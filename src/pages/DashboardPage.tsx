@@ -22,32 +22,40 @@ interface QuickLinkProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
   description: string;
-  color: string;
+  iconBg: string;
+  iconColor: string;
 }
 
-function QuickLink({ to, icon: Icon, label, description, color }: QuickLinkProps) {
+function QuickLink({ to, icon: Icon, label, description, iconBg, iconColor }: QuickLinkProps) {
   return (
     <Link
       to={to}
-      className="group flex items-start gap-4 bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:border-orange-200 hover:shadow-md transition-all"
+      className="group flex items-start gap-4 bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5 hover:border-(--primary) hover:shadow-md transition-all"
     >
-      <div className={`flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center ${color}`}>
-        <Icon className="h-5 w-5" />
+      <div className={`shrink-0 h-10 w-10 rounded-lg flex items-center justify-center ${iconBg}`}>
+        <Icon className={`h-5 w-5 ${iconColor}`} />
       </div>
       <div>
-        <p className="font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
+        <p className="font-semibold text-(--text-primary) group-hover:text-(--primary) transition-colors">
           {label}
         </p>
-        <p className="text-xs text-gray-500 mt-0.5">{description}</p>
+        <p className="text-xs text-(--text-muted) mt-0.5">{description}</p>
       </div>
     </Link>
   );
 }
 
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return 'morning';
+  if (h < 17) return 'afternoon';
+  return 'evening';
+}
+
 export default function DashboardPage() {
   const { user } = useAuthStore();
 
-  const { data: notifications, isLoading: notificationsLoading } = useQuery<Notification[]>({
+  const { data: notifications, isLoading: notifLoading } = useQuery<Notification[]>({
     queryKey: ['notifications'],
     queryFn: async () => {
       const response = await api.get('/notifications/');
@@ -57,32 +65,34 @@ export default function DashboardPage() {
 
   const firstName = user?.first_name || 'there';
   const modules = user?.selectedModules ?? [];
-
   const hasInventory = modules.length === 0 || modules.includes('inventory');
-  const hasAjo = modules.length === 0 || modules.includes('ajo');
-  const hasThrift = modules.length === 0 || modules.includes('thrift');
+  const hasAjo       = modules.length === 0 || modules.includes('ajo');
+  const hasThrift    = modules.length === 0 || modules.includes('thrift');
 
-  const quickLinks = [
+  const quickLinks: QuickLinkProps[] = [
     hasAjo && {
       to: '/ajo',
       icon: UserGroupIcon,
       label: 'Ajo Groups',
       description: 'View and manage your savings circles',
-      color: 'bg-orange-50 text-orange-600',
+      iconBg: 'bg-(--primary-tint)',
+      iconColor: 'text-(--primary)',
     },
     hasThrift && {
       to: '/thrift',
       icon: BanknotesIcon,
       label: 'Thrift',
       description: 'Your cooperative savings groups',
-      color: 'bg-green-50 text-green-600',
+      iconBg: 'bg-green-50 dark:bg-green-950/40',
+      iconColor: 'text-green-600 dark:text-green-400',
     },
     hasInventory && {
       to: '/inventory',
       icon: CubeIcon,
       label: 'Inventory',
       description: 'Track products, sales and analytics',
-      color: 'bg-blue-50 text-blue-600',
+      iconBg: 'bg-purple-50 dark:bg-purple-950/40',
+      iconColor: 'text-purple-600 dark:text-purple-400',
     },
   ].filter(Boolean) as QuickLinkProps[];
 
@@ -90,10 +100,10 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Welcome */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-(--text-primary)">
           Good {getGreeting()}, {firstName}!
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-(--text-secondary)">
           {format(new Date(), 'EEEE, d MMMM yyyy')}
         </p>
       </div>
@@ -101,7 +111,7 @@ export default function DashboardPage() {
       {/* Quick links */}
       {quickLinks.length > 0 && (
         <section>
-          <h2 className="text-base font-semibold text-gray-700 mb-3">Quick Access</h2>
+          <h2 className="text-base font-semibold text-(--text-secondary) mb-3">Quick Access</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {quickLinks.map((link) => (
               <QuickLink key={link.to} {...link} />
@@ -113,19 +123,19 @@ export default function DashboardPage() {
       {/* Notifications */}
       <section>
         <div className="flex items-center gap-2 mb-3">
-          <BellIcon className="h-5 w-5 text-gray-400" />
-          <h2 className="text-base font-semibold text-gray-700">Recent Notifications</h2>
+          <BellIcon className="h-5 w-5 text-(--text-muted)" />
+          <h2 className="text-base font-semibold text-(--text-secondary)">Recent Notifications</h2>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-50">
-          {notificationsLoading ? (
+        <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm divide-y divide-(--border)">
+          {notifLoading ? (
             <div className="p-6 space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="flex gap-3 animate-pulse">
-                  <div className="h-4 w-4 bg-gray-200 rounded-full mt-0.5 flex-shrink-0" />
+                <div key={i} className="flex gap-3">
+                  <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded-full mt-0.5 shrink-0 skeleton" />
                   <div className="flex-1 space-y-1.5">
-                    <div className="h-3.5 bg-gray-200 rounded w-3/4" />
-                    <div className="h-3 bg-gray-100 rounded w-1/3" />
+                    <div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-3/4 skeleton" />
+                    <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-1/3 skeleton" />
                   </div>
                 </div>
               ))}
@@ -134,23 +144,25 @@ export default function DashboardPage() {
             notifications.slice(0, 10).map((n) => (
               <div
                 key={n.id}
-                className={`flex items-start gap-3 px-5 py-4 ${!n.is_read ? 'bg-orange-50/40' : ''}`}
+                className={`flex items-start gap-3 px-5 py-4 ${
+                  !n.is_read ? 'bg-(--primary-tint)/30' : ''
+                }`}
               >
                 <div
-                  className={`mt-1.5 h-2 w-2 rounded-full flex-shrink-0 ${
-                    n.is_read ? 'bg-gray-300' : 'bg-orange-500'
+                  className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${
+                    n.is_read ? 'bg-gray-300 dark:bg-gray-600' : 'bg-(--primary)'
                   }`}
                 />
                 <div>
-                  <p className="text-sm text-gray-800">{n.message}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-sm text-(--text-primary)">{n.message}</p>
+                  <p className="text-xs text-(--text-muted) mt-0.5">
                     {format(new Date(n.created_at), 'dd MMM yyyy, h:mm a')}
                   </p>
                 </div>
               </div>
             ))
           ) : (
-            <div className="px-5 py-10 text-center text-sm text-gray-400">
+            <div className="px-5 py-10 text-center text-sm text-(--text-muted)">
               No notifications yet.
             </div>
           )}
@@ -158,11 +170,4 @@ export default function DashboardPage() {
       </section>
     </div>
   );
-}
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'morning';
-  if (hour < 17) return 'afternoon';
-  return 'evening';
 }

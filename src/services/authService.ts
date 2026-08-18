@@ -30,8 +30,12 @@ export interface User {
   selectedModules?: string[];
 }
 
-export async function login(payload: LoginPayload): Promise<AuthTokens> {
-  const response = await api.post<AuthTokens>('/token/', payload);
+export interface LoginResponse extends AuthTokens {
+  user: User;
+}
+
+export async function login(payload: LoginPayload): Promise<LoginResponse> {
+  const response = await api.post<LoginResponse>('/auth/login/', payload);
   return response.data;
 }
 
@@ -46,7 +50,7 @@ export async function verifyOTP(email: string, code: string): Promise<AuthTokens
 }
 
 export async function refreshToken(refresh: string): Promise<{ access: string }> {
-  const response = await api.post<{ access: string }>('/token/refresh/', { refresh });
+  const response = await api.post<{ access: string }>('/auth/token/refresh/', { refresh });
   return response.data;
 }
 

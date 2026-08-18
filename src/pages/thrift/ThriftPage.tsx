@@ -6,68 +6,74 @@ import api from '../../services/api';
 interface ThriftGroup {
   id: number;
   name: string;
+  description: string;
   frequency: string;
-  contribution_amount: number;
+  cycle_type: string;
+  invite_code: string;
   member_count: number;
-  total_saved: number;
-  status: string;
+  is_on_trial: boolean;
+  is_subscription_active: boolean;
+  trial_end: string | null;
+  subscription_expires: string | null;
+  created_at: string;
+  collector: { id: number; full_name: string; email: string } | null;
+  organization: { id: number; name: string } | null;
 }
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('en-NG', {
-    style: 'currency',
-    currency: 'NGN',
-    maximumFractionDigits: 0,
-  }).format(value);
-}
+type Row = Record<string, unknown>;
 
-function StatusBadge({ status }: { status: string }) {
-  const s = status.toLowerCase();
+function SubscriptionBadge({ row }: { row: Row }) {
+  const group = row as unknown as ThriftGroup;
+  const label = group.is_on_trial ? 'Trial' : group.is_subscription_active ? 'Active' : 'Inactive';
   return (
     <span
       className={clsx(
-        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize',
-        s === 'active'
-          ? 'bg-green-100 text-green-700'
-          : s === 'completed'
-          ? 'bg-blue-100 text-blue-700'
-          : s === 'pending'
+        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+        group.is_on_trial
           ? 'bg-yellow-100 text-yellow-700'
-          : 'bg-gray-100 text-gray-600',
+          : group.is_subscription_active
+          ? 'bg-green-100 text-green-700'
+          : 'bg-gray-100 text-gray-500',
       )}
     >
-      {status}
+      {label}
     </span>
   );
 }
 
-const columns: Column<Record<string, unknown>>[] = [
+const columns: Column<Row>[] = [
   { key: 'name', header: 'Group Name' },
   {
     key: 'frequency',
     header: 'Frequency',
-    render: (value) => <span className="capitalize">{String(value)}</span>,
+    render: (v) => <span className="capitalize">{String(v ?? '')}</span>,
   },
   {
-    key: 'contribution_amount',
-    header: 'Contribution',
-    render: (value) => formatCurrency(Number(value)),
+    key: 'cycle_type',
+    header: 'Cycle',
+    render: (v) => <span className="capitalize">{String(v ?? '')}</span>,
+  },
+  { key: 'member_count', header: 'Members' },
+  {
+    key: 'collector',
+    header: 'Collector',
+    render: (v) => {
+      const c = v as { full_name?: string } | null;
+      return <span>{c?.full_name ?? '—'}</span>;
+    },
   },
   {
-    key: 'member_count',
-    header: 'Members',
+    key: 'organization',
+    header: 'Organisation',
+    render: (v) => {
+      const o = v as { name?: string } | null;
+      return <span>{o?.name ?? '—'}</span>;
+    },
   },
   {
-    key: 'total_saved',
-    header: 'Total Saved',
-    render: (value) => (
-      <span className="font-semibold text-gray-900">{formatCurrency(Number(value))}</span>
-    ),
-  },
-  {
-    key: 'status',
+    key: 'is_subscription_active',
     header: 'Status',
-    render: (value) => <StatusBadge status={String(value)} />,
+    render: (_, row) => <SubscriptionBadge row={row} />,
   },
 ];
 
@@ -75,7 +81,7 @@ export default function ThriftPage() {
   const { data, isLoading, error } = useQuery<ThriftGroup[]>({
     queryKey: ['thrift-groups'],
     queryFn: async () => {
-      const response = await api.get('/thrift/groups/');
+      const response = await api.get('/thrift/');
       return response.data;
     },
   });
@@ -96,7 +102,7 @@ export default function ThriftPage() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <Table
           columns={columns}
-          data={(data ?? []) as unknown as Record<string, unknown>[]}
+          data={(data ?? []) as unknown as Row[]}
           loading={isLoading}
           emptyMessage="You are not a member of any thrift group yet."
         />

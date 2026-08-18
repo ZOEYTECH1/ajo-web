@@ -9,7 +9,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://ajo-backend.onrender.com',
+        target: 'https://ajo-backend-q6dp.onrender.com',
         changeOrigin: true,
       },
     },

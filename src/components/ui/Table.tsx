@@ -18,7 +18,7 @@ function SkeletonRow({ cols }: { cols: number }) {
     <tr>
       {Array.from({ length: cols }).map((_, i) => (
         <td key={i} className="px-6 py-4">
-          <div className="h-4 bg-gray-200 rounded animate-pulse" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded skeleton" />
         </td>
       ))}
     </tr>
@@ -32,34 +32,29 @@ export function Table<T extends Record<string, unknown>>({
   emptyMessage = 'No data available.',
 }: TableProps<T>) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm">
-      <table className="min-w-full divide-y divide-gray-100 bg-white">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto rounded-xl border border-(--border) shadow-sm">
+      <table className="min-w-full divide-y divide-(--border) bg-(--surface)">
+        <thead className="bg-(--bg)">
           <tr>
             {columns.map((col) => (
               <th
                 key={col.key}
                 scope="col"
-                className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider"
               >
                 {col.header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-50">
+        <tbody className="divide-y divide-(--border)">
           {loading ? (
-            <>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <SkeletonRow key={i} cols={columns.length} />
-              ))}
-            </>
+            Array.from({ length: 5 }).map((_, i) => (
+              <SkeletonRow key={i} cols={columns.length} />
+            ))
           ) : data.length === 0 ? (
             <tr>
-              <td
-                colSpan={columns.length}
-                className="px-6 py-12 text-center text-sm text-gray-400"
-              >
+              <td colSpan={columns.length} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                 {emptyMessage}
               </td>
             </tr>
@@ -68,15 +63,12 @@ export function Table<T extends Record<string, unknown>>({
               <tr
                 key={rowIndex}
                 className={clsx(
-                  'hover:bg-orange-50 transition-colors',
-                  rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50/50',
+                  'hover:bg-(--primary-tint)/30 transition-colors',
+                  rowIndex % 2 === 0 ? 'bg-(--surface)' : 'bg-(--bg)',
                 )}
               >
                 {columns.map((col) => (
-                  <td
-                    key={col.key}
-                    className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap"
-                  >
+                  <td key={col.key} className="px-6 py-4 text-sm text-(--text-primary) whitespace-nowrap">
                     {col.render
                       ? col.render(row[col.key], row)
                       : String(row[col.key] ?? '')}

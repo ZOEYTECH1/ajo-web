@@ -1,74 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { Table, type Column } from '../../components/ui/Table';
+import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 
 interface SaleItem {
   product_name: string;
   quantity: number;
-  unit_price: number;
+  unit_price: string;
 }
 
 interface Sale {
   id: number;
-  date: string;
+  sold_at: string;
   items: SaleItem[];
-  total: number;
-  customer_name: string;
-  customer_phone?: string;
+  total: string;
+  customer_name: string | null;
+  notes: string;
 }
 
-function formatCurrency(value: number): string {
+function formatCurrency(value: string | number): string {
   return new Intl.NumberFormat('en-NG', {
-    style: 'currency',
-    currency: 'NGN',
-    maximumFractionDigits: 0,
-  }).format(value);
+    style: 'currency', currency: 'NGN', maximumFractionDigits: 0,
+  }).format(Number(value));
 }
-
-const columns: Column<Record<string, unknown>>[] = [
-  {
-    key: 'date',
-    header: 'Date',
-    render: (value) => {
-      try {
-        return format(new Date(String(value)), 'dd MMM yyyy, h:mm a');
-      } catch {
-        return String(value);
-      }
-    },
-  },
-  {
-    key: 'items',
-    header: 'Items',
-    render: (value) => {
-      const items = value as SaleItem[];
-      if (!Array.isArray(items) || items.length === 0) return '—';
-      const summary = items
-        .slice(0, 2)
-        .map((i) => `${i.product_name} x${i.quantity}`)
-        .join(', ');
-      return items.length > 2 ? `${summary} +${items.length - 2} more` : summary;
-    },
-  },
-  {
-    key: 'total',
-    header: 'Total',
-    render: (value) => (
-      <span className="font-semibold text-gray-900">{formatCurrency(Number(value))}</span>
-    ),
-  },
-  {
-    key: 'customer_name',
-    header: 'Customer',
-    render: (value) => String(value) || '—',
-  },
-  {
-    key: 'customer_phone',
-    header: 'Phone',
-    render: (value) => String(value ?? '—'),
-  },
-];
 
 export default function InventorySalesPage() {
   const { data, isLoading, error } = useQuery<Sale[]>({
@@ -82,23 +36,68 @@ export default function InventorySalesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Sales</h1>
-        <p className="text-sm text-gray-500">All recorded sales transactions</p>
+        <h1 className="text-2xl font-bold text-(--text-primary)">Sales</h1>
+        <p className="text-sm text-(--text-secondary)">All recorded sales transactions</p>
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-          Failed to load sales data. Please refresh.
+        <div className="rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+          Failed to load sales. Please refresh.
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <Table
-          columns={columns}
-          data={(data ?? []) as unknown as Record<string, unknown>[]}
-          loading={isLoading}
-          emptyMessage="No sales recorded yet."
-        />
+      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-(--border)">
+            <thead className="bg-(--bg)">
+              <tr>
+                {['Date', 'Items', 'Customer', 'Total'].map((h) => (
+                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-(--border)">
+              {isLoading ? (
+                <SkeletonTable rows={6} cols={4} />
+              ) : data && data.length > 0 ? (
+                data.map((sale) => (
+                  <tr key={sale.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                    <td className="px-6 py-4 text-sm text-(--text-secondary) whitespace-nowrap">
+                      {format(new Date(sale.sold_at), 'dd MMM yyyy, h:mm a')}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-(--text-primary)">
+                      {sale.items.length === 0
+                        ? '—'
+                        : (() => {
+                            const summary = sale.items
+                              .slice(0, 2)
+                              .map((i) => `${i.product_name} ×${i.quantity}`)
+                              .join(', ');
+                            return sale.items.length > 2
+                              ? `${summary} +${sale.items.length - 2} more`
+                              : summary;
+                          })()}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-(--text-secondary)">
+                      {sale.customer_name || '—'}
+                    </td>
+                    <td className="px-6 py-4 text-sm font-semibold text-(--text-primary) whitespace-nowrap">
+                      {formatCurrency(sale.total)}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="px-6 py-12 text-center text-sm text-(--text-muted)">
+                    No sales recorded yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

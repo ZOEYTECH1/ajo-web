@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import './index.css';
 
 import App, { ProtectedLayout } from './App';
+import { ThemeProvider } from './context/ThemeContext';
 
 // Auth pages
 import LoginPage from './pages/auth/LoginPage';
@@ -57,6 +58,8 @@ if (!root) throw new Error('Root element not found');
 
 createRoot(root).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   </StrictMode>,
 );

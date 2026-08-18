@@ -11,7 +11,7 @@ test.describe('Authentication flow', () => {
 
   test('shows error when submitting invalid credentials', async ({ page }) => {
     // Mock the backend to return 401
-    await page.route('**/api/token/', async (route) => {
+    await page.route('**/api/auth/login/', async (route) => {
       await route.fulfill({
         status: 401,
         contentType: 'application/json',
@@ -30,27 +30,23 @@ test.describe('Authentication flow', () => {
   });
 
   test('login with valid credentials redirects to dashboard', async ({ page }) => {
-    await page.route('**/api/token/', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ access: 'e2e-access-token', refresh: 'e2e-refresh-token' }),
-      });
-    });
-
-    await page.route('**/api/auth/me/', async (route) => {
+    await page.route('**/api/auth/login/', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          id: 1,
-          email: 'test@example.com',
-          first_name: 'Test',
-          last_name: 'User',
-          phone_number: '+2348000000000',
-          role: 'member',
-          is_email_verified: true,
-          selectedModules: ['ajo', 'inventory', 'thrift'],
+          access: 'e2e-access-token',
+          refresh: 'e2e-refresh-token',
+          user: {
+            id: 1,
+            email: 'test@example.com',
+            first_name: 'Test',
+            last_name: 'User',
+            phone_number: '+2348000000000',
+            role: 'member',
+            is_email_verified: true,
+            selectedModules: ['ajo', 'inventory', 'thrift'],
+          },
         }),
       });
     });

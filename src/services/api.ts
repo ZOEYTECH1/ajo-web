@@ -35,8 +35,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
-    const isAuthEndpoint =
-      originalRequest.url?.includes('/token/') || originalRequest.url?.includes('/auth/');
+    const isAuthEndpoint = originalRequest.url?.includes('/auth/');
 
     if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       const refresh = localStorage.getItem('refresh');
@@ -64,7 +63,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await axios.post('/api/token/refresh/', { refresh });
+        const response = await axios.post('/api/auth/token/refresh/', { refresh });
         const newAccess: string = response.data.access;
         localStorage.setItem('access', newAccess);
         isRefreshing = false;

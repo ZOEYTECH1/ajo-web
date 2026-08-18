@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root {
+  --brand: #E65100;
+  --brand-dark: #BF360C;
+  --brand-light: #FFF3E0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #F9FAFB;
+  color: #111827;
+}
+
+#root {
+  min-height: 100vh;
+}

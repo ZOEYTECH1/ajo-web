@@ -11,6 +11,7 @@ import {
   ClockIcon,
 } from '@heroicons/react/24/outline';
 import { SkeletonCard } from '../../components/ui/Skeleton';
+import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
 
 /* ── Types matching actual backend response ────────────────────────────── */
@@ -105,6 +106,7 @@ export default function InventoryDashboardPage() {
 
   return (
     <div className="space-y-6">
+      <InventoryNav />
       {/* Header + date navigation */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 import { CurrencyDollarIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 import { SkeletonCard } from '../../components/ui/Skeleton';
+import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
 
 /* ── Types matching actual backend ────────────────────────────────────── */
@@ -59,6 +60,7 @@ export default function InventoryAnalyticsPage() {
 
   return (
     <div className="space-y-6">
+      <InventoryNav />
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-(--text-primary)">Analytics</h1>

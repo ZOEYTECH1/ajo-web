@@ -16,10 +16,16 @@ import DashboardPage from './pages/DashboardPage';
 import InventoryDashboardPage from './pages/inventory/InventoryDashboardPage';
 import InventoryAnalyticsPage from './pages/inventory/InventoryAnalyticsPage';
 import InventorySalesPage from './pages/inventory/InventorySalesPage';
+import InventoryCategoriesPage from './pages/inventory/InventoryCategoriesPage';
 import InventoryProductsPage from './pages/inventory/InventoryProductsPage';
+import InventoryExpensesPage from './pages/inventory/InventoryExpensesPage';
+import InventoryCustomersPage from './pages/inventory/InventoryCustomersPage';
 import AjoGroupsPage from './pages/ajo/AjoGroupsPage';
 import AjoGroupDetailPage from './pages/ajo/AjoGroupDetailPage';
+import AjoPaymentHistoryPage from './pages/ajo/AjoPaymentHistoryPage';
 import ThriftPage from './pages/thrift/ThriftPage';
+import ThriftGroupDetailPage from './pages/thrift/ThriftGroupDetailPage';
+import ThriftPaymentHistoryPage from './pages/thrift/ThriftPaymentHistoryPage';
 import AccountPage from './pages/account/AccountPage';
 
 const router = createBrowserRouter([
@@ -41,10 +47,16 @@ const router = createBrowserRouter([
           { path: 'inventory',                  element: <InventoryDashboardPage /> },
           { path: 'inventory/analytics',        element: <InventoryAnalyticsPage /> },
           { path: 'inventory/sales',            element: <InventorySalesPage /> },
+          { path: 'inventory/categories',       element: <InventoryCategoriesPage /> },
           { path: 'inventory/products/:catId',  element: <InventoryProductsPage /> },
+          { path: 'inventory/expenses',         element: <InventoryExpensesPage /> },
+          { path: 'inventory/customers',        element: <InventoryCustomersPage /> },
           { path: 'ajo',                        element: <AjoGroupsPage /> },
+          { path: 'ajo/history',                element: <AjoPaymentHistoryPage /> },
           { path: 'ajo/:id',                    element: <AjoGroupDetailPage /> },
           { path: 'thrift',                     element: <ThriftPage /> },
+          { path: 'thrift/history',             element: <ThriftPaymentHistoryPage /> },
+          { path: 'thrift/:id',                 element: <ThriftGroupDetailPage /> },
           { path: 'account',                    element: <AccountPage /> },
           { path: '*',                          element: <Navigate to="/dashboard" replace /> },
         ],

@@ -1,120 +1,1057 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import clsx from 'clsx';
-import { ChevronLeftIcon, UserGroupIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import {
+  ChevronLeftIcon, UserGroupIcon, CalendarIcon, KeyIcon,
+  PaperClipIcon, CheckCircleIcon, XCircleIcon, PlusIcon,
+  Cog6ToothIcon, ArrowPathIcon, ClipboardDocumentIcon,
+} from '@heroicons/react/24/outline';
 import { Table, type Column } from '../../components/ui/Table';
 import api from '../../services/api';
+import useAuthStore from '../../store/useAuthStore';
 
-interface Member {
+// ── API shapes ────────────────────────────────────────────────────────────────
+
+interface UserSnap {
   id: number;
-  user: { first_name: string; last_name: string; email: string };
-  position: number;
-  has_collected: boolean;
+  first_name: string;
+  last_name: string;
+  email: string;
+}
+
+interface Group {
+  id: number;
+  name: string;
+  description: string;
+  contribution_frequency: string;
+  contribution_amount: string;
+  member_count: number;
+  invite_code: string;
+  is_on_trial: boolean;
+  is_subscription_active: boolean;
+  admin: UserSnap;
+  created_at: string;
+  grace_period_days?: number;
+}
+
+interface Membership {
+  id: number;
+  user: UserSnap;
+  user_name?: string;
+  user_email?: string;
+  status: string;
+  joined_at: string | null;
+  total_approved: string;
+  consecutive_default_streak: number;
 }
 
 interface Payment {
   id: number;
-  payer_name: string;
-  amount: number;
-  date: string;
-  cycle_number: number;
+  submitted_by: UserSnap;
+  cycle_number: number | null;
+  amount_entered: string;
   status: string;
+  submitted_at: string;
+  receipt_image?: string | null;
+  rejection_reason?: string;
 }
 
-interface GroupDetail {
+interface Cycle {
   id: number;
-  name: string;
-  description?: string;
-  frequency: string;
-  contribution_amount: number;
+  cycle_number: number;
+  start_date: string;
+  end_date: string;
   status: string;
-  current_collector?: string;
-  current_cycle: number;
-  total_cycles: number;
-  next_payment_date?: string;
-  start_date?: string;
-  members: Member[];
-  payments: Payment[];
+  total_member_count: number;
 }
 
-function formatCurrency(value: number): string {
+interface RemovalProposal {
+  id: number;
+  target_membership: number;
+  target_name: string;
+  target_user_id: number;
+  status: string;
+  eligible_count: number;
+  yes_count: number;
+  no_count: number;
+  current_user_vote: boolean | null;
+  created_at: string;
+}
+
+interface CollectionOrderEntry {
+  id: number;
+  user_id: number;
+  full_name: string;
+  profile_photo: string | null;
+  collection_slot: number;
+}
+
+interface Defaulter {
+  user_name?: string;
+  user_email?: string;
+  full_name?: string;
+  email?: string;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', {
-    style: 'currency',
-    currency: 'NGN',
-    maximumFractionDigits: 0,
-  }).format(value);
+    style: 'currency', currency: 'NGN', maximumFractionDigits: 0,
+  }).format(Number(v));
 }
 
-const paymentColumns: Column<Record<string, unknown>>[] = [
-  { key: 'payer_name', header: 'Member' },
-  { key: 'cycle_number', header: 'Cycle' },
-  {
-    key: 'amount',
-    header: 'Amount',
-    render: (value) => formatCurrency(Number(value)),
-  },
-  {
-    key: 'date',
-    header: 'Date',
-    render: (value) => {
-      try {
-        return format(new Date(String(value)), 'dd MMM yyyy');
-      } catch {
-        return String(value);
-      }
+function fullName(u: UserSnap) {
+  return `${u.first_name} ${u.last_name}`.trim() || u.email;
+}
+
+function StatusBadge({ value }: { value: string }) {
+  const s = value.toLowerCase();
+  return (
+    <span className={clsx(
+      'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize',
+      s === 'approved' || s === 'active' || s === 'confirmed'
+        ? 'bg-green-100 text-green-700'
+        : s === 'pending'
+        ? 'bg-yellow-100 text-yellow-700'
+        : s === 'rejected' || s === 'closed'
+        ? 'bg-red-100 text-red-600'
+        : 'bg-gray-100 text-gray-600',
+    )}>
+      {value}
+    </span>
+  );
+}
+
+// ── Shared style constants ────────────────────────────────────────────────────
+
+const inputCls =
+  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const orangeBtn =
+  'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
+const cancelBtn =
+  'rounded-lg border border-gray-300 text-gray-700 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition-colors';
+
+// ── Submit Payment Modal ──────────────────────────────────────────────────────
+
+function SubmitPaymentModal({
+  groupId,
+  groupName,
+  contributionAmount,
+  onClose,
+}: {
+  groupId: number;
+  groupName: string;
+  contributionAmount: string;
+  onClose: () => void;
+}) {
+  const qc = useQueryClient();
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [amount, setAmount] = useState(String(Math.round(Number(contributionAmount))));
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [err, setErr] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      const form = new FormData();
+      form.append('amount_entered', amount.trim());
+      if (file) form.append('receipt_image', file);
+      return api.post(`/groups/${groupId}/payments/`, form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
     },
-  },
-  {
-    key: 'status',
-    header: 'Status',
-    render: (value) => {
-      const s = String(value).toLowerCase();
-      return (
-        <span
-          className={clsx(
-            'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize',
-            s === 'paid'
-              ? 'bg-green-100 text-green-700'
-              : s === 'pending'
-              ? 'bg-yellow-100 text-yellow-700'
-              : 'bg-gray-100 text-gray-600',
-          )}
-        >
-          {value as string}
-        </span>
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-payments', String(groupId)] });
+      setSuccess(true);
+    },
+    onError: (e: any) => {
+      const d = e.response?.data;
+      setErr(
+        d?.amount_entered?.[0] ?? d?.receipt_image?.[0] ??
+        d?.non_field_errors?.[0] ?? d?.detail ?? 'Something went wrong.',
       );
     },
-  },
-];
+  });
 
-type TabKey = 'payments' | 'members';
+  function handleFile(f: File | null) {
+    setFile(f);
+    if (f) setPreview(URL.createObjectURL(f));
+    else setPreview(null);
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErr('');
+    const amt = Number(amount.trim());
+    if (!amount.trim() || isNaN(amt) || amt <= 0) {
+      setErr('Enter a valid payment amount.');
+      return;
+    }
+    mutation.mutate();
+  }
+
+  if (success) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full text-center space-y-4">
+          <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto" />
+          <h2 className="text-xl font-bold text-gray-900">Payment Submitted!</h2>
+          <p className="text-sm text-gray-500">
+            Your payment is pending review by the group admin.
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full mt-2 rounded-lg bg-orange-600 text-white py-2.5 font-semibold hover:bg-orange-700 transition-colors"
+          >
+            Back to Group
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="text-lg font-bold text-gray-900">Submit Payment</h2>
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <XCircleIcon className="h-6 w-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          <p className="text-sm text-gray-500">
+            Group: <span className="font-medium text-gray-800">{groupName}</span>
+          </p>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Amount (NGN)</label>
+            <input
+              type="number"
+              min="1"
+              value={amount}
+              onChange={(e) => { setAmount(e.target.value); setErr(''); }}
+              className={inputCls}
+              placeholder={String(Math.round(Number(contributionAmount)))}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Receipt (optional)</label>
+            {preview ? (
+              <div className="relative rounded-xl overflow-hidden border border-gray-200">
+                <img src={preview} alt="Receipt preview" className="w-full h-48 object-cover" />
+                <button
+                  type="button"
+                  onClick={() => handleFile(null)}
+                  className="absolute top-2 right-2 bg-red-100 text-red-600 rounded-full p-1 hover:bg-red-200 transition-colors"
+                >
+                  <XCircleIcon className="h-5 w-5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="w-full rounded-xl border-2 border-dashed border-gray-300 py-8 flex flex-col items-center gap-2 hover:border-orange-400 hover:bg-orange-50 transition-colors"
+              >
+                <PaperClipIcon className="h-8 w-8 text-gray-400" />
+                <span className="text-sm font-medium text-gray-500">Attach receipt photo</span>
+                <span className="text-xs text-gray-400">Click to choose from your files</span>
+              </button>
+            )}
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
+            />
+          </div>
+
+          {err && (
+            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>
+          )}
+
+          <div className="flex gap-3 pt-1">
+            <button type="button" onClick={onClose} className={`flex-1 ${cancelBtn}`}>Cancel</button>
+            <button
+              type="submit"
+              disabled={mutation.isPending || !amount.trim()}
+              className={`flex-1 ${orangeBtn}`}
+            >
+              {mutation.isPending ? 'Submitting…' : 'Submit Payment'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ── Reject Reason Modal ───────────────────────────────────────────────────────
+
+function RejectModal({
+  onConfirm,
+  onCancel,
+}: {
+  onConfirm: (reason: string) => void;
+  onCancel: () => void;
+}) {
+  const [reason, setReason] = useState('');
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+        <h3 className="text-lg font-bold text-gray-900">Reject Payment</h3>
+        <p className="text-sm text-gray-500">
+          Optionally provide a reason so the member knows what to fix.
+        </p>
+        <textarea
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          rows={3}
+          placeholder="e.g. Wrong amount entered"
+          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+        />
+        <div className="flex gap-3">
+          <button type="button" onClick={onCancel} className={cancelBtn}>Cancel</button>
+          <button
+            type="button"
+            onClick={() => onConfirm(reason.trim())}
+            className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700"
+          >
+            Reject
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Group Settings Modal ──────────────────────────────────────────────────────
+
+function GroupSettingsModal({
+  group,
+  onClose,
+}: {
+  group: Group;
+  onClose: () => void;
+}) {
+  const qc = useQueryClient();
+  const [form, setForm] = useState({
+    name: group.name,
+    description: group.description ?? '',
+    grace_period_days: String(group.grace_period_days ?? 0),
+  });
+  const [err, setErr] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: () =>
+      api.patch(`/groups/${group.id}/`, {
+        name: form.name.trim(),
+        description: form.description.trim(),
+        grace_period_days: Math.min(30, Math.max(0, Number(form.grace_period_days) || 0)),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group', String(group.id)] });
+      setSuccess(true);
+      setTimeout(onClose, 800);
+    },
+    onError: (e: any) => {
+      const d = e.response?.data;
+      const first = Object.values(d ?? {})[0];
+      setErr(d?.detail ?? (Array.isArray(first) ? (first as string[])[0] : String(first ?? 'Something went wrong.')));
+    },
+  });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErr('');
+    if (!form.name.trim()) { setErr('Group name is required.'); return; }
+    mutation.mutate();
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="text-lg font-bold text-gray-900">Group Settings</h2>
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <XCircleIcon className="h-6 w-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Group Name</label>
+            <input
+              type="text"
+              value={form.name}
+              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              className={inputCls}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+            <textarea
+              rows={3}
+              value={form.description}
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              className={inputCls}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Grace Period (days, 0–30)
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="30"
+              value={form.grace_period_days}
+              onChange={(e) => setForm((f) => ({ ...f, grace_period_days: e.target.value }))}
+              className={inputCls}
+            />
+          </div>
+
+          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {success && <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">Settings saved!</p>}
+
+          <div className="flex gap-3 pt-1">
+            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+            <button type="submit" disabled={mutation.isPending} className={orangeBtn}>
+              {mutation.isPending ? 'Saving…' : 'Save Settings'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ── Start Cycle Modal ─────────────────────────────────────────────────────────
+
+function StartCycleModal({
+  groupId,
+  onClose,
+}: {
+  groupId: number;
+  onClose: () => void;
+}) {
+  const qc = useQueryClient();
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [err, setErr] = useState('');
+
+  const mutation = useMutation({
+    mutationFn: () =>
+      api.post(`/groups/${groupId}/cycles/`, { start_date: startDate, end_date: endDate }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
+      onClose();
+    },
+    onError: (e: any) => {
+      const d = e.response?.data;
+      const first = Object.values(d ?? {})[0];
+      setErr(d?.detail ?? (Array.isArray(first) ? (first as string[])[0] : String(first ?? 'Something went wrong.')));
+    },
+  });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErr('');
+    if (!startDate || !endDate) { setErr('Both dates are required.'); return; }
+    mutation.mutate();
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="text-lg font-bold text-gray-900">Start New Cycle</h2>
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <XCircleIcon className="h-6 w-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Start Date</label>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => { setStartDate(e.target.value); setErr(''); }}
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">End Date</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => { setEndDate(e.target.value); setErr(''); }}
+              className={inputCls}
+            />
+          </div>
+
+          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+
+          <div className="flex gap-3 pt-1">
+            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+            <button type="submit" disabled={mutation.isPending} className={orangeBtn}>
+              {mutation.isPending ? 'Creating…' : 'Create Cycle'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ── Payments Tab ──────────────────────────────────────────────────────────────
+
+function PaymentsTab({
+  payments,
+  groupId,
+  isAdmin,
+}: {
+  payments: Payment[];
+  groupId: number;
+  isAdmin: boolean;
+}) {
+  const qc = useQueryClient();
+  const [rejectTarget, setRejectTarget] = useState<number | null>(null);
+
+  const reviewMutation = useMutation({
+    mutationFn: ({ paymentId, action, reason }: { paymentId: number; action: string; reason?: string }) =>
+      api.patch(`/groups/${groupId}/payments/${paymentId}/`, { action, reason }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-payments', String(groupId)] });
+      setRejectTarget(null);
+    },
+  });
+
+  const cols: Column<Record<string, unknown>>[] = [
+    {
+      key: 'submitted_by',
+      header: 'Member',
+      render: (_, row) => fullName(row.submitted_by as UserSnap),
+    },
+    { key: 'cycle_number', header: 'Cycle', render: (v) => v ?? '—' },
+    { key: 'amount_entered', header: 'Amount', render: (v) => formatCurrency(v as string) },
+    {
+      key: 'submitted_at',
+      header: 'Date',
+      render: (v) => {
+        try { return format(new Date(v as string), 'dd MMM yyyy'); } catch { return v as string; }
+      },
+    },
+    { key: 'status', header: 'Status', render: (v) => <StatusBadge value={v as string} /> },
+    ...(isAdmin
+      ? [{
+          key: 'id',
+          header: 'Actions',
+          render: (id: unknown, row: Record<string, unknown>) => {
+            if ((row.status as string) !== 'pending') return <span className="text-xs text-gray-400">—</span>;
+            const payId = id as number;
+            return (
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => reviewMutation.mutate({ paymentId: payId, action: 'approve' })}
+                  disabled={reviewMutation.isPending}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 disabled:opacity-50 transition-colors"
+                >
+                  <CheckCircleIcon className="h-3.5 w-3.5" /> Approve
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRejectTarget(payId)}
+                  disabled={reviewMutation.isPending}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
+                >
+                  <XCircleIcon className="h-3.5 w-3.5" /> Reject
+                </button>
+              </div>
+            );
+          },
+        } as Column<Record<string, unknown>>]
+      : []),
+  ];
+
+  return (
+    <>
+      <Table
+        columns={cols}
+        data={payments as unknown as Record<string, unknown>[]}
+        emptyMessage="No payments yet."
+      />
+      {rejectTarget !== null && (
+        <RejectModal
+          onConfirm={(reason) => reviewMutation.mutate({ paymentId: rejectTarget, action: 'reject', reason })}
+          onCancel={() => setRejectTarget(null)}
+        />
+      )}
+    </>
+  );
+}
+
+// ── Members Tab ───────────────────────────────────────────────────────────────
+
+function MembersTab({
+  members,
+  groupId,
+  isAdmin,
+  removals,
+}: {
+  members: Membership[];
+  groupId: number;
+  isAdmin: boolean;
+  removals: RemovalProposal[];
+}) {
+  const qc = useQueryClient();
+  const [memberSubTab, setMemberSubTab] = useState<'approved' | 'pending'>('approved');
+
+  const approveMemberMutation = useMutation({
+    mutationFn: ({ membershipId, action }: { membershipId: number; action: 'approve' | 'reject' }) =>
+      api.patch(`/groups/${groupId}/members/${membershipId}/`, { action }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-members', String(groupId)] });
+      qc.invalidateQueries({ queryKey: ['ajo-group', String(groupId)] });
+    },
+  });
+
+  const proposeRemovalMutation = useMutation({
+    mutationFn: (membershipId: number) =>
+      api.post(`/groups/${groupId}/members/${membershipId}/propose-removal/`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-removals', String(groupId)] });
+    },
+  });
+
+  const voteMutation = useMutation({
+    mutationFn: ({ proposalId, approved }: { proposalId: number; approved: boolean }) =>
+      api.post(`/groups/${groupId}/removals/${proposalId}/vote/`, { approved }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-removals', String(groupId)] });
+    },
+  });
+
+  const approvedMembers = members.filter((m) => m.status === 'approved');
+  const pendingMembers = members.filter((m) => m.status === 'pending');
+  const pendingRemovals = removals.filter((r) => r.status === 'pending');
+
+  const approvedCols: Column<Record<string, unknown>>[] = [
+    { key: 'user_name', header: 'Name', render: (_, row) => fullName(row.user as UserSnap) },
+    { key: 'user_email', header: 'Email', render: (_, row) => (row.user as UserSnap).email },
+    { key: 'total_approved', header: 'Total Saved', render: (v) => formatCurrency(v as string) },
+    {
+      key: 'joined_at',
+      header: 'Joined',
+      render: (v) => {
+        if (!v) return '—';
+        try { return format(new Date(v as string), 'dd MMM yyyy'); } catch { return v as string; }
+      },
+    },
+    { key: 'status', header: 'Status', render: (v) => <StatusBadge value={v as string} /> },
+    ...(isAdmin
+      ? [{
+          key: 'id',
+          header: 'Action',
+          render: (id: unknown) => (
+            <button
+              type="button"
+              onClick={() => proposeRemovalMutation.mutate(id as number)}
+              disabled={proposeRemovalMutation.isPending}
+              className="px-2.5 py-1 rounded-md bg-red-50 text-red-600 text-xs font-semibold hover:bg-red-100 disabled:opacity-50 transition-colors"
+            >
+              Propose Removal
+            </button>
+          ),
+        } as Column<Record<string, unknown>>]
+      : []),
+  ];
+
+  const pendingCols: Column<Record<string, unknown>>[] = [
+    { key: 'user_name', header: 'Name', render: (_, row) => fullName(row.user as UserSnap) },
+    { key: 'user_email', header: 'Email', render: (_, row) => (row.user as UserSnap).email },
+    {
+      key: 'joined_at',
+      header: 'Requested',
+      render: (v) => {
+        if (!v) return '—';
+        try { return format(new Date(v as string), 'dd MMM yyyy'); } catch { return v as string; }
+      },
+    },
+    {
+      key: 'id',
+      header: 'Actions',
+      render: (id: unknown) => (
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => approveMemberMutation.mutate({ membershipId: id as number, action: 'approve' })}
+            disabled={approveMemberMutation.isPending}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 disabled:opacity-50 transition-colors"
+          >
+            <CheckCircleIcon className="h-3.5 w-3.5" /> Approve
+          </button>
+          <button
+            type="button"
+            onClick={() => approveMemberMutation.mutate({ membershipId: id as number, action: 'reject' })}
+            disabled={approveMemberMutation.isPending}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
+          >
+            <XCircleIcon className="h-3.5 w-3.5" /> Reject
+          </button>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Sub-tabs */}
+      <div className="flex gap-1 border-b border-gray-100">
+        <button
+          type="button"
+          onClick={() => setMemberSubTab('approved')}
+          className={clsx(
+            'px-4 py-2 text-sm font-medium transition-colors',
+            memberSubTab === 'approved'
+              ? 'border-b-2 border-orange-600 text-orange-600'
+              : 'text-gray-500 hover:text-gray-700',
+          )}
+        >
+          Approved
+          <span className="ml-1.5 text-xs text-gray-400">{approvedMembers.length}</span>
+        </button>
+        {isAdmin && (
+          <button
+            type="button"
+            onClick={() => setMemberSubTab('pending')}
+            className={clsx(
+              'px-4 py-2 text-sm font-medium transition-colors',
+              memberSubTab === 'pending'
+                ? 'border-b-2 border-orange-600 text-orange-600'
+                : 'text-gray-500 hover:text-gray-700',
+            )}
+          >
+            Pending
+            {pendingMembers.length > 0 && (
+              <span className="ml-1.5 text-xs bg-orange-100 text-orange-600 rounded-full px-1.5 py-0.5">
+                {pendingMembers.length}
+              </span>
+            )}
+          </button>
+        )}
+      </div>
+
+      {memberSubTab === 'approved' && (
+        <Table
+          columns={approvedCols}
+          data={approvedMembers as unknown as Record<string, unknown>[]}
+          emptyMessage="No approved members."
+        />
+      )}
+
+      {memberSubTab === 'pending' && isAdmin && (
+        <Table
+          columns={pendingCols}
+          data={pendingMembers as unknown as Record<string, unknown>[]}
+          emptyMessage="No pending membership requests."
+        />
+      )}
+
+      {/* Removal proposals */}
+      {pendingRemovals.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-gray-700">Removal Proposals</h3>
+          {pendingRemovals.map((proposal) => (
+            <div
+              key={proposal.id}
+              className="rounded-xl border border-gray-200 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+            >
+              <div>
+                <p className="text-sm font-medium text-gray-900">{proposal.target_name}</p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {proposal.yes_count} / {proposal.eligible_count} votes to remove
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                {proposal.current_user_vote === null ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => voteMutation.mutate({ proposalId: proposal.id, approved: true })}
+                      disabled={voteMutation.isPending}
+                      className="px-3 py-1.5 rounded-lg bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
+                    >
+                      Vote to Remove
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => voteMutation.mutate({ proposalId: proposal.id, approved: false })}
+                      disabled={voteMutation.isPending}
+                      className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                    >
+                      Vote to Keep
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-xs text-gray-500 italic">
+                    You voted {proposal.current_user_vote ? 'Yes' : 'No'}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Cycles Tab ────────────────────────────────────────────────────────────────
+
+function CyclesTab({
+  cycles,
+  groupId,
+  isAdmin,
+}: {
+  cycles: Cycle[];
+  groupId: number;
+  isAdmin: boolean;
+}) {
+  const qc = useQueryClient();
+  const [showStartCycle, setShowStartCycle] = useState(false);
+  const [expandedDefaulters, setExpandedDefaulters] = useState<Record<number, boolean>>({});
+  const [defaulterData, setDefaulterData] = useState<Record<number, Defaulter[] | string>>({});
+
+  const closeCycleMutation = useMutation({
+    mutationFn: (cycleId: number) =>
+      api.post(`/groups/${groupId}/cycles/${cycleId}/close/`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
+    },
+  });
+
+  async function toggleDefaulters(cycleId: number) {
+    const isOpen = expandedDefaulters[cycleId];
+    setExpandedDefaulters((prev) => ({ ...prev, [cycleId]: !isOpen }));
+    if (!isOpen && !defaulterData[cycleId]) {
+      try {
+        const res = await api.get(`/groups/${groupId}/cycles/${cycleId}/defaulters/`);
+        setDefaulterData((prev) => ({ ...prev, [cycleId]: res.data }));
+      } catch {
+        setDefaulterData((prev) => ({ ...prev, [cycleId]: 'Failed to load defaulters.' }));
+      }
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      {isAdmin && (
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => setShowStartCycle(true)}
+            className={`inline-flex items-center gap-2 ${orangeBtn}`}
+          >
+            <PlusIcon className="h-4 w-4" />
+            Start New Cycle
+          </button>
+        </div>
+      )}
+
+      {cycles.length === 0 ? (
+        <p className="text-sm text-gray-500 text-center py-8">No cycles started yet.</p>
+      ) : (
+        <div className="space-y-3">
+          {cycles.map((cycle) => (
+            <div key={cycle.id} className="rounded-xl border border-gray-200 overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4">
+                <div className="flex items-center gap-4">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">Cycle #{cycle.cycle_number}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {format(new Date(cycle.start_date), 'dd MMM yyyy')} —{' '}
+                      {format(new Date(cycle.end_date), 'dd MMM yyyy')}
+                    </p>
+                  </div>
+                  <StatusBadge value={cycle.status} />
+                  <span className="text-xs text-gray-400">{cycle.total_member_count} members</span>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => toggleDefaulters(cycle.id)}
+                    className="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+                  >
+                    {expandedDefaulters[cycle.id] ? 'Hide Defaulters' : 'Defaulters'}
+                  </button>
+                  {isAdmin && cycle.status === 'active' && (
+                    <button
+                      type="button"
+                      onClick={() => closeCycleMutation.mutate(cycle.id)}
+                      disabled={closeCycleMutation.isPending}
+                      className="px-3 py-1.5 rounded-lg bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
+                    >
+                      Close Cycle
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {expandedDefaulters[cycle.id] && (
+                <div className="border-t border-gray-100 bg-gray-50 px-4 py-3">
+                  {!defaulterData[cycle.id] ? (
+                    <p className="text-xs text-gray-400 animate-pulse">Loading defaulters…</p>
+                  ) : typeof defaulterData[cycle.id] === 'string' ? (
+                    <p className="text-xs text-red-500">{defaulterData[cycle.id] as string}</p>
+                  ) : Array.isArray(defaulterData[cycle.id]) &&
+                    (defaulterData[cycle.id] as Defaulter[]).length === 0 ? (
+                    <p className="text-xs text-gray-500">No defaulters for this cycle.</p>
+                  ) : (
+                    <ul className="space-y-1">
+                      {(defaulterData[cycle.id] as Defaulter[]).map((d, i) => (
+                        <li key={i} className="text-xs text-gray-700">
+                          {d.user_name ?? d.full_name ?? '—'}{' '}
+                          {(d.user_email ?? d.email) && (
+                            <span className="text-gray-400">({d.user_email ?? d.email})</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {showStartCycle && (
+        <StartCycleModal groupId={groupId} onClose={() => setShowStartCycle(false)} />
+      )}
+    </div>
+  );
+}
+
+// ── Collection Order Tab ──────────────────────────────────────────────────────
+
+function CollectionOrderTab({ groupId, active }: { groupId: number; active: boolean }) {
+  const { data, isLoading, error } = useQuery<CollectionOrderEntry[]>({
+    queryKey: ['ajo-group-collection-order', String(groupId)],
+    queryFn: () => api.get(`/groups/${groupId}/collection-order/`).then((r) => r.data),
+    enabled: active,
+  });
+
+  if (!active) return null;
+  if (isLoading) return <p className="text-sm text-gray-400 animate-pulse">Loading collection order…</p>;
+  if (error) return <p className="text-sm text-red-500">Failed to load collection order.</p>;
+  if (!data || data.length === 0) return <p className="text-sm text-gray-500 text-center py-8">No collection order set.</p>;
+
+  return (
+    <ol className="space-y-2">
+      {data
+        .slice()
+        .sort((a, b) => a.collection_slot - b.collection_slot)
+        .map((entry) => (
+          <li
+            key={entry.id}
+            className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 bg-white"
+          >
+            <span className="text-sm font-bold text-orange-600 w-6 text-right">
+              {entry.collection_slot}
+            </span>
+            <span className="text-sm text-gray-700 font-medium">{entry.full_name}</span>
+          </li>
+        ))}
+    </ol>
+  );
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
+
+type TabKey = 'payments' | 'members' | 'cycles' | 'order';
 
 export default function AjoGroupDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const qc = useQueryClient();
+  const currentUser = useAuthStore((s) => s.user);
   const [activeTab, setActiveTab] = useState<TabKey>('payments');
+  const [showSubmit, setShowSubmit] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const { data, isLoading, error } = useQuery<GroupDetail>({
-    queryKey: ['ajo-group', id],
-    queryFn: async () => {
-      const response = await api.get(`/groups/${id}/`);
-      return response.data;
-    },
-    enabled: !!id,
+  const [groupQ, membersQ, paymentsQ, cyclesQ] = useQueries({
+    queries: [
+      {
+        queryKey: ['ajo-group', id],
+        queryFn: () => api.get<Group>(`/groups/${id}/`).then((r) => r.data),
+        enabled: !!id,
+      },
+      {
+        queryKey: ['ajo-group-members', id],
+        queryFn: () => api.get<Membership[]>(`/groups/${id}/members/`).then((r) => r.data),
+        enabled: !!id,
+      },
+      {
+        queryKey: ['ajo-group-payments', id],
+        queryFn: () => api.get<Payment[]>(`/groups/${id}/payments/`).then((r) => r.data),
+        enabled: !!id,
+      },
+      {
+        queryKey: ['ajo-group-cycles', id],
+        queryFn: () => api.get<Cycle[]>(`/groups/${id}/cycles/`).then((r) => r.data),
+        enabled: !!id,
+      },
+    ],
   });
 
-  if (isLoading) {
+  const { data: removals = [] } = useQuery<RemovalProposal[]>({
+    queryKey: ['ajo-group-removals', id],
+    queryFn: () => api.get<RemovalProposal[]>(`/groups/${id}/removals/`).then((r) => r.data),
+    enabled: !!id && activeTab === 'members',
+  });
+
+  const regenerateMutation = useMutation({
+    mutationFn: () => api.post(`/groups/${id}/invite/regenerate/`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group', id] });
+    },
+  });
+
+  function copyInviteCode(code: string) {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  if (groupQ.isLoading || membersQ.isLoading || paymentsQ.isLoading) {
     return (
       <div className="space-y-6 animate-pulse">
         <div className="h-8 bg-gray-200 rounded w-1/3" />
-        <div className="h-32 bg-gray-200 rounded-xl" />
+        <div className="h-36 bg-gray-200 rounded-xl" />
         <div className="h-64 bg-gray-200 rounded-xl" />
       </div>
     );
   }
 
-  if (error || !data) {
+  if (groupQ.error || !groupQ.data) {
     return (
       <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-6 text-center text-sm text-red-700">
         Failed to load group details.{' '}
@@ -123,40 +1060,33 @@ export default function AjoGroupDetailPage() {
     );
   }
 
-  const memberColumns: Column<Record<string, unknown>>[] = [
-    {
-      key: 'user',
-      header: 'Name',
-      render: (value) => {
-        const u = value as Member['user'];
-        return `${u.first_name} ${u.last_name}`.trim() || u.email;
-      },
-    },
-    {
-      key: 'user',
-      header: 'Email',
-      render: (value) => (value as Member['user']).email,
-    },
-    { key: 'position', header: 'Position' },
-    {
-      key: 'has_collected',
-      header: 'Collected',
-      render: (value) =>
-        value ? (
-          <span className="text-green-600 font-medium">Yes</span>
-        ) : (
-          <span className="text-gray-400">No</span>
-        ),
-    },
+  const group    = groupQ.data;
+  const members  = membersQ.data ?? [];
+  const payments = paymentsQ.data ?? [];
+  const cycles   = cyclesQ.data ?? [];
+
+  const isAdmin       = currentUser?.id === group.admin.id;
+  const activeCycle   = cycles.find((c) => c.status === 'active');
+  const approvedMembers = members.filter((m) => m.status === 'approved');
+
+  const myActivePay = activeCycle
+    ? payments.find(
+        (p) => p.submitted_by.id === currentUser?.id && p.cycle_number === activeCycle.cycle_number,
+      )
+    : undefined;
+  const canSubmit = !!activeCycle && !isAdmin && !myActivePay;
+
+  const tabs: { key: TabKey; label: string; count?: number }[] = [
+    { key: 'payments', label: 'Payments', count: payments.length },
+    { key: 'members', label: 'Members', count: approvedMembers.length },
+    { key: 'cycles', label: 'Cycles', count: cycles.length },
+    { key: 'order', label: 'Collection Order' },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Back link */}
-      <Link
-        to="/ajo"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
-      >
+      {/* Back */}
+      <Link to="/ajo" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
         <ChevronLeftIcon className="h-4 w-4" />
         Back to groups
       </Link>
@@ -165,95 +1095,182 @@ export default function AjoGroupDetailPage() {
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{data.name}</h1>
-            {data.description && (
-              <p className="text-sm text-gray-500 mt-1">{data.description}</p>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-gray-900">{group.name}</h1>
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setShowSettings(true)}
+                  title="Group settings"
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <Cog6ToothIcon className="h-5 w-5" />
+                </button>
+              )}
+            </div>
+            {group.description && (
+              <p className="text-sm text-gray-500 mt-1">{group.description}</p>
             )}
             <div className="mt-3 flex flex-wrap gap-3 text-sm text-gray-600">
               <span className="inline-flex items-center gap-1">
                 <UserGroupIcon className="h-4 w-4" />
-                {data.members.length} members
+                {group.member_count} members
               </span>
-              {data.next_payment_date && (
+              {activeCycle && (
                 <span className="inline-flex items-center gap-1">
                   <CalendarIcon className="h-4 w-4" />
-                  Next payment: {format(new Date(data.next_payment_date), 'dd MMM yyyy')}
+                  Cycle {activeCycle.cycle_number} ends{' '}
+                  {format(new Date(activeCycle.end_date), 'dd MMM yyyy')}
                 </span>
+              )}
+            </div>
+
+            {/* Invite code section */}
+            <div className="mt-3 flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 font-mono tracking-widest text-gray-500 text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
+                <KeyIcon className="h-4 w-4 text-gray-400" />
+                {group.invite_code}
+              </span>
+              <button
+                type="button"
+                onClick={() => copyInviteCode(group.invite_code)}
+                title="Copy invite code"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+              >
+                <ClipboardDocumentIcon className="h-3.5 w-3.5" />
+                {copied ? 'Copied!' : 'Copy'}
+              </button>
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => regenerateMutation.mutate()}
+                  disabled={regenerateMutation.isPending}
+                  title="Regenerate invite code"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                >
+                  <ArrowPathIcon className={clsx('h-3.5 w-3.5', regenerateMutation.isPending && 'animate-spin')} />
+                  Regenerate
+                </button>
               )}
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 text-sm">
-            <div className="bg-orange-50 rounded-lg px-4 py-3 text-center">
-              <p className="text-orange-600 font-bold text-xl">{formatCurrency(data.contribution_amount)}</p>
-              <p className="text-orange-500 text-xs capitalize">{data.frequency}</p>
+          <div className="flex flex-col items-end gap-2">
+            <div className="bg-orange-50 rounded-lg px-5 py-3 text-center">
+              <p className="text-orange-600 font-bold text-xl">{formatCurrency(group.contribution_amount)}</p>
+              <p className="text-orange-500 text-xs capitalize">{group.contribution_frequency}</p>
             </div>
+            {group.is_on_trial && (
+              <span className="text-xs bg-blue-50 text-blue-600 rounded-full px-3 py-1 font-medium">
+                Trial active
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Cycle info */}
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-gray-100">
+        {/* Stats row */}
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-gray-100 text-sm">
           <div>
-            <p className="text-xs text-gray-500">Status</p>
-            <p className="font-medium text-gray-900 capitalize">{data.status}</p>
+            <p className="text-xs text-gray-500">Admin</p>
+            <p className="font-medium text-gray-900">{fullName(group.admin)}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Current Cycle</p>
+            <p className="text-xs text-gray-500">Total Cycles</p>
+            <p className="font-medium text-gray-900">{cycles.length}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Active Cycle</p>
+            <p className="font-medium text-gray-900">{activeCycle ? `#${activeCycle.cycle_number}` : 'None'}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">Payments This Cycle</p>
             <p className="font-medium text-gray-900">
-              {data.current_cycle} / {data.total_cycles}
+              {payments.filter((p) => p.cycle_number === activeCycle?.cycle_number).length}
             </p>
           </div>
-          <div>
-            <p className="text-xs text-gray-500">Current Collector</p>
-            <p className="font-medium text-gray-900">{data.current_collector ?? '—'}</p>
-          </div>
-          {data.start_date && (
-            <div>
-              <p className="text-xs text-gray-500">Start Date</p>
-              <p className="font-medium text-gray-900">
-                {format(new Date(data.start_date), 'dd MMM yyyy')}
-              </p>
-            </div>
-          )}
         </div>
+
+        {/* Member action: submit payment */}
+        {canSubmit && (
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={() => setShowSubmit(true)}
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-700 transition-colors"
+            >
+              <PlusIcon className="h-4 w-4" />
+              Submit My Payment
+            </button>
+          </div>
+        )}
+
+        {myActivePay && !isAdmin && (
+          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
+            <span className="text-sm text-gray-600">Your payment for this cycle:</span>
+            <StatusBadge value={myActivePay.status} />
+            {myActivePay.status === 'rejected' && myActivePay.rejection_reason && (
+              <span className="text-xs text-red-600">— {myActivePay.rejection_reason}</span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Tabs */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="border-b border-gray-100 flex">
-          {(['payments', 'members'] as TabKey[]).map((tab) => (
+        <div className="border-b border-gray-100 flex overflow-x-auto">
+          {tabs.map(({ key, label, count }) => (
             <button
-              key={tab}
+              key={key}
               type="button"
-              onClick={() => setActiveTab(tab)}
+              onClick={() => setActiveTab(key)}
               className={clsx(
-                'px-6 py-3 text-sm font-medium capitalize transition-colors',
-                activeTab === tab
+                'px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors',
+                activeTab === key
                   ? 'border-b-2 border-orange-600 text-orange-600'
                   : 'text-gray-500 hover:text-gray-700',
               )}
             >
-              {tab}
+              {label}
+              {count !== undefined && (
+                <span className="ml-1.5 text-xs text-gray-400">{count}</span>
+              )}
             </button>
           ))}
         </div>
 
         <div className="p-6">
-          {activeTab === 'payments' ? (
-            <Table
-              columns={paymentColumns}
-              data={(data.payments ?? []) as unknown as Record<string, unknown>[]}
-              emptyMessage="No payments recorded yet."
+          {activeTab === 'payments' && (
+            <PaymentsTab payments={payments} groupId={Number(id)} isAdmin={isAdmin} />
+          )}
+          {activeTab === 'members' && (
+            <MembersTab
+              members={members}
+              groupId={Number(id)}
+              isAdmin={isAdmin}
+              removals={removals}
             />
-          ) : (
-            <Table
-              columns={memberColumns}
-              data={(data.members ?? []) as unknown as Record<string, unknown>[]}
-              emptyMessage="No members found."
-            />
+          )}
+          {activeTab === 'cycles' && (
+            <CyclesTab cycles={cycles} groupId={Number(id)} isAdmin={isAdmin} />
+          )}
+          {activeTab === 'order' && (
+            <CollectionOrderTab groupId={Number(id)} active={activeTab === 'order'} />
           )}
         </div>
       </div>
+
+      {showSubmit && (
+        <SubmitPaymentModal
+          groupId={Number(id)}
+          groupName={group.name}
+          contributionAmount={group.contribution_amount}
+          onClose={() => setShowSubmit(false)}
+        />
+      )}
+
+      {showSettings && isAdmin && (
+        <GroupSettingsModal group={group} onClose={() => setShowSettings(false)} />
+      )}
     </div>
   );
 }

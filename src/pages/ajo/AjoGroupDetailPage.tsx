@@ -1653,10 +1653,18 @@ export default function AjoGroupDetailPage() {
               <p className="text-orange-600 font-bold text-xl">{formatCurrency(group.contribution_amount)}</p>
               <p className="text-orange-500 text-xs capitalize">{group.contribution_frequency}</p>
             </div>
-            {group.is_on_trial && (
-              <span className="text-xs bg-blue-50 text-blue-600 rounded-full px-3 py-1 font-medium">
-                Trial active
-              </span>
+            {(group.is_on_trial || !group.is_subscription_active) && (
+              <Link
+                to={`/ajo/${id}/subscription`}
+                className={clsx(
+                  'text-xs rounded-full px-3 py-1 font-medium hover:opacity-80 transition-opacity',
+                  group.is_on_trial
+                    ? 'bg-blue-50 text-blue-600'
+                    : 'bg-red-50 text-red-600',
+                )}
+              >
+                {group.is_on_trial ? 'Trial active — upgrade' : 'No subscription — pay now'}
+              </Link>
             )}
           </div>
         </div>

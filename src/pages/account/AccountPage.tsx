@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CameraIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { Button } from '../../components/ui/Button';
@@ -257,6 +257,17 @@ export default function AccountPage() {
           </div>
         </div>
       )}
+
+      {/* Privacy & Terms */}
+      <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
+        <h2 className="text-base font-semibold text-(--text-primary) mb-3">Legal</h2>
+        <Link
+          to="/account/privacy"
+          className="text-sm text-(--primary) hover:underline font-medium"
+        >
+          Privacy Policy &amp; Terms of Service →
+        </Link>
+      </div>
 
       {/* Danger zone */}
       <div className="bg-(--surface) rounded-xl border border-red-200 dark:border-red-900 p-6">

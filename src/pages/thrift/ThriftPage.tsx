@@ -272,17 +272,22 @@ export default function ThriftPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold text-(--text-primary)">Thrift Groups</h1>
             <p className="text-sm text-(--text-secondary)">Your cooperative savings groups</p>
           </div>
-          <Link
-            to="/thrift/history"
-            className="text-sm text-gray-400 hover:text-teal-600 transition-colors whitespace-nowrap"
-          >
-            My Payment History →
-          </Link>
+          <div className="flex items-center gap-3 flex-wrap">
+            <Link to="/thrift/history" className="text-sm text-gray-400 hover:text-teal-600 transition-colors whitespace-nowrap">
+              My Payment History →
+            </Link>
+            <Link to="/thrift/queue" className="text-sm text-gray-400 hover:text-teal-600 transition-colors whitespace-nowrap">
+              Collector Queue →
+            </Link>
+            <Link to="/thrift/billing" className="text-sm text-gray-400 hover:text-teal-600 transition-colors whitespace-nowrap">
+              Billing →
+            </Link>
+          </div>
         </div>
         <div className="flex gap-2">
           <button

@@ -2,14 +2,18 @@ import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
 
 const links = [
-  { to: '/inventory',            label: 'Dashboard',  end: true },
-  { to: '/inventory/categories', label: 'Categories', end: false },
-  { to: '/inventory/sales',      label: 'Sales',      end: false },
-  { to: '/inventory/expenses',   label: 'Expenses',   end: false },
-  { to: '/inventory/customers',  label: 'Customers',  end: false },
-  { to: '/inventory/analytics',  label: 'Analytics',  end: false },
-  { to: '/inventory/transfers',  label: 'Transfers',  end: false },
-  { to: '/inventory/business',   label: 'Business',   end: false },
+  { to: '/inventory',                      label: 'Dashboard',  end: true },
+  { to: '/inventory/categories',           label: 'Categories', end: false },
+  { to: '/inventory/sales',                label: 'Sales',      end: false },
+  { to: '/inventory/expenses',             label: 'Expenses',   end: false },
+  { to: '/inventory/customers',            label: 'Customers',  end: false },
+  { to: '/inventory/analytics',            label: 'Analytics',  end: false },
+  { to: '/inventory/transfers',            label: 'Transfers',  end: false },
+  { to: '/inventory/warehouse/receive',    label: 'Receive',    end: false },
+  { to: '/inventory/warehouse/dispatch',   label: 'Dispatch',   end: false },
+  { to: '/inventory/product-requests',     label: 'Requests',   end: false },
+  { to: '/inventory/business',             label: 'Business',   end: false },
+  { to: '/inventory/subscription',         label: 'Subscription', end: false },
 ];
 
 export function InventoryNav() {

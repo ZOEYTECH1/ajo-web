@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQueries, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import clsx from 'clsx';
@@ -8,6 +8,8 @@ import {
   UserGroupIcon, CalendarIcon, KeyIcon,
   PaperClipIcon, CheckCircleIcon, XCircleIcon, PlusIcon,
   Cog6ToothIcon, ArrowPathIcon, ClipboardDocumentIcon,
+  ExclamationTriangleIcon, EyeIcon, ArrowRightStartOnRectangleIcon,
+  TrophyIcon, ClockIcon,
 } from '@heroicons/react/24/outline';
 import { Table, type Column } from '../../components/ui/Table';
 import api from '../../services/api';
@@ -26,6 +28,7 @@ interface Group {
   id: number;
   name: string;
   description: string;
+  rules?: string;
   contribution_frequency: string;
   contribution_amount: string;
   member_count: number;
@@ -66,6 +69,9 @@ interface Cycle {
   end_date: string;
   status: string;
   total_member_count: number;
+  can_normal_close: boolean;
+  force_close_requested: boolean;
+  force_close_acceptor_count: number;
 }
 
 interface RemovalProposal {
@@ -335,6 +341,36 @@ function RejectModal({
   );
 }
 
+// ── Receipt Viewer Modal ──────────────────────────────────────────────────────
+
+function ReceiptViewerModal({ url, onClose }: { url: string; onClose: () => void }) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-w-2xl w-full flex flex-col items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute -top-10 right-0 text-white/80 hover:text-white text-sm flex items-center gap-1"
+        >
+          <XCircleIcon className="h-6 w-6" />
+          <span>Close</span>
+        </button>
+        <img
+          src={url}
+          alt="Payment receipt"
+          className="rounded-xl object-contain max-h-[80vh] w-full"
+        />
+      </div>
+    </div>
+  );
+}
+
 // ── Group Settings Modal ──────────────────────────────────────────────────────
 
 function GroupSettingsModal({
@@ -348,6 +384,7 @@ function GroupSettingsModal({
   const [form, setForm] = useState({
     name: group.name,
     description: group.description ?? '',
+    rules: group.rules ?? '',
     grace_period_days: String(group.grace_period_days ?? 0),
   });
   const [err, setErr] = useState('');
@@ -358,6 +395,7 @@ function GroupSettingsModal({
       api.patch(`/groups/${group.id}/`, {
         name: form.name.trim(),
         description: form.description.trim(),
+        rules: form.rules.trim(),
         grace_period_days: Math.min(30, Math.max(0, Number(form.grace_period_days) || 0)),
       }),
     onSuccess: () => {
@@ -406,6 +444,17 @@ function GroupSettingsModal({
               rows={3}
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              className={inputCls}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">Rules (optional)</label>
+            <textarea
+              rows={3}
+              value={form.rules}
+              onChange={(e) => setForm((f) => ({ ...f, rules: e.target.value }))}
+              placeholder="e.g. All payments must be made by the 5th of each month…"
               className={inputCls}
             />
           </div>
@@ -530,7 +579,9 @@ function PaymentsTab({
   isAdmin: boolean;
 }) {
   const qc = useQueryClient();
+  const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [rejectTarget, setRejectTarget] = useState<number | null>(null);
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
 
   const reviewMutation = useMutation({
     mutationFn: ({ paymentId, action, reason }: { paymentId: number; action: string; reason?: string }) =>
@@ -540,6 +591,17 @@ function PaymentsTab({
       setRejectTarget(null);
     },
   });
+
+  const filteredPayments = filter === 'all'
+    ? payments
+    : payments.filter((p) => p.status === filter);
+
+  const filterPills = [
+    { key: 'all' as const,      label: 'All',      count: payments.length },
+    { key: 'pending' as const,  label: 'Pending',  count: payments.filter((p) => p.status === 'pending').length },
+    { key: 'approved' as const, label: 'Approved', count: payments.filter((p) => p.status === 'approved').length },
+    { key: 'rejected' as const, label: 'Rejected', count: payments.filter((p) => p.status === 'rejected').length },
+  ];
 
   const cols: Column<Record<string, unknown>>[] = [
     {
@@ -557,6 +619,23 @@ function PaymentsTab({
       },
     },
     { key: 'status', header: 'Status', render: (v) => <StatusBadge value={v as string} /> },
+    {
+      key: 'receipt_image',
+      header: 'Receipt',
+      render: (v) => {
+        if (!v) return <span className="text-xs text-gray-400">—</span>;
+        return (
+          <button
+            type="button"
+            onClick={() => setReceiptUrl(v as string)}
+            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 text-xs font-semibold hover:bg-blue-100 transition-colors"
+          >
+            <EyeIcon className="h-3 w-3" />
+            View
+          </button>
+        );
+      },
+    },
     ...(isAdmin
       ? [{
           key: 'id',
@@ -591,16 +670,46 @@ function PaymentsTab({
 
   return (
     <>
+      {/* Filter pills */}
+      <div className="flex gap-2 mb-4 flex-wrap">
+        {filterPills.map(({ key, label, count }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setFilter(key)}
+            className={clsx(
+              'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors',
+              filter === key
+                ? 'bg-orange-600 text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+            )}
+          >
+            {label}
+            <span className={clsx(
+              'inline-flex items-center justify-center h-4 min-w-[1rem] rounded-full text-[10px] font-bold px-0.5',
+              filter === key ? 'bg-white/25 text-white' : 'bg-white text-gray-500',
+            )}>
+              {count}
+            </span>
+          </button>
+        ))}
+      </div>
+
       <Table
         columns={cols}
-        data={payments as unknown as Record<string, unknown>[]}
+        data={filteredPayments as unknown as Record<string, unknown>[]}
         emptyMessage="No payments yet."
       />
+
       {rejectTarget !== null && (
         <RejectModal
           onConfirm={(reason) => reviewMutation.mutate({ paymentId: rejectTarget, action: 'reject', reason })}
           onCancel={() => setRejectTarget(null)}
         />
+      )}
+
+      {receiptUrl && (
+        <ReceiptViewerModal url={receiptUrl} onClose={() => setReceiptUrl(null)} />
       )}
     </>
   );
@@ -615,6 +724,7 @@ function MembersTab({
   removals,
   payments,
   activeCycle,
+  currentUserId,
 }: {
   members: Membership[];
   groupId: number;
@@ -622,11 +732,14 @@ function MembersTab({
   removals: RemovalProposal[];
   payments: Payment[];
   activeCycle: Cycle | undefined;
+  currentUserId?: number;
 }) {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [memberSubTab, setMemberSubTab] = useState<'approved' | 'pending'>('approved');
   const [proposePendingId, setProposePendingId] = useState<number | null>(null);
   const [proposePendingName, setProposePendingName] = useState('');
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
 
   const approveMemberMutation = useMutation({
     mutationFn: ({ membershipId, action }: { membershipId: number; action: 'approve' | 'reject' }) =>
@@ -650,6 +763,13 @@ function MembersTab({
       api.post(`/groups/${groupId}/removals/${proposalId}/vote/`, { approved }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ajo-group-removals', String(groupId)] });
+    },
+  });
+
+  const leaveMutation = useMutation({
+    mutationFn: () => api.post(`/groups/${groupId}/leave/`),
+    onSuccess: () => {
+      navigate('/ajo');
     },
   });
 
@@ -895,6 +1015,54 @@ function MembersTab({
           ))}
         </div>
       )}
+
+      {/* Leave group (non-admin members only) */}
+      {!isAdmin && currentUserId && (
+        <div className="pt-2 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={() => setShowLeaveConfirm(true)}
+            className="inline-flex items-center gap-2 text-sm text-red-600 font-semibold hover:underline"
+          >
+            <ArrowRightStartOnRectangleIcon className="h-4 w-4" />
+            Leave Group
+          </button>
+        </div>
+      )}
+
+      {/* Leave group confirm */}
+      {showLeaveConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+            <h3 className="text-lg font-bold text-gray-900">Leave Group</h3>
+            <p className="text-sm text-gray-600">
+              Are you sure you want to leave this group? This action cannot be undone.
+            </p>
+            {leaveMutation.isError && (
+              <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+                {(leaveMutation.error as any)?.response?.data?.detail ?? 'Failed to leave group.'}
+              </p>
+            )}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowLeaveConfirm(false)}
+                className={cancelBtn}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={leaveMutation.isPending}
+                onClick={() => leaveMutation.mutate()}
+                className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+              >
+                {leaveMutation.isPending ? 'Leaving…' : 'Yes, Leave'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -918,6 +1086,22 @@ function CyclesTab({
   const closeCycleMutation = useMutation({
     mutationFn: (cycleId: number) =>
       api.post(`/groups/${groupId}/cycles/${cycleId}/close/`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
+    },
+  });
+
+  const requestForceCloseMutation = useMutation({
+    mutationFn: (cycleId: number) =>
+      api.post(`/groups/${groupId}/cycles/${cycleId}/request-force-close/`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
+    },
+  });
+
+  const acceptForceCloseMutation = useMutation({
+    mutationFn: (cycleId: number) =>
+      api.post(`/groups/${groupId}/cycles/${cycleId}/accept-force-close/`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
     },
@@ -965,12 +1149,18 @@ function CyclesTab({
                       {format(new Date(cycle.start_date), 'dd MMM yyyy')} —{' '}
                       {format(new Date(cycle.end_date), 'dd MMM yyyy')}
                     </p>
+                    {cycle.force_close_requested && (
+                      <p className="mt-1 text-xs text-orange-600 flex items-center gap-1">
+                        <ClockIcon className="h-3 w-3" />
+                        Early close: {cycle.force_close_acceptor_count}/{cycle.total_member_count} accepted
+                      </p>
+                    )}
                   </div>
                   <StatusBadge value={cycle.status} />
                   <span className="text-xs text-gray-400">{cycle.total_member_count} members</span>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <button
                     type="button"
                     onClick={() => toggleDefaulters(cycle.id)}
@@ -978,14 +1168,40 @@ function CyclesTab({
                   >
                     {expandedDefaulters[cycle.id] ? 'Hide Defaulters' : 'Defaulters'}
                   </button>
-                  {isAdmin && cycle.status === 'active' && (
+
+                  {/* Normal close — all members have paid */}
+                  {isAdmin && cycle.status === 'active' && cycle.can_normal_close && (
                     <button
                       type="button"
                       onClick={() => closeCycleMutation.mutate(cycle.id)}
                       disabled={closeCycleMutation.isPending}
                       className="px-3 py-1.5 rounded-lg bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
                     >
-                      Close Cycle
+                      {closeCycleMutation.isPending ? 'Closing…' : 'Close Cycle'}
+                    </button>
+                  )}
+
+                  {/* Request early close — not all paid yet */}
+                  {isAdmin && cycle.status === 'active' && !cycle.can_normal_close && !cycle.force_close_requested && (
+                    <button
+                      type="button"
+                      onClick={() => requestForceCloseMutation.mutate(cycle.id)}
+                      disabled={requestForceCloseMutation.isPending}
+                      className="px-3 py-1.5 rounded-lg bg-orange-100 text-orange-600 text-xs font-semibold hover:bg-orange-200 disabled:opacity-50 transition-colors"
+                    >
+                      {requestForceCloseMutation.isPending ? 'Requesting…' : 'Request Early Close'}
+                    </button>
+                  )}
+
+                  {/* Accept early close — all members can accept */}
+                  {cycle.status === 'active' && cycle.force_close_requested && (
+                    <button
+                      type="button"
+                      onClick={() => acceptForceCloseMutation.mutate(cycle.id)}
+                      disabled={acceptForceCloseMutation.isPending}
+                      className="px-3 py-1.5 rounded-lg bg-orange-100 text-orange-600 text-xs font-semibold hover:bg-orange-200 disabled:opacity-50 transition-colors"
+                    >
+                      {acceptForceCloseMutation.isPending ? 'Accepting…' : 'Accept Early Close'}
                     </button>
                   )}
                 </div>
@@ -1178,9 +1394,86 @@ function CollectionOrderTab({
   );
 }
 
+// ── History Tab ───────────────────────────────────────────────────────────────
+
+function HistoryTab({
+  groupId,
+  cycles,
+  payments,
+  active,
+}: {
+  groupId: number;
+  cycles: Cycle[];
+  payments: Payment[];
+  active: boolean;
+}) {
+  const { data: collectionOrder = [] } = useQuery<CollectionOrderEntry[]>({
+    queryKey: ['ajo-group-collection-order', String(groupId)],
+    queryFn: () => api.get(`/groups/${groupId}/collection-order/`).then((r) => r.data),
+    enabled: active,
+  });
+
+  const closedCycles = [...cycles]
+    .filter((c) => c.status === 'closed')
+    .sort((a, b) => b.cycle_number - a.cycle_number);
+
+  if (closedCycles.length === 0) {
+    return (
+      <p className="text-sm text-gray-500 text-center py-8">
+        No completed cycles yet. History will appear here once cycles are closed.
+      </p>
+    );
+  }
+
+  const sortedOrder = [...collectionOrder].sort((a, b) => a.collection_slot - b.collection_slot);
+
+  return (
+    <div className="space-y-3">
+      {closedCycles.map((cycle) => {
+        const recipient = sortedOrder[cycle.cycle_number - 1];
+        const pot = payments
+          .filter((p) => p.cycle_number === cycle.cycle_number && p.status === 'approved')
+          .reduce((sum, p) => sum + Number(p.amount_entered), 0);
+
+        return (
+          <div key={cycle.id} className="rounded-xl border border-gray-200 p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
+                  <TrophyIcon className="h-4 w-4 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Cycle #{cycle.cycle_number}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {format(new Date(cycle.start_date), 'dd MMM yyyy')} —{' '}
+                    {format(new Date(cycle.end_date), 'dd MMM yyyy')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-6">
+                {recipient && (
+                  <div>
+                    <p className="text-xs text-gray-500">Recipient</p>
+                    <p className="text-sm font-semibold text-gray-900">{recipient.full_name}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-xs text-gray-500">Total Collected</p>
+                  <p className="text-sm font-semibold text-green-700">{formatCurrency(pot)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 
-type TabKey = 'payments' | 'members' | 'cycles' | 'order';
+type TabKey = 'payments' | 'members' | 'cycles' | 'order' | 'history';
 
 export default function AjoGroupDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -1260,8 +1553,8 @@ export default function AjoGroupDetailPage() {
   const payments = paymentsQ.data ?? [];
   const cycles   = cyclesQ.data ?? [];
 
-  const isAdmin       = currentUser?.id === group.admin.id;
-  const activeCycle   = cycles.find((c) => c.status === 'active');
+  const isAdmin         = currentUser?.id === group.admin.id;
+  const activeCycle     = cycles.find((c) => c.status === 'active');
   const approvedMembers = members.filter((m) => m.status === 'approved');
 
   const myActivePay = activeCycle
@@ -1271,11 +1564,16 @@ export default function AjoGroupDetailPage() {
     : undefined;
   const canSubmit = !!activeCycle && !isAdmin && !myActivePay;
 
+  const pendingPaymentsCount = activeCycle
+    ? payments.filter((p) => p.cycle_number === activeCycle.cycle_number && p.status === 'pending').length
+    : 0;
+
   const tabs: { key: TabKey; label: string; count?: number }[] = [
     { key: 'payments', label: 'Payments', count: payments.length },
-    { key: 'members', label: 'Members', count: approvedMembers.length },
-    { key: 'cycles', label: 'Cycles', count: cycles.length },
-    { key: 'order', label: 'Collection Order' },
+    { key: 'members',  label: 'Members',  count: approvedMembers.length },
+    { key: 'cycles',   label: 'Cycles',   count: cycles.length },
+    { key: 'order',    label: 'Collection Order' },
+    { key: 'history',  label: 'History' },
   ];
 
   return (
@@ -1426,6 +1724,26 @@ export default function AjoGroupDetailPage() {
         )}
       </div>
 
+      {/* Pending payments banner — admin only */}
+      {isAdmin && pendingPaymentsCount > 0 && (
+        <div className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
+          <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600 shrink-0" />
+          <p className="text-sm text-yellow-800">
+            <span className="font-semibold">
+              {pendingPaymentsCount} pending payment{pendingPaymentsCount !== 1 ? 's' : ''}
+            </span>{' '}
+            in the active cycle awaiting your review.{' '}
+            <button
+              type="button"
+              onClick={() => setActiveTab('payments')}
+              className="underline font-semibold hover:text-yellow-900"
+            >
+              Review now
+            </button>
+          </p>
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="border-b border-gray-100 flex overflow-x-auto">
@@ -1461,6 +1779,7 @@ export default function AjoGroupDetailPage() {
               removals={removals}
               payments={payments}
               activeCycle={activeCycle}
+              currentUserId={currentUser?.id}
             />
           )}
           {activeTab === 'cycles' && (
@@ -1468,6 +1787,14 @@ export default function AjoGroupDetailPage() {
           )}
           {activeTab === 'order' && (
             <CollectionOrderTab groupId={Number(id)} isAdmin={isAdmin} active={activeTab === 'order'} />
+          )}
+          {activeTab === 'history' && (
+            <HistoryTab
+              groupId={Number(id)}
+              cycles={cycles}
+              payments={payments}
+              active={activeTab === 'history'}
+            />
           )}
         </div>
       </div>

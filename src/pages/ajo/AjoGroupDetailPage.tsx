@@ -613,11 +613,15 @@ function MembersTab({
   groupId,
   isAdmin,
   removals,
+  payments,
+  activeCycle,
 }: {
   members: Membership[];
   groupId: number;
   isAdmin: boolean;
   removals: RemovalProposal[];
+  payments: Payment[];
+  activeCycle: Cycle | undefined;
 }) {
   const qc = useQueryClient();
   const [memberSubTab, setMemberSubTab] = useState<'approved' | 'pending'>('approved');
@@ -665,7 +669,40 @@ function MembersTab({
         try { return format(new Date(v as string), 'dd MMM yyyy'); } catch { return v as string; }
       },
     },
-    { key: 'status', header: 'Status', render: (v) => <StatusBadge value={v as string} /> },
+    {
+      key: 'user',
+      header: 'This Cycle',
+      render: (userSnap) => {
+        if (!activeCycle) return <span className="text-xs text-gray-400">No cycle</span>;
+        const userId = (userSnap as UserSnap).id;
+        const pay = payments.find(
+          (p) => p.submitted_by.id === userId && p.cycle_number === activeCycle.cycle_number,
+        );
+        if (!pay) {
+          return (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-600">
+              Not paid
+            </span>
+          );
+        }
+        if (pay.status === 'approved') {
+          return (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
+              Approved
+            </span>
+          );
+        }
+        if (pay.status === 'pending') {
+          return (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+              Pending
+            </span>
+          );
+        }
+        return <StatusBadge value={pay.status} />;
+      },
+    },
+    { key: 'status', header: 'Member Status', render: (v) => <StatusBadge value={v as string} /> },
     ...(isAdmin
       ? [{
           key: 'id',
@@ -1422,6 +1459,8 @@ export default function AjoGroupDetailPage() {
               groupId={Number(id)}
               isAdmin={isAdmin}
               removals={removals}
+              payments={payments}
+              activeCycle={activeCycle}
             />
           )}
           {activeTab === 'cycles' && (

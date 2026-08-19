@@ -8,6 +8,8 @@ const links = [
   { to: '/inventory/expenses',   label: 'Expenses',   end: false },
   { to: '/inventory/customers',  label: 'Customers',  end: false },
   { to: '/inventory/analytics',  label: 'Analytics',  end: false },
+  { to: '/inventory/transfers',  label: 'Transfers',  end: false },
+  { to: '/inventory/business',   label: 'Business',   end: false },
 ];
 
 export function InventoryNav() {

@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import {
   HomeIcon,
@@ -6,10 +7,12 @@ import {
   BanknotesIcon,
   CubeIcon,
   UserCircleIcon,
+  BellIcon,
   ArrowRightStartOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import useAuthStore from '../../store/useAuthStore';
 import { logout } from '../../services/authService';
+import api from '../../services/api';
 
 interface NavItem {
   label: string;
@@ -18,12 +21,15 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard',  to: '/dashboard', icon: HomeIcon },
-  { label: 'Ajo Groups', to: '/ajo',       icon: UserGroupIcon },
-  { label: 'Thrift',     to: '/thrift',    icon: BanknotesIcon },
-  { label: 'Inventory',  to: '/inventory', icon: CubeIcon },
-  { label: 'Account',    to: '/account',   icon: UserCircleIcon },
+  { label: 'Dashboard',     to: '/dashboard',     icon: HomeIcon },
+  { label: 'Ajo Groups',    to: '/ajo',           icon: UserGroupIcon },
+  { label: 'Thrift',        to: '/thrift',        icon: BanknotesIcon },
+  { label: 'Inventory',     to: '/inventory',     icon: CubeIcon },
+  { label: 'Notifications', to: '/notifications', icon: BellIcon },
+  { label: 'Account',       to: '/account',       icon: UserCircleIcon },
 ];
+
+interface Notification { is_read: boolean }
 
 interface SidebarProps {
   onClose?: () => void;
@@ -32,6 +38,14 @@ interface SidebarProps {
 export function Sidebar({ onClose }: SidebarProps) {
   const { user, clearAuth } = useAuthStore();
   const navigate = useNavigate();
+
+  const { data: notifs = [] } = useQuery<Notification[]>({
+    queryKey: ['notifications'],
+    queryFn: () => api.get('/notifications/').then((r) => r.data),
+    refetchInterval: 60_000,
+    staleTime: 30_000,
+  });
+  const unreadCount = notifs.filter((n) => !n.is_read).length;
 
   const handleLogout = async () => {
     try { await logout(); } catch { /* ignore */ }
@@ -72,7 +86,12 @@ export function Sidebar({ onClose }: SidebarProps) {
             }
           >
             <Icon className="h-5 w-5 shrink-0" />
-            {label}
+            <span className="flex-1">{label}</span>
+            {label === 'Notifications' && unreadCount > 0 && (
+              <span className="flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>

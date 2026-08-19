@@ -26,7 +26,10 @@ import AjoPaymentHistoryPage from './pages/ajo/AjoPaymentHistoryPage';
 import ThriftPage from './pages/thrift/ThriftPage';
 import ThriftGroupDetailPage from './pages/thrift/ThriftGroupDetailPage';
 import ThriftPaymentHistoryPage from './pages/thrift/ThriftPaymentHistoryPage';
+import NotificationsPage from './pages/NotificationsPage';
 import AccountPage from './pages/account/AccountPage';
+import InventoryBusinessPage from './pages/inventory/InventoryBusinessPage';
+import InventoryTransfersPage from './pages/inventory/InventoryTransfersPage';
 
 const router = createBrowserRouter([
   {
@@ -51,6 +54,9 @@ const router = createBrowserRouter([
           { path: 'inventory/products/:catId',  element: <InventoryProductsPage /> },
           { path: 'inventory/expenses',         element: <InventoryExpensesPage /> },
           { path: 'inventory/customers',        element: <InventoryCustomersPage /> },
+          { path: 'inventory/business',         element: <InventoryBusinessPage /> },
+          { path: 'inventory/transfers',        element: <InventoryTransfersPage /> },
+          { path: 'notifications',              element: <NotificationsPage /> },
           { path: 'ajo',                        element: <AjoGroupsPage /> },
           { path: 'ajo/history',                element: <AjoPaymentHistoryPage /> },
           { path: 'ajo/:id',                    element: <AjoGroupDetailPage /> },

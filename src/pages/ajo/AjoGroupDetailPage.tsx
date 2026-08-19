@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQueries, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import clsx from 'clsx';
 import {
-  ChevronLeftIcon, UserGroupIcon, CalendarIcon, KeyIcon,
+  ChevronLeftIcon, ChevronUpIcon, ChevronDownIcon,
+  UserGroupIcon, CalendarIcon, KeyIcon,
   PaperClipIcon, CheckCircleIcon, XCircleIcon, PlusIcon,
   Cog6ToothIcon, ArrowPathIcon, ClipboardDocumentIcon,
 } from '@heroicons/react/24/outline';
@@ -620,6 +621,8 @@ function MembersTab({
 }) {
   const qc = useQueryClient();
   const [memberSubTab, setMemberSubTab] = useState<'approved' | 'pending'>('approved');
+  const [proposePendingId, setProposePendingId] = useState<number | null>(null);
+  const [proposePendingName, setProposePendingName] = useState('');
 
   const approveMemberMutation = useMutation({
     mutationFn: ({ membershipId, action }: { membershipId: number; action: 'approve' | 'reject' }) =>
@@ -667,10 +670,13 @@ function MembersTab({
       ? [{
           key: 'id',
           header: 'Action',
-          render: (id: unknown) => (
+          render: (id: unknown, row: Record<string, unknown>) => (
             <button
               type="button"
-              onClick={() => proposeRemovalMutation.mutate(id as number)}
+              onClick={() => {
+                setProposePendingId(id as number);
+                setProposePendingName(fullName((row as unknown as Membership).user));
+              }}
               disabled={proposeRemovalMutation.isPending}
               className="px-2.5 py-1 rounded-md bg-red-50 text-red-600 text-xs font-semibold hover:bg-red-100 disabled:opacity-50 transition-colors"
             >
@@ -770,6 +776,40 @@ function MembersTab({
           data={pendingMembers as unknown as Record<string, unknown>[]}
           emptyMessage="No pending membership requests."
         />
+      )}
+
+      {/* Propose removal confirm dialog */}
+      {proposePendingId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+            <h3 className="text-lg font-bold text-gray-900">Propose Removal</h3>
+            <p className="text-sm text-gray-600">
+              Propose removing <span className="font-semibold text-gray-900">{proposePendingName}</span> from the group?
+              Other members will vote on whether to approve the removal.
+            </p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => { setProposePendingId(null); setProposePendingName(''); }}
+                className={cancelBtn}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={proposeRemovalMutation.isPending}
+                onClick={() => {
+                  proposeRemovalMutation.mutate(proposePendingId, {
+                    onSuccess: () => { setProposePendingId(null); setProposePendingName(''); },
+                  });
+                }}
+                className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+              >
+                {proposeRemovalMutation.isPending ? 'Proposing…' : 'Yes, Propose'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Removal proposals */}
@@ -951,12 +991,76 @@ function CyclesTab({
 
 // ── Collection Order Tab ──────────────────────────────────────────────────────
 
-function CollectionOrderTab({ groupId, active }: { groupId: number; active: boolean }) {
+function CollectionOrderTab({
+  groupId,
+  isAdmin,
+  active,
+}: {
+  groupId: number;
+  isAdmin: boolean;
+  active: boolean;
+}) {
+  const qc = useQueryClient();
   const { data, isLoading, error } = useQuery<CollectionOrderEntry[]>({
     queryKey: ['ajo-group-collection-order', String(groupId)],
     queryFn: () => api.get(`/groups/${groupId}/collection-order/`).then((r) => r.data),
     enabled: active,
   });
+
+  const [localOrder, setLocalOrder] = useState<CollectionOrderEntry[]>([]);
+  const [isDirty, setIsDirty] = useState(false);
+  const [saveErr, setSaveErr] = useState('');
+
+  useEffect(() => {
+    if (data) {
+      setLocalOrder([...data].sort((a, b) => a.collection_slot - b.collection_slot));
+      setIsDirty(false);
+      setSaveErr('');
+    }
+  }, [data]);
+
+  const saveMutation = useMutation({
+    mutationFn: () =>
+      api.patch(`/groups/${groupId}/collection-order/`, { order: localOrder.map((e) => e.id) }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-collection-order', String(groupId)] });
+    },
+    onError: (e: any) => {
+      setSaveErr(e.response?.data?.detail ?? 'Failed to save order.');
+    },
+  });
+
+  function moveUp(index: number) {
+    if (index === 0) return;
+    setLocalOrder((prev) => {
+      const next = [...prev];
+      [next[index - 1], next[index]] = [next[index], next[index - 1]];
+      return next;
+    });
+    setIsDirty(true);
+  }
+
+  function moveDown(index: number) {
+    if (index === localOrder.length - 1) return;
+    setLocalOrder((prev) => {
+      const next = [...prev];
+      [next[index], next[index + 1]] = [next[index + 1], next[index]];
+      return next;
+    });
+    setIsDirty(true);
+  }
+
+  function shuffle() {
+    setLocalOrder((prev) => {
+      const next = [...prev];
+      for (let i = next.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [next[i], next[j]] = [next[j], next[i]];
+      }
+      return next;
+    });
+    setIsDirty(true);
+  }
 
   if (!active) return null;
   if (isLoading) return <p className="text-sm text-gray-400 animate-pulse">Loading collection order…</p>;
@@ -964,22 +1068,76 @@ function CollectionOrderTab({ groupId, active }: { groupId: number; active: bool
   if (!data || data.length === 0) return <p className="text-sm text-gray-500 text-center py-8">No collection order set.</p>;
 
   return (
-    <ol className="space-y-2">
-      {data
-        .slice()
-        .sort((a, b) => a.collection_slot - b.collection_slot)
-        .map((entry) => (
+    <div className="space-y-4">
+      {isAdmin && (
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm text-gray-500">Drag members up or down, then save.</p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={shuffle}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-colors"
+            >
+              <ArrowPathIcon className="h-4 w-4" />
+              Shuffle
+            </button>
+            <button
+              type="button"
+              onClick={() => saveMutation.mutate()}
+              disabled={!isDirty || saveMutation.isPending}
+              className={clsx(
+                'inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors',
+                isDirty
+                  ? 'bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-50'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed',
+              )}
+            >
+              {saveMutation.isPending ? 'Saving…' : 'Save Order'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {saveErr && (
+        <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{saveErr}</p>
+      )}
+
+      <ol className="space-y-2">
+        {localOrder.map((entry, index) => (
           <li
             key={entry.id}
             className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 bg-white"
           >
-            <span className="text-sm font-bold text-orange-600 w-6 text-right">
-              {entry.collection_slot}
+            <span className="text-sm font-bold text-orange-600 w-6 text-right shrink-0">
+              {index + 1}
             </span>
-            <span className="text-sm text-gray-700 font-medium">{entry.full_name}</span>
+            <span className="text-sm text-gray-700 font-medium flex-1">{entry.full_name}</span>
+            {isAdmin && (
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => moveUp(index)}
+                  disabled={index === 0}
+                  className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                  title="Move up"
+                >
+                  <ChevronUpIcon className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveDown(index)}
+                  disabled={index === localOrder.length - 1}
+                  className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                  title="Move down"
+                >
+                  <ChevronDownIcon className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </li>
         ))}
-    </ol>
+      </ol>
+    </div>
   );
 }
 
@@ -1183,9 +1341,15 @@ export default function AjoGroupDetailPage() {
             <p className="font-medium text-gray-900">{activeCycle ? `#${activeCycle.cycle_number}` : 'None'}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Payments This Cycle</p>
+            <p className="text-xs text-gray-500">Approved This Cycle</p>
             <p className="font-medium text-gray-900">
-              {payments.filter((p) => p.cycle_number === activeCycle?.cycle_number).length}
+              {activeCycle
+                ? formatCurrency(
+                    payments
+                      .filter((p) => p.cycle_number === activeCycle.cycle_number && p.status === 'approved')
+                      .reduce((sum, p) => sum + Number(p.amount_entered), 0),
+                  )
+                : '—'}
             </p>
           </div>
         </div>
@@ -1254,7 +1418,7 @@ export default function AjoGroupDetailPage() {
             <CyclesTab cycles={cycles} groupId={Number(id)} isAdmin={isAdmin} />
           )}
           {activeTab === 'order' && (
-            <CollectionOrderTab groupId={Number(id)} active={activeTab === 'order'} />
+            <CollectionOrderTab groupId={Number(id)} isAdmin={isAdmin} active={activeTab === 'order'} />
           )}
         </div>
       </div>

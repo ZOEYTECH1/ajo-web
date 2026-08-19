@@ -1327,7 +1327,7 @@ export default function AjoGroupDetailPage() {
         </div>
 
         {/* Stats row */}
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-gray-100 text-sm">
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 pt-4 border-t border-gray-100 text-sm">
           <div>
             <p className="text-xs text-gray-500">Admin</p>
             <p className="font-medium text-gray-900">{fullName(group.admin)}</p>
@@ -1341,8 +1341,8 @@ export default function AjoGroupDetailPage() {
             <p className="font-medium text-gray-900">{activeCycle ? `#${activeCycle.cycle_number}` : 'None'}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Approved This Cycle</p>
-            <p className="font-medium text-gray-900">
+            <p className="text-xs text-gray-500">This Cycle Approved</p>
+            <p className="font-medium text-green-700">
               {activeCycle
                 ? formatCurrency(
                     payments
@@ -1350,6 +1350,16 @@ export default function AjoGroupDetailPage() {
                       .reduce((sum, p) => sum + Number(p.amount_entered), 0),
                   )
                 : '—'}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-500">All-Time Approved</p>
+            <p className="font-medium text-orange-600">
+              {formatCurrency(
+                payments
+                  .filter((p) => p.status === 'approved')
+                  .reduce((sum, p) => sum + Number(p.amount_entered), 0),
+              )}
             </p>
           </div>
         </div>

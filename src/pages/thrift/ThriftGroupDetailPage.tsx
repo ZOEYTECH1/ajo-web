@@ -12,7 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
-import { useAuthStore } from '../../store/authStore';
+import useAuthStore from '../../store/useAuthStore';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

@@ -130,7 +130,7 @@ export default function NotificationsPage() {
                 : 'bg-(--surface) border border-(--border) text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
-            {f === 'all' ? `All (${data.length})` : `Unread (${unreadCount})`}
+            {f === 'all' ? `All (${data?.count ?? 0})` : `Unread (${unreadCount})`}
           </button>
         ))}
       </div>

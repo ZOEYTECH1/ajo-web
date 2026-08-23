@@ -44,9 +44,20 @@ export async function register(payload: RegisterPayload): Promise<{ message: str
   return response.data;
 }
 
-export async function verifyOTP(email: string, code: string): Promise<AuthTokens> {
-  const response = await api.post<AuthTokens>('/auth/verify-otp/', { email, code });
+export async function verifyEmail(email: string, code: string): Promise<{ message: string }> {
+  const response = await api.post<{ message: string }>('/auth/verify-email/', { email, code });
   return response.data;
+}
+
+export async function forgotPasswordVerify(email: string, code: string): Promise<AuthTokens & { user: User }> {
+  const response = await api.post<AuthTokens & { user: User }>('/auth/forgot-password/verify/', { email, code });
+  return response.data;
+}
+
+export async function resetPassword(newPassword: string, accessToken: string): Promise<void> {
+  await api.post('/auth/reset-password/', { new_password: newPassword }, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 }
 
 export async function refreshToken(refresh: string): Promise<{ access: string }> {

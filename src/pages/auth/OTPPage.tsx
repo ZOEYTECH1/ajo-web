@@ -1,8 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
-import { verifyOTP, getMe } from '../../services/authService';
-import useAuthStore from '../../store/useAuthStore';
+import { verifyEmail } from '../../services/authService';
 
 const OTP_LENGTH = 6;
 
@@ -10,11 +9,11 @@ export default function OTPPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') ?? '';
-  const { setAuth } = useAuthStore();
 
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -58,12 +57,8 @@ export default function OTPPage() {
     setIsLoading(true);
 
     try {
-      const tokens = await verifyOTP(email, code);
-      localStorage.setItem('access', tokens.access);
-      localStorage.setItem('refresh', tokens.refresh);
-      const user = await getMe();
-      setAuth(user, tokens);
-      navigate('/dashboard', { replace: true });
+      await verifyEmail(email, code);
+      setVerified(true);
     } catch {
       setError('Invalid or expired OTP. Please try again.');
       setDigits(Array(OTP_LENGTH).fill(''));
@@ -82,54 +77,71 @@ export default function OTPPage() {
         </div>
 
         <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-8">
-          <div className="text-center mb-6">
-            <p className="text-sm text-(--text-secondary)">
-              We sent a 6-digit code to
-            </p>
-            <p className="font-semibold text-(--text-primary) mt-0.5">{email || 'your email'}</p>
-          </div>
-
-          {error && (
-            <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400" role="alert">
-              {error}
+          {verified ? (
+            <div className="text-center space-y-4">
+              <div className="flex items-center justify-center w-14 h-14 rounded-full bg-green-100 dark:bg-green-900/30 mx-auto">
+                <svg className="w-7 h-7 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-semibold text-(--text-primary)">Email verified!</h2>
+              <p className="text-sm text-(--text-secondary)">Your account is ready. You can now sign in.</p>
+              <Button variant="primary" fullWidth onClick={() => navigate('/login', { replace: true })}>
+                Go to Login
+              </Button>
             </div>
+          ) : (
+            <>
+              <div className="text-center mb-6">
+                <p className="text-sm text-(--text-secondary)">
+                  We sent a 6-digit code to
+                </p>
+                <p className="font-semibold text-(--text-primary) mt-0.5">{email || 'your email'}</p>
+              </div>
+
+              {error && (
+                <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400" role="alert">
+                  {error}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} noValidate>
+                <div className="flex gap-2 justify-center mb-6" onPaste={handlePaste}>
+                  {digits.map((digit, index) => (
+                    <input
+                      key={index}
+                      ref={(el) => { inputRefs.current[index] = el; }}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleChange(index, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(index, e)}
+                      aria-label={`OTP digit ${index + 1}`}
+                      className="w-11 h-12 text-center text-lg font-semibold border border-(--border) rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-(--text-primary) bg-(--surface)"
+                    />
+                  ))}
+                </div>
+
+                <Button
+                  type="submit"
+                  variant="primary"
+                  fullWidth
+                  loading={isLoading}
+                  disabled={!isComplete}
+                >
+                  Verify
+                </Button>
+              </form>
+
+              <p className="mt-4 text-center text-sm text-(--text-secondary)">
+                Wrong email?{' '}
+                <Link to="/register" className="font-medium text-orange-600 hover:text-orange-700">
+                  Go back
+                </Link>
+              </p>
+            </>
           )}
-
-          <form onSubmit={handleSubmit} noValidate>
-            <div className="flex gap-2 justify-center mb-6" onPaste={handlePaste}>
-              {digits.map((digit, index) => (
-                <input
-                  key={index}
-                  ref={(el) => { inputRefs.current[index] = el; }}
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleChange(index, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(index, e)}
-                  aria-label={`OTP digit ${index + 1}`}
-                  className="w-11 h-12 text-center text-lg font-semibold border border-(--border) rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-(--text-primary) bg-(--surface)"
-                />
-              ))}
-            </div>
-
-            <Button
-              type="submit"
-              variant="primary"
-              fullWidth
-              loading={isLoading}
-              disabled={!isComplete}
-            >
-              Verify
-            </Button>
-          </form>
-
-          <p className="mt-4 text-center text-sm text-(--text-secondary)">
-            Wrong email?{' '}
-            <Link to="/register" className="font-medium text-orange-600 hover:text-orange-700">
-              Go back
-            </Link>
-          </p>
         </div>
       </div>
     </div>

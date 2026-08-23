@@ -96,10 +96,18 @@ interface CollectionOrderEntry {
 }
 
 interface Defaulter {
-  user_name?: string;
-  user_email?: string;
-  full_name?: string;
-  email?: string;
+  id: number;
+  user: { id: number; email: string; first_name: string; last_name: string; profile_photo?: string | null };
+  total_approved: string;
+}
+
+interface DefaultersResponse {
+  cycle_number: number;
+  end_date: string;
+  status: string;
+  visible_from: string;
+  grace_period_active: boolean;
+  defaulters: Defaulter[];
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -1104,7 +1112,7 @@ function CyclesTab({
   const qc = useQueryClient();
   const [showStartCycle, setShowStartCycle] = useState(false);
   const [expandedDefaulters, setExpandedDefaulters] = useState<Record<number, boolean>>({});
-  const [defaulterData, setDefaulterData] = useState<Record<number, Defaulter[] | string>>({});
+  const [defaulterData, setDefaulterData] = useState<Record<number, DefaultersResponse | string>>({});
 
   const closeCycleMutation = useMutation({
     mutationFn: (cycleId: number) =>
@@ -1135,7 +1143,7 @@ function CyclesTab({
     setExpandedDefaulters((prev) => ({ ...prev, [cycleId]: !isOpen }));
     if (!isOpen && !defaulterData[cycleId]) {
       try {
-        const res = await api.get(`/groups/${groupId}/cycles/${cycleId}/defaulters/`);
+        const res = await api.get<DefaultersResponse>(`/groups/${groupId}/cycles/${cycleId}/defaulters/`);
         setDefaulterData((prev) => ({ ...prev, [cycleId]: res.data }));
       } catch {
         setDefaulterData((prev) => ({ ...prev, [cycleId]: 'Failed to load defaulters.' }));
@@ -1236,17 +1244,21 @@ function CyclesTab({
                     <p className="text-xs text-gray-400 animate-pulse">Loading defaulters…</p>
                   ) : typeof defaulterData[cycle.id] === 'string' ? (
                     <p className="text-xs text-red-500">{defaulterData[cycle.id] as string}</p>
-                  ) : Array.isArray(defaulterData[cycle.id]) &&
-                    (defaulterData[cycle.id] as Defaulter[]).length === 0 ? (
+                  ) : (defaulterData[cycle.id] as DefaultersResponse).grace_period_active ? (
+                    <p className="text-xs text-gray-500">
+                      Grace period active — defaulters visible from{' '}
+                      {format(new Date((defaulterData[cycle.id] as DefaultersResponse).visible_from), 'dd MMM yyyy')}.
+                    </p>
+                  ) : (defaulterData[cycle.id] as DefaultersResponse).defaulters.length === 0 ? (
                     <p className="text-xs text-gray-500">No defaulters for this cycle.</p>
                   ) : (
                     <ul className="space-y-1">
-                      {(defaulterData[cycle.id] as Defaulter[]).map((d, i) => (
-                        <li key={i} className="text-xs text-gray-700">
-                          {d.user_name ?? d.full_name ?? '—'}{' '}
-                          {(d.user_email ?? d.email) && (
-                            <span className="text-gray-400">({d.user_email ?? d.email})</span>
-                          )}
+                      {(defaulterData[cycle.id] as DefaultersResponse).defaulters.map((d) => (
+                        <li key={d.id} className="text-xs text-gray-700">
+                          {d.user.first_name} {d.user.last_name}{' '}
+                          <span className="text-gray-400">({d.user.email})</span>
+                          {' · '}
+                          <span className="text-orange-600">paid {formatCurrency(d.total_approved)}</span>
                         </li>
                       ))}
                     </ul>

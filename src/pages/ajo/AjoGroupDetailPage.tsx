@@ -97,7 +97,7 @@ interface CollectionOrderEntry {
 
 interface Defaulter {
   id: number;
-  user: { id: number; email: string; first_name: string; last_name: string; profile_photo?: string | null };
+  user: { id: number; first_name: string; last_name: string; profile_photo?: string | null };
   total_approved: string;
 }
 
@@ -1256,9 +1256,7 @@ function CyclesTab({
                       {(defaulterData[cycle.id] as DefaultersResponse).defaulters.map((d) => (
                         <li key={d.id} className="text-xs text-gray-700">
                           {d.user.first_name} {d.user.last_name}{' '}
-                          <span className="text-gray-400">({d.user.email})</span>
-                          {' · '}
-                          <span className="text-orange-600">paid {formatCurrency(d.total_approved)}</span>
+                          <span className="text-orange-600">· paid {formatCurrency(d.total_approved)}</span>
                         </li>
                       ))}
                     </ul>

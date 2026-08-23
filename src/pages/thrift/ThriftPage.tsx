@@ -20,11 +20,6 @@ interface ThriftGroup {
   organization: { id: number; name: string } | null;
 }
 
-function formatCurrency(v: string | number) {
-  return new Intl.NumberFormat('en-NG', {
-    style: 'currency', currency: 'NGN', maximumFractionDigits: 0,
-  }).format(Number(v));
-}
 
 function SubscriptionBadge({ group }: { group: ThriftGroup }) {
   const label = group.is_on_trial ? 'Trial' : group.is_subscription_active ? 'Active' : 'Inactive';

@@ -239,7 +239,7 @@ export default function InventoryBusinessPage() {
   const { data: businesses = [], isLoading: bizLoading } = useQuery<Business[]>({
     queryKey: ['inventory-businesses'],
     queryFn: () => api.get('/inventory/businesses/').then((r) => r.data),
-    onSuccess: (data) => {
+    onSuccess: (data: Business[]) => {
       if (data.length > 0 && !selectedBizId) setSelectedBizId(data[0].id);
     },
   } as any);

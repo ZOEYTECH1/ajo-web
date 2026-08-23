@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowUpIcon } from '@heroicons/react/24/outline';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 

@@ -609,7 +609,7 @@ function PaymentsTab({
       header: 'Member',
       render: (_, row) => fullName(row.submitted_by as UserSnap),
     },
-    { key: 'cycle_number', header: 'Cycle', render: (v) => v ?? '—' },
+    { key: 'cycle_number', header: 'Cycle', render: (v) => String(v ?? '—') },
     { key: 'amount_entered', header: 'Amount', render: (v) => formatCurrency(v as string) },
     {
       key: 'submitted_at',
@@ -619,6 +619,13 @@ function PaymentsTab({
       },
     },
     { key: 'status', header: 'Status', render: (v) => <StatusBadge value={v as string} /> },
+    {
+      key: 'rejection_reason',
+      header: 'Reason',
+      render: (v) => v
+        ? <span className="text-xs text-red-600">{v as string}</span>
+        : <span className="text-xs text-gray-400">—</span>,
+    },
     {
       key: 'receipt_image',
       header: 'Receipt',
@@ -781,6 +788,22 @@ function MembersTab({
     { key: 'user_name', header: 'Name', render: (_, row) => fullName(row.user as UserSnap) },
     { key: 'user_email', header: 'Email', render: (_, row) => (row.user as UserSnap).email },
     { key: 'total_approved', header: 'Total Saved', render: (v) => formatCurrency(v as string) },
+    {
+      key: 'consecutive_default_streak',
+      header: 'Streak',
+      render: (v) => {
+        const streak = v as number;
+        if (!streak) return <span className="text-xs text-gray-400">—</span>;
+        return (
+          <span className={clsx(
+            'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold',
+            streak >= 3 ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-700',
+          )}>
+            {streak}× default
+          </span>
+        );
+      },
+    },
     {
       key: 'joined_at',
       header: 'Joined',
@@ -1603,6 +1626,16 @@ export default function AjoGroupDetailPage() {
             </div>
             {group.description && (
               <p className="text-sm text-gray-500 mt-1">{group.description}</p>
+            )}
+            {group.rules && (
+              <details className="mt-2 group/rules">
+                <summary className="cursor-pointer text-xs text-orange-600 font-semibold hover:underline select-none">
+                  View group rules
+                </summary>
+                <p className="mt-1.5 text-xs text-gray-600 bg-orange-50 rounded-lg px-3 py-2 leading-relaxed whitespace-pre-line">
+                  {group.rules}
+                </p>
+              </details>
             )}
             <div className="mt-3 flex flex-wrap gap-3 text-sm text-gray-600">
               <span className="inline-flex items-center gap-1">

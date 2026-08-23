@@ -25,6 +25,10 @@ export default function AccountPage() {
   const [photoErr, setPhotoErr] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' });
+  const [pwErr, setPwErr] = useState('');
+  const [pwSuccess, setPwSuccess] = useState(false);
+
   const { data: user } = useQuery<User>({
     queryKey: ['me'],
     queryFn: getMe,
@@ -95,6 +99,36 @@ export default function AccountPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     photoMutation.mutate(file);
+  }
+
+  // ── Change password ───────────────────────────────────────────────────────────
+
+  const changePwMutation = useMutation({
+    mutationFn: (payload: { current_password: string; new_password: string }) =>
+      api.post('/auth/change-password/', payload),
+    onSuccess: () => {
+      setPwForm({ current: '', next: '', confirm: '' });
+      setPwErr('');
+      setPwSuccess(true);
+      setTimeout(() => setPwSuccess(false), 3000);
+    },
+    onError: (e: any) => {
+      setPwErr(e.response?.data?.detail ?? 'Failed to change password.');
+    },
+  });
+
+  function handlePwSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setPwErr('');
+    if (pwForm.next !== pwForm.confirm) {
+      setPwErr('New passwords do not match.');
+      return;
+    }
+    if (pwForm.next.length < 8) {
+      setPwErr('New password must be at least 8 characters.');
+      return;
+    }
+    changePwMutation.mutate({ current_password: pwForm.current, new_password: pwForm.next });
   }
 
   // ── Delete account ────────────────────────────────────────────────────────────
@@ -236,6 +270,54 @@ export default function AccountPage() {
           <div className="flex justify-end">
             <Button type="submit" variant="primary" loading={updateMutation.isPending}>
               Save changes
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      {/* Change password */}
+      <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
+        <h2 className="text-base font-semibold text-(--text-primary) mb-4">Change Password</h2>
+
+        {pwSuccess && (
+          <div className="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
+            Password changed successfully.
+          </div>
+        )}
+        {pwErr && (
+          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+            {pwErr}
+          </div>
+        )}
+
+        <form onSubmit={handlePwSubmit} className="space-y-4">
+          <Input
+            label="Current password"
+            name="current"
+            type="password"
+            value={pwForm.current}
+            onChange={(e) => setPwForm((f) => ({ ...f, current: e.target.value }))}
+            autoComplete="current-password"
+          />
+          <Input
+            label="New password"
+            name="next"
+            type="password"
+            value={pwForm.next}
+            onChange={(e) => setPwForm((f) => ({ ...f, next: e.target.value }))}
+            autoComplete="new-password"
+          />
+          <Input
+            label="Confirm new password"
+            name="confirm"
+            type="password"
+            value={pwForm.confirm}
+            onChange={(e) => setPwForm((f) => ({ ...f, confirm: e.target.value }))}
+            autoComplete="new-password"
+          />
+          <div className="flex justify-end">
+            <Button type="submit" variant="primary" loading={changePwMutation.isPending}>
+              Change password
             </Button>
           </div>
         </form>

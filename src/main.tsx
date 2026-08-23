@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import './index.css';
@@ -7,39 +7,45 @@ import App, { ProtectedLayout } from './App';
 import { ThemeProvider } from './context/ThemeContext';
 
 // Auth pages
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
-import OTPPage from './pages/auth/OTPPage';
+const LoginPage                     = lazy(() => import('./pages/auth/LoginPage'));
+const RegisterPage                  = lazy(() => import('./pages/auth/RegisterPage'));
+const OTPPage                       = lazy(() => import('./pages/auth/OTPPage'));
+const ForgotPasswordPage            = lazy(() => import('./pages/auth/ForgotPasswordPage'));
 
 // App pages
-import DashboardPage from './pages/DashboardPage';
-import InventoryDashboardPage from './pages/inventory/InventoryDashboardPage';
-import InventoryAnalyticsPage from './pages/inventory/InventoryAnalyticsPage';
-import InventorySalesPage from './pages/inventory/InventorySalesPage';
-import InventoryCategoriesPage from './pages/inventory/InventoryCategoriesPage';
-import InventoryProductsPage from './pages/inventory/InventoryProductsPage';
-import InventoryExpensesPage from './pages/inventory/InventoryExpensesPage';
-import InventoryCustomersPage from './pages/inventory/InventoryCustomersPage';
-import AjoGroupsPage from './pages/ajo/AjoGroupsPage';
-import AjoGroupDetailPage from './pages/ajo/AjoGroupDetailPage';
-import AjoPaymentHistoryPage from './pages/ajo/AjoPaymentHistoryPage';
-import AjoSubscriptionPage from './pages/ajo/AjoSubscriptionPage';
-import ThriftPage from './pages/thrift/ThriftPage';
-import ThriftGroupDetailPage from './pages/thrift/ThriftGroupDetailPage';
-import ThriftPaymentHistoryPage from './pages/thrift/ThriftPaymentHistoryPage';
-import ThriftQueuePage from './pages/thrift/ThriftQueuePage';
-import ThriftBillingPage from './pages/thrift/ThriftBillingPage';
-import ThriftOrgPage from './pages/thrift/ThriftOrgPage';
-import NotificationsPage from './pages/NotificationsPage';
-import AccountPage from './pages/account/AccountPage';
-import PrivacyPage from './pages/account/PrivacyPage';
-import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
-import InventoryBusinessPage from './pages/inventory/InventoryBusinessPage';
-import InventoryTransfersPage from './pages/inventory/InventoryTransfersPage';
-import InventoryWarehouseReceivePage from './pages/inventory/InventoryWarehouseReceivePage';
-import InventoryWarehouseDispatchPage from './pages/inventory/InventoryWarehouseDispatchPage';
-import InventoryProductRequestsPage from './pages/inventory/InventoryProductRequestsPage';
-import InventorySubscriptionPage from './pages/inventory/InventorySubscriptionPage';
+const DashboardPage                 = lazy(() => import('./pages/DashboardPage'));
+const NotificationsPage             = lazy(() => import('./pages/NotificationsPage'));
+const AccountPage                   = lazy(() => import('./pages/account/AccountPage'));
+const PrivacyPage                   = lazy(() => import('./pages/account/PrivacyPage'));
+
+// Ajo pages
+const AjoGroupsPage                 = lazy(() => import('./pages/ajo/AjoGroupsPage'));
+const AjoGroupDetailPage            = lazy(() => import('./pages/ajo/AjoGroupDetailPage'));
+const AjoPaymentHistoryPage         = lazy(() => import('./pages/ajo/AjoPaymentHistoryPage'));
+const AjoSubscriptionPage           = lazy(() => import('./pages/ajo/AjoSubscriptionPage'));
+
+// Thrift pages
+const ThriftPage                    = lazy(() => import('./pages/thrift/ThriftPage'));
+const ThriftGroupDetailPage         = lazy(() => import('./pages/thrift/ThriftGroupDetailPage'));
+const ThriftPaymentHistoryPage      = lazy(() => import('./pages/thrift/ThriftPaymentHistoryPage'));
+const ThriftQueuePage               = lazy(() => import('./pages/thrift/ThriftQueuePage'));
+const ThriftBillingPage             = lazy(() => import('./pages/thrift/ThriftBillingPage'));
+const ThriftOrgPage                 = lazy(() => import('./pages/thrift/ThriftOrgPage'));
+
+// Inventory pages
+const InventoryDashboardPage        = lazy(() => import('./pages/inventory/InventoryDashboardPage'));
+const InventoryAnalyticsPage        = lazy(() => import('./pages/inventory/InventoryAnalyticsPage'));
+const InventorySalesPage            = lazy(() => import('./pages/inventory/InventorySalesPage'));
+const InventoryCategoriesPage       = lazy(() => import('./pages/inventory/InventoryCategoriesPage'));
+const InventoryProductsPage         = lazy(() => import('./pages/inventory/InventoryProductsPage'));
+const InventoryExpensesPage         = lazy(() => import('./pages/inventory/InventoryExpensesPage'));
+const InventoryCustomersPage        = lazy(() => import('./pages/inventory/InventoryCustomersPage'));
+const InventoryBusinessPage         = lazy(() => import('./pages/inventory/InventoryBusinessPage'));
+const InventoryTransfersPage        = lazy(() => import('./pages/inventory/InventoryTransfersPage'));
+const InventoryWarehouseReceivePage = lazy(() => import('./pages/inventory/InventoryWarehouseReceivePage'));
+const InventoryWarehouseDispatchPage= lazy(() => import('./pages/inventory/InventoryWarehouseDispatchPage'));
+const InventoryProductRequestsPage  = lazy(() => import('./pages/inventory/InventoryProductRequestsPage'));
+const InventorySubscriptionPage     = lazy(() => import('./pages/inventory/InventorySubscriptionPage'));
 
 const router = createBrowserRouter([
   {
@@ -97,7 +103,9 @@ if (!root) throw new Error('Root element not found');
 createRoot(root).render(
   <StrictMode>
     <ThemeProvider>
-      <RouterProvider router={router} />
+      <Suspense fallback={null}>
+        <RouterProvider router={router} />
+      </Suspense>
     </ThemeProvider>
   </StrictMode>,
 );

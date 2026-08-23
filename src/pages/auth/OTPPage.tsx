@@ -19,7 +19,6 @@ export default function OTPPage() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleChange = (index: number, value: string) => {
-    // Accept only digits
     const digit = value.replace(/\D/g, '').slice(-1);
     const newDigits = [...digits];
     newDigits[index] = digit;
@@ -75,23 +74,23 @@ export default function OTPPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-(--bg) flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold text-orange-600">Ajo</h1>
-          <p className="mt-2 text-sm text-gray-500">Verify your email</p>
+          <h1 className="text-4xl font-extrabold text-orange-600">Scribe</h1>
+          <p className="mt-2 text-sm text-(--text-secondary)">Verify your email</p>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+        <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-8">
           <div className="text-center mb-6">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-(--text-secondary)">
               We sent a 6-digit code to
             </p>
-            <p className="font-semibold text-gray-900 mt-0.5">{email || 'your email'}</p>
+            <p className="font-semibold text-(--text-primary) mt-0.5">{email || 'your email'}</p>
           </div>
 
           {error && (
-            <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700" role="alert">
+            <div className="mb-4 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400" role="alert">
               {error}
             </div>
           )}
@@ -109,7 +108,7 @@ export default function OTPPage() {
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   aria-label={`OTP digit ${index + 1}`}
-                  className="w-11 h-12 text-center text-lg font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-gray-900"
+                  className="w-11 h-12 text-center text-lg font-semibold border border-(--border) rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-(--text-primary) bg-(--surface)"
                 />
               ))}
             </div>
@@ -125,7 +124,7 @@ export default function OTPPage() {
             </Button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-gray-500">
+          <p className="mt-4 text-center text-sm text-(--text-secondary)">
             Wrong email?{' '}
             <Link to="/register" className="font-medium text-orange-600 hover:text-orange-700">
               Go back

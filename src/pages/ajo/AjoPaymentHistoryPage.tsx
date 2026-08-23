@@ -3,11 +3,18 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import clsx from 'clsx';
-import { ChevronLeftIcon } from '@heroicons/react/24/outline';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { Table, type Column } from '../../components/ui/Table';
 import api from '../../services/api';
 
 // ── API shapes ────────────────────────────────────────────────────────────────
+
+interface PaginatedPayments {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: PaymentRecord[];
+}
 
 interface PaymentRecord {
   id: number;
@@ -104,15 +111,18 @@ const cols: Column<Record<string, unknown>>[] = [
 
 export default function AjoPaymentHistoryPage() {
   const [filter, setFilter] = useState<FilterKey>('all');
+  const [page, setPage] = useState(1);
 
-  const { data, isLoading, error } = useQuery<PaymentRecord[]>({
-    queryKey: ['ajo-payment-history'],
-    queryFn: () => api.get('/payments/history/').then((r) => r.data),
+  const { data, isLoading, error } = useQuery<PaginatedPayments>({
+    queryKey: ['ajo-payment-history', page],
+    queryFn: () => api.get(`/payments/history/?page=${page}`).then((r) => r.data),
   });
 
-  const filtered = (data ?? []).filter(
+  const allResults = data?.results ?? [];
+  const filtered = allResults.filter(
     (p) => filter === 'all' || p.status.toLowerCase() === filter,
   );
+  const totalPages = data ? Math.ceil(data.count / 20) : 1;
 
   return (
     <div className="space-y-6">
@@ -168,6 +178,35 @@ export default function AjoPaymentHistoryPage() {
             : `No ${filter} payments found.`
         }
       />
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-sm text-gray-500">
+            Page {page} of {totalPages} · {data?.count ?? 0} total
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              <ChevronLeftIcon className="h-4 w-4" />
+              Prev
+            </button>
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+            >
+              Next
+              <ChevronRightIcon className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -47,6 +47,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
     contribution_frequency: 'monthly',
     contribution_amount: '',
     collection_day: '',
+    grace_period_days: '7',
     description: '',
     start_date: '',
     end_date: '',
@@ -59,6 +60,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
       contribution_frequency: form.contribution_frequency,
       contribution_amount: form.contribution_amount,
       collection_day: form.collection_day ? Number(form.collection_day) : null,
+      grace_period_days: Math.min(30, Math.max(0, Number(form.grace_period_days) || 0)),
       description: form.description.trim(),
       start_date: form.start_date || undefined,
       end_date: form.end_date || undefined,
@@ -102,8 +104,9 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <Field label="Group Name *">
+          <Field label="Group Name *" id="cg-name">
             <input
+              id="cg-name"
               type="text"
               value={form.name}
               onChange={(e) => set('name', e.target.value)}
@@ -112,8 +115,9 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             />
           </Field>
 
-          <Field label="Contribution Frequency *">
+          <Field label="Contribution Frequency *" id="cg-frequency">
             <select
+              id="cg-frequency"
               value={form.contribution_frequency}
               onChange={(e) => set('contribution_frequency', e.target.value)}
               className={inputCls}
@@ -124,8 +128,9 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             </select>
           </Field>
 
-          <Field label="Contribution Amount (NGN) *">
+          <Field label="Contribution Amount (NGN) *" id="cg-amount">
             <input
+              id="cg-amount"
               type="number"
               min="1"
               value={form.contribution_amount}
@@ -135,8 +140,9 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             />
           </Field>
 
-          <Field label="Collection Day (optional)">
+          <Field label="Collection Day (optional)" id="cg-collection-day">
             <input
+              id="cg-collection-day"
               type="number"
               min="0"
               max="31"
@@ -147,17 +153,31 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             />
           </Field>
 
+          <Field label="Grace Period (days, 0–30)" id="cg-grace">
+            <input
+              id="cg-grace"
+              type="number"
+              min="0"
+              max="30"
+              value={form.grace_period_days}
+              onChange={(e) => set('grace_period_days', e.target.value)}
+              placeholder="e.g. 7"
+              className={inputCls}
+            />
+          </Field>
+
           <div className="grid grid-cols-2 gap-3">
-            <Field label="First Cycle Start">
-              <input type="date" value={form.start_date} onChange={(e) => set('start_date', e.target.value)} className={inputCls} />
+            <Field label="First Cycle Start" id="cg-start">
+              <input id="cg-start" type="date" value={form.start_date} onChange={(e) => set('start_date', e.target.value)} className={inputCls} />
             </Field>
-            <Field label="First Cycle End">
-              <input type="date" value={form.end_date} onChange={(e) => set('end_date', e.target.value)} className={inputCls} />
+            <Field label="First Cycle End" id="cg-end">
+              <input id="cg-end" type="date" value={form.end_date} onChange={(e) => set('end_date', e.target.value)} className={inputCls} />
             </Field>
           </div>
 
-          <Field label="Description (optional)">
+          <Field label="Description (optional)" id="cg-description">
             <textarea
+              id="cg-description"
               rows={2}
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
@@ -279,10 +299,10 @@ const submitBtn =
 const cancelBtn =
   'flex-1 rounded-lg border border-gray-300 text-gray-700 py-2.5 text-sm font-semibold hover:bg-gray-50 transition-colors';
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, id, children }: { label: string; id?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
+      <label htmlFor={id} className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
       {children}
     </div>
   );

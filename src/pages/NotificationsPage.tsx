@@ -23,6 +23,12 @@ interface NotificationItem {
   created_at: string;
 }
 
+interface PaginatedNotifications {
+  count: number;
+  next: string | null;
+  results: NotificationItem[];
+}
+
 function getNotifLink(n: NotificationItem): string | null {
   const d = n.action_data;
   const t = n.notif_type;
@@ -64,10 +70,10 @@ export default function NotificationsPage() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<FilterKey>('all');
 
-  const { data = [], isLoading } = useQuery<NotificationItem[]>({
+  const { data, isLoading } = useQuery<PaginatedNotifications>({
     queryKey: ['notifications'],
     queryFn: () => api.get('/notifications/').then((r) => r.data),
-    refetchInterval: 60_000,
+    refetchInterval: 30_000,
   });
 
   const markAllMutation = useMutation({
@@ -80,8 +86,9 @@ export default function NotificationsPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['notifications'] }),
   });
 
-  const unreadCount = data.filter((n) => !n.is_read).length;
-  const displayed = filter === 'unread' ? data.filter((n) => !n.is_read) : data;
+  const items = data?.results ?? [];
+  const unreadCount = items.filter((n) => !n.is_read).length;
+  const displayed = filter === 'unread' ? items.filter((n) => !n.is_read) : items;
 
   function handleClick(n: NotificationItem) {
     if (!n.is_read) markOneMutation.mutate(n.id);

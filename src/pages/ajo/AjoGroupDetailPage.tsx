@@ -1116,7 +1116,7 @@ function CyclesTab({
 
   const requestForceCloseMutation = useMutation({
     mutationFn: (cycleId: number) =>
-      api.post(`/groups/${groupId}/cycles/${cycleId}/request-force-close/`),
+      api.post(`/groups/${groupId}/cycles/${cycleId}/request-early-close/`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
     },
@@ -1124,7 +1124,7 @@ function CyclesTab({
 
   const acceptForceCloseMutation = useMutation({
     mutationFn: (cycleId: number) =>
-      api.post(`/groups/${groupId}/cycles/${cycleId}/accept-force-close/`),
+      api.post(`/groups/${groupId}/cycles/${cycleId}/accept-early-close/`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
     },

@@ -142,13 +142,21 @@ function InviteModal({ bizId, onClose }: { bizId: number; onClose: () => void })
 
 // ── Edit Business Modal ───────────────────────────────────────────────────────
 
+const BUSINESS_TYPES = [
+  { value: 'sole_proprietorship', label: 'Sole Proprietorship' },
+  { value: 'partnership', label: 'Partnership' },
+  { value: 'limited_liability', label: 'Limited Liability (LLC)' },
+  { value: 'cooperative', label: 'Cooperative' },
+  { value: 'other', label: 'Other' },
+];
+
 function EditBusinessModal({ biz, onClose }: { biz: Business; onClose: () => void }) {
   const qc = useQueryClient();
-  const [form, setForm] = useState({ name: biz.name, address: biz.address ?? '', phone: biz.phone ?? '' });
+  const [form, setForm] = useState({ name: biz.name, address: biz.address ?? '', phone: biz.phone ?? '', business_type: biz.business_type ?? '' });
   const [err, setErr] = useState('');
 
   const mutation = useMutation({
-    mutationFn: () => api.patch(`/inventory/businesses/${biz.id}/`, { name: form.name.trim(), address: form.address.trim(), phone: form.phone.trim() }),
+    mutationFn: () => api.patch(`/inventory/businesses/${biz.id}/`, { name: form.name.trim(), address: form.address.trim(), phone: form.phone.trim(), business_type: form.business_type }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['inventory-businesses'] });
       onClose();
@@ -181,6 +189,13 @@ function EditBusinessModal({ biz, onClose }: { biz: Business; onClose: () => voi
           <div>
             <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Phone</label>
             <input type="tel" value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="e.g. 08012345678" className={inputCls} />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Business Type</label>
+            <select value={form.business_type} onChange={(e) => setForm(f => ({ ...f, business_type: e.target.value }))} className={inputCls}>
+              <option value="">Select type…</option>
+              {BUSINESS_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+            </select>
           </div>
           {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3 pt-1">

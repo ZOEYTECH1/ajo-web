@@ -88,8 +88,8 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
 
   const verifyMutation = useMutation({
     mutationFn: () =>
-      api.post(`/inventory/businesses/${biz.id}/subscription/verify/`, {
-        tx_ref: txRef.trim(),
+      api.get(`/inventory/businesses/${biz.id}/subscription/verify/`, {
+        params: { transaction_id: txRef.trim() },
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['inventory-businesses'] });

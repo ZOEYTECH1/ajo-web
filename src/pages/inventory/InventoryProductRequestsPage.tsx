@@ -350,9 +350,10 @@ export default function InventoryProductRequestsPage() {
                     <button
                       type="button"
                       disabled={reviewMutation.isPending}
-                      onClick={() =>
-                        reviewMutation.mutate({ reqId: req.id, status: 'approved' })
-                      }
+                      onClick={() => {
+                        if (window.confirm(`Approve request for "${req.product_name}"?`))
+                          reviewMutation.mutate({ reqId: req.id, status: 'approved' });
+                      }}
                       className="inline-flex items-center gap-1.5 rounded-lg bg-green-600 text-white px-3 py-1.5 text-sm font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors"
                     >
                       <CheckIcon className="h-4 w-4" />
@@ -361,9 +362,10 @@ export default function InventoryProductRequestsPage() {
                     <button
                       type="button"
                       disabled={reviewMutation.isPending}
-                      onClick={() =>
-                        reviewMutation.mutate({ reqId: req.id, status: 'rejected' })
-                      }
+                      onClick={() => {
+                        if (window.confirm(`Reject request for "${req.product_name}"?`))
+                          reviewMutation.mutate({ reqId: req.id, status: 'rejected' });
+                      }}
                       className="inline-flex items-center gap-1.5 rounded-lg border border-red-300 text-red-600 px-3 py-1.5 text-sm font-semibold hover:bg-red-50 disabled:opacity-50 transition-colors"
                     >
                       <XMarkIcon className="h-4 w-4" />

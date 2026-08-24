@@ -1,6 +1,6 @@
 ﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusIcon, PencilIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
@@ -173,14 +173,32 @@ function CreditModal({ customer, onClose }: { customer: Customer; onClose: () =>
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function InventoryCustomersPage() {
+  const qc = useQueryClient();
   const [showAdd, setShowAdd] = useState(false);
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
   const [creditCustomer, setCreditCustomer] = useState<Customer | null>(null);
+  const [search, setSearch] = useState('');
 
   const { data, isLoading, error } = useQuery<Customer[]>({
     queryKey: ['inventory-customers'],
     queryFn: () => api.get('/inventory/customers/').then(r => r.data),
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => api.delete(`/inventory/customers/${id}/`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['inventory-customers'] }),
+  });
+
+  const handleDelete = (c: Customer) => {
+    if (!window.confirm(`Delete "${c.name}"? This cannot be undone.`)) return;
+    deleteMutation.mutate(c.id);
+  };
+
+  const filtered = (data ?? []).filter(c =>
+    c.name.toLowerCase().includes(search.toLowerCase()) ||
+    c.phone.toLowerCase().includes(search.toLowerCase()),
+  );
+  const totalCredit = (data ?? []).reduce((sum, c) => sum + Number(c.credit_balance), 0);
 
   return (
     <div className="space-y-6">
@@ -201,6 +219,24 @@ export default function InventoryCustomersPage() {
         </button>
       </div>
 
+      {/* Search */}
+      <input
+        type="search"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder="Search by name or phone…"
+        className="w-full max-w-sm rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+      />
+
+      {/* Total credit owed banner */}
+      {totalCredit > 0 && (
+        <div className="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3">
+          <span className="text-sm font-semibold text-orange-800">
+            Total credit owed: <span className="font-bold">{formatCurrency(totalCredit)}</span>
+          </span>
+        </div>
+      )}
+
       {error && (
         <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
           Failed to load customers. Please refresh.
@@ -220,8 +256,8 @@ export default function InventoryCustomersPage() {
             <tbody className="divide-y divide-(--border)">
               {isLoading ? (
                 <SkeletonTable rows={4} cols={5} />
-              ) : data && data.length > 0 ? (
-                data.map(c => (
+              ) : filtered.length > 0 ? (
+                filtered.map(c => (
                   <tr key={c.id} className="hover:bg-(--primary-tint)/30 transition-colors">
                     <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{c.name}</td>
                     <td className="px-6 py-4 text-sm text-(--text-secondary)">{c.phone || '—'}</td>
@@ -248,6 +284,15 @@ export default function InventoryCustomersPage() {
                         >
                           <PencilIcon className="h-4 w-4" />
                         </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(c)}
+                          disabled={deleteMutation.isPending}
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                          title="Delete customer"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -255,8 +300,7 @@ export default function InventoryCustomersPage() {
               ) : (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    No customers yet.{' '}
-                    <button type="button" onClick={() => setShowAdd(true)} className="text-orange-600 font-semibold hover:underline">Add the first customer.</button>
+                    {search ? `No customers match "${search}".` : <>No customers yet.{' '}<button type="button" onClick={() => setShowAdd(true)} className="text-orange-600 font-semibold hover:underline">Add the first customer.</button></>}
                   </td>
                 </tr>
               )}

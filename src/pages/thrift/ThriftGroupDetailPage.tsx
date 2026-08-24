@@ -72,6 +72,7 @@ interface ThriftPayment {
   status: 'pending' | 'confirmed' | 'disputed';
   payer_confirmed: boolean;
   dispute_reason: string;
+  dispute_audio: string | null;
   disputed_at: string | null;
   resolved_at: string | null;
 }
@@ -410,6 +411,83 @@ function DisputeModal({
   );
 }
 
+// ── Dispute Detail Modal (read-only viewer for collector / org admin) ─────────
+
+function DisputeDetailModal({
+  payment, onClose,
+}: { payment: ThriftPayment; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Dispute Details</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" />
+          </button>
+        </div>
+        <div className="p-6 space-y-4">
+          {/* Payment info */}
+          <div className="rounded-xl bg-(--bg) border border-(--border) px-4 py-3 grid grid-cols-2 gap-2 text-sm">
+            <div>
+              <p className="text-(--text-muted) text-xs font-medium">Member</p>
+              <p className="font-semibold text-(--text-primary) mt-0.5">{payment.member_name}</p>
+            </div>
+            <div>
+              <p className="text-(--text-muted) text-xs font-medium">Amount</p>
+              <p className="font-semibold text-(--text-primary) mt-0.5">{formatCurrency(payment.amount)}</p>
+            </div>
+            <div>
+              <p className="text-(--text-muted) text-xs font-medium">Period</p>
+              <p className="font-semibold text-(--text-primary) mt-0.5">{payment.period_date}</p>
+            </div>
+            {payment.disputed_at && (
+              <div>
+                <p className="text-(--text-muted) text-xs font-medium">Disputed at</p>
+                <p className="font-semibold text-(--text-primary) mt-0.5">
+                  {new Date(payment.disputed_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Reason */}
+          <div>
+            <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide mb-1">Dispute Reason</p>
+            <p className="text-sm text-(--text-primary) bg-red-50 border border-red-100 rounded-lg px-4 py-3 leading-relaxed">
+              {payment.dispute_reason || <span className="italic text-(--text-muted)">No reason provided.</span>}
+            </p>
+          </div>
+
+          {/* Voice note */}
+          {payment.dispute_audio ? (
+            <div>
+              <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide mb-2">Voice Note</p>
+              <audio
+                controls
+                src={payment.dispute_audio}
+                className="w-full rounded-lg"
+                style={{ accentColor: '#dc2626' }}
+              >
+                Your browser does not support audio playback.
+              </audio>
+            </div>
+          ) : (
+            <p className="text-xs text-(--text-muted) italic">No voice note attached.</p>
+          )}
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Report Collector Modal (payer only) ──────────────────────────────────────
 
 function ReportCollectorModal({ groupId, onClose }: { groupId: number; onClose: () => void }) {
@@ -541,6 +619,7 @@ export default function ThriftGroupDetailPage() {
   const [showSettings, setShowSettings] = useState(false);
   const [showMarkPayment, setShowMarkPayment] = useState(false);
   const [disputePaymentId, setDisputePaymentId] = useState<number | null>(null);
+  const [viewDisputePayment, setViewDisputePayment] = useState<ThriftPayment | null>(null);
   const [showStartCycle, setShowStartCycle] = useState(false);
   const [showReportCollector, setShowReportCollector] = useState(false);
 
@@ -826,9 +905,14 @@ export default function ThriftGroupDetailPage() {
                                 </>
                               )}
                               {p.status === 'disputed' && (
-                                <span className="text-xs text-red-600 italic truncate max-w-[12rem]" title={p.dispute_reason}>
-                                  {p.dispute_reason || 'Disputed'}
-                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => setViewDisputePayment(p)}
+                                  className="text-xs text-red-600 italic hover:underline text-left truncate max-w-[12rem]"
+                                  title="Click to view dispute details"
+                                >
+                                  {p.dispute_reason || 'Disputed'} — View details
+                                </button>
                               )}
                               {/* Collector can delete */}
                               {isCollector && (
@@ -1037,6 +1121,9 @@ export default function ThriftGroupDetailPage() {
       )}
       {showReportCollector && (
         <ReportCollectorModal groupId={groupId} onClose={() => setShowReportCollector(false)} />
+      )}
+      {viewDisputePayment && (
+        <DisputeDetailModal payment={viewDisputePayment} onClose={() => setViewDisputePayment(null)} />
       )}
     </div>
   );

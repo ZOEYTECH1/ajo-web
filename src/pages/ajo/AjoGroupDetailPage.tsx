@@ -1464,9 +1464,9 @@ function HistoryTab({
     <div className="space-y-3">
       {closedCycles.map((cycle) => {
         const recipient = sortedOrder[cycle.cycle_number - 1];
-        const pot = payments
-          .filter((p) => p.cycle_number === cycle.cycle_number && p.status === 'approved')
-          .reduce((sum, p) => sum + Number(p.amount_entered), 0);
+        const approvedPays = payments.filter((p) => p.cycle_number === cycle.cycle_number && p.status === 'approved');
+        const pot = approvedPays.reduce((sum, p) => sum + Number(p.amount_entered), 0);
+        const paidCount = approvedPays.length;
 
         return (
           <div key={cycle.id} className="rounded-xl border border-gray-200 p-4">
@@ -1491,6 +1491,10 @@ function HistoryTab({
                     <p className="text-sm font-semibold text-gray-900">{recipient.full_name}</p>
                   </div>
                 )}
+                <div>
+                  <p className="text-xs text-gray-500">Members Paid</p>
+                  <p className="text-sm font-semibold text-gray-900">{paidCount}</p>
+                </div>
                 <div>
                   <p className="text-xs text-gray-500">Total Collected</p>
                   <p className="text-sm font-semibold text-green-700">{formatCurrency(pot)}</p>

@@ -9,6 +9,7 @@ import api from '../../services/api';
 interface AjoGroup {
   id: number;
   name: string;
+  description?: string;
   contribution_frequency: string;
   contribution_amount: string;
   member_count: number;
@@ -379,9 +380,12 @@ export default function AjoGroupsPage() {
                 data.map((group) => (
                   <tr key={group.id} className="hover:bg-(--primary-tint)/30 transition-colors">
                     <td className="px-6 py-4 text-sm font-medium">
-                      <Link to={`/ajo/${group.id}`} className="text-(--primary) hover:underline">
+                      <Link to={`/ajo/${group.id}`} className="text-(--primary) hover:underline font-semibold">
                         {group.name}
                       </Link>
+                      {group.description && (
+                        <p className="text-xs text-(--text-muted) mt-0.5 truncate max-w-xs">{group.description}</p>
+                      )}
                     </td>
                     <td className="px-6 py-4 text-sm text-(--text-secondary) capitalize">
                       {group.contribution_frequency}

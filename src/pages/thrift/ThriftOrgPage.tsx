@@ -297,11 +297,21 @@ export default function ThriftOrgPage() {
   const qc = useQueryClient();
   const [showInvite, setShowInvite] = useState(false);
   const [actionError, setActionError] = useState<Record<number, string>>({});
+  const [reportFilter, setReportFilter] = useState<'all' | 'pending' | 'reviewed' | 'resolved' | 'dismissed'>('all');
 
   const { data, isLoading, error } = useQuery<OrgDashboard>({
     queryKey: ['thrift-org', orgId],
     queryFn: () => api.get(`/thrift/orgs/${orgId}/dashboard/`).then(r => r.data),
     enabled: !!orgId,
+  });
+
+  const { data: allReports = [], isLoading: reportsLoading } = useQuery<OrgReport[]>({
+    queryKey: ['thrift-org-reports', orgId, reportFilter],
+    queryFn: () => {
+      const params = reportFilter !== 'all' ? `?status=${reportFilter}` : '';
+      return api.get(`/thrift/orgs/${orgId}/reports/${params}`).then(r => r.data);
+    },
+    enabled: !!orgId && !!data,
   });
 
   const collectorActionMutation = useMutation({
@@ -331,6 +341,7 @@ export default function ThriftOrgPage() {
       api.patch(`/thrift/orgs/${orgId}/reports/${reportId}/`, { action }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['thrift-org', orgId] });
+      qc.invalidateQueries({ queryKey: ['thrift-org-reports', orgId] });
     },
   });
 
@@ -627,17 +638,46 @@ export default function ThriftOrgPage() {
         </div>
       </div>
 
-      {/* ── Reports ── */}
-      {recent_reports.length > 0 && (
-        <div className="space-y-3">
+      {/* ── Reports (full list from dedicated endpoint) ── */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <h2 className="text-base font-bold text-(--text-primary)">
             Reports
-            <span className="ml-2 text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-              {recent_reports.filter(r => r.status === 'pending').length} pending
-            </span>
+            {allReports.filter(r => r.status === 'pending').length > 0 && (
+              <span className="ml-2 text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                {allReports.filter(r => r.status === 'pending').length} pending
+              </span>
+            )}
           </h2>
+          {/* Status filter tabs */}
+          <div className="flex gap-1 flex-wrap">
+            {(['all', 'pending', 'reviewed', 'resolved', 'dismissed'] as const).map(f => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setReportFilter(f)}
+                className={clsx(
+                  'text-xs font-semibold px-3 py-1 rounded-full transition-colors capitalize',
+                  reportFilter === f
+                    ? 'bg-teal-600 text-white'
+                    : 'bg-(--bg) border border-(--border) text-(--text-secondary) hover:border-teal-300 hover:text-teal-600',
+                )}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {reportsLoading ? (
+          <div className="text-sm text-(--text-secondary) py-4 text-center">Loading reports…</div>
+        ) : allReports.length === 0 ? (
+          <div className="bg-(--surface) rounded-xl border border-(--border) px-6 py-8 text-center text-sm text-(--text-secondary)">
+            No {reportFilter !== 'all' ? reportFilter : ''} reports found.
+          </div>
+        ) : (
           <div className="space-y-3">
-            {recent_reports.map(report => (
+            {allReports.map(report => (
               <div key={report.id} className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-4 space-y-2">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="space-y-0.5">
@@ -697,8 +737,8 @@ export default function ThriftOrgPage() {
               </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Modals */}
       {showInvite && (

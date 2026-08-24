@@ -5,6 +5,7 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   CreditCardIcon,
+  CheckIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
@@ -27,6 +28,20 @@ const inputCls =
   'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 const PRICE_PER_MONTH = 2000;
+
+const FEATURES = [
+  'Unlimited products & categories',
+  'Daily P&L dashboard',
+  'Sales tracking & history',
+  'Customer credit management',
+  'Expense logging & categorisation',
+  'Low stock & expiry alerts',
+  'Best sellers analytics',
+  'Warehouse receive & dispatch',
+  'Product request management',
+  'Multi-branch support',
+  'CSV export for sales & expenses',
+];
 
 const MONTH_OPTIONS: { value: number; label: string }[] = [
   { value: 1, label: '1 month' },
@@ -177,6 +192,19 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
       <div className="flex items-center justify-between py-3 border-t border-(--border)">
         <span className="text-sm font-medium text-(--text-secondary)">Total</span>
         <span className="text-lg font-bold text-(--text-primary)">{fmt(total)}</span>
+      </div>
+
+      {/* What's included */}
+      <div className="rounded-xl bg-(--bg) border border-(--border) p-4">
+        <p className="text-sm font-bold text-(--text-primary) mb-3">What's included</p>
+        <ul className="space-y-2">
+          {FEATURES.map(f => (
+            <li key={f} className="flex items-center gap-2 text-sm text-(--text-secondary)">
+              <CheckIcon className="h-4 w-4 text-orange-500 shrink-0" />
+              {f}
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Subscribe button */}

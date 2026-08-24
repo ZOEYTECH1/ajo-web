@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { PlusIcon, XCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, XCircleIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import { Pagination } from '../../components/ui/Pagination';
@@ -234,11 +234,27 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+function exportSalesCsv(sales: Sale[]) {
+  const header = 'Date,Customer,Items,Total (NGN)\n';
+  const rows = sales.map(s => {
+    const items = s.items.map(i => `${i.product_name} x${i.quantity}`).join('; ');
+    return `${format(new Date(s.sold_at), 'yyyy-MM-dd HH:mm')},${s.customer_name || 'Walk-in'},"${items}",${Number(s.total).toFixed(2)}`;
+  }).join('\n');
+  const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ajo-sales.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function InventorySalesPage() {
   const [showNewSale, setShowNewSale] = useState(false);
   const [page, setPage] = useState(1);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   const { data, isLoading, error } = useQuery<PaginatedSales>({
     queryKey: ['inventory-sales', page],
@@ -253,19 +269,31 @@ export default function InventorySalesPage() {
     <div className="space-y-6">
       <InventoryNav />
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-(--text-primary)">Sales</h1>
           <p className="text-sm text-(--text-secondary)">All recorded sales transactions</p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowNewSale(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
-        >
-          <PlusIcon className="h-4 w-4" />
-          New Sale
-        </button>
+        <div className="flex items-center gap-2">
+          {sales.length > 0 && (
+            <button
+              type="button"
+              onClick={() => exportSalesCsv(sales)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+            >
+              <ArrowDownTrayIcon className="h-4 w-4" />
+              Export CSV
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setShowNewSale(true)}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+          >
+            <PlusIcon className="h-4 w-4" />
+            New Sale
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -279,33 +307,73 @@ export default function InventorySalesPage() {
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
               <tr>
-                {['Date', 'Items', 'Customer', 'Total'].map(h => (
+                {['Date', 'Items', 'Customer', 'Total', ''].map(h => (
                   <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-(--border)">
               {isLoading ? (
-                <SkeletonTable rows={6} cols={4} />
+                <SkeletonTable rows={6} cols={5} />
               ) : sales.length > 0 ? (
                 sales.map(sale => (
-                  <tr key={sale.id} className="hover:bg-(--primary-tint)/30 transition-colors">
-                    <td className="px-6 py-4 text-sm text-(--text-secondary) whitespace-nowrap">
-                      {format(new Date(sale.sold_at), 'dd MMM yyyy, h:mm a')}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-(--text-primary)">
-                      {sale.items.length === 0 ? '—' : (() => {
-                        const summary = sale.items.slice(0, 2).map(i => `${i.product_name} ×${i.quantity}`).join(', ');
-                        return sale.items.length > 2 ? `${summary} +${sale.items.length - 2} more` : summary;
-                      })()}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{sale.customer_name || '—'}</td>
-                    <td className="px-6 py-4 text-sm font-semibold text-(--text-primary) whitespace-nowrap">{formatCurrency(sale.total)}</td>
-                  </tr>
+                  <>
+                    <tr
+                      key={sale.id}
+                      className="hover:bg-(--primary-tint)/30 transition-colors cursor-pointer"
+                      onClick={() => setExpandedId(expandedId === sale.id ? null : sale.id)}
+                    >
+                      <td className="px-6 py-4 text-sm text-(--text-secondary) whitespace-nowrap">
+                        {format(new Date(sale.sold_at), 'dd MMM yyyy, h:mm a')}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-(--text-primary)">
+                        {sale.items.length === 0 ? '—' : (() => {
+                          const summary = sale.items.slice(0, 2).map(i => `${i.product_name} ×${i.quantity}`).join(', ');
+                          return sale.items.length > 2 ? `${summary} +${sale.items.length - 2} more` : summary;
+                        })()}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-(--text-secondary)">{sale.customer_name || '—'}</td>
+                      <td className="px-6 py-4 text-sm font-semibold text-(--text-primary) whitespace-nowrap">{formatCurrency(sale.total)}</td>
+                      <td className="px-6 py-4 text-(--text-muted)">
+                        {sale.items.length > 0 && (
+                          expandedId === sale.id
+                            ? <ChevronUpIcon className="h-4 w-4" />
+                            : <ChevronDownIcon className="h-4 w-4" />
+                        )}
+                      </td>
+                    </tr>
+                    {expandedId === sale.id && sale.items.length > 0 && (
+                      <tr key={`${sale.id}-items`} className="bg-(--bg)">
+                        <td colSpan={5} className="px-8 py-3">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="text-xs text-(--text-muted) uppercase">
+                                <th className="text-left pb-1 pr-4">Product</th>
+                                <th className="text-right pb-1 pr-4">Qty</th>
+                                <th className="text-right pb-1 pr-4">Unit Price</th>
+                                <th className="text-right pb-1">Subtotal</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-(--border)">
+                              {sale.items.map((item, idx) => (
+                                <tr key={idx}>
+                                  <td className="py-1.5 pr-4 font-medium text-(--text-primary)">{item.product_name}</td>
+                                  <td className="py-1.5 pr-4 text-right text-(--text-secondary)">{item.quantity}</td>
+                                  <td className="py-1.5 pr-4 text-right text-(--text-secondary)">{formatCurrency(item.unit_price)}</td>
+                                  <td className="py-1.5 text-right font-semibold text-(--text-primary)">{formatCurrency(item.subtotal)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          {sale.notes && <p className="mt-2 text-xs text-(--text-muted) italic">Note: {sale.notes}</p>}
+                        </td>
+                      </tr>
+                    )}
+                  </>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-sm text-(--text-muted)">
+                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                     No sales recorded yet.{' '}
                     <button type="button" onClick={() => setShowNewSale(true)} className="text-orange-600 font-semibold hover:underline">Record the first sale.</button>
                   </td>

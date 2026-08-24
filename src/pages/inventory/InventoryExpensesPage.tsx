@@ -1,7 +1,8 @@
-﻿import { useState } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { format, startOfMonth, startOfWeek } from 'date-fns';
+import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import { Pagination } from '../../components/ui/Pagination';
@@ -33,6 +34,33 @@ const CATEGORIES = [
   { value: 'utility', label: 'Utility' },
   { value: 'other', label: 'Other' },
 ];
+
+type Period = 'all' | 'week' | 'month';
+
+const PERIODS: { key: Period; label: string }[] = [
+  { key: 'month', label: 'This Month' },
+  { key: 'week', label: 'This Week' },
+  { key: 'all', label: 'All Time' },
+];
+
+function catLabel(cat: string) {
+  return CATEGORIES.find(c => c.value === cat)?.label ?? cat;
+}
+
+function exportCsvBlob(expenses: Expense[], period: Period) {
+  const periodLabel = period === 'month' ? 'this-month' : period === 'week' ? 'this-week' : 'all-time';
+  const header = 'Date,Category,Description,Amount (NGN)\n';
+  const rows = expenses.map(e =>
+    `${e.spent_at.slice(0, 10)},${catLabel(e.category_label)},"${(e.description || '').replace(/"/g, '""')}",${Number(e.amount).toFixed(2)}`
+  ).join('\n');
+  const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ajo-expenses-${periodLabel}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(v));
@@ -135,10 +163,18 @@ export default function InventoryExpensesPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [editExpense, setEditExpense] = useState<Expense | null>(null);
   const [page, setPage] = useState(1);
+  const [period, setPeriod] = useState<Period>('month');
+
+  const today = new Date();
+  const periodParams = useMemo(() => {
+    if (period === 'month') return `&spent_at_after=${format(startOfMonth(today), 'yyyy-MM-dd')}`;
+    if (period === 'week') return `&spent_at_after=${format(startOfWeek(today, { weekStartsOn: 1 }), 'yyyy-MM-dd')}`;
+    return '';
+  }, [period, today.toISOString().slice(0, 7)]);
 
   const { data, isLoading, error } = useQuery<PaginatedExpenses>({
-    queryKey: ['inventory-expenses', page],
-    queryFn: () => api.get(`/inventory/expenses/?page=${page}`).then(r => r.data),
+    queryKey: ['inventory-expenses', page, period],
+    queryFn: () => api.get(`/inventory/expenses/?page=${page}${periodParams}`).then(r => r.data),
   });
 
   const deleteMutation = useMutation({
@@ -151,29 +187,102 @@ export default function InventoryExpensesPage() {
   const totalPages = Math.max(1, Math.ceil(totalCount / 20));
   const totalAmount = Number(data?.total_amount ?? 0);
 
+  const byCategory = useMemo(() => {
+    const map: Record<string, { label: string; amount: number }> = {};
+    for (const e of expenses) {
+      if (!map[e.category]) map[e.category] = { label: e.category_label, amount: 0 };
+      map[e.category].amount += Number(e.amount);
+    }
+    return Object.values(map).sort((a, b) => b.amount - a.amount);
+  }, [expenses]);
+
+  const pageTotal = expenses.reduce((s, e) => s + Number(e.amount), 0);
+
   return (
     <div className="space-y-6">
       <InventoryNav />
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-(--text-primary)">Expenses</h1>
           <p className="text-sm text-(--text-secondary)">Track your business costs</p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowAdd(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
-        >
-          <PlusIcon className="h-4 w-4" />
-          Add Expense
-        </button>
+        <div className="flex items-center gap-2">
+          {expenses.length > 0 && (
+            <button
+              type="button"
+              onClick={() => exportCsvBlob(expenses, period)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+            >
+              <ArrowDownTrayIcon className="h-4 w-4" />
+              Export CSV
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setShowAdd(true)}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+          >
+            <PlusIcon className="h-4 w-4" />
+            Add Expense
+          </button>
+        </div>
+      </div>
+
+      {/* Period filter tabs */}
+      <div className="flex gap-2 flex-wrap">
+        {PERIODS.map(({ key, label }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => { setPeriod(key); setPage(1); }}
+            className={clsx(
+              'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
+              period === key
+                ? 'bg-orange-600 text-white'
+                : 'bg-(--surface) border border-(--border) text-(--text-secondary) hover:text-(--text-primary)',
+            )}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {totalCount > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4">
-          <p className="text-sm text-red-600 font-medium">Total recorded expenses</p>
-          <p className="text-2xl font-bold text-red-700">{formatCurrency(totalAmount)}</p>
+        <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm text-red-600 font-medium">
+              {period === 'month' ? 'Total This Month' : period === 'week' ? 'Total This Week' : 'Total All Time'}
+            </p>
+            <p className="text-2xl font-bold text-red-700">{formatCurrency(totalAmount || pageTotal)}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-red-500 font-medium uppercase">Entries</p>
+            <p className="text-2xl font-bold text-red-700">{totalCount}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Category breakdown */}
+      {byCategory.length > 1 && (
+        <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5 space-y-3">
+          <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide">
+            Breakdown by Category {totalPages > 1 && <span className="normal-case font-normal">(this page)</span>}
+          </p>
+          {byCategory.map(({ label, amount }) => {
+            const pct = pageTotal > 0 ? Math.round((amount / pageTotal) * 100) : 0;
+            return (
+              <div key={label} className="space-y-1">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-(--text-primary)">{label}</span>
+                  <span className="font-semibold text-(--text-primary)">{formatCurrency(amount)} <span className="text-(--text-muted) font-normal">{pct}%</span></span>
+                </div>
+                <div className="h-1.5 bg-(--border) rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-orange-500 rounded-full" style={{ width: `${pct}%` }} />
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 

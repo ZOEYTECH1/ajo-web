@@ -1,11 +1,13 @@
-﻿import { useState } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   BuildingStorefrontIcon,
+  BuildingOfficeIcon,
   UserGroupIcon,
   PlusIcon,
   TrashIcon,
   XCircleIcon,
+  CubeIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
@@ -21,6 +23,7 @@ interface Business {
   phone: string;
   business_type: string;
   branch_count: number;
+  parent_business: number | null;
   is_on_trial: boolean;
   is_subscription_active: boolean;
   my_role: string;
@@ -67,6 +70,137 @@ function RoleBadge({ role }: { role: string }) {
     <span className={clsx('px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize', colors[role] ?? 'bg-(--bg) text-(--text-secondary)')}>
       {role.replace('_', ' ')}
     </span>
+  );
+}
+
+// ── Create Location Modal ─────────────────────────────────────────────────────
+
+type CreationMode = 'retail' | 'warehouse' | 'branch';
+
+const MODE_OPTIONS: { key: CreationMode; label: string; desc: string; icon: React.ElementType; bg: string; color: string }[] = [
+  { key: 'retail',    label: 'Retail Store',  desc: 'Sells to customers, tracks revenue and daily P&L.',                      icon: BuildingStorefrontIcon, bg: 'bg-green-50',  color: 'text-green-700' },
+  { key: 'warehouse', label: 'Warehouse',      desc: 'Tracks bulk stock, receives goods, dispatches to branches.',              icon: CubeIcon,              bg: 'bg-blue-50',   color: 'text-blue-700'  },
+  { key: 'branch',    label: 'Branch Shop',    desc: 'A branch of an existing business — independent inventory.',              icon: BuildingOfficeIcon,    bg: 'bg-purple-50', color: 'text-purple-700'},
+];
+
+function CreateLocationModal({ businesses, onClose }: { businesses: Business[]; onClose: () => void }) {
+  const qc = useQueryClient();
+  const [name, setName] = useState('');
+  const [mode, setMode] = useState<CreationMode>('retail');
+  const [parentId, setParentId] = useState<number | null>(null);
+  const [err, setErr] = useState('');
+
+  const ownedParents = useMemo(
+    () => businesses.filter(b => b.my_role === 'owner' && b.mode !== 'branch'),
+    [businesses],
+  );
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      const body: Record<string, any> = { name: name.trim(), mode };
+      if (mode === 'branch') body.parent_business_id = parentId;
+      return api.post('/inventory/businesses/', body);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['inventory-businesses'] });
+      onClose();
+    },
+    onError: (e: any) => {
+      const d = e.response?.data;
+      const first = Object.values(d ?? {})[0];
+      setErr(d?.detail ?? (Array.isArray(first) ? first[0] : String(first ?? 'Could not create location.')));
+    },
+  });
+
+  function handleSubmit() {
+    if (!name.trim()) { setErr('Enter a name for this location.'); return; }
+    if (mode === 'branch' && !parentId) { setErr('Select a parent business for this branch.'); return; }
+    mutation.mutate();
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
+          <h2 className="text-lg font-bold text-(--text-primary)">Add a Location</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+        </div>
+        <div className="p-6 space-y-5">
+          <div>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Location Name *</label>
+            <input
+              type="text"
+              value={name}
+              onChange={e => { setName(e.target.value); setErr(''); }}
+              placeholder={mode === 'branch' ? 'e.g. Ikeja Branch' : 'e.g. Main Store'}
+              className={inputCls}
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold text-(--text-secondary) mb-2">Type *</p>
+            <div className="space-y-2">
+              {MODE_OPTIONS.map(({ key, label, desc, icon: Icon, bg, color }) => {
+                const isDisabled = key === 'branch' && ownedParents.length === 0;
+                const isActive = mode === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    disabled={isDisabled}
+                    onClick={() => { setMode(key); if (key !== 'branch') setParentId(null); setErr(''); }}
+                    className={clsx(
+                      'w-full flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all',
+                      isActive ? `border-orange-500 ${bg}` : 'border-(--border) bg-(--surface) hover:border-orange-300',
+                      isDisabled && 'opacity-40 cursor-not-allowed',
+                    )}
+                  >
+                    <Icon className={clsx('h-5 w-5 mt-0.5 shrink-0', isActive ? color : 'text-(--text-muted)')} />
+                    <div>
+                      <p className={clsx('text-sm font-semibold', isActive ? color : 'text-(--text-primary)')}>{label}</p>
+                      <p className="text-xs text-(--text-secondary) mt-0.5">{desc}</p>
+                      {isDisabled && <p className="text-xs text-orange-600 font-semibold mt-1">Create a retail store or warehouse first.</p>}
+                    </div>
+                    {isActive && <span className="ml-auto text-orange-600 text-lg shrink-0">✓</span>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {mode === 'branch' && ownedParents.length > 0 && (
+            <div>
+              <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Parent Business *</label>
+              <select
+                value={parentId ?? ''}
+                onChange={e => setParentId(Number(e.target.value) || null)}
+                className={inputCls}
+              >
+                <option value="">Select a business…</option>
+                {ownedParents.map(b => (
+                  <option key={b.id} value={b.id}>{b.name} ({MODE_LABELS[b.mode] ?? b.mode})</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+
+          <div className="flex gap-3 pt-1">
+            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+            <button
+              type="button"
+              disabled={mutation.isPending}
+              onClick={handleSubmit}
+              className={`flex-1 ${orangeBtn}`}
+            >
+              {mutation.isPending ? 'Creating…' : 'Create Location'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -248,6 +382,7 @@ export default function InventoryBusinessPage() {
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabKey>('details');
   const [selectedBizId, setSelectedBizId] = useState<number | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
 
@@ -284,6 +419,14 @@ export default function InventoryBusinessPage() {
           <h1 className="text-2xl font-bold text-(--text-primary)">Business</h1>
           <p className="text-sm text-(--text-secondary)">Manage your business details and staff</p>
         </div>
+        <button
+          type="button"
+          onClick={() => setShowCreate(true)}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+        >
+          <PlusIcon className="h-4 w-4" />
+          Add Location
+        </button>
       </div>
 
       {bizLoading ? (
@@ -293,8 +436,16 @@ export default function InventoryBusinessPage() {
       ) : businesses.length === 0 ? (
         <div className="text-center py-16">
           <BuildingStorefrontIcon className="h-12 w-12 text-(--text-muted) mx-auto mb-3" />
-          <p className="text-(--text-muted) text-sm">No business found.</p>
-          <p className="text-xs text-(--text-muted) mt-1">Create a business from the mobile app to get started.</p>
+          <p className="font-semibold text-(--text-primary)">No business yet</p>
+          <p className="text-sm text-(--text-muted) mt-1 mb-4">Create your first location to start tracking inventory.</p>
+          <button
+            type="button"
+            onClick={() => setShowCreate(true)}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-700 transition-colors"
+          >
+            <PlusIcon className="h-4 w-4" />
+            Create Business
+          </button>
         </div>
       ) : (
         <>
@@ -447,6 +598,9 @@ export default function InventoryBusinessPage() {
         </>
       )}
 
+      {showCreate && (
+        <CreateLocationModal businesses={businesses} onClose={() => setShowCreate(false)} />
+      )}
       {showInvite && selectedBiz && (
         <InviteModal bizId={selectedBiz.id} onClose={() => setShowInvite(false)} />
       )}

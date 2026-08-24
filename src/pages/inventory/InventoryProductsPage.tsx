@@ -5,9 +5,19 @@ import clsx from 'clsx';
 import {
   PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowUpIcon,
   ChartBarIcon, PhotoIcon, ChevronLeftIcon, ChevronRightIcon,
+  ClockIcon,
 } from '@heroicons/react/24/outline';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
+
+interface InventoryMovement {
+  id: number;
+  movement_type: 'in' | 'out' | 'adjustment';
+  quantity_change: number;
+  balance_after: number;
+  note: string;
+  recorded_at: string;
+}
 
 interface Product {
   id: number;
@@ -304,6 +314,74 @@ function StockModal({ prodId, catId, productName, onClose }: { prodId: number; c
   );
 }
 
+// ── Movement History Modal ────────────────────────────────────────────────────
+
+const MOVE_DISPLAY: Record<string, { label: string; bg: string; color: string; sign: string }> = {
+  in:         { label: 'Stock In',   bg: 'bg-green-50',  color: 'text-green-700',  sign: '+' },
+  out:        { label: 'Stock Out',  bg: 'bg-red-50',    color: 'text-red-700',    sign: '-' },
+  adjustment: { label: 'Adjustment', bg: 'bg-blue-50',   color: 'text-blue-700',   sign: '±' },
+};
+
+function MovementHistoryModal({ product, onClose }: { product: Product; onClose: () => void }) {
+  const { data: movements, isLoading } = useQuery<InventoryMovement[]>({
+    queryKey: ['inventory-movements', product.id],
+    queryFn: () => api.get(`/inventory/products/${product.id}/movements/`).then(r => r.data),
+  });
+
+  const fmtDate = (d: string) => new Date(d).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) shrink-0">
+          <div>
+            <h2 className="text-lg font-bold text-(--text-primary)">Stock History</h2>
+            <p className="text-sm text-(--text-secondary) mt-0.5">{product.name}</p>
+          </div>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+        </div>
+        <div className="overflow-y-auto flex-1 p-4">
+          {isLoading ? (
+            <div className="animate-pulse space-y-3 p-2">
+              {[1,2,3,4].map(i => <div key={i} className="h-14 rounded-lg bg-(--border)" />)}
+            </div>
+          ) : movements && movements.length > 0 ? (
+            <div className="space-y-2">
+              {movements.map(m => {
+                const d = MOVE_DISPLAY[m.movement_type] ?? MOVE_DISPLAY.adjustment;
+                const qty = Math.abs(m.quantity_change);
+                return (
+                  <div key={m.id} className={clsx('flex items-center gap-4 rounded-xl p-4 border', d.bg, 'border-(--border)')}>
+                    <div className={clsx('w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0', d.bg, d.color)}>
+                      {d.sign}{qty}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={clsx('text-xs font-semibold px-2 py-0.5 rounded-full', d.bg, d.color)}>{d.label}</span>
+                        <span className="text-xs text-(--text-muted) truncate">{fmtDate(m.recorded_at)}</span>
+                      </div>
+                      {m.note && <p className="text-sm text-(--text-secondary) mt-1 truncate">{m.note}</p>}
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-xs text-(--text-muted)">Balance</p>
+                      <p className="text-sm font-bold text-(--text-primary)">{m.balance_after}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-(--text-muted) text-center py-10">No stock movements recorded yet.</p>
+          )}
+        </div>
+        <div className="px-4 pb-4 shrink-0">
+          <button type="button" onClick={onClose} className={cancelBtn}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Daily Stock Summary Modal ─────────────────────────────────────────────────
 
 function DailySummaryModal({ product, onClose }: { product: Product; onClose: () => void }) {
@@ -469,6 +547,7 @@ export default function InventoryProductsPage() {
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [stockProduct, setStockProduct] = useState<Product | null>(null);
   const [summaryProduct, setSummaryProduct] = useState<Product | null>(null);
+  const [historyProduct, setHistoryProduct] = useState<Product | null>(null);
 
   const { data: category } = useQuery<Category>({
     queryKey: ['inventory-category', catId],
@@ -571,6 +650,14 @@ export default function InventoryProductsPage() {
                         </button>
                         <button
                           type="button"
+                          onClick={() => setHistoryProduct(p)}
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-purple-600 hover:bg-purple-50 transition-colors"
+                          title="Movement history"
+                        >
+                          <ClockIcon className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => setStockProduct(p)}
                           className="p-1.5 rounded-lg text-(--text-muted) hover:text-green-600 hover:bg-green-50 transition-colors"
                           title="Adjust stock"
@@ -639,6 +726,9 @@ export default function InventoryProductsPage() {
       )}
       {summaryProduct && (
         <DailySummaryModal product={summaryProduct} onClose={() => setSummaryProduct(null)} />
+      )}
+      {historyProduct && (
+        <MovementHistoryModal product={historyProduct} onClose={() => setHistoryProduct(null)} />
       )}
     </div>
   );

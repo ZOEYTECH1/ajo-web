@@ -14,6 +14,7 @@ const links = [
   { to: '/inventory/product-requests',     label: 'Requests',   end: false },
   { to: '/inventory/business',             label: 'Business',   end: false },
   { to: '/inventory/subscription',         label: 'Subscription', end: false },
+  { to: '/inventory/best-sellers',         label: 'Best Sellers', end: false },
 ];
 
 export function InventoryNav() {

@@ -1,7 +1,7 @@
 ﻿import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format, startOfMonth, startOfWeek } from 'date-fns';
-import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowDownTrayIcon, TagIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
@@ -26,6 +26,12 @@ interface PaginatedExpenses {
   total_amount: string;
 }
 
+interface UserExpenseCategory {
+  id: number;
+  name: string;
+  created_at: string;
+}
+
 const CATEGORIES = [
   { value: 'rent', label: 'Rent' },
   { value: 'transport', label: 'Transport' },
@@ -45,6 +51,86 @@ const PERIODS: { key: Period; label: string }[] = [
 
 function catLabel(cat: string) {
   return CATEGORIES.find(c => c.value === cat)?.label ?? cat;
+}
+
+function ManageCategoriesModal({ onClose }: { onClose: () => void }) {
+  const qc = useQueryClient();
+  const [newName, setNewName] = useState('');
+  const [err, setErr] = useState('');
+
+  const { data: cats = [] } = useQuery<UserExpenseCategory[]>({
+    queryKey: ['inventory-expense-categories'],
+    queryFn: () => api.get('/inventory/expense-categories/').then(r => r.data),
+  });
+
+  const addMutation = useMutation({
+    mutationFn: () => api.post('/inventory/expense-categories/', { name: newName.trim() }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['inventory-expense-categories'] }); setNewName(''); setErr(''); },
+    onError: (e: any) => {
+      const d = e.response?.data;
+      const first = Object.values(d ?? {})[0];
+      setErr(d?.detail ?? (Array.isArray(first) ? first[0] : String(first ?? 'Failed.')));
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => api.delete(`/inventory/expense-categories/${id}/`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['inventory-expense-categories'] }),
+  });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">My Expense Categories</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+        </div>
+        <div className="p-6 space-y-4">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newName}
+              onChange={e => setNewName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); if (newName.trim()) addMutation.mutate(); } }}
+              placeholder="New category name"
+              className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+            <button
+              type="button"
+              disabled={!newName.trim() || addMutation.isPending}
+              onClick={() => addMutation.mutate()}
+              className="rounded-lg bg-orange-600 text-white px-4 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+            >
+              {addMutation.isPending ? '…' : 'Add'}
+            </button>
+          </div>
+          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {cats.length > 0 ? (
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {cats.map(c => (
+                <div key={c.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-(--bg) border border-(--border)">
+                  <span className="text-sm font-medium text-(--text-primary)">{c.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => { if (confirm(`Delete category "${c.name}"?`)) deleteMutation.mutate(c.id); }}
+                    disabled={deleteMutation.isPending}
+                    className="p-1 rounded text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-(--text-muted) text-center py-4">No custom categories yet. Add one above.</p>
+          )}
+          <button type="button" onClick={onClose} className="w-full rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors">
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function exportCsvBlob(expenses: Expense[], period: Period) {
@@ -101,6 +187,11 @@ function ExpenseModal({
   });
   const [err, setErr] = useState('');
 
+  const { data: customCats = [] } = useQuery<UserExpenseCategory[]>({
+    queryKey: ['inventory-expense-categories'],
+    queryFn: () => api.get('/inventory/expense-categories/').then(r => r.data),
+  });
+
   const mutation = useMutation({
     mutationFn: () => {
       const body = { category: form.category, description: form.description.trim(), amount: form.amount, spent_at: form.spent_at };
@@ -133,7 +224,14 @@ function ExpenseModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <Field label="Category *">
             <select value={form.category} onChange={(e) => setForm(f => ({ ...f, category: e.target.value }))} className={inputCls}>
-              {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+              <optgroup label="Preset">
+                {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+              </optgroup>
+              {customCats.length > 0 && (
+                <optgroup label="My Categories">
+                  {customCats.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                </optgroup>
+              )}
             </select>
           </Field>
           <Field label="Amount (NGN) *">
@@ -162,6 +260,7 @@ export default function InventoryExpensesPage() {
   const qc = useQueryClient();
   const [showAdd, setShowAdd] = useState(false);
   const [editExpense, setEditExpense] = useState<Expense | null>(null);
+  const [showManageCats, setShowManageCats] = useState(false);
   const [page, setPage] = useState(1);
   const [period, setPeriod] = useState<Period>('month');
 
@@ -208,6 +307,14 @@ export default function InventoryExpensesPage() {
           <p className="text-sm text-(--text-secondary)">Track your business costs</p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowManageCats(true)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+          >
+            <TagIcon className="h-4 w-4" />
+            Categories
+          </button>
           {expenses.length > 0 && (
             <button
               type="button"
@@ -352,6 +459,7 @@ export default function InventoryExpensesPage() {
 
       <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
 
+      {showManageCats && <ManageCategoriesModal onClose={() => setShowManageCats(false)} />}
       {showAdd && <ExpenseModal onClose={() => setShowAdd(false)} />}
       {editExpense && (
         <ExpenseModal

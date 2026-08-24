@@ -48,6 +48,7 @@ const InventoryWarehouseReceivePage = lazy(() => import('./pages/inventory/Inven
 const InventoryWarehouseDispatchPage= lazy(() => import('./pages/inventory/InventoryWarehouseDispatchPage'));
 const InventoryProductRequestsPage  = lazy(() => import('./pages/inventory/InventoryProductRequestsPage'));
 const InventorySubscriptionPage     = lazy(() => import('./pages/inventory/InventorySubscriptionPage'));
+const InventoryBestSellersPage      = lazy(() => import('./pages/inventory/InventoryBestSellersPage'));
 
 const router = createBrowserRouter([
   {
@@ -94,6 +95,7 @@ const router = createBrowserRouter([
           { path: 'inventory/warehouse/dispatch',      element: <InventoryWarehouseDispatchPage /> },
           { path: 'inventory/product-requests',        element: <InventoryProductRequestsPage /> },
           { path: 'inventory/subscription',            element: <InventorySubscriptionPage /> },
+          { path: 'inventory/best-sellers',            element: <InventoryBestSellersPage /> },
           { path: '*',                          element: <Navigate to="/dashboard" replace /> },
         ],
       },

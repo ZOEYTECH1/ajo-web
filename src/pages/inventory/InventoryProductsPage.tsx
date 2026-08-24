@@ -1,8 +1,11 @@
-﻿import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowUpIcon } from '@heroicons/react/24/outline';
+import {
+  PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowUpIcon,
+  ChartBarIcon, PhotoIcon, ChevronLeftIcon, ChevronRightIcon,
+} from '@heroicons/react/24/outline';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 
@@ -17,16 +20,30 @@ interface Product {
   barcode: string;
   low_stock_threshold: number;
   expiry_date: string | null;
+  image_url: string | null;
   created_at: string;
 }
 
-interface Category {
-  id: number;
-  name: string;
+interface Category { id: number; name: string; }
+
+interface ProductDailySummary {
+  date: string;
+  opening_stock: number;
+  closing_stock: number;
+  units_sold: number;
+  units_received: number;
+  revenue: string;
+  is_closed: boolean;
 }
 
 function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(v));
+}
+
+function addDays(dateStr: string, n: number) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
 }
 
 const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
@@ -48,23 +65,26 @@ function StockBadge({ qty, threshold }: { qty: number; threshold: number }) {
   return <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">In stock</span>;
 }
 
-// ── Product Form (create/edit) ─────────────────────────────────────────────
+// ── Product Form (create/edit) ─────────────────────────────────────────────────
 
 type ProductForm = {
   name: string; price: string; cost_price: string; quantity: string;
   barcode: string; low_stock_threshold: string; expiry_date: string;
+  discount_percent: string;
 };
 
 function ProductModal({
-  initial, catId, prodId, onClose,
+  initial, catId, prodId, currentImageUrl, onClose,
 }: {
   initial?: Partial<ProductForm>;
   catId: string;
   prodId?: number;
+  currentImageUrl?: string | null;
   onClose: () => void;
 }) {
   const qc = useQueryClient();
   const isEdit = !!prodId;
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState<ProductForm>({
     name: initial?.name ?? '',
     price: initial?.price ?? '',
@@ -73,11 +93,29 @@ function ProductModal({
     barcode: initial?.barcode ?? '',
     low_stock_threshold: initial?.low_stock_threshold ?? '5',
     expiry_date: initial?.expiry_date ?? '',
+    discount_percent: initial?.discount_percent ?? '0',
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [err, setErr] = useState('');
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  }
 
   const mutation = useMutation({
     mutationFn: () => {
+      if (isEdit && imageFile) {
+        const fd = new FormData();
+        Object.entries({ ...form, quantity: undefined }).forEach(([k, v]) => {
+          if (v !== undefined && v !== '') fd.append(k, String(v));
+        });
+        fd.append('image', imageFile);
+        return api.patch(`/inventory/products/${prodId}/`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      }
       const body = {
         name: form.name.trim(),
         price: form.price,
@@ -86,6 +124,7 @@ function ProductModal({
         barcode: form.barcode.trim() || undefined,
         low_stock_threshold: Number(form.low_stock_threshold || 5),
         expiry_date: form.expiry_date || null,
+        discount_percent: Number(form.discount_percent || 0),
       };
       return isEdit
         ? api.patch(`/inventory/products/${prodId}/`, body)
@@ -93,6 +132,7 @@ function ProductModal({
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['inventory-products', catId] });
+      if (imagePreview) URL.revokeObjectURL(imagePreview);
       onClose();
     },
     onError: (e: any) => {
@@ -128,22 +168,62 @@ function ProductModal({
               <input type="number" min="0" step="0.01" value={form.cost_price} onChange={(e) => setForm(f => ({ ...f, cost_price: e.target.value }))} placeholder="e.g. 200" className={inputCls} />
             </Field>
           </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Discount %">
+              <input type="number" min="0" max="100" step="0.1" value={form.discount_percent} onChange={(e) => setForm(f => ({ ...f, discount_percent: e.target.value }))} placeholder="0" className={inputCls} />
+            </Field>
+            <Field label="Low Stock Threshold">
+              <input type="number" min="0" value={form.low_stock_threshold} onChange={(e) => setForm(f => ({ ...f, low_stock_threshold: e.target.value }))} placeholder="5" className={inputCls} />
+            </Field>
+          </div>
           {!isEdit && (
             <Field label="Initial Quantity">
               <input type="number" min="0" value={form.quantity} onChange={(e) => setForm(f => ({ ...f, quantity: e.target.value }))} placeholder="0" className={inputCls} />
             </Field>
           )}
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Low Stock Threshold">
-              <input type="number" min="0" value={form.low_stock_threshold} onChange={(e) => setForm(f => ({ ...f, low_stock_threshold: e.target.value }))} placeholder="5" className={inputCls} />
-            </Field>
-            <Field label="Barcode (optional)">
-              <input type="text" value={form.barcode} onChange={(e) => setForm(f => ({ ...f, barcode: e.target.value }))} placeholder="e.g. 1234567890" className={inputCls} />
-            </Field>
-          </div>
+          <Field label="Barcode (optional)">
+            <input type="text" value={form.barcode} onChange={(e) => setForm(f => ({ ...f, barcode: e.target.value }))} placeholder="e.g. 1234567890" className={inputCls} />
+          </Field>
           <Field label="Expiry Date (optional)">
             <input type="date" value={form.expiry_date} onChange={(e) => setForm(f => ({ ...f, expiry_date: e.target.value }))} className={inputCls} />
           </Field>
+
+          {/* Image upload — edit only */}
+          {isEdit && (
+            <div>
+              <label className="block text-sm font-semibold text-(--text-secondary) mb-2">Product Image</label>
+              <div className="flex items-center gap-4">
+                {(imagePreview ?? currentImageUrl) && (
+                  <img
+                    src={imagePreview ?? currentImageUrl!}
+                    alt="Product"
+                    className="w-16 h-16 rounded-lg object-cover border border-(--border)"
+                  />
+                )}
+                <div className="flex-1">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="inline-flex items-center gap-2 rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+                  >
+                    <PhotoIcon className="h-4 w-4" />
+                    {(imagePreview ?? currentImageUrl) ? 'Change image' : 'Upload image'}
+                  </button>
+                  {imageFile && (
+                    <p className="text-xs text-(--text-muted) mt-1 truncate">{imageFile.name}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -224,6 +304,162 @@ function StockModal({ prodId, catId, productName, onClose }: { prodId: number; c
   );
 }
 
+// ── Daily Stock Summary Modal ─────────────────────────────────────────────────
+
+function DailySummaryModal({ product, onClose }: { product: Product; onClose: () => void }) {
+  const qc = useQueryClient();
+  const today = new Date().toISOString().slice(0, 10);
+  const [date, setDate] = useState(today);
+  const [openingInput, setOpeningInput] = useState('');
+  const [showOpeningInput, setShowOpeningInput] = useState(false);
+
+  const isToday = date === today;
+
+  const { data: summary, isLoading } = useQuery<ProductDailySummary>({
+    queryKey: ['inventory-daily-summary', product.id, date],
+    queryFn: () => api.get(`/inventory/products/${product.id}/daily-summary/?date=${date}`).then(r => r.data),
+  });
+
+  const closeMutation = useMutation({
+    mutationFn: () => api.post(`/inventory/products/${product.id}/close-stock/`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['inventory-daily-summary', product.id, date] }),
+  });
+
+  const openingMutation = useMutation({
+    mutationFn: () => api.post(`/inventory/products/${product.id}/set-opening-stock/`, { opening_stock: Number(openingInput) }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['inventory-daily-summary', product.id, date] });
+      setShowOpeningInput(false);
+      setOpeningInput('');
+    },
+  });
+
+  const fmtDate = (d: string) => new Date(d + 'T00:00:00').toLocaleDateString('en-NG', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <div>
+            <h2 className="text-lg font-bold text-(--text-primary)">Daily Summary</h2>
+            <p className="text-sm text-(--text-secondary) mt-0.5">{product.name}</p>
+          </div>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+        </div>
+
+        {/* Date nav */}
+        <div className="flex items-center justify-between px-6 py-3 border-b border-(--border) bg-(--bg)">
+          <button type="button" onClick={() => setDate(d => addDays(d, -1))} className="p-1.5 rounded-lg hover:bg-(--border) transition-colors">
+            <ChevronLeftIcon className="h-4 w-4 text-(--text-secondary)" />
+          </button>
+          <div className="text-center">
+            <p className="text-sm font-semibold text-(--text-primary)">{fmtDate(date)}</p>
+            {!isToday && (
+              <button type="button" onClick={() => setDate(today)} className="text-xs text-orange-600 font-semibold hover:underline mt-0.5">
+                Jump to today
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => setDate(d => addDays(d, 1))}
+            disabled={isToday}
+            className="p-1.5 rounded-lg hover:bg-(--border) transition-colors disabled:opacity-30"
+          >
+            <ChevronRightIcon className="h-4 w-4 text-(--text-secondary)" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-4">
+          {isLoading ? (
+            <div className="animate-pulse space-y-3">
+              {[1, 2, 3, 4].map(i => <div key={i} className="h-12 rounded-lg bg-(--border)" />)}
+            </div>
+          ) : summary ? (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'Opening Stock', value: summary.opening_stock, color: 'text-blue-700', bg: 'bg-blue-50' },
+                  { label: 'Closing Stock', value: summary.closing_stock, color: 'text-orange-700', bg: 'bg-orange-50' },
+                  { label: 'Units Sold', value: summary.units_sold, color: 'text-red-700', bg: 'bg-red-50' },
+                  { label: 'Units Received', value: summary.units_received, color: 'text-green-700', bg: 'bg-green-50' },
+                ].map(({ label, value, color, bg }) => (
+                  <div key={label} className={clsx('rounded-xl p-4', bg)}>
+                    <p className={clsx('text-xs font-semibold uppercase tracking-wide', color)}>{label}</p>
+                    <p className={clsx('text-2xl font-bold mt-1', color)}>{value}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-xl bg-(--bg) border border-(--border) px-4 py-3 flex items-center justify-between">
+                <p className="text-sm font-medium text-(--text-secondary)">Revenue</p>
+                <p className="text-sm font-bold text-(--text-primary)">{formatCurrency(summary.revenue)}</p>
+              </div>
+
+              {summary.is_closed && (
+                <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-2 text-sm text-green-700 font-medium">
+                  Stock closed for this day
+                </div>
+              )}
+
+              {/* Actions — only for today */}
+              {isToday && (
+                <div className="space-y-2 pt-1">
+                  {!summary.is_closed && (
+                    <button
+                      type="button"
+                      onClick={() => { if (confirm('Close stock for today? This records the current quantity as closing stock.')) closeMutation.mutate(); }}
+                      disabled={closeMutation.isPending}
+                      className="w-full rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+                    >
+                      {closeMutation.isPending ? 'Closing…' : 'Close Stock'}
+                    </button>
+                  )}
+
+                  {showOpeningInput ? (
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        min="0"
+                        value={openingInput}
+                        onChange={e => setOpeningInput(e.target.value)}
+                        placeholder="Opening stock qty"
+                        className={clsx(inputCls, 'flex-1')}
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        disabled={!openingInput || openingMutation.isPending}
+                        onClick={() => openingMutation.mutate()}
+                        className="rounded-lg bg-blue-600 text-white px-4 text-sm font-semibold hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        {openingMutation.isPending ? '…' : 'Set'}
+                      </button>
+                      <button type="button" onClick={() => setShowOpeningInput(false)} className="rounded-lg border border-(--border) px-3 text-sm text-(--text-secondary) hover:bg-(--border)">✕</button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => { setOpeningInput(String(summary.opening_stock)); setShowOpeningInput(true); }}
+                      className="w-full rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+                    >
+                      Set Opening Stock
+                    </button>
+                  )}
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-(--text-muted) text-center py-8">No summary data available for this date.</p>
+          )}
+
+          <button type="button" onClick={onClose} className={cancelBtn}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function InventoryProductsPage() {
@@ -232,6 +468,7 @@ export default function InventoryProductsPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [stockProduct, setStockProduct] = useState<Product | null>(null);
+  const [summaryProduct, setSummaryProduct] = useState<Product | null>(null);
 
   const { data: category } = useQuery<Category>({
     queryKey: ['inventory-category', catId],
@@ -284,29 +521,54 @@ export default function InventoryProductsPage() {
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
               <tr>
-                {['Product', 'Price', 'Cost', 'Quantity', 'Status', 'Actions'].map(h => (
-                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
+                {['', 'Product', 'Price', 'Cost', 'Discount', 'Quantity', 'Status', 'Actions'].map(h => (
+                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-(--border)">
               {isLoading ? (
-                <SkeletonTable rows={5} cols={6} />
+                <SkeletonTable rows={5} cols={8} />
               ) : data && data.length > 0 ? (
                 data.map(p => (
                   <tr key={p.id} className={clsx('hover:bg-(--primary-tint)/30 transition-colors', p.quantity === 0 && 'bg-red-50/30')}>
-                    <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">
+                    <td className="px-4 py-3 w-12">
+                      {p.image_url ? (
+                        <img src={p.image_url} alt={p.name} className="w-10 h-10 rounded-lg object-cover border border-(--border)" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-(--bg) border border-(--border) flex items-center justify-center">
+                          <PhotoIcon className="h-5 w-5 text-(--text-muted)" />
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium text-(--text-primary)">
                       {p.name}
                       {p.barcode && <span className="block text-xs text-(--text-muted)">{p.barcode}</span>}
                     </td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{formatCurrency(p.effective_price ?? p.price)}</td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{Number(p.cost_price) > 0 ? formatCurrency(p.cost_price) : '—'}</td>
-                    <td className="px-6 py-4 text-sm font-semibold text-(--text-primary)">{p.quantity}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3 text-sm text-(--text-secondary)">
+                      {formatCurrency(p.effective_price ?? p.price)}
+                      {p.discount_percent > 0 && (
+                        <span className="block text-xs text-green-600 font-semibold">{p.discount_percent}% off</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-(--text-secondary)">{Number(p.cost_price) > 0 ? formatCurrency(p.cost_price) : '—'}</td>
+                    <td className="px-4 py-3 text-sm text-(--text-secondary)">
+                      {p.discount_percent > 0 ? `${p.discount_percent}%` : '—'}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-semibold text-(--text-primary)">{p.quantity}</td>
+                    <td className="px-4 py-3">
                       <StockBadge qty={p.quantity} threshold={p.low_stock_threshold} />
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => setSummaryProduct(p)}
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                          title="Daily summary"
+                        >
+                          <ChartBarIcon className="h-4 w-4" />
+                        </button>
                         <button
                           type="button"
                           onClick={() => setStockProduct(p)}
@@ -338,7 +600,7 @@ export default function InventoryProductsPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-(--text-muted)">
+                  <td colSpan={8} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                     No products in this category.{' '}
                     <button type="button" onClick={() => setShowAdd(true)} className="text-orange-600 font-semibold hover:underline">Add the first product.</button>
                   </td>
@@ -359,9 +621,11 @@ export default function InventoryProductsPage() {
             barcode: editProduct.barcode,
             low_stock_threshold: String(editProduct.low_stock_threshold),
             expiry_date: editProduct.expiry_date ?? '',
+            discount_percent: String(editProduct.discount_percent),
           }}
           catId={catId}
           prodId={editProduct.id}
+          currentImageUrl={editProduct.image_url}
           onClose={() => setEditProduct(null)}
         />
       )}
@@ -372,6 +636,9 @@ export default function InventoryProductsPage() {
           productName={stockProduct.name}
           onClose={() => setStockProduct(null)}
         />
+      )}
+      {summaryProduct && (
+        <DailySummaryModal product={summaryProduct} onClose={() => setSummaryProduct(null)} />
       )}
     </div>
   );

@@ -31,6 +31,7 @@ interface Group {
   rules?: string;
   contribution_frequency: string;
   contribution_amount: string;
+  collection_day?: number | null;
   member_count: number;
   invite_code: string;
   is_on_trial: boolean;
@@ -444,6 +445,20 @@ function GroupSettingsModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Read-only group config */}
+          <div className="rounded-lg bg-(--bg) border border-(--border) px-4 py-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+            <span className="text-(--text-secondary)">Contribution</span>
+            <span className="font-medium text-(--text-primary)">{formatCurrency(group.contribution_amount)}</span>
+            <span className="text-(--text-secondary)">Frequency</span>
+            <span className="font-medium text-(--text-primary) capitalize">{group.contribution_frequency}</span>
+            {group.collection_day != null && (
+              <>
+                <span className="text-(--text-secondary)">Collection day</span>
+                <span className="font-medium text-(--text-primary)">{group.collection_day}</span>
+              </>
+            )}
+          </div>
+
           <div>
             <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Group Name</label>
             <input
@@ -1197,14 +1212,21 @@ function MembersTab({
 
 // ── Cycles Tab ────────────────────────────────────────────────────────────────
 
+function periodLabel(cycleNumber: number, frequency: string): string {
+  const unit = frequency === 'daily' ? 'Day' : frequency === 'weekly' ? 'Week' : 'Month';
+  return `${unit} ${cycleNumber}`;
+}
+
 function CyclesTab({
   cycles,
   groupId,
   isAdmin,
+  frequency,
 }: {
   cycles: Cycle[];
   groupId: number;
   isAdmin: boolean;
+  frequency: string;
 }) {
   const qc = useQueryClient();
   const [showStartCycle, setShowStartCycle] = useState(false);
@@ -1272,7 +1294,12 @@ function CyclesTab({
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4">
                 <div className="flex items-center gap-4">
                   <div>
-                    <p className="text-sm font-semibold text-(--text-primary)">Cycle #{cycle.cycle_number}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-(--text-primary)">Cycle #{cycle.cycle_number}</p>
+                      <span className="text-xs font-medium text-(--text-muted) bg-(--bg) rounded-full px-2 py-0.5">
+                        {periodLabel(cycle.cycle_number, frequency)}
+                      </span>
+                    </div>
                     <p className="text-xs text-(--text-secondary) mt-0.5">
                       {format(new Date(cycle.start_date), 'dd MMM yyyy')} —{' '}
                       {format(new Date(cycle.end_date), 'dd MMM yyyy')}
@@ -1956,7 +1983,7 @@ export default function AjoGroupDetailPage() {
             />
           )}
           {activeTab === 'cycles' && (
-            <CyclesTab cycles={cycles} groupId={Number(id)} isAdmin={isAdmin} />
+            <CyclesTab cycles={cycles} groupId={Number(id)} isAdmin={isAdmin} frequency={group.contribution_frequency} />
           )}
           {activeTab === 'order' && (
             <CollectionOrderTab groupId={Number(id)} isAdmin={isAdmin} active={activeTab === 'order'} activeCycleNumber={activeCycle?.cycle_number} />

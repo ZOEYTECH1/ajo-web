@@ -392,6 +392,23 @@ export default function AjoSubscriptionPage() {
         </div>
       )}
 
+      {/* What you get */}
+      <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-(--text-primary)">What you get</h2>
+        <ul className="space-y-2">
+          {[
+            'Approve unlimited members (beyond the free 10)',
+            'Full payment history and audit trail',
+            'Tamper-evident records for all contributions',
+          ].map((benefit) => (
+            <li key={benefit} className="flex items-start gap-2.5 text-sm text-(--text-secondary)">
+              <CheckCircleIcon className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
+              {benefit}
+            </li>
+          ))}
+        </ul>
+      </div>
+
       {/* Non-admin notice */}
       {!isAdmin && (
         <div className="rounded-xl bg-(--bg) border border-(--border) px-4 py-4 text-sm text-(--text-secondary)">

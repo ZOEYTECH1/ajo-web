@@ -142,6 +142,66 @@ function StatCard({ label, value }: { label: string; value: string | number }) {
   );
 }
 
+// ── CSV Export ────────────────────────────────────────────────────────────────
+
+function exportCSV(data: OrgDashboard) {
+  const rows: string[][] = [];
+
+  rows.push(['=== ORGANISATION SUMMARY ===']);
+  rows.push(['Name', data.organization.name]);
+  rows.push(['Type', data.organization.org_type]);
+  rows.push(['Verified', data.organization.is_verified ? 'Yes' : 'No']);
+  rows.push([]);
+  rows.push(['=== PAYMENT STATS ===']);
+  rows.push(['Total', String(data.payment_stats.total)]);
+  rows.push(['Confirmed', String(data.payment_stats.confirmed)]);
+  rows.push(['Disputed', String(data.payment_stats.disputed)]);
+  rows.push(['Pending', String(data.payment_stats.pending)]);
+  rows.push(['Total Collected (NGN)', String(data.payment_stats.total_collected)]);
+  rows.push(['Savings Mobilization (%)', String(data.payment_stats.savings_mobilization)]);
+  rows.push([]);
+  rows.push(['=== COLLECTORS ===']);
+  rows.push(['Name', 'Email', 'Status', 'Mobilization Rate (%)', 'Dispute Rate (%)', 'Total Amount', 'Confirmed Amount']);
+  for (const c of data.collectors) {
+    const stats = data.collector_stats[String(c.id)];
+    rows.push([
+      fullName(c.user),
+      c.user.email,
+      c.status,
+      stats ? String(stats.mobilization_rate) : '',
+      stats ? String(stats.dispute_rate) : '',
+      stats ? String(stats.total_amount) : '',
+      stats ? String(stats.confirmed_amount) : '',
+    ]);
+  }
+  rows.push([]);
+  rows.push(['=== GROUPS ===']);
+  rows.push(['Group Name', 'Frequency', 'Members', 'Collector']);
+  for (const g of data.groups) {
+    rows.push([
+      g.name, g.frequency, String(g.member_count),
+      g.collector ? `${g.collector.first_name} ${g.collector.last_name}` : 'Unassigned',
+    ]);
+  }
+  rows.push([]);
+  rows.push(['=== RECENT REPORTS ===']);
+  rows.push(['Reporter', 'Collector', 'Reason', 'Status', 'Date']);
+  for (const r of data.recent_reports) {
+    rows.push([r.reporter_name, r.collector_name, r.reason, r.status, fmt(r.created_at)]);
+  }
+
+  const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `org-${data.organization.name.replace(/\s+/g, '-')}-report.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 // ── Loading Skeleton ──────────────────────────────────────────────────────────
 
 function OrgSkeleton() {
@@ -310,7 +370,14 @@ export default function ThriftOrgPage() {
               )}
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => exportCSV(data)}
+              className="text-xs font-semibold text-(--text-secondary) bg-(--bg) border border-(--border) rounded-lg px-3 py-1.5 hover:bg-(--primary-tint)/30 transition-colors"
+            >
+              Export CSV
+            </button>
             <Link
               to={`/thrift/org/${orgId}/billing`}
               className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-100 transition-colors"

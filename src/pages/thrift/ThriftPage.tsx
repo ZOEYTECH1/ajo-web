@@ -282,6 +282,9 @@ export default function ThriftPage() {
             <Link to="/thrift/billing" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
               Billing →
             </Link>
+            <Link to="/thrift/org/create" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
+              Organisation →
+            </Link>
           </div>
         </div>
         <div className="flex gap-2">

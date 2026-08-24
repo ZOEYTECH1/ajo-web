@@ -249,9 +249,64 @@ function DisputeModal({
   const [reason, setReason] = useState('');
   const [err, setErr] = useState('');
 
+  // Audio recording state
+  const [recording, setRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [micError, setMicError] = useState('');
+
+  const startRecording = async () => {
+    setMicError('');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const chunks: BlobPart[] = [];
+      const recorder = new MediaRecorder(stream);
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+        setAudioBlob(blob);
+        setAudioUrl(URL.createObjectURL(blob));
+        stream.getTracks().forEach(t => t.stop());
+      };
+      recorder.start();
+      setMediaRecorder(recorder);
+      setRecording(true);
+    } catch {
+      setMicError('Microphone access denied. Please allow microphone access or type your reason instead.');
+    }
+  };
+
+  const stopRecording = () => {
+    mediaRecorder?.stop();
+    setRecording(false);
+  };
+
+  const clearAudio = () => {
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    setAudioBlob(null);
+    setAudioUrl(null);
+  };
+
+  const canSubmit = (reason.trim().length > 0 || audioBlob != null);
+
   const mutation = useMutation({
-    mutationFn: () => api.post(`/thrift/${groupId}/payments/${paymentId}/dispute/`, { reason }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['thrift-payments', groupId] }); onClose(); },
+    mutationFn: () => {
+      if (audioBlob) {
+        const fd = new FormData();
+        if (reason.trim()) fd.append('reason', reason.trim());
+        fd.append('dispute_audio', audioBlob, 'dispute.webm');
+        return api.post(`/thrift/${groupId}/payments/${paymentId}/dispute/`, fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+      return api.post(`/thrift/${groupId}/payments/${paymentId}/dispute/`, { reason });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['thrift-payments', groupId] });
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
+      onClose();
+    },
     onError: (e: any) => setErr(e.response?.data?.reason?.[0] ?? e.response?.data?.detail ?? 'Dispute failed.'),
   });
 
@@ -263,16 +318,54 @@ function DisputeModal({
           <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
         <div className="p-6 space-y-4">
-          <p className="text-sm text-(--text-secondary)">Describe why this payment record is incorrect.</p>
-          <Field label="Reason *">
+          <p className="text-sm text-(--text-secondary)">Describe why this payment record is incorrect. You can type a reason, record a voice note, or both.</p>
+
+          <Field label="Reason (optional if you record audio)">
             <textarea rows={3} value={reason} onChange={(e) => { setReason(e.target.value); setErr(''); }} placeholder="e.g. I did not make this payment on this date" className={inputCls} />
           </Field>
+
+          {/* Voice note section */}
+          <div className="space-y-2">
+            <p className="text-sm font-semibold text-(--text-secondary)">Voice note (optional)</p>
+
+            {micError && (
+              <p className="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">{micError}</p>
+            )}
+
+            {!audioUrl ? (
+              <button
+                type="button"
+                onClick={recording ? stopRecording : startRecording}
+                className={clsx(
+                  'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
+                  recording
+                    ? 'bg-red-600 text-white hover:bg-red-700 animate-pulse'
+                    : 'bg-(--bg) border border-(--border) text-(--text-secondary) hover:text-teal-600 hover:border-teal-300',
+                )}
+              >
+                <span className={clsx('inline-block w-2.5 h-2.5 rounded-full', recording ? 'bg-white' : 'bg-red-500')} />
+                {recording ? 'Stop recording' : 'Record voice note'}
+              </button>
+            ) : (
+              <div className="space-y-2">
+                <audio src={audioUrl} controls className="w-full h-10 rounded-lg" />
+                <button
+                  type="button"
+                  onClick={clearAudio}
+                  className="text-xs text-red-600 hover:text-red-700 font-semibold"
+                >
+                  Remove audio
+                </button>
+              </div>
+            )}
+          </div>
+
           {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button
               type="button"
-              disabled={!reason.trim() || mutation.isPending}
+              disabled={!canSubmit || mutation.isPending}
               onClick={() => mutation.mutate()}
               className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
             >

@@ -62,6 +62,14 @@ interface Payment {
   rejection_reason?: string;
 }
 
+interface PaginatedPayments {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Payment[];
+  status_counts: { all: number; pending: number; approved: number; rejected: number };
+}
+
 interface Cycle {
   id: number;
   cycle_number: number;
@@ -578,11 +586,9 @@ function StartCycleModal({
 // ── Payments Tab ──────────────────────────────────────────────────────────────
 
 function PaymentsTab({
-  payments,
   groupId,
   isAdmin,
 }: {
-  payments: Payment[];
   groupId: number;
   isAdmin: boolean;
 }) {
@@ -592,24 +598,29 @@ function PaymentsTab({
   const [rejectTarget, setRejectTarget] = useState<number | null>(null);
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
 
-  const PAGE_SIZE = 10;
+  const { data, isLoading } = useQuery<PaginatedPayments>({
+    queryKey: ['ajo-group-payments-paged', String(groupId), filter, page],
+    queryFn: () => {
+      const params = new URLSearchParams({ page: String(page) });
+      if (filter !== 'all') params.set('status', filter);
+      return api.get(`/groups/${groupId}/payments/?${params}`).then((r) => r.data);
+    },
+  });
 
   const reviewMutation = useMutation({
     mutationFn: ({ paymentId, action, reason }: { paymentId: number; action: string; reason?: string }) =>
       api.patch(`/groups/${groupId}/payments/${paymentId}/`, { action, reason }),
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group-payments-paged', String(groupId)] });
       qc.invalidateQueries({ queryKey: ['ajo-group-payments', String(groupId)] });
       setRejectTarget(null);
     },
   });
 
-  const filteredPayments = filter === 'all'
-    ? payments
-    : payments.filter((p) => p.status === filter);
-
-  const totalPages = Math.max(1, Math.ceil(filteredPayments.length / PAGE_SIZE));
-  const safePage = Math.min(page, totalPages);
-  const pagePayments = filteredPayments.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const pagePayments = data?.results ?? [];
+  const totalCount = data?.count ?? 0;
+  const statusCounts = data?.status_counts;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 10));
 
   function changeFilter(f: typeof filter) {
     setFilter(f);
@@ -617,10 +628,10 @@ function PaymentsTab({
   }
 
   const filterPills = [
-    { key: 'all' as const,      label: 'All',      count: payments.length },
-    { key: 'pending' as const,  label: 'Pending',  count: payments.filter((p) => p.status === 'pending').length },
-    { key: 'approved' as const, label: 'Approved', count: payments.filter((p) => p.status === 'approved').length },
-    { key: 'rejected' as const, label: 'Rejected', count: payments.filter((p) => p.status === 'rejected').length },
+    { key: 'all' as const,      label: 'All',      count: statusCounts?.all      ?? totalCount },
+    { key: 'pending' as const,  label: 'Pending',  count: statusCounts?.pending  ?? 0 },
+    { key: 'approved' as const, label: 'Approved', count: statusCounts?.approved ?? 0 },
+    { key: 'rejected' as const, label: 'Rejected', count: statusCounts?.rejected ?? 0 },
   ];
 
   const cols: Column<Record<string, unknown>>[] = [
@@ -725,26 +736,27 @@ function PaymentsTab({
       <Table
         columns={cols}
         data={pagePayments as unknown as Record<string, unknown>[]}
+        loading={isLoading}
         emptyMessage="No payments yet."
       />
 
-      {/* Pagination */}
-      {filteredPayments.length > PAGE_SIZE && (
+      {/* Server-side pagination */}
+      {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4 gap-3 flex-wrap">
           <p className="text-xs text-(--text-muted)">
-            Showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filteredPayments.length)} of {filteredPayments.length}
+            Showing {(page - 1) * 10 + 1}–{Math.min(page * 10, totalCount)} of {totalCount}
           </p>
           <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={safePage === 1}
+              disabled={page === 1}
               className="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
             >
               ← Prev
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter((n) => n === 1 || n === totalPages || Math.abs(n - safePage) <= 1)
+              .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
               .reduce<(number | '…')[]>((acc, n, idx, arr) => {
                 if (idx > 0 && n - (arr[idx - 1] as number) > 1) acc.push('…');
                 acc.push(n);
@@ -760,7 +772,7 @@ function PaymentsTab({
                     onClick={() => setPage(n as number)}
                     className={clsx(
                       'w-8 h-8 rounded-lg text-xs font-semibold transition-colors',
-                      safePage === n
+                      page === n
                         ? 'bg-orange-600 text-white'
                         : 'border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30',
                     )}
@@ -772,7 +784,7 @@ function PaymentsTab({
             <button
               type="button"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={safePage === totalPages}
+              disabled={page === totalPages}
               className="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
             >
               Next →

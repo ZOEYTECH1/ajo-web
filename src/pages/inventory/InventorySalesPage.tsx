@@ -70,6 +70,34 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
   const [notes, setNotes] = useState('');
   const [err, setErr] = useState('');
   const [completedSale, setCompletedSale] = useState<CompletedSale | null>(null);
+  const [barcodeInput, setBarcodeInput] = useState('');
+  const [barcodeErr, setBarcodeErr] = useState('');
+  const [barcodeLoading, setBarcodeLoading] = useState(false);
+
+  async function lookupBarcode() {
+    const code = barcodeInput.trim();
+    if (!code) return;
+    setBarcodeErr('');
+    setBarcodeLoading(true);
+    try {
+      const res = await api.get('/inventory/products/barcode/', { params: { code } });
+      const prod: Product = res.data;
+      if (prod.quantity <= 0) { setBarcodeErr(`"${prod.name}" is out of stock.`); return; }
+      setCart(prev => {
+        const existing = prev.find(c => c.product_id === prod.id);
+        if (existing) {
+          if (existing.quantity + 1 > prod.quantity) { setBarcodeErr(`Only ${prod.quantity} units available.`); return prev; }
+          return prev.map(c => c.product_id === prod.id ? { ...c, quantity: c.quantity + 1 } : c);
+        }
+        return [...prev, { product_id: prod.id, product_name: prod.name, quantity: 1, unit_price: prod.effective_price ?? prod.price }];
+      });
+      setBarcodeInput('');
+    } catch (e: any) {
+      setBarcodeErr(e.response?.status === 404 ? `No product found with barcode "${code}".` : 'Barcode lookup failed.');
+    } finally {
+      setBarcodeLoading(false);
+    }
+  }
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ['inventory-categories'],
@@ -176,20 +204,40 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
             {receiptText}
           </div>
           <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={async () => {
-                if (navigator.clipboard) await navigator.clipboard.writeText(receiptText);
-              }}
-              className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
-            >
-              Copy Receipt
-            </button>
+            {/* Smart share: Web Share API (mobile browsers) → WhatsApp (desktop) */}
+            {typeof navigator !== 'undefined' && 'share' in navigator ? (
+              <button
+                type="button"
+                onClick={() => navigator.share({ title: 'Sale Receipt', text: receiptText }).catch(() => {})}
+                className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+              >
+                Share Receipt
+              </button>
+            ) : (
+              <div className="flex flex-1 gap-2">
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(receiptText)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-center rounded-lg bg-green-600 text-white py-2.5 text-sm font-semibold hover:bg-green-700 transition-colors"
+                >
+                  WhatsApp
+                </a>
+                <button
+                  type="button"
+                  onClick={async () => { if (navigator.clipboard) await navigator.clipboard.writeText(receiptText); }}
+                  className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+                >
+                  Copy
+                </button>
+              </div>
+            )}
             <button
               type="button"
               onClick={() => {
                 setCart([]); setSelectedCatId(''); setSelectedProdId('');
                 setQty('1'); setUnitPrice(''); setCustomerId(''); setNotes(''); setErr('');
+                setBarcodeInput(''); setBarcodeErr('');
                 setCompletedSale(null);
               }}
               className="flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 transition-colors"
@@ -217,6 +265,37 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
           {/* Add item row */}
           <div className="bg-(--bg) rounded-xl p-4 space-y-3">
             <p className="text-sm font-semibold text-(--text-secondary)">Add Items</p>
+
+            {/* Barcode lookup */}
+            <div>
+              <label className="block text-xs font-medium text-(--text-secondary) mb-1">Barcode (type or scan)</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={barcodeInput}
+                  onChange={e => { setBarcodeInput(e.target.value); setBarcodeErr(''); }}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); lookupBarcode(); } }}
+                  placeholder="Type or paste a barcode code, then press Enter"
+                  className={inputCls}
+                />
+                <button
+                  type="button"
+                  onClick={lookupBarcode}
+                  disabled={!barcodeInput.trim() || barcodeLoading}
+                  className="rounded-lg border border-(--border) text-(--text-secondary) px-4 text-sm font-semibold hover:text-(--text-primary) disabled:opacity-40 transition-colors whitespace-nowrap"
+                >
+                  {barcodeLoading ? '…' : 'Find'}
+                </button>
+              </div>
+              {barcodeErr && <p className="text-xs text-red-600 mt-1">{barcodeErr}</p>}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-px bg-(--border)" />
+              <span className="text-xs text-(--text-muted) font-medium">or pick from list</span>
+              <div className="flex-1 h-px bg-(--border)" />
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-(--text-secondary) mb-1">Category</label>

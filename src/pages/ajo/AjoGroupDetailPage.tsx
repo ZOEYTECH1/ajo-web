@@ -588,8 +588,11 @@ function PaymentsTab({
 }) {
   const qc = useQueryClient();
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+  const [page, setPage] = useState(1);
   const [rejectTarget, setRejectTarget] = useState<number | null>(null);
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+
+  const PAGE_SIZE = 10;
 
   const reviewMutation = useMutation({
     mutationFn: ({ paymentId, action, reason }: { paymentId: number; action: string; reason?: string }) =>
@@ -603,6 +606,15 @@ function PaymentsTab({
   const filteredPayments = filter === 'all'
     ? payments
     : payments.filter((p) => p.status === filter);
+
+  const totalPages = Math.max(1, Math.ceil(filteredPayments.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+  const pagePayments = filteredPayments.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  function changeFilter(f: typeof filter) {
+    setFilter(f);
+    setPage(1);
+  }
 
   const filterPills = [
     { key: 'all' as const,      label: 'All',      count: payments.length },
@@ -691,7 +703,7 @@ function PaymentsTab({
           <button
             key={key}
             type="button"
-            onClick={() => setFilter(key)}
+            onClick={() => changeFilter(key)}
             className={clsx(
               'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors',
               filter === key
@@ -712,9 +724,62 @@ function PaymentsTab({
 
       <Table
         columns={cols}
-        data={filteredPayments as unknown as Record<string, unknown>[]}
+        data={pagePayments as unknown as Record<string, unknown>[]}
         emptyMessage="No payments yet."
       />
+
+      {/* Pagination */}
+      {filteredPayments.length > PAGE_SIZE && (
+        <div className="flex items-center justify-between mt-4 gap-3 flex-wrap">
+          <p className="text-xs text-(--text-muted)">
+            Showing {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filteredPayments.length)} of {filteredPayments.length}
+          </p>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={safePage === 1}
+              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
+            >
+              ← Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((n) => n === 1 || n === totalPages || Math.abs(n - safePage) <= 1)
+              .reduce<(number | '…')[]>((acc, n, idx, arr) => {
+                if (idx > 0 && n - (arr[idx - 1] as number) > 1) acc.push('…');
+                acc.push(n);
+                return acc;
+              }, [])
+              .map((n, i) =>
+                n === '…' ? (
+                  <span key={`ellipsis-${i}`} className="px-1.5 text-xs text-(--text-muted)">…</span>
+                ) : (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setPage(n as number)}
+                    className={clsx(
+                      'w-8 h-8 rounded-lg text-xs font-semibold transition-colors',
+                      safePage === n
+                        ? 'bg-orange-600 text-white'
+                        : 'border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30',
+                    )}
+                  >
+                    {n}
+                  </button>
+                ),
+              )}
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={safePage === totalPages}
+              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      )}
 
       {rejectTarget !== null && (
         <RejectModal

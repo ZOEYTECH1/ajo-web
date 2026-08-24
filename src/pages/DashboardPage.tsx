@@ -55,12 +55,13 @@ function getGreeting(): string {
 export default function DashboardPage() {
   const { user } = useAuthStore();
 
-  const { data: notifications, isLoading: notifLoading } = useQuery<Notification[]>({
+  const { data: notifications, isLoading: notifLoading, isError: notifError, refetch: refetchNotif } = useQuery<Notification[]>({
     queryKey: ['notifications'],
     queryFn: async () => {
       const response = await api.get('/notifications/');
       return response.data;
     },
+    retry: 1,
   });
 
   const firstName = user?.first_name || 'there';
@@ -129,7 +130,10 @@ export default function DashboardPage() {
 
         <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm divide-y divide-(--border)">
           {notifLoading ? (
-            <div className="p-6 space-y-3">
+            <div className="p-6 space-y-4">
+              <p className="text-xs text-(--text-muted) text-center animate-pulse">
+                Connecting to server — this may take a moment on first load…
+              </p>
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex gap-3">
                   <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded-full mt-0.5 shrink-0 skeleton" />
@@ -139,6 +143,17 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          ) : notifError ? (
+            <div className="px-5 py-8 text-center space-y-2">
+              <p className="text-sm text-(--text-muted)">Could not load notifications.</p>
+              <button
+                type="button"
+                onClick={() => refetchNotif()}
+                className="text-sm text-(--primary) font-semibold hover:underline"
+              >
+                Retry
+              </button>
             </div>
           ) : notifications && notifications.length > 0 ? (
             notifications.slice(0, 10).map((n) => (

@@ -39,13 +39,14 @@ export function Sidebar({ onClose }: SidebarProps) {
   const { user, clearAuth } = useAuthStore();
   const navigate = useNavigate();
 
-  const { data: notifs = [] } = useQuery<Notification[]>({
+  const { data: notifs } = useQuery({
     queryKey: ['notifications'],
     queryFn: () => api.get('/notifications/').then((r) => r.data),
     refetchInterval: 60_000,
     staleTime: 30_000,
   });
-  const unreadCount = notifs.filter((n) => !n.is_read).length;
+  const notifList: Notification[] = Array.isArray(notifs) ? notifs : (notifs?.results ?? []);
+  const unreadCount = notifList.filter((n) => !n.is_read).length;
 
   const handleLogout = async () => {
     try { await logout(); } catch { /* ignore */ }
@@ -65,8 +66,8 @@ export function Sidebar({ onClose }: SidebarProps) {
     <aside className="flex flex-col h-full bg-(--surface) border-r border-(--border)">
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-(--border)">
-        <img src="/ajo-logo.svg" alt="Ajo" className="h-9 w-9 shrink-0" />
-        <span className="text-xl font-extrabold tracking-tight text-(--primary)">Ajo</span>
+        <img src="/ajo-logo.svg" alt="Scribe" className="h-9 w-9 shrink-0" />
+        <span className="text-xl font-extrabold tracking-tight text-(--primary)">Scribe</span>
       </div>
 
       {/* Navigation */}

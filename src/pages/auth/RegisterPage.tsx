@@ -80,7 +80,7 @@ export default function RegisterPage() {
           <div className="flex items-center justify-center gap-3 mb-3">
             <AjoLoader size={52} />
           </div>
-          <h1 className="text-3xl font-extrabold text-(--primary) mt-2">Ajo</h1>
+          <h1 className="text-3xl font-extrabold text-(--primary) mt-2">Scribe</h1>
           <p className="mt-1 text-sm text-(--text-secondary)">Create your account</p>
         </div>
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
@@ -170,7 +170,7 @@ export default function NotificationsPage() {
               )}
             >
               <div className="flex items-start gap-3">
-                <div className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center bg-white dark:bg-gray-800 border border-(--border) shadow-sm">
+                <div className="shrink-0 h-9 w-9 rounded-xl flex items-center justify-center bg-(--surface) border border-(--border) shadow-sm">
                   <NotifIcon type={n.notif_type} />
                 </div>
                 <div className="flex-1 min-w-0">

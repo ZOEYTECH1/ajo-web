@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   BuildingStorefrontIcon,
@@ -50,21 +50,21 @@ const MODE_LABELS: Record<string, string> = {
 };
 
 const inputCls =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const orangeBtn =
   'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
 const cancelBtn =
-  'rounded-lg border border-gray-300 text-gray-700 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition-colors';
+  'rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
 
 function RoleBadge({ role }: { role: string }) {
   const colors: Record<string, string> = {
     owner:        'bg-orange-100 text-orange-700',
     manager:      'bg-blue-100 text-blue-700',
     branch_admin: 'bg-purple-100 text-purple-700',
-    staff:        'bg-gray-100 text-gray-700',
+    staff:        'bg-(--bg) text-(--text-secondary)',
   };
   return (
-    <span className={clsx('px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize', colors[role] ?? 'bg-gray-100 text-gray-600')}>
+    <span className={clsx('px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize', colors[role] ?? 'bg-(--bg) text-(--text-secondary)')}>
       {role.replace('_', ' ')}
     </span>
   );
@@ -92,16 +92,16 @@ function InviteModal({ bizId, onClose }: { bizId: number; onClose: () => void })
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Invite Staff</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Invite Staff</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" />
           </button>
         </div>
         <div className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Email address *</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Email address *</label>
             <input
               type="email"
               value={email}
@@ -111,7 +111,7 @@ function InviteModal({ bizId, onClose }: { bizId: number; onClose: () => void })
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Role *</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Role *</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
@@ -162,24 +162,24 @@ function EditBusinessModal({ biz, onClose }: { biz: Business; onClose: () => voi
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Edit Business</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Edit Business</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" />
           </button>
         </div>
         <div className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Business Name *</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Business Name *</label>
             <input type="text" value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} className={inputCls} />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Address</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Address</label>
             <input type="text" value={form.address} onChange={(e) => setForm(f => ({ ...f, address: e.target.value }))} placeholder="e.g. 12 Market St, Lagos" className={inputCls} />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Phone</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Phone</label>
             <input type="tel" value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="e.g. 08012345678" className={inputCls} />
           </div>
           {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
@@ -411,7 +411,7 @@ export default function InventoryBusinessPage() {
                                         }
                                       }}
                                       disabled={removeStaffMutation.isPending}
-                                      className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+                                      className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
                                       title="Remove"
                                     >
                                       <TrashIcon className="h-4 w-4" />

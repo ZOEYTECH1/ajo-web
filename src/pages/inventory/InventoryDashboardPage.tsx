@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format, addDays, subDays, isToday } from 'date-fns';
 import {
@@ -219,7 +219,7 @@ export default function InventoryDashboardPage() {
         {isLoading ? (
           <div className="p-6 space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-10 rounded-lg bg-gray-100 dark:bg-gray-800 skeleton" />
+              <div key={i} className="h-10 rounded-lg bg-(--bg) skeleton" />
             ))}
           </div>
         ) : data?.low_stock_items.length ? (
@@ -272,7 +272,7 @@ export default function InventoryDashboardPage() {
         {isLoading ? (
           <div className="p-6 space-y-3">
             {[1, 2].map((i) => (
-              <div key={i} className="h-10 rounded-lg bg-gray-100 dark:bg-gray-800 skeleton" />
+              <div key={i} className="h-10 rounded-lg bg-(--bg) skeleton" />
             ))}
           </div>
         ) : data?.expiring_soon_items.length ? (

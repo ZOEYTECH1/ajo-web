@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+﻿import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { CheckBadgeIcon } from '@heroicons/react/24/outline';
@@ -83,7 +83,7 @@ function CollectorStatusBadge({ status }: { status: string }) {
     <span className={clsx(
       'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize',
       status === 'active' ? 'bg-green-100 text-green-700'
-      : status === 'suspended' ? 'bg-gray-100 text-gray-500'
+      : status === 'suspended' ? 'bg-(--bg) text-(--text-secondary)'
       : 'bg-yellow-100 text-yellow-700',
     )}>
       {status}

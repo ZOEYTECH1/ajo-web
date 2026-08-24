@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -29,14 +29,14 @@ function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(v));
 }
 
-const inputCls = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-gray-300 text-gray-700 py-2.5 text-sm font-semibold hover:bg-gray-50 transition-colors';
+const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-semibold text-(--text-secondary) mb-1">{label}</label>
       {children}
     </div>
   );
@@ -111,10 +111,10 @@ function ProductModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-          <h2 className="text-lg font-bold text-gray-900">{isEdit ? 'Edit Product' : 'Add Product'}</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600"><XCircleIcon className="h-6 w-6" /></button>
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
+          <h2 className="text-lg font-bold text-(--text-primary)">{isEdit ? 'Edit Product' : 'Add Product'}</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <Field label="Product Name *">
@@ -181,13 +181,13 @@ function StockModal({ prodId, catId, productName, onClose }: { prodId: number; c
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Stock Movement</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600"><XCircleIcon className="h-6 w-6" /></button>
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Stock Movement</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
         <div className="p-6 space-y-4">
-          <p className="text-sm text-gray-500">Adjusting stock for <span className="font-semibold text-gray-900">{productName}</span></p>
+          <p className="text-sm text-(--text-secondary)">Adjusting stock for <span className="font-semibold text-(--text-primary)">{productName}</span></p>
           <Field label="Movement Type *">
             <select value={form.movement_type} onChange={(e) => setForm(f => ({ ...f, movement_type: e.target.value }))} className={inputCls}>
               <option value="in">Stock In (received)</option>
@@ -310,7 +310,7 @@ export default function InventoryProductsPage() {
                         <button
                           type="button"
                           onClick={() => setStockProduct(p)}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-green-600 hover:bg-green-50 transition-colors"
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-green-600 hover:bg-green-50 transition-colors"
                           title="Adjust stock"
                         >
                           <ArrowUpIcon className="h-4 w-4" />
@@ -318,7 +318,7 @@ export default function InventoryProductsPage() {
                         <button
                           type="button"
                           onClick={() => setEditProduct(p)}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-orange-600 hover:bg-orange-50 transition-colors"
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-orange-600 hover:bg-orange-50 transition-colors"
                           title="Edit"
                         >
                           <PencilIcon className="h-4 w-4" />
@@ -327,7 +327,7 @@ export default function InventoryProductsPage() {
                           type="button"
                           onClick={() => { if (confirm(`Delete "${p.name}"?`)) deleteMutation.mutate(p.id); }}
                           disabled={deleteMutation.isPending}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors"
                           title="Delete"
                         >
                           <TrashIcon className="h-4 w-4" />

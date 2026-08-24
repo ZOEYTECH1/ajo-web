@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import {
@@ -24,7 +24,7 @@ interface Business {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 const PRICE_PER_MONTH = 2000;
 
@@ -153,7 +153,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
 
       {/* Month selector */}
       <div>
-        <p className="text-sm font-semibold text-gray-700 mb-2">Select duration</p>
+        <p className="text-sm font-semibold text-(--text-secondary) mb-2">Select duration</p>
         <div className="flex flex-wrap gap-2">
           {MONTH_OPTIONS.map(({ value, label }) => (
             <button
@@ -194,7 +194,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
       {/* Verify payment section */}
       {showVerify && (
         <div className="space-y-3 rounded-xl bg-(--bg) border border-(--border) p-4">
-          <p className="text-sm font-semibold text-gray-700">
+          <p className="text-sm font-semibold text-(--text-secondary)">
             Verify Payment
           </p>
           <p className="text-xs text-(--text-secondary)">
@@ -217,7 +217,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
             <button
               type="button"
               onClick={() => { setShowVerify(false); setVerifyErr(''); }}
-              className="flex-1 rounded-lg border border-gray-300 text-gray-700 py-2 text-sm font-semibold hover:bg-gray-50 transition-colors"
+              className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
             >
               Cancel
             </button>

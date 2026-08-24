@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -85,7 +85,7 @@ const orangeBtn =
   'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
 
 const inputCls =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 // ── Status badge ──────────────────────────────────────────────────────────────
 
@@ -178,10 +178,10 @@ export default function AjoSubscriptionPage() {
   if (isLoading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-5 bg-gray-200 rounded w-32" />
-        <div className="h-8 bg-gray-200 rounded w-56" />
-        <div className="h-32 bg-gray-200 rounded-xl" />
-        <div className="h-48 bg-gray-200 rounded-xl" />
+        <div className="h-5 bg-(--border) rounded w-32" />
+        <div className="h-8 bg-(--border) rounded w-56" />
+        <div className="h-32 bg-(--border) rounded-xl" />
+        <div className="h-48 bg-(--border) rounded-xl" />
       </div>
     );
   }
@@ -211,7 +211,7 @@ export default function AjoSubscriptionPage() {
       {/* Back link */}
       <Link
         to={`/ajo/${id}`}
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+        className="inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text-primary)"
       >
         <ChevronLeftIcon className="h-4 w-4" />
         Back to group
@@ -223,7 +223,7 @@ export default function AjoSubscriptionPage() {
       </h1>
 
       {/* Status card */}
-      <div className="bg-white rounded-xl shadow-sm border border-(--border) p-5 space-y-3">
+      <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-5 space-y-3">
         <div className="flex items-center gap-3">
           <span className="text-sm font-semibold text-(--text-primary)">Current status</span>
           <SubscriptionStatusBadge group={group} />
@@ -245,15 +245,15 @@ export default function AjoSubscriptionPage() {
       </div>
 
       {/* How it works */}
-      <div className="flex gap-3 rounded-xl bg-gray-50 border border-(--border) px-4 py-4">
-        <InformationCircleIcon className="h-5 w-5 text-gray-400 shrink-0 mt-0.5" />
+      <div className="flex gap-3 rounded-xl bg-(--bg) border border-(--border) px-4 py-4">
+        <InformationCircleIcon className="h-5 w-5 text-(--text-muted) shrink-0 mt-0.5" />
         <p className="text-sm text-(--text-secondary)">
           The platform fee keeps your group running. Pay for multiple cycles in advance to save time.
         </p>
       </div>
 
       {/* Pricing breakdown */}
-      <div className="bg-white rounded-xl shadow-sm border border-(--border) p-5 space-y-3">
+      <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-5 space-y-3">
         <h2 className="text-sm font-semibold text-(--text-primary)">Pricing breakdown</h2>
 
         <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
@@ -282,7 +282,7 @@ export default function AjoSubscriptionPage() {
 
       {/* Cycle selector + Pay Now (admin only) */}
       {isAdmin && (
-        <div className="bg-white rounded-xl shadow-sm border border-(--border) p-5 space-y-5">
+        <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-5 space-y-5">
           <div className="space-y-3">
             <h2 className="text-sm font-semibold text-(--text-primary)">Select cycles</h2>
 
@@ -297,7 +297,7 @@ export default function AjoSubscriptionPage() {
                     'flex-1 py-2 rounded-lg text-sm font-semibold border transition-colors',
                     selectedCycles === n
                       ? 'bg-orange-600 text-white border-orange-600'
-                      : 'bg-white text-(--text-secondary) border-(--border) hover:border-orange-400 hover:text-orange-600',
+                      : 'bg-(--surface) text-(--text-secondary) border-(--border) hover:border-orange-400 hover:text-orange-600',
                   )}
                 >
                   {n}
@@ -394,7 +394,7 @@ export default function AjoSubscriptionPage() {
 
       {/* Non-admin notice */}
       {!isAdmin && (
-        <div className="rounded-xl bg-gray-50 border border-(--border) px-4 py-4 text-sm text-(--text-secondary)">
+        <div className="rounded-xl bg-(--bg) border border-(--border) px-4 py-4 text-sm text-(--text-secondary)">
           Only the group admin can manage the subscription. Contact{' '}
           <span className="font-medium text-(--text-primary)">
             {group.admin.first_name} {group.admin.last_name}

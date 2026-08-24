@@ -56,7 +56,7 @@ export function Button({
   const variants = {
     primary: 'bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500',
     secondary:
-      'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-orange-500',
+      'border border-(--border) bg-(--surface) text-(--text-secondary) hover:bg-(--primary-tint)/30 focus:ring-orange-500',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
   };
 

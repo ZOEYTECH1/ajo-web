@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { PlusIcon, XCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
@@ -49,11 +49,11 @@ interface Product {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const orangeBtn =
   'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
 const cancelBtn =
-  'rounded-lg border border-gray-300 text-gray-700 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition-colors';
+  'rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
 
 // ── Transfer Modal ─────────────────────────────────────────────────────────────
 
@@ -139,10 +139,10 @@ function TransferModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white">
-          <h2 className="text-lg font-bold text-gray-900">New Transfer</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface)">
+          <h2 className="text-lg font-bold text-(--text-primary)">New Transfer</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" />
           </button>
         </div>
@@ -150,7 +150,7 @@ function TransferModal({
         <div className="p-6 space-y-5">
           {/* Destination */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Transfer To *</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Transfer To *</label>
             <select value={toBizId} onChange={(e) => { setToBizId(e.target.value); setErr(''); }} className={inputCls}>
               <option value="">Select destination business…</option>
               {destBusinesses.map((b) => (
@@ -160,18 +160,18 @@ function TransferModal({
           </div>
 
           {/* Product picker */}
-          <div className="rounded-xl border border-gray-200 p-4 space-y-3 bg-gray-50">
-            <p className="text-sm font-semibold text-gray-700">Add Products</p>
+          <div className="rounded-xl border border-(--border) p-4 space-y-3 bg-(--bg)">
+            <p className="text-sm font-semibold text-(--text-secondary)">Add Products</p>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Category</label>
+                <label className="block text-xs text-(--text-secondary) mb-1">Category</label>
                 <select value={selectedCatId} onChange={(e) => { setSelectedCatId(e.target.value); setSelectedProdId(''); }} className={inputCls}>
                   <option value="">Select category…</option>
                   {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs text-gray-500 mb-1">Product</label>
+                <label className="block text-xs text-(--text-secondary) mb-1">Product</label>
                 <select value={selectedProdId} onChange={(e) => setSelectedProdId(e.target.value)} disabled={!selectedCatId} className={inputCls}>
                   <option value="">Select product…</option>
                   {products.map((p) => <option key={p.id} value={p.id}>{p.name} ({p.quantity} in stock)</option>)}
@@ -194,12 +194,12 @@ function TransferModal({
           {/* Cart */}
           {cart.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-semibold text-gray-700">Items to transfer</p>
+              <p className="text-sm font-semibold text-(--text-secondary)">Items to transfer</p>
               {cart.map((item, i) => (
                 <div key={i} className="flex items-center justify-between gap-2 rounded-lg bg-orange-50 border border-orange-100 px-3 py-2">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{item.product_name}</p>
-                    <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                    <p className="text-sm font-medium text-(--text-primary)">{item.product_name}</p>
+                    <p className="text-xs text-(--text-secondary)">Qty: {item.quantity}</p>
                   </div>
                   <button
                     type="button"
@@ -215,11 +215,11 @@ function TransferModal({
 
           {/* Reference & notes */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Reference (optional)</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Reference (optional)</label>
             <input type="text" value={reference} onChange={(e) => setReference(e.target.value)} placeholder="e.g. TRF-001" className={inputCls} />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Notes (optional)</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Notes (optional)</label>
             <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Add any notes…" className={inputCls} />
           </div>
 
@@ -319,7 +319,7 @@ export default function InventoryTransfersPage() {
                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize ${
                       t.status === 'completed' ? 'bg-green-100 text-green-700' :
                       t.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-gray-100 text-gray-600'
+                      'bg-(--bg) text-(--text-secondary)'
                     }`}>
                       {t.status}
                     </span>

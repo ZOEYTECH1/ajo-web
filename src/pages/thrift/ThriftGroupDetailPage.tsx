@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQueries, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -88,14 +88,14 @@ function fmt(d: string | null | undefined) {
   return new Date(d).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-const inputCls = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
 const submitBtn = 'flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-gray-300 text-gray-700 py-2.5 text-sm font-semibold hover:bg-gray-50 transition-colors';
+const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-semibold text-(--text-secondary) mb-1">{label}</label>
       {children}
     </div>
   );
@@ -142,10 +142,10 @@ function SettingsModal({ groupId, group, onClose }: { groupId: number; group: Th
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white">
-          <h2 className="text-lg font-bold text-gray-900">Group Settings</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600"><XCircleIcon className="h-6 w-6" /></button>
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Group Settings</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
         <div className="p-6 space-y-4">
           <Field label="Group Name">
@@ -203,10 +203,10 @@ function MarkPaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Mark Payment</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600"><XCircleIcon className="h-6 w-6" /></button>
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Mark Payment</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <Field label="Member *">
@@ -256,13 +256,13 @@ function DisputeModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Dispute Payment</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600"><XCircleIcon className="h-6 w-6" /></button>
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Dispute Payment</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
         <div className="p-6 space-y-4">
-          <p className="text-sm text-gray-500">Describe why this payment record is incorrect.</p>
+          <p className="text-sm text-(--text-secondary)">Describe why this payment record is incorrect.</p>
           <Field label="Reason *">
             <textarea rows={3} value={reason} onChange={(e) => { setReason(e.target.value); setErr(''); }} placeholder="e.g. I did not make this payment on this date" className={inputCls} />
           </Field>
@@ -306,10 +306,10 @@ function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: number; c
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Start Cycle #{cycleNumber}</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600"><XCircleIcon className="h-6 w-6" /></button>
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Start Cycle #{cycleNumber}</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -421,8 +421,8 @@ export default function ThriftGroupDetailPage() {
   if (groupQ.isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 bg-gray-200 rounded skeleton w-48" />
-        <div className="h-32 bg-gray-200 rounded-xl skeleton" />
+        <div className="h-8 bg-(--border) rounded skeleton w-48" />
+        <div className="h-32 bg-(--border) rounded-xl skeleton" />
       </div>
     );
   }
@@ -469,7 +469,7 @@ export default function ThriftGroupDetailPage() {
 
           <div className="flex items-center gap-2">
             {isCollector && (
-              <button type="button" onClick={() => setShowSettings(true)} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:text-teal-600 hover:border-teal-300 transition-colors" title="Settings">
+              <button type="button" onClick={() => setShowSettings(true)} className="p-2 rounded-lg border border-(--border) text-(--text-secondary) hover:text-teal-600 hover:border-teal-300 transition-colors" title="Settings">
                 <Cog6ToothIcon className="h-5 w-5" />
               </button>
             )}
@@ -519,7 +519,7 @@ export default function ThriftGroupDetailPage() {
               type="button"
               onClick={() => regenMutation.mutate()}
               disabled={regenMutation.isPending}
-              className="flex items-center gap-1 text-xs text-gray-500 hover:text-teal-600 transition-colors"
+              className="flex items-center gap-1 text-xs text-(--text-secondary) hover:text-teal-600 transition-colors"
             >
               <ArrowPathIcon className={clsx('h-4 w-4', regenMutation.isPending && 'animate-spin')} />
               Regenerate
@@ -628,7 +628,7 @@ export default function ThriftGroupDetailPage() {
                                   type="button"
                                   onClick={() => { if (confirm('Delete this payment record?')) deletePaymentMutation.mutate(p.id); }}
                                   disabled={deletePaymentMutation.isPending}
-                                  className="text-xs text-gray-400 hover:text-red-600 transition-colors"
+                                  className="text-xs text-(--text-muted) hover:text-red-600 transition-colors"
                                 >
                                   Delete
                                 </button>
@@ -756,7 +756,7 @@ export default function ThriftGroupDetailPage() {
 
           {cyclesQ.isLoading ? (
             <div className="space-y-3">
-              {[1, 2].map(i => <div key={i} className="h-20 bg-gray-200 rounded-xl skeleton" />)}
+              {[1, 2].map(i => <div key={i} className="h-20 bg-(--border) rounded-xl skeleton" />)}
             </div>
           ) : cycles.length === 0 ? (
             <p className="text-center text-sm text-(--text-muted) py-12">No cycles yet.</p>
@@ -769,7 +769,7 @@ export default function ThriftGroupDetailPage() {
                       <span className="font-semibold text-(--text-primary)">Cycle #{c.cycle_number}</span>
                       <span className={clsx(
                         'text-xs font-semibold px-2 py-0.5 rounded-full',
-                        c.status === 'active' ? 'bg-teal-100 text-teal-700' : 'bg-gray-100 text-gray-500',
+                        c.status === 'active' ? 'bg-teal-100 text-teal-700' : 'bg-(--bg) text-(--text-secondary)',
                       )}>
                         {c.status}
                       </span>
@@ -784,7 +784,7 @@ export default function ThriftGroupDetailPage() {
                       type="button"
                       onClick={() => { if (confirm(`End Cycle #${c.cycle_number}?`)) endCycleMutation.mutate(c.id); }}
                       disabled={endCycleMutation.isPending}
-                      className="text-sm font-semibold text-gray-600 border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                      className="text-sm font-semibold text-(--text-secondary) border border-(--border) rounded-lg px-4 py-2 hover:bg-(--primary-tint)/30 transition-colors disabled:opacity-50"
                     >
                       End Cycle
                     </button>

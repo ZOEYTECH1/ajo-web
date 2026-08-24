@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CameraIcon, XCircleIcon } from '@heroicons/react/24/outline';
@@ -369,14 +369,14 @@ export default function AccountPage() {
       {/* Delete confirm modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+          <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-gray-900">Delete Account</h3>
-              <button type="button" onClick={() => setShowDeleteConfirm(false)} className="text-gray-400 hover:text-gray-600">
+              <h3 className="text-lg font-bold text-(--text-primary)">Delete Account</h3>
+              <button type="button" onClick={() => setShowDeleteConfirm(false)} className="text-(--text-muted) hover:text-(--text-primary)">
                 <XCircleIcon className="h-6 w-6" />
               </button>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-(--text-secondary)">
               Are you sure you want to delete your account? This action is{' '}
               <span className="font-semibold text-red-600">permanent and cannot be reversed</span>.
             </p>
@@ -389,7 +389,7 @@ export default function AccountPage() {
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 rounded-lg border border-gray-300 text-gray-700 py-2.5 text-sm font-semibold hover:bg-gray-50 transition-colors"
+                className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
               >
                 Cancel
               </button>

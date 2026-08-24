@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -134,7 +134,7 @@ export default function InventoryAnalyticsPage() {
       <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
         <h2 className="text-base font-semibold text-(--text-primary) mb-4">Revenue vs Expenses</h2>
         {isLoading ? (
-          <div className="h-64 rounded-lg bg-gray-100 dark:bg-gray-800 skeleton" />
+          <div className="h-64 rounded-lg bg-(--bg) skeleton" />
         ) : (
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={data?.chart ?? []} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
@@ -154,7 +154,7 @@ export default function InventoryAnalyticsPage() {
       <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
         <h2 className="text-base font-semibold text-(--text-primary) mb-4">Stock Movement</h2>
         {isLoading ? (
-          <div className="h-64 rounded-lg bg-gray-100 dark:bg-gray-800 skeleton" />
+          <div className="h-64 rounded-lg bg-(--bg) skeleton" />
         ) : (
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={data?.chart ?? []} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
@@ -178,7 +178,7 @@ export default function InventoryAnalyticsPage() {
         {isLoading ? (
           <div className="p-6 space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-10 rounded-lg bg-gray-100 dark:bg-gray-800 skeleton" />
+              <div key={i} className="h-10 rounded-lg bg-(--bg) skeleton" />
             ))}
           </div>
         ) : data?.best_sellers.length ? (

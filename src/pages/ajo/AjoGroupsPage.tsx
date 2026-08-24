@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
@@ -32,7 +32,7 @@ function StatusBadge({ group }: { group: AjoGroup }) {
         ? 'bg-yellow-100 text-yellow-700'
         : group.is_subscription_active
         ? 'bg-green-100 text-green-700'
-        : 'bg-gray-100 text-gray-500',
+        : 'bg-(--bg) text-(--text-secondary)',
     )}>
       {label}
     </span>
@@ -96,10 +96,10 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-          <h2 className="text-lg font-bold text-gray-900">Create Ajo Group</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
+          <h2 className="text-lg font-bold text-(--text-primary)">Create Ajo Group</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" />
           </button>
         </div>
@@ -223,10 +223,10 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Join Ajo Group</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Join Ajo Group</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" />
           </button>
         </div>
@@ -234,7 +234,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
         <div className="p-6 space-y-4">
           {stage === 'code' ? (
             <>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-(--text-secondary)">
                 Enter the 8-character invite code shared by your group admin.
               </p>
               <div>
@@ -264,10 +264,10 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
             <>
               <div className="rounded-xl bg-orange-50 border border-orange-100 p-4 text-center">
                 <p className="text-xs text-orange-500 uppercase tracking-wider font-semibold mb-1">Group found</p>
-                <p className="text-lg font-bold text-gray-900">{found?.group_name}</p>
-                <p className="text-sm text-gray-500 mt-1">{found?.message}</p>
+                <p className="text-lg font-bold text-(--text-primary)">{found?.group_name}</p>
+                <p className="text-sm text-(--text-secondary) mt-1">{found?.message}</p>
               </div>
-              <p className="text-sm text-gray-500 text-center">
+              <p className="text-sm text-(--text-secondary) text-center">
                 Your request will be sent to the group admin for approval.
               </p>
               <div className="flex gap-3">
@@ -294,16 +294,16 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const submitBtn =
   'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
 const cancelBtn =
-  'flex-1 rounded-lg border border-gray-300 text-gray-700 py-2.5 text-sm font-semibold hover:bg-gray-50 transition-colors';
+  'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
 
 function Field({ label, id, children }: { label: string; id?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
+      <label htmlFor={id} className="block text-sm font-semibold text-(--text-secondary) mb-1">{label}</label>
       {children}
     </div>
   );
@@ -330,7 +330,7 @@ export default function AjoGroupsPage() {
           </div>
           <Link
             to="/ajo/history"
-            className="text-sm text-gray-400 hover:text-orange-600 transition-colors whitespace-nowrap"
+            className="text-sm text-(--text-muted) hover:text-orange-600 transition-colors whitespace-nowrap"
           >
             My Payment History →
           </Link>
@@ -339,7 +339,7 @@ export default function AjoGroupsPage() {
           <button
             type="button"
             onClick={() => setShowJoin(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 text-gray-700 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
           >
             <KeyIcon className="h-4 w-4" />
             Join Group

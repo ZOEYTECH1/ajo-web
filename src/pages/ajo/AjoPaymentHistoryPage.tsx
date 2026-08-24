@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
@@ -50,7 +50,7 @@ function StatusBadge({ value }: { value: string }) {
         ? 'bg-yellow-100 text-yellow-700'
         : s === 'rejected'
         ? 'bg-red-100 text-red-600'
-        : 'bg-gray-100 text-gray-600',
+        : 'bg-(--bg) text-(--text-secondary)',
     )}>
       {value}
     </span>
@@ -129,7 +129,7 @@ export default function AjoPaymentHistoryPage() {
       {/* Back link */}
       <Link
         to="/ajo"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+        className="inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text-primary)"
       >
         <ChevronLeftIcon className="h-4 w-4" />
         Back to groups
@@ -137,8 +137,8 @@ export default function AjoPaymentHistoryPage() {
 
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Payment History</h1>
-        <p className="text-sm text-gray-500 mt-1">All payments you have submitted across your groups</p>
+        <h1 className="text-2xl font-bold text-(--text-primary)">My Payment History</h1>
+        <p className="text-sm text-(--text-secondary) mt-1">All payments you have submitted across your groups</p>
       </div>
 
       {/* Status filter */}
@@ -152,7 +152,7 @@ export default function AjoPaymentHistoryPage() {
               'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
               filter === key
                 ? 'bg-orange-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+                : 'bg-(--bg) text-(--text-secondary) hover:bg-(--primary-tint)/50',
             )}
           >
             {label}
@@ -182,7 +182,7 @@ export default function AjoPaymentHistoryPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between pt-2">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-(--text-secondary)">
             Page {page} of {totalPages} · {data?.count ?? 0} total
           </p>
           <div className="flex gap-2">
@@ -190,7 +190,7 @@ export default function AjoPaymentHistoryPage() {
               type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-(--border) text-sm font-medium text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
             >
               <ChevronLeftIcon className="h-4 w-4" />
               Prev
@@ -199,7 +199,7 @@ export default function AjoPaymentHistoryPage() {
               type="button"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-(--border) text-sm font-medium text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
             >
               Next
               <ChevronRightIcon className="h-4 w-4" />

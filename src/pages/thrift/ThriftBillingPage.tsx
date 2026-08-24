@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Skeleton } from '../../components/ui/Skeleton';
@@ -139,7 +139,7 @@ function InvoiceCard({ invoice }: { invoice: Invoice }) {
               value={verifyTxId}
               onChange={(e) => { setVerifyTxId(e.target.value); setVerifyError(''); }}
               placeholder="Transaction ID"
-              className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <button
               type="button"

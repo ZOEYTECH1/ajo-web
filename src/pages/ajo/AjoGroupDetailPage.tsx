@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQueries, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
@@ -242,7 +242,7 @@ function SubmitPaymentModal({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <p className="text-sm text-(--text-secondary)">
-            Group: <span className="font-medium text-gray-800">{groupName}</span>
+            Group: <span className="font-medium text-(--text-primary)">{groupName}</span>
           </p>
 
           <div>

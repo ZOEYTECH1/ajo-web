@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
@@ -23,7 +23,7 @@ interface Category {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -130,7 +130,7 @@ export default function InventoryWarehouseDispatchPage() {
         <form onSubmit={handleSubmit} className="space-y-5 max-w-xl">
           {/* Category */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
               Category <span className="text-red-500">*</span>
             </label>
             <select
@@ -152,7 +152,7 @@ export default function InventoryWarehouseDispatchPage() {
 
           {/* Product */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
               Product <span className="text-red-500">*</span>
             </label>
             <select
@@ -172,7 +172,7 @@ export default function InventoryWarehouseDispatchPage() {
 
           {/* Quantity */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
               Quantity <span className="text-red-500">*</span>
             </label>
             <input
@@ -199,7 +199,7 @@ export default function InventoryWarehouseDispatchPage() {
 
           {/* Destination */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
               Destination (optional)
             </label>
             <input
@@ -213,7 +213,7 @@ export default function InventoryWarehouseDispatchPage() {
 
           {/* Reference */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
               Reference Number (optional)
             </label>
             <input
@@ -227,7 +227,7 @@ export default function InventoryWarehouseDispatchPage() {
 
           {/* Note */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
               Note (optional)
             </label>
             <textarea

@@ -9,7 +9,7 @@ export function Skeleton({ className, rounded }: SkeletonProps) {
   return (
     <div
       className={clsx(
-        'skeleton bg-gray-200 dark:bg-gray-700',
+        'skeleton bg-(--border)',
         rounded ? 'rounded-full' : 'rounded-md',
         className,
       )}

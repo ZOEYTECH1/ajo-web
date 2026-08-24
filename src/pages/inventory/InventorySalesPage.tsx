@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { PlusIcon, XCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -30,9 +30,9 @@ function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(v));
 }
 
-const inputCls = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-gray-300 text-gray-700 py-2.5 text-sm font-semibold hover:bg-gray-50 transition-colors';
+const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
 
 // ── New Sale Modal ─────────────────────────────────────────────────────────────
 
@@ -116,26 +116,26 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-          <h2 className="text-lg font-bold text-gray-900">New Sale</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600"><XCircleIcon className="h-6 w-6" /></button>
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
+          <h2 className="text-lg font-bold text-(--text-primary)">New Sale</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Add item row */}
-          <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-            <p className="text-sm font-semibold text-gray-700">Add Items</p>
+          <div className="bg-(--bg) rounded-xl p-4 space-y-3">
+            <p className="text-sm font-semibold text-(--text-secondary)">Add Items</p>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Category</label>
+                <label className="block text-xs font-medium text-(--text-secondary) mb-1">Category</label>
                 <select value={selectedCatId} onChange={(e) => { setSelectedCatId(e.target.value); setSelectedProdId(''); setUnitPrice(''); }} className={inputCls}>
                   <option value="">Select category…</option>
                   {categories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Product</label>
+                <label className="block text-xs font-medium text-(--text-secondary) mb-1">Product</label>
                 <select value={selectedProdId} onChange={(e) => handleProductSelect(e.target.value)} disabled={!selectedCatId} className={inputCls}>
                   <option value="">Select product…</option>
                   {products?.map(p => <option key={p.id} value={p.id}>{p.name} (qty: {p.quantity})</option>)}
@@ -144,11 +144,11 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Qty</label>
+                <label className="block text-xs font-medium text-(--text-secondary) mb-1">Qty</label>
                 <input type="number" min="1" value={qty} onChange={(e) => setQty(e.target.value)} className={inputCls} />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Unit Price (NGN)</label>
+                <label className="block text-xs font-medium text-(--text-secondary) mb-1">Unit Price (NGN)</label>
                 <input type="number" min="0" step="0.01" value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} className={inputCls} />
               </div>
               <div className="flex items-end">
@@ -166,24 +166,24 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
 
           {/* Cart */}
           {cart.length > 0 && (
-            <div className="border border-gray-200 rounded-xl overflow-hidden">
+            <div className="border border-(--border) rounded-xl overflow-hidden">
               <table className="min-w-full divide-y divide-gray-100">
-                <thead className="bg-gray-50">
+                <thead className="bg-(--bg)">
                   <tr>
                     {['Product', 'Qty', 'Unit Price', 'Subtotal', ''].map(h => (
-                      <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase">{h}</th>
+                      <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-(--text-secondary) uppercase">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {cart.map(item => (
                     <tr key={item.product_id}>
-                      <td className="px-4 py-2 text-sm text-gray-900">{item.product_name}</td>
-                      <td className="px-4 py-2 text-sm text-gray-600">{item.quantity}</td>
-                      <td className="px-4 py-2 text-sm text-gray-600">{formatCurrency(item.unit_price)}</td>
-                      <td className="px-4 py-2 text-sm font-semibold text-gray-900">{formatCurrency(item.quantity * Number(item.unit_price))}</td>
+                      <td className="px-4 py-2 text-sm text-(--text-primary)">{item.product_name}</td>
+                      <td className="px-4 py-2 text-sm text-(--text-secondary)">{item.quantity}</td>
+                      <td className="px-4 py-2 text-sm text-(--text-secondary)">{formatCurrency(item.unit_price)}</td>
+                      <td className="px-4 py-2 text-sm font-semibold text-(--text-primary)">{formatCurrency(item.quantity * Number(item.unit_price))}</td>
                       <td className="px-4 py-2">
-                        <button type="button" onClick={() => setCart(cart.filter(c => c.product_id !== item.product_id))} className="text-gray-400 hover:text-red-600">
+                        <button type="button" onClick={() => setCart(cart.filter(c => c.product_id !== item.product_id))} className="text-(--text-muted) hover:text-red-600">
                           <TrashIcon className="h-4 w-4" />
                         </button>
                       </td>
@@ -191,8 +191,8 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
                   ))}
                 </tbody>
               </table>
-              <div className="px-4 py-3 bg-gray-50 flex justify-end">
-                <span className="text-sm font-bold text-gray-900">Total: {formatCurrency(total)}</span>
+              <div className="px-4 py-3 bg-(--bg) flex justify-end">
+                <span className="text-sm font-bold text-(--text-primary)">Total: {formatCurrency(total)}</span>
               </div>
             </div>
           )}
@@ -200,14 +200,14 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
           {/* Customer + Notes */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Customer (optional)</label>
+              <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Customer (optional)</label>
               <select value={customerId} onChange={(e) => setCustomerId(e.target.value)} className={inputCls}>
                 <option value="">Walk-in / No customer</option>
                 {customers?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Notes</label>
+              <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Notes</label>
               <input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional notes" className={inputCls} />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
@@ -13,9 +13,9 @@ interface Category {
   created_at: string;
 }
 
-const inputCls = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-gray-300 text-gray-700 py-2.5 text-sm font-semibold hover:bg-gray-50 transition-colors';
+const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
 
 function CategoryModal({
   initial,
@@ -33,14 +33,14 @@ function CategoryModal({
   const [name, setName] = useState(initial);
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">{initial ? 'Edit Category' : 'Add Category'}</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600"><XCircleIcon className="h-6 w-6" /></button>
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">{initial ? 'Edit Category' : 'Add Category'}</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
         <div className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Category Name *</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Category Name *</label>
             <input
               type="text"
               value={name}
@@ -149,7 +149,7 @@ export default function InventoryCategoriesPage() {
                         <button
                           type="button"
                           onClick={() => { setMutErr(''); setEditCat(cat); }}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-orange-600 hover:bg-orange-50 transition-colors"
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-orange-600 hover:bg-orange-50 transition-colors"
                           title="Edit"
                         >
                           <PencilIcon className="h-4 w-4" />
@@ -158,7 +158,7 @@ export default function InventoryCategoriesPage() {
                           type="button"
                           onClick={() => { if (confirm(`Delete "${cat.name}"? This cannot be undone.`)) deleteMutation.mutate(cat.id); }}
                           disabled={deleteMutation.isPending}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors"
                           title="Delete"
                         >
                           <TrashIcon className="h-4 w-4" />

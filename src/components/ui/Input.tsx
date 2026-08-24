@@ -30,7 +30,7 @@ export function Input({
     <div className="flex flex-col gap-1">
       <label
         htmlFor={inputId}
-        className="text-sm font-medium text-gray-700"
+        className="text-sm font-medium text-(--text-secondary)"
       >
         {label}
         {required && <span className="text-red-500 ml-1" aria-hidden="true">*</span>}
@@ -47,12 +47,12 @@ export function Input({
         aria-describedby={error ? `${inputId}-error` : undefined}
         aria-invalid={!!error}
         className={clsx(
-          'w-full rounded-lg border px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400',
+          'w-full rounded-lg border px-3 py-2 text-sm text-(--text-primary) placeholder:text-(--text-muted)',
           'focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500',
-          'disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed',
+          'disabled:bg-(--bg) disabled:text-(--text-muted) disabled:cursor-not-allowed',
           error
             ? 'border-red-400 bg-red-50'
-            : 'border-gray-300 bg-white',
+            : 'border-(--border) bg-(--surface)',
         )}
       />
       {error && (

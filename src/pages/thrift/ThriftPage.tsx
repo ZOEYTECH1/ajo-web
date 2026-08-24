@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
@@ -28,7 +28,7 @@ function SubscriptionBadge({ group }: { group: ThriftGroup }) {
       'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
       group.is_on_trial ? 'bg-yellow-100 text-yellow-700'
       : group.is_subscription_active ? 'bg-green-100 text-green-700'
-      : 'bg-gray-100 text-gray-500',
+      : 'bg-(--bg) text-(--text-secondary)',
     )}>
       {label}
     </span>
@@ -37,14 +37,14 @@ function SubscriptionBadge({ group }: { group: ThriftGroup }) {
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
-const inputCls = 'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
 const submitBtn = 'flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-gray-300 text-gray-700 py-2.5 text-sm font-semibold hover:bg-gray-50 transition-colors';
+const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm font-semibold text-(--text-secondary) mb-1">{label}</label>
       {children}
     </div>
   );
@@ -91,10 +91,10 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-          <h2 className="text-lg font-bold text-gray-900">Create Thrift Group</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
+          <h2 className="text-lg font-bold text-(--text-primary)">Create Thrift Group</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" />
           </button>
         </div>
@@ -175,16 +175,16 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Join Thrift Group</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600"><XCircleIcon className="h-6 w-6" /></button>
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Join Thrift Group</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
 
         <div className="p-6 space-y-4">
           {stage === 'code' && (
             <>
-              <p className="text-sm text-gray-500">Enter the invite code shared by your collector.</p>
+              <p className="text-sm text-(--text-secondary)">Enter the invite code shared by your collector.</p>
               <input
                 type="text"
                 value={code}
@@ -205,7 +205,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 
           {stage === 'amount' && (
             <>
-              <p className="text-sm text-gray-500">Enter the amount you will contribute per collection period.</p>
+              <p className="text-sm text-(--text-secondary)">Enter the amount you will contribute per collection period.</p>
               <Field label="My Contribution Amount (NGN) *">
                 <input
                   type="number"
@@ -235,8 +235,8 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
             <>
               <div className="rounded-xl bg-teal-50 border border-teal-100 p-4 text-center">
                 <p className="text-xs text-teal-600 uppercase tracking-wider font-semibold mb-1">Request sent!</p>
-                <p className="text-lg font-bold text-gray-900">{groupName}</p>
-                <p className="text-sm text-gray-500 mt-1">Waiting for collector approval.</p>
+                <p className="text-lg font-bold text-(--text-primary)">{groupName}</p>
+                <p className="text-sm text-(--text-secondary) mt-1">Waiting for collector approval.</p>
               </div>
               <button
                 type="button"
@@ -273,13 +273,13 @@ export default function ThriftPage() {
             <p className="text-sm text-(--text-secondary)">Your cooperative savings groups</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <Link to="/thrift/history" className="text-sm text-gray-400 hover:text-teal-600 transition-colors whitespace-nowrap">
+            <Link to="/thrift/history" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
               My Payment History →
             </Link>
-            <Link to="/thrift/queue" className="text-sm text-gray-400 hover:text-teal-600 transition-colors whitespace-nowrap">
+            <Link to="/thrift/queue" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
               Collector Queue →
             </Link>
-            <Link to="/thrift/billing" className="text-sm text-gray-400 hover:text-teal-600 transition-colors whitespace-nowrap">
+            <Link to="/thrift/billing" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
               Billing →
             </Link>
           </div>
@@ -288,7 +288,7 @@ export default function ThriftPage() {
           <button
             type="button"
             onClick={() => setShowJoin(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 text-gray-700 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
           >
             <KeyIcon className="h-4 w-4" />
             Join Group

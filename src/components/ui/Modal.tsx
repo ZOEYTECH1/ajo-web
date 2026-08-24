@@ -46,18 +46,18 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
             >
               <DialogPanel
                 className={clsx(
-                  'w-full bg-white rounded-xl shadow-xl p-6',
+                  'w-full bg-(--surface) rounded-xl shadow-xl p-6',
                   sizeClasses[size],
                 )}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <DialogTitle className="text-lg font-semibold text-gray-900">
+                  <DialogTitle className="text-lg font-semibold text-(--text-primary)">
                     {title}
                   </DialogTitle>
                   <button
                     type="button"
                     onClick={onClose}
-                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                    className="text-(--text-muted) hover:text-(--text-primary) transition-colors"
                     aria-label="Close modal"
                   >
                     <XMarkIcon className="h-5 w-5" />

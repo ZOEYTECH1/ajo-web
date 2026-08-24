@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import {
@@ -136,10 +136,10 @@ export default function DashboardPage() {
               </p>
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex gap-3">
-                  <div className="h-4 w-4 bg-gray-200 dark:bg-gray-700 rounded-full mt-0.5 shrink-0 skeleton" />
+                  <div className="h-4 w-4 bg-(--border) rounded-full mt-0.5 shrink-0 skeleton" />
                   <div className="flex-1 space-y-1.5">
-                    <div className="h-3.5 bg-gray-200 dark:bg-gray-700 rounded w-3/4 skeleton" />
-                    <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-1/3 skeleton" />
+                    <div className="h-3.5 bg-(--border) rounded w-3/4 skeleton" />
+                    <div className="h-3 bg-(--bg) rounded w-1/3 skeleton" />
                   </div>
                 </div>
               ))}

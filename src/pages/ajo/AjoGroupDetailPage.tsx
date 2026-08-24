@@ -133,7 +133,7 @@ function StatusBadge({ value }: { value: string }) {
         ? 'bg-yellow-100 text-yellow-700'
         : s === 'rejected' || s === 'closed'
         ? 'bg-red-100 text-red-600'
-        : 'bg-gray-100 text-gray-600',
+        : 'bg-(--bg) text-(--text-secondary)',
     )}>
       {value}
     </span>
@@ -143,11 +143,11 @@ function StatusBadge({ value }: { value: string }) {
 // ── Shared style constants ────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) bg-(--surface) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const orangeBtn =
   'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
 const cancelBtn =
-  'rounded-lg border border-gray-300 text-gray-700 px-4 py-2 text-sm font-semibold hover:bg-gray-50 transition-colors';
+  'rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
 
 // ── Submit Payment Modal ──────────────────────────────────────────────────────
 
@@ -212,10 +212,10 @@ function SubmitPaymentModal({
   if (success) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full text-center space-y-4">
+        <div className="bg-(--surface) rounded-2xl shadow-xl p-8 max-w-sm w-full text-center space-y-4">
           <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto" />
-          <h2 className="text-xl font-bold text-gray-900">Payment Submitted!</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-xl font-bold text-(--text-primary)">Payment Submitted!</h2>
+          <p className="text-sm text-(--text-secondary)">
             Your payment is pending review by the group admin.
           </p>
           <button
@@ -232,21 +232,21 @@ function SubmitPaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Submit Payment</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Submit Payment</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-(--text-secondary)">
             Group: <span className="font-medium text-gray-800">{groupName}</span>
           </p>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Amount (NGN)</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Amount (NGN)</label>
             <input
               type="number"
               min="1"
@@ -258,9 +258,9 @@ function SubmitPaymentModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Receipt (optional)</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Receipt (optional)</label>
             {preview ? (
-              <div className="relative rounded-xl overflow-hidden border border-gray-200">
+              <div className="relative rounded-xl overflow-hidden border border-(--border)">
                 <img src={preview} alt="Receipt preview" className="w-full h-48 object-cover" />
                 <button
                   type="button"
@@ -274,11 +274,11 @@ function SubmitPaymentModal({
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="w-full rounded-xl border-2 border-dashed border-gray-300 py-8 flex flex-col items-center gap-2 hover:border-orange-400 hover:bg-orange-50 transition-colors"
+                className="w-full rounded-xl border-2 border-dashed border-(--border) py-8 flex flex-col items-center gap-2 hover:border-orange-400 hover:bg-orange-50 transition-colors"
               >
-                <PaperClipIcon className="h-8 w-8 text-gray-400" />
-                <span className="text-sm font-medium text-gray-500">Attach receipt photo</span>
-                <span className="text-xs text-gray-400">Click to choose from your files</span>
+                <PaperClipIcon className="h-8 w-8 text-(--text-muted)" />
+                <span className="text-sm font-medium text-(--text-secondary)">Attach receipt photo</span>
+                <span className="text-xs text-(--text-muted)">Click to choose from your files</span>
               </button>
             )}
             <input
@@ -322,9 +322,9 @@ function RejectModal({
   const [reason, setReason] = useState('');
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
-        <h3 className="text-lg font-bold text-gray-900">Reject Payment</h3>
-        <p className="text-sm text-gray-500">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+        <h3 className="text-lg font-bold text-(--text-primary)">Reject Payment</h3>
+        <p className="text-sm text-(--text-secondary)">
           Optionally provide a reason so the member knows what to fix.
         </p>
         <textarea
@@ -332,7 +332,7 @@ function RejectModal({
           onChange={(e) => setReason(e.target.value)}
           rows={3}
           placeholder="e.g. Wrong amount entered"
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
+          className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
         />
         <div className="flex gap-3">
           <button type="button" onClick={onCancel} className={cancelBtn}>Cancel</button>
@@ -427,17 +427,17 @@ function GroupSettingsModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Group Settings</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Group Settings</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Group Name</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Group Name</label>
             <input
               type="text"
               value={form.name}
@@ -447,7 +447,7 @@ function GroupSettingsModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Description</label>
             <textarea
               rows={3}
               value={form.description}
@@ -457,7 +457,7 @@ function GroupSettingsModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Rules (optional)</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Rules (optional)</label>
             <textarea
               rows={3}
               value={form.rules}
@@ -468,7 +468,7 @@ function GroupSettingsModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
               Grace Period (days, 0–30)
             </label>
             <input
@@ -533,17 +533,17 @@ function StartCycleModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900">Start New Cycle</h2>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Start New Cycle</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">Start Date</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Start Date</label>
             <input
               type="date"
               value={startDate}
@@ -552,7 +552,7 @@ function StartCycleModal({
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">End Date</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">End Date</label>
             <input
               type="date"
               value={endDate}
@@ -632,13 +632,13 @@ function PaymentsTab({
       header: 'Reason',
       render: (v) => v
         ? <span className="text-xs text-red-600">{v as string}</span>
-        : <span className="text-xs text-gray-400">—</span>,
+        : <span className="text-xs text-(--text-muted)">—</span>,
     },
     {
       key: 'receipt_image',
       header: 'Receipt',
       render: (v) => {
-        if (!v) return <span className="text-xs text-gray-400">—</span>;
+        if (!v) return <span className="text-xs text-(--text-muted)">—</span>;
         return (
           <button
             type="button"
@@ -656,7 +656,7 @@ function PaymentsTab({
           key: 'id',
           header: 'Actions',
           render: (id: unknown, row: Record<string, unknown>) => {
-            if ((row.status as string) !== 'pending') return <span className="text-xs text-gray-400">—</span>;
+            if ((row.status as string) !== 'pending') return <span className="text-xs text-(--text-muted)">—</span>;
             const payId = id as number;
             return (
               <div className="flex gap-2">
@@ -696,13 +696,13 @@ function PaymentsTab({
               'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors',
               filter === key
                 ? 'bg-orange-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+                : 'bg-(--bg) text-(--text-secondary) hover:bg-(--primary-tint)/50',
             )}
           >
             {label}
             <span className={clsx(
               'inline-flex items-center justify-center h-4 min-w-[1rem] rounded-full text-[10px] font-bold px-0.5',
-              filter === key ? 'bg-white/25 text-white' : 'bg-white text-gray-500',
+              filter === key ? 'bg-white/25 text-white' : 'bg-(--surface) text-(--text-muted)',
             )}>
               {count}
             </span>
@@ -800,7 +800,7 @@ function MembersTab({
       header: 'Streak',
       render: (v) => {
         const streak = v as number;
-        if (!streak) return <span className="text-xs text-gray-400">—</span>;
+        if (!streak) return <span className="text-xs text-(--text-muted)">—</span>;
         return (
           <span className={clsx(
             'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold',
@@ -823,7 +823,7 @@ function MembersTab({
       key: 'user',
       header: 'This Cycle',
       render: (userSnap) => {
-        if (!activeCycle) return <span className="text-xs text-gray-400">No cycle</span>;
+        if (!activeCycle) return <span className="text-xs text-(--text-muted)">No cycle</span>;
         const userId = (userSnap as UserSnap).id;
         const pay = payments.find(
           (p) => p.submitted_by.id === userId && p.cycle_number === activeCycle.cycle_number,
@@ -913,7 +913,7 @@ function MembersTab({
   return (
     <div className="space-y-6">
       {/* Sub-tabs */}
-      <div className="flex gap-1 border-b border-gray-100">
+      <div className="flex gap-1 border-b border-(--border)">
         <button
           type="button"
           onClick={() => setMemberSubTab('approved')}
@@ -921,11 +921,11 @@ function MembersTab({
             'px-4 py-2 text-sm font-medium transition-colors',
             memberSubTab === 'approved'
               ? 'border-b-2 border-orange-600 text-orange-600'
-              : 'text-gray-500 hover:text-gray-700',
+              : 'text-(--text-secondary) hover:text-(--text-primary)',
           )}
         >
           Approved
-          <span className="ml-1.5 text-xs text-gray-400">{approvedMembers.length}</span>
+          <span className="ml-1.5 text-xs text-(--text-muted)">{approvedMembers.length}</span>
         </button>
         {isAdmin && (
           <button
@@ -935,7 +935,7 @@ function MembersTab({
               'px-4 py-2 text-sm font-medium transition-colors',
               memberSubTab === 'pending'
                 ? 'border-b-2 border-orange-600 text-orange-600'
-                : 'text-gray-500 hover:text-gray-700',
+                : 'text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
             Pending
@@ -967,10 +967,10 @@ function MembersTab({
       {/* Propose removal confirm dialog */}
       {proposePendingId !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
-            <h3 className="text-lg font-bold text-gray-900">Propose Removal</h3>
-            <p className="text-sm text-gray-600">
-              Propose removing <span className="font-semibold text-gray-900">{proposePendingName}</span> from the group?
+          <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+            <h3 className="text-lg font-bold text-(--text-primary)">Propose Removal</h3>
+            <p className="text-sm text-(--text-secondary)">
+              Propose removing <span className="font-semibold text-(--text-primary)">{proposePendingName}</span> from the group?
               Other members will vote on whether to approve the removal.
             </p>
             <div className="flex gap-3">
@@ -1001,23 +1001,23 @@ function MembersTab({
       {/* Removal proposals */}
       {pendingRemovals.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-gray-700">Removal Proposals</h3>
+          <h3 className="text-sm font-semibold text-(--text-secondary)">Removal Proposals</h3>
           {pendingRemovals.map((proposal) => (
             <div
               key={proposal.id}
-              className="rounded-xl border border-gray-200 p-4 space-y-3"
+              className="rounded-xl border border-(--border) p-4 space-y-3"
             >
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{proposal.target_name}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-sm font-medium text-(--text-primary)">{proposal.target_name}</p>
+                  <p className="text-xs text-(--text-secondary) mt-0.5">
                     {proposal.yes_count} yes · {proposal.no_count} no · {proposal.eligible_count} eligible
                   </p>
                 </div>
 
                 <div className="flex gap-2">
                   {proposal.target_user_id === currentUserId ? (
-                    <span className="text-xs text-gray-400 italic">You cannot vote on your own removal</span>
+                    <span className="text-xs text-(--text-muted) italic">You cannot vote on your own removal</span>
                   ) : proposal.current_user_vote === null ? (
                     <>
                       <button
@@ -1032,7 +1032,7 @@ function MembersTab({
                         type="button"
                         onClick={() => voteMutation.mutate({ proposalId: proposal.id, approved: false })}
                         disabled={voteMutation.isPending}
-                        className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                        className="px-3 py-1.5 rounded-lg bg-(--bg) text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/50 disabled:opacity-50 transition-colors"
                       >
                         Vote to Keep
                       </button>
@@ -1040,7 +1040,7 @@ function MembersTab({
                   ) : (
                     <span className={clsx(
                       'text-xs font-semibold px-3 py-1.5 rounded-lg',
-                      proposal.current_user_vote ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600',
+                      proposal.current_user_vote ? 'bg-red-50 text-red-600' : 'bg-(--bg) text-(--text-secondary)',
                     )}>
                       You voted {proposal.current_user_vote ? 'to remove' : 'to keep'}
                     </span>
@@ -1051,13 +1051,13 @@ function MembersTab({
               {/* Vote progress bar */}
               {proposal.eligible_count > 0 && (
                 <div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-(--bg) rounded-full overflow-hidden">
                     <div
                       className="h-2 bg-orange-500 rounded-full transition-all"
                       style={{ width: `${Math.round((proposal.yes_count / proposal.eligible_count) * 100)}%` }}
                     />
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-(--text-muted) mt-1">
                     {Math.round((proposal.yes_count / proposal.eligible_count) * 100)}% in favour · need &gt;50% to pass
                   </p>
                 </div>
@@ -1069,7 +1069,7 @@ function MembersTab({
 
       {/* Leave group (non-admin members only) */}
       {!isAdmin && currentUserId && (
-        <div className="pt-2 border-t border-gray-100">
+        <div className="pt-2 border-t border-(--border)">
           <button
             type="button"
             onClick={() => setShowLeaveConfirm(true)}
@@ -1084,9 +1084,9 @@ function MembersTab({
       {/* Leave group confirm */}
       {showLeaveConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
-            <h3 className="text-lg font-bold text-gray-900">Leave Group</h3>
-            <p className="text-sm text-gray-600">
+          <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
+            <h3 className="text-lg font-bold text-(--text-primary)">Leave Group</h3>
+            <p className="text-sm text-(--text-secondary)">
               Are you sure you want to leave this group? This action cannot be undone.
             </p>
             {leaveMutation.isError && (
@@ -1187,16 +1187,16 @@ function CyclesTab({
       )}
 
       {cycles.length === 0 ? (
-        <p className="text-sm text-gray-500 text-center py-8">No cycles started yet.</p>
+        <p className="text-sm text-(--text-secondary) text-center py-8">No cycles started yet.</p>
       ) : (
         <div className="space-y-3">
           {cycles.map((cycle) => (
-            <div key={cycle.id} className="rounded-xl border border-gray-200 overflow-hidden">
+            <div key={cycle.id} className="rounded-xl border border-(--border) overflow-hidden">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4">
                 <div className="flex items-center gap-4">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">Cycle #{cycle.cycle_number}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-sm font-semibold text-(--text-primary)">Cycle #{cycle.cycle_number}</p>
+                    <p className="text-xs text-(--text-secondary) mt-0.5">
                       {format(new Date(cycle.start_date), 'dd MMM yyyy')} —{' '}
                       {format(new Date(cycle.end_date), 'dd MMM yyyy')}
                     </p>
@@ -1208,14 +1208,14 @@ function CyclesTab({
                     )}
                   </div>
                   <StatusBadge value={cycle.status} />
-                  <span className="text-xs text-gray-400">{cycle.total_member_count} members</span>
+                  <span className="text-xs text-(--text-muted)">{cycle.total_member_count} members</span>
                 </div>
 
                 <div className="flex gap-2 flex-wrap">
                   <button
                     type="button"
                     onClick={() => toggleDefaulters(cycle.id)}
-                    className="px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+                    className="px-3 py-1.5 rounded-lg border border-(--border) text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30 transition-colors"
                   >
                     {expandedDefaulters[cycle.id] ? 'Hide Defaulters' : 'Defaulters'}
                   </button>
@@ -1259,22 +1259,22 @@ function CyclesTab({
               </div>
 
               {expandedDefaulters[cycle.id] && (
-                <div className="border-t border-gray-100 bg-gray-50 px-4 py-3">
+                <div className="border-t border-(--border) bg-(--bg) px-4 py-3">
                   {!defaulterData[cycle.id] ? (
-                    <p className="text-xs text-gray-400 animate-pulse">Loading defaulters…</p>
+                    <p className="text-xs text-(--text-muted) animate-pulse">Loading defaulters…</p>
                   ) : typeof defaulterData[cycle.id] === 'string' ? (
                     <p className="text-xs text-red-500">{defaulterData[cycle.id] as string}</p>
                   ) : (defaulterData[cycle.id] as DefaultersResponse).grace_period_active ? (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-(--text-secondary)">
                       Grace period active — defaulters visible from{' '}
                       {format(new Date((defaulterData[cycle.id] as DefaultersResponse).visible_from), 'dd MMM yyyy')}.
                     </p>
                   ) : (defaulterData[cycle.id] as DefaultersResponse).defaulters.length === 0 ? (
-                    <p className="text-xs text-gray-500">No defaulters for this cycle.</p>
+                    <p className="text-xs text-(--text-secondary)">No defaulters for this cycle.</p>
                   ) : (
                     <ul className="space-y-1">
                       {(defaulterData[cycle.id] as DefaultersResponse).defaulters.map((d) => (
-                        <li key={d.id} className="text-xs text-gray-700">
+                        <li key={d.id} className="text-xs text-(--text-secondary)">
                           {d.user.first_name} {d.user.last_name}{' '}
                           <span className="text-orange-600">· paid {formatCurrency(d.total_approved)}</span>
                         </li>
@@ -1376,20 +1376,20 @@ function CollectionOrderTab({
   }
 
   if (!active) return null;
-  if (isLoading) return <p className="text-sm text-gray-400 animate-pulse">Loading collection order…</p>;
+  if (isLoading) return <p className="text-sm text-(--text-muted) animate-pulse">Loading collection order…</p>;
   if (error) return <p className="text-sm text-red-500">Failed to load collection order.</p>;
-  if (!data || data.length === 0) return <p className="text-sm text-gray-500 text-center py-8">No collection order set.</p>;
+  if (!data || data.length === 0) return <p className="text-sm text-(--text-secondary) text-center py-8">No collection order set.</p>;
 
   return (
     <div className="space-y-4">
       {isAdmin && (
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm text-gray-500">Drag members up or down, then save.</p>
+          <p className="text-sm text-(--text-secondary)">Drag members up or down, then save.</p>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={shuffle}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-(--border) text-(--text-secondary) text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
             >
               <ArrowPathIcon className="h-4 w-4" />
               Shuffle
@@ -1402,7 +1402,7 @@ function CollectionOrderTab({
                 'inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors',
                 isDirty
                   ? 'bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-50'
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed',
+                  : 'bg-(--bg) text-(--text-muted) cursor-not-allowed',
               )}
             >
               {saveMutation.isPending ? 'Saving…' : 'Save Order'}
@@ -1426,14 +1426,14 @@ function CollectionOrderTab({
                   'flex items-center gap-3 rounded-lg border px-4 py-3',
                   isCurrent
                     ? 'bg-orange-50 border-orange-200'
-                    : 'border-gray-100 bg-white',
+                    : 'border-(--border) bg-(--surface)',
                 )}
               >
-                <span className={clsx('text-sm font-bold w-6 text-right shrink-0', isCurrent ? 'text-orange-600' : 'text-gray-400')}>
+                <span className={clsx('text-sm font-bold w-6 text-right shrink-0', isCurrent ? 'text-orange-600' : 'text-(--text-muted)')}>
                   {index + 1}
                 </span>
                 {isCurrent && <TrophyIcon className="h-4 w-4 text-orange-500 shrink-0" />}
-                <span className={clsx('text-sm font-medium flex-1', isCurrent ? 'text-orange-700 font-semibold' : 'text-gray-700')}>{entry.full_name}</span>
+                <span className={clsx('text-sm font-medium flex-1', isCurrent ? 'text-orange-700 font-semibold' : 'text-(--text-secondary)')}>{entry.full_name}</span>
                 {isCurrent && (
                   <span className="text-xs font-semibold bg-orange-100 text-orange-600 rounded-full px-2 py-0.5">Now</span>
                 )}
@@ -1443,7 +1443,7 @@ function CollectionOrderTab({
                       type="button"
                       onClick={() => moveUp(index)}
                       disabled={index === 0}
-                      className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                      className="p-1 rounded text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30 disabled:opacity-30 transition-colors"
                       title="Move up"
                     >
                       <ChevronUpIcon className="h-4 w-4" />
@@ -1452,7 +1452,7 @@ function CollectionOrderTab({
                       type="button"
                       onClick={() => moveDown(index)}
                       disabled={index === localOrder.length - 1}
-                      className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                      className="p-1 rounded text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30 disabled:opacity-30 transition-colors"
                       title="Move down"
                     >
                       <ChevronDownIcon className="h-4 w-4" />
@@ -1493,7 +1493,7 @@ function HistoryTab({
 
   if (closedCycles.length === 0) {
     return (
-      <p className="text-sm text-gray-500 text-center py-8">
+      <p className="text-sm text-(--text-secondary) text-center py-8">
         No completed cycles yet. History will appear here once cycles are closed.
       </p>
     );
@@ -1510,15 +1510,15 @@ function HistoryTab({
         const paidCount = approvedPays.length;
 
         return (
-          <div key={cycle.id} className="rounded-xl border border-gray-200 p-4">
+          <div key={cycle.id} className="rounded-xl border border-(--border) p-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="h-9 w-9 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
                   <TrophyIcon className="h-4 w-4 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">Cycle #{cycle.cycle_number}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-sm font-semibold text-(--text-primary)">Cycle #{cycle.cycle_number}</p>
+                  <p className="text-xs text-(--text-secondary) mt-0.5">
                     {format(new Date(cycle.start_date), 'dd MMM yyyy')} —{' '}
                     {format(new Date(cycle.end_date), 'dd MMM yyyy')}
                   </p>
@@ -1528,16 +1528,16 @@ function HistoryTab({
               <div className="flex items-center gap-6">
                 {recipient && (
                   <div>
-                    <p className="text-xs text-gray-500">Recipient</p>
-                    <p className="text-sm font-semibold text-gray-900">{recipient.full_name}</p>
+                    <p className="text-xs text-(--text-secondary)">Recipient</p>
+                    <p className="text-sm font-semibold text-(--text-primary)">{recipient.full_name}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-xs text-gray-500">Members Paid</p>
-                  <p className="text-sm font-semibold text-gray-900">{paidCount}</p>
+                  <p className="text-xs text-(--text-secondary)">Members Paid</p>
+                  <p className="text-sm font-semibold text-(--text-primary)">{paidCount}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Total Collected</p>
+                  <p className="text-xs text-(--text-secondary)">Total Collected</p>
                   <p className="text-sm font-semibold text-green-700">{formatCurrency(pot)}</p>
                 </div>
               </div>
@@ -1610,9 +1610,9 @@ export default function AjoGroupDetailPage() {
   if (groupQ.isLoading || membersQ.isLoading || paymentsQ.isLoading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-8 bg-gray-200 rounded w-1/3" />
-        <div className="h-36 bg-gray-200 rounded-xl" />
-        <div className="h-64 bg-gray-200 rounded-xl" />
+        <div className="h-8 bg-(--border) rounded w-1/3" />
+        <div className="h-36 bg-(--border) rounded-xl" />
+        <div className="h-64 bg-(--border) rounded-xl" />
       </div>
     );
   }
@@ -1657,42 +1657,42 @@ export default function AjoGroupDetailPage() {
   return (
     <div className="space-y-6">
       {/* Back */}
-      <Link to="/ajo" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700">
+      <Link to="/ajo" className="inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text-primary)">
         <ChevronLeftIcon className="h-4 w-4" />
         Back to groups
       </Link>
 
       {/* Header card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">{group.name}</h1>
+              <h1 className="text-2xl font-bold text-(--text-primary)">{group.name}</h1>
               {isAdmin && (
                 <button
                   type="button"
                   onClick={() => setShowSettings(true)}
                   title="Group settings"
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30 transition-colors"
                 >
                   <Cog6ToothIcon className="h-5 w-5" />
                 </button>
               )}
             </div>
             {group.description && (
-              <p className="text-sm text-gray-500 mt-1">{group.description}</p>
+              <p className="text-sm text-(--text-secondary) mt-1">{group.description}</p>
             )}
             {group.rules && (
               <details className="mt-2 group/rules">
                 <summary className="cursor-pointer text-xs text-orange-600 font-semibold hover:underline select-none">
                   View group rules
                 </summary>
-                <p className="mt-1.5 text-xs text-gray-600 bg-orange-50 rounded-lg px-3 py-2 leading-relaxed whitespace-pre-line">
+                <p className="mt-1.5 text-xs text-(--text-secondary) bg-orange-50 rounded-lg px-3 py-2 leading-relaxed whitespace-pre-line">
                   {group.rules}
                 </p>
               </details>
             )}
-            <div className="mt-3 flex flex-wrap gap-3 text-sm text-gray-600">
+            <div className="mt-3 flex flex-wrap gap-3 text-sm text-(--text-secondary)">
               <span className="inline-flex items-center gap-1">
                 <UserGroupIcon className="h-4 w-4" />
                 {group.member_count} members
@@ -1709,15 +1709,15 @@ export default function AjoGroupDetailPage() {
             {/* Invite code section — admin only */}
             {isAdmin && (
               <div className="mt-3 flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 font-mono tracking-widest text-gray-500 text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
-                  <KeyIcon className="h-4 w-4 text-gray-400" />
+                <span className="inline-flex items-center gap-1.5 font-mono tracking-widest text-(--text-secondary) text-sm bg-(--bg) border border-(--border) rounded-lg px-3 py-1.5">
+                  <KeyIcon className="h-4 w-4 text-(--text-muted)" />
                   {group.invite_code}
                 </span>
                 <button
                   type="button"
                   onClick={() => copyInviteCode(group.invite_code)}
                   title="Copy invite code"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-(--border) text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30 transition-colors"
                 >
                   <ClipboardDocumentIcon className="h-3.5 w-3.5" />
                   {copied ? 'Copied!' : 'Copy'}
@@ -1727,7 +1727,7 @@ export default function AjoGroupDetailPage() {
                   onClick={() => regenerateMutation.mutate()}
                   disabled={regenerateMutation.isPending}
                   title="Regenerate invite code"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-(--border) text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30 disabled:opacity-50 transition-colors"
                 >
                   <ArrowPathIcon className={clsx('h-3.5 w-3.5', regenerateMutation.isPending && 'animate-spin')} />
                   Regenerate
@@ -1758,21 +1758,21 @@ export default function AjoGroupDetailPage() {
         </div>
 
         {/* Stats row */}
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 pt-4 border-t border-gray-100 text-sm">
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 pt-4 border-t border-(--border) text-sm">
           <div>
-            <p className="text-xs text-gray-500">Admin</p>
-            <p className="font-medium text-gray-900">{fullName(group.admin)}</p>
+            <p className="text-xs text-(--text-secondary)">Admin</p>
+            <p className="font-medium text-(--text-primary)">{fullName(group.admin)}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Total Cycles</p>
-            <p className="font-medium text-gray-900">{cycles.length}</p>
+            <p className="text-xs text-(--text-secondary)">Total Cycles</p>
+            <p className="font-medium text-(--text-primary)">{cycles.length}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Active Cycle</p>
-            <p className="font-medium text-gray-900">{activeCycle ? `#${activeCycle.cycle_number}` : 'None'}</p>
+            <p className="text-xs text-(--text-secondary)">Active Cycle</p>
+            <p className="font-medium text-(--text-primary)">{activeCycle ? `#${activeCycle.cycle_number}` : 'None'}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">This Cycle Approved</p>
+            <p className="text-xs text-(--text-secondary)">This Cycle Approved</p>
             <p className="font-medium text-green-700">
               {activeCycle
                 ? formatCurrency(
@@ -1784,7 +1784,7 @@ export default function AjoGroupDetailPage() {
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">All-Time Approved</p>
+            <p className="text-xs text-(--text-secondary)">All-Time Approved</p>
             <p className="font-medium text-orange-600">
               {formatCurrency(
                 payments
@@ -1797,7 +1797,7 @@ export default function AjoGroupDetailPage() {
 
         {/* Member action: submit payment */}
         {canSubmit && (
-          <div className="mt-4 pt-4 border-t border-gray-100">
+          <div className="mt-4 pt-4 border-t border-(--border)">
             <button
               type="button"
               onClick={() => setShowSubmit(true)}
@@ -1810,8 +1810,8 @@ export default function AjoGroupDetailPage() {
         )}
 
         {myActivePay && !isAdmin && (
-          <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
-            <span className="text-sm text-gray-600">Your payment for this cycle:</span>
+          <div className="mt-4 pt-4 border-t border-(--border) flex items-center gap-3">
+            <span className="text-sm text-(--text-secondary)">Your payment for this cycle:</span>
             <StatusBadge value={myActivePay.status} />
             {myActivePay.status === 'rejected' && myActivePay.rejection_reason && (
               <span className="text-xs text-red-600">— {myActivePay.rejection_reason}</span>
@@ -1841,8 +1841,8 @@ export default function AjoGroupDetailPage() {
       )}
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="border-b border-gray-100 flex overflow-x-auto">
+      <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) overflow-hidden">
+        <div className="border-b border-(--border) flex overflow-x-auto">
           {tabs.map(({ key, label, count }) => (
             <button
               key={key}
@@ -1852,12 +1852,12 @@ export default function AjoGroupDetailPage() {
                 'px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors',
                 activeTab === key
                   ? 'border-b-2 border-orange-600 text-orange-600'
-                  : 'text-gray-500 hover:text-gray-700',
+                  : 'text-(--text-secondary) hover:text-(--text-primary)',
               )}
             >
               {label}
               {count !== undefined && (
-                <span className="ml-1.5 text-xs text-gray-400">{count}</span>
+                <span className="ml-1.5 text-xs text-(--text-muted)">{count}</span>
               )}
             </button>
           ))}

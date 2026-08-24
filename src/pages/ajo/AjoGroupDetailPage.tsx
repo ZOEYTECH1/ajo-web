@@ -1706,22 +1706,22 @@ export default function AjoGroupDetailPage() {
               )}
             </div>
 
-            {/* Invite code section */}
-            <div className="mt-3 flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 font-mono tracking-widest text-gray-500 text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
-                <KeyIcon className="h-4 w-4 text-gray-400" />
-                {group.invite_code}
-              </span>
-              <button
-                type="button"
-                onClick={() => copyInviteCode(group.invite_code)}
-                title="Copy invite code"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
-              >
-                <ClipboardDocumentIcon className="h-3.5 w-3.5" />
-                {copied ? 'Copied!' : 'Copy'}
-              </button>
-              {isAdmin && (
+            {/* Invite code section — admin only */}
+            {isAdmin && (
+              <div className="mt-3 flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1.5 font-mono tracking-widest text-gray-500 text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
+                  <KeyIcon className="h-4 w-4 text-gray-400" />
+                  {group.invite_code}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => copyInviteCode(group.invite_code)}
+                  title="Copy invite code"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+                >
+                  <ClipboardDocumentIcon className="h-3.5 w-3.5" />
+                  {copied ? 'Copied!' : 'Copy'}
+                </button>
                 <button
                   type="button"
                   onClick={() => regenerateMutation.mutate()}
@@ -1732,8 +1732,8 @@ export default function AjoGroupDetailPage() {
                   <ArrowPathIcon className={clsx('h-3.5 w-3.5', regenerateMutation.isPending && 'animate-spin')} />
                   Regenerate
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col items-end gap-2">

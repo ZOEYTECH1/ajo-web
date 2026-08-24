@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQueries, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -250,11 +250,33 @@ function DisputeModal({
   const [err, setErr] = useState('');
 
   // Audio recording state
+  const MAX_SECONDS = 60;
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [micError, setMicError] = useState('');
+  const [secondsLeft, setSecondsLeft] = useState(MAX_SECONDS);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+
+  // Tick countdown while recording
+  useEffect(() => {
+    if (!recording) return;
+    setSecondsLeft(MAX_SECONDS);
+    timerRef.current = setInterval(() => {
+      setSecondsLeft(s => {
+        if (s <= 1) {
+          clearInterval(timerRef.current!);
+          recorderRef.current?.stop();
+          setRecording(false);
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timerRef.current!);
+  }, [recording]);
 
   const startRecording = async () => {
     setMicError('');
@@ -270,6 +292,7 @@ function DisputeModal({
         stream.getTracks().forEach(t => t.stop());
       };
       recorder.start();
+      recorderRef.current = recorder;
       setMediaRecorder(recorder);
       setRecording(true);
     } catch {
@@ -278,6 +301,7 @@ function DisputeModal({
   };
 
   const stopRecording = () => {
+    clearInterval(timerRef.current!);
     mediaRecorder?.stop();
     setRecording(false);
   };
@@ -333,19 +357,27 @@ function DisputeModal({
             )}
 
             {!audioUrl ? (
-              <button
-                type="button"
-                onClick={recording ? stopRecording : startRecording}
-                className={clsx(
-                  'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
-                  recording
-                    ? 'bg-red-600 text-white hover:bg-red-700 animate-pulse'
-                    : 'bg-(--bg) border border-(--border) text-(--text-secondary) hover:text-teal-600 hover:border-teal-300',
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  onClick={recording ? stopRecording : startRecording}
+                  className={clsx(
+                    'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
+                    recording
+                      ? 'bg-red-600 text-white hover:bg-red-700 animate-pulse'
+                      : 'bg-(--bg) border border-(--border) text-(--text-secondary) hover:text-teal-600 hover:border-teal-300',
+                  )}
+                >
+                  <span className={clsx('inline-block w-2.5 h-2.5 rounded-full', recording ? 'bg-white' : 'bg-red-500')} />
+                  {recording ? `Stop recording (${secondsLeft}s left)` : 'Record voice note'}
+                </button>
+                {recording && secondsLeft <= 10 && (
+                  <p className="text-xs text-red-600 font-semibold">Recording stops automatically in {secondsLeft}s</p>
                 )}
-              >
-                <span className={clsx('inline-block w-2.5 h-2.5 rounded-full', recording ? 'bg-white' : 'bg-red-500')} />
-                {recording ? 'Stop recording' : 'Record voice note'}
-              </button>
+                {!recording && (
+                  <p className="text-xs text-(--text-muted)">Max 60 seconds</p>
+                )}
+              </div>
             ) : (
               <div className="space-y-2">
                 <audio src={audioUrl} controls className="w-full h-10 rounded-lg" />

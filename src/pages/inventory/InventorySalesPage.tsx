@@ -31,7 +31,7 @@ interface PaginatedSales {
 }
 
 interface Category { id: number; name: string; }
-interface Product { id: number; name: string; price: string; quantity: number; }
+interface Product { id: number; name: string; price: string; effective_price: string | null; quantity: number; }
 interface Customer { id: number; name: string; }
 
 function formatCurrency(v: string | number) {
@@ -51,6 +51,14 @@ interface CartItem {
   unit_price: string;
 }
 
+interface CompletedSale {
+  total: string;
+  customer_name?: string;
+  items: { product_name: string; quantity: number; unit_price: string; subtotal: string }[];
+  notes: string;
+  sold_at: string;
+}
+
 function NewSaleModal({ onClose }: { onClose: () => void }) {
   const qc = useQueryClient();
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -61,6 +69,7 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
   const [customerId, setCustomerId] = useState('');
   const [notes, setNotes] = useState('');
   const [err, setErr] = useState('');
+  const [completedSale, setCompletedSale] = useState<CompletedSale | null>(null);
 
   const { data: categories } = useQuery<Category[]>({
     queryKey: ['inventory-categories'],
@@ -83,16 +92,26 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
   function handleProductSelect(prodId: string) {
     setSelectedProdId(prodId);
     const prod = products?.find(p => String(p.id) === prodId);
-    if (prod) setUnitPrice(prod.price);
+    if (prod) setUnitPrice(prod.effective_price ?? prod.price);
   }
 
   function addToCart() {
     if (!selectedProduct || !qty || !unitPrice) return;
+    const qtyNum = Number(qty);
+    if (qtyNum > selectedProduct.quantity) {
+      setErr(`Only ${selectedProduct.quantity} units of "${selectedProduct.name}" available.`);
+      return;
+    }
     const existing = cart.find(c => c.product_id === selectedProduct.id);
     if (existing) {
-      setCart(cart.map(c => c.product_id === selectedProduct.id ? { ...c, quantity: c.quantity + Number(qty) } : c));
+      const newQty = existing.quantity + qtyNum;
+      if (newQty > selectedProduct.quantity) {
+        setErr(`Cannot exceed available stock of ${selectedProduct.quantity} units.`);
+        return;
+      }
+      setCart(cart.map(c => c.product_id === selectedProduct.id ? { ...c, quantity: newQty } : c));
     } else {
-      setCart([...cart, { product_id: selectedProduct.id, product_name: selectedProduct.name, quantity: Number(qty), unit_price: unitPrice }]);
+      setCart([...cart, { product_id: selectedProduct.id, product_name: selectedProduct.name, quantity: qtyNum, unit_price: unitPrice }]);
     }
     setSelectedProdId('');
     setQty('1');
@@ -108,7 +127,10 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
       notes: notes.trim(),
       items: cart.map(c => ({ product_id: c.product_id, quantity: c.quantity, unit_price: c.unit_price })),
     }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['inventory-sales'] }); onClose(); },
+    onSuccess: (res) => {
+      qc.invalidateQueries({ queryKey: ['inventory-sales'] });
+      setCompletedSale(res.data);
+    },
     onError: (e: any) => {
       const d = e.response?.data;
       const first = Object.values(d ?? {})[0];
@@ -120,6 +142,67 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
     e.preventDefault();
     if (cart.length === 0) { setErr('Add at least one item to the sale.'); return; }
     mutation.mutate();
+  }
+
+  // Receipt view
+  if (completedSale) {
+    const receiptText = [
+      '🧾 SALE RECEIPT',
+      '──────────────────',
+      `📅 ${new Date(completedSale.sold_at).toLocaleString('en-NG', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`,
+      completedSale.customer_name ? `👤 ${completedSale.customer_name}` : '👤 Walk-in Customer',
+      '──────────────────',
+      ...(completedSale.items ?? []).map((i: any) =>
+        `• ${i.product_name} x${i.quantity} @ ₦${Number(i.unit_price).toLocaleString()} = ₦${Number(i.subtotal).toLocaleString()}`
+      ),
+      '──────────────────',
+      `TOTAL: ₦${Number(completedSale.total).toLocaleString()}`,
+      ...(completedSale.notes ? [`📝 ${completedSale.notes}`] : []),
+      '',
+      'Thank you! 🙏',
+    ].join('\n');
+
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md p-6 space-y-5">
+          <div className="text-center">
+            <div className="text-5xl mb-3">✅</div>
+            <h2 className="text-xl font-bold text-(--text-primary)">Sale Recorded!</h2>
+            <p className="text-sm text-(--text-secondary) mt-1">
+              {completedSale.customer_name ?? 'Walk-in'} · {formatCurrency(completedSale.total)}
+            </p>
+          </div>
+          <div className="bg-(--bg) rounded-xl p-4 text-xs font-mono text-(--text-secondary) whitespace-pre leading-relaxed overflow-auto max-h-48">
+            {receiptText}
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={async () => {
+                if (navigator.clipboard) await navigator.clipboard.writeText(receiptText);
+              }}
+              className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+            >
+              Copy Receipt
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setCart([]); setSelectedCatId(''); setSelectedProdId('');
+                setQty('1'); setUnitPrice(''); setCustomerId(''); setNotes(''); setErr('');
+                setCompletedSale(null);
+              }}
+              className="flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 transition-colors"
+            >
+              New Sale
+            </button>
+          </div>
+          <button type="button" onClick={onClose} className="w-full text-sm text-(--text-muted) hover:text-(--text-primary) py-1 transition-colors">
+            Close
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

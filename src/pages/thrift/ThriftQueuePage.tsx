@@ -170,7 +170,6 @@ export default function ThriftQueuePage() {
                       <p className="text-sm font-semibold text-(--text-primary)">
                         {member.user.first_name} {member.user.last_name}
                       </p>
-                      <p className="text-xs text-(--text-secondary)">{member.user.email}</p>
                       <p className="text-xs text-(--text-secondary)">
                         Group:{' '}
                         <Link

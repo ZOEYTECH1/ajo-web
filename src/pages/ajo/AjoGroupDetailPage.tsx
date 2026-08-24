@@ -119,7 +119,7 @@ function formatCurrency(v: string | number) {
 }
 
 function fullName(u: UserSnap) {
-  return `${u.first_name} ${u.last_name}`.trim() || u.email;
+  return `${u.first_name} ${u.last_name}`.trim() || 'Member';
 }
 
 function StatusBadge({ value }: { value: string }) {
@@ -794,7 +794,6 @@ function MembersTab({
 
   const approvedCols: Column<Record<string, unknown>>[] = [
     { key: 'user_name', header: 'Name', render: (_, row) => fullName(row.user as UserSnap) },
-    { key: 'user_email', header: 'Email', render: (_, row) => (row.user as UserSnap).email },
     { key: 'total_approved', header: 'Total Saved', render: (v) => formatCurrency(v as string) },
     {
       key: 'consecutive_default_streak',
@@ -877,7 +876,6 @@ function MembersTab({
 
   const pendingCols: Column<Record<string, unknown>>[] = [
     { key: 'user_name', header: 'Name', render: (_, row) => fullName(row.user as UserSnap) },
-    { key: 'user_email', header: 'Email', render: (_, row) => (row.user as UserSnap).email },
     {
       key: 'joined_at',
       header: 'Requested',

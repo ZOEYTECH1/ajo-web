@@ -209,7 +209,7 @@ export default function ThriftOrgPage() {
               <table className="min-w-full divide-y divide-(--border)">
                 <thead className="bg-(--bg)">
                   <tr>
-                    {['Name', 'Email', 'Actions'].map(h => (
+                    {['Name', 'Actions'].map(h => (
                       <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
                         {h}
                       </th>
@@ -220,7 +220,6 @@ export default function ThriftOrgPage() {
                   {pending_collectors.map(c => (
                     <tr key={c.id} className="hover:bg-(--primary-tint)/30 transition-colors">
                       <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{fullName(c.user)}</td>
-                      <td className="px-6 py-4 text-sm text-(--text-secondary)">{c.user.email}</td>
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
                           <button
@@ -258,7 +257,7 @@ export default function ThriftOrgPage() {
             <table className="min-w-full divide-y divide-(--border)">
               <thead className="bg-(--bg)">
                 <tr>
-                  {['Name', 'Email', 'Status'].map(h => (
+                  {['Name', 'Status'].map(h => (
                     <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
                       {h}
                     </th>
@@ -276,7 +275,6 @@ export default function ThriftOrgPage() {
                   collectors.map(c => (
                     <tr key={c.id} className="hover:bg-(--primary-tint)/30 transition-colors">
                       <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{fullName(c.user)}</td>
-                      <td className="px-6 py-4 text-sm text-(--text-secondary)">{c.user.email}</td>
                       <td className="px-6 py-4"><CollectorStatusBadge status={c.status} /></td>
                     </tr>
                   ))

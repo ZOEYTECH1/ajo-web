@@ -1005,41 +1005,63 @@ function MembersTab({
           {pendingRemovals.map((proposal) => (
             <div
               key={proposal.id}
-              className="rounded-xl border border-gray-200 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+              className="rounded-xl border border-gray-200 p-4 space-y-3"
             >
-              <div>
-                <p className="text-sm font-medium text-gray-900">{proposal.target_name}</p>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  {proposal.yes_count} / {proposal.eligible_count} votes to remove
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium text-gray-900">{proposal.target_name}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {proposal.yes_count} yes · {proposal.no_count} no · {proposal.eligible_count} eligible
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  {proposal.target_user_id === currentUserId ? (
+                    <span className="text-xs text-gray-400 italic">You cannot vote on your own removal</span>
+                  ) : proposal.current_user_vote === null ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => voteMutation.mutate({ proposalId: proposal.id, approved: true })}
+                        disabled={voteMutation.isPending}
+                        className="px-3 py-1.5 rounded-lg bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
+                      >
+                        Vote to Remove
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => voteMutation.mutate({ proposalId: proposal.id, approved: false })}
+                        disabled={voteMutation.isPending}
+                        className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 disabled:opacity-50 transition-colors"
+                      >
+                        Vote to Keep
+                      </button>
+                    </>
+                  ) : (
+                    <span className={clsx(
+                      'text-xs font-semibold px-3 py-1.5 rounded-lg',
+                      proposal.current_user_vote ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600',
+                    )}>
+                      You voted {proposal.current_user_vote ? 'to remove' : 'to keep'}
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <div className="flex gap-2">
-                {proposal.current_user_vote === null ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => voteMutation.mutate({ proposalId: proposal.id, approved: true })}
-                      disabled={voteMutation.isPending}
-                      className="px-3 py-1.5 rounded-lg bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
-                    >
-                      Vote to Remove
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => voteMutation.mutate({ proposalId: proposal.id, approved: false })}
-                      disabled={voteMutation.isPending}
-                      className="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-xs font-semibold hover:bg-gray-200 disabled:opacity-50 transition-colors"
-                    >
-                      Vote to Keep
-                    </button>
-                  </>
-                ) : (
-                  <span className="text-xs text-gray-500 italic">
-                    You voted {proposal.current_user_vote ? 'Yes' : 'No'}
-                  </span>
-                )}
-              </div>
+              {/* Vote progress bar */}
+              {proposal.eligible_count > 0 && (
+                <div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-2 bg-orange-500 rounded-full transition-all"
+                      style={{ width: `${Math.round((proposal.yes_count / proposal.eligible_count) * 100)}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {Math.round((proposal.yes_count / proposal.eligible_count) * 100)}% in favour · need &gt;50% to pass
+                  </p>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -1279,10 +1301,12 @@ function CollectionOrderTab({
   groupId,
   isAdmin,
   active,
+  activeCycleNumber,
 }: {
   groupId: number;
   isAdmin: boolean;
   active: boolean;
+  activeCycleNumber?: number;
 }) {
   const qc = useQueryClient();
   const { data, isLoading, error } = useQuery<CollectionOrderEntry[]>({
@@ -1302,6 +1326,11 @@ function CollectionOrderTab({
       setSaveErr('');
     }
   }, [data]);
+
+  const totalSlots = localOrder.length;
+  const effectiveSlot = activeCycleNumber != null && totalSlots > 0
+    ? ((activeCycleNumber - 1) % totalSlots) + 1
+    : null;
 
   const saveMutation = useMutation({
     mutationFn: () =>
@@ -1388,37 +1417,51 @@ function CollectionOrderTab({
 
       <ol className="space-y-2">
         {localOrder.map((entry, index) => (
-          <li
-            key={entry.id}
-            className="flex items-center gap-3 rounded-lg border border-gray-100 px-4 py-3 bg-white"
-          >
-            <span className="text-sm font-bold text-orange-600 w-6 text-right shrink-0">
-              {index + 1}
-            </span>
-            <span className="text-sm text-gray-700 font-medium flex-1">{entry.full_name}</span>
-            {isAdmin && (
-              <div className="flex gap-1">
-                <button
-                  type="button"
-                  onClick={() => moveUp(index)}
-                  disabled={index === 0}
-                  className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
-                  title="Move up"
-                >
-                  <ChevronUpIcon className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveDown(index)}
-                  disabled={index === localOrder.length - 1}
-                  className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
-                  title="Move down"
-                >
-                  <ChevronDownIcon className="h-4 w-4" />
-                </button>
-              </div>
-            )}
-          </li>
+          (() => {
+            const isCurrent = effectiveSlot != null && entry.collection_slot === effectiveSlot;
+            return (
+              <li
+                key={entry.id}
+                className={clsx(
+                  'flex items-center gap-3 rounded-lg border px-4 py-3',
+                  isCurrent
+                    ? 'bg-orange-50 border-orange-200'
+                    : 'border-gray-100 bg-white',
+                )}
+              >
+                <span className={clsx('text-sm font-bold w-6 text-right shrink-0', isCurrent ? 'text-orange-600' : 'text-gray-400')}>
+                  {index + 1}
+                </span>
+                {isCurrent && <TrophyIcon className="h-4 w-4 text-orange-500 shrink-0" />}
+                <span className={clsx('text-sm font-medium flex-1', isCurrent ? 'text-orange-700 font-semibold' : 'text-gray-700')}>{entry.full_name}</span>
+                {isCurrent && (
+                  <span className="text-xs font-semibold bg-orange-100 text-orange-600 rounded-full px-2 py-0.5">Now</span>
+                )}
+                {isAdmin && (
+                  <div className="flex gap-1">
+                    <button
+                      type="button"
+                      onClick={() => moveUp(index)}
+                      disabled={index === 0}
+                      className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                      title="Move up"
+                    >
+                      <ChevronUpIcon className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveDown(index)}
+                      disabled={index === localOrder.length - 1}
+                      className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                      title="Move down"
+                    >
+                      <ChevronDownIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </li>
+            );
+          })()
         ))}
       </ol>
     </div>
@@ -1839,7 +1882,7 @@ export default function AjoGroupDetailPage() {
             <CyclesTab cycles={cycles} groupId={Number(id)} isAdmin={isAdmin} />
           )}
           {activeTab === 'order' && (
-            <CollectionOrderTab groupId={Number(id)} isAdmin={isAdmin} active={activeTab === 'order'} />
+            <CollectionOrderTab groupId={Number(id)} isAdmin={isAdmin} active={activeTab === 'order'} activeCycleNumber={activeCycle?.cycle_number} />
           )}
           {activeTab === 'history' && (
             <HistoryTab

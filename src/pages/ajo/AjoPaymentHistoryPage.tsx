@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import clsx from 'clsx';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { Table, type Column } from '../../components/ui/Table';
+import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 
 // ── API shapes ────────────────────────────────────────────────────────────────
@@ -179,34 +180,13 @@ export default function AjoPaymentHistoryPage() {
         }
       />
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-2">
-          <p className="text-sm text-(--text-secondary)">
-            Page {page} of {totalPages} · {data?.count ?? 0} total
-          </p>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-(--border) text-sm font-medium text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
-            >
-              <ChevronLeftIcon className="h-4 w-4" />
-              Prev
-            </button>
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-(--border) text-sm font-medium text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
-            >
-              Next
-              <ChevronRightIcon className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        totalCount={data?.count ?? 0}
+        pageSize={20}
+        onChange={setPage}
+      />
     </div>
   );
 }

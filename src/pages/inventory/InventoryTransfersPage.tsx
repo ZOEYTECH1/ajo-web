@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { PlusIcon, XCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
+import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -33,6 +34,13 @@ interface Transfer {
   status: string;
   transferred_at: string;
   items: TransferItem[];
+}
+
+interface PaginatedTransfers {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Transfer[];
 }
 
 interface Category {
@@ -246,11 +254,16 @@ function TransferModal({
 
 export default function InventoryTransfersPage() {
   const [showModal, setShowModal] = useState(false);
+  const [page, setPage] = useState(1);
 
-  const { data: transfers = [], isLoading, error } = useQuery<Transfer[]>({
-    queryKey: ['inventory-transfers'],
-    queryFn: () => api.get('/inventory/transfers/').then((r) => r.data),
+  const { data, isLoading, error } = useQuery<PaginatedTransfers>({
+    queryKey: ['inventory-transfers', page],
+    queryFn: () => api.get(`/inventory/transfers/?page=${page}`).then((r) => r.data),
   });
+
+  const transfers = data?.results ?? [];
+  const totalCount = data?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 20));
 
   const { data: businesses = [] } = useQuery<Business[]>({
     queryKey: ['inventory-businesses'],
@@ -297,7 +310,7 @@ export default function InventoryTransfersPage() {
           <div className="p-6 space-y-3">
             {[1, 2, 3].map((i) => <div key={i} className="h-16 rounded-lg bg-(--bg) skeleton" />)}
           </div>
-        ) : transfers.length === 0 ? (
+        ) : transfers.length === 0 && totalCount === 0 ? (
           <div className="px-6 py-12 text-center">
             <ArrowRightIcon className="h-10 w-10 text-(--text-muted) mx-auto mb-3" />
             <p className="text-sm text-(--text-muted)">No transfers yet.</p>
@@ -343,6 +356,8 @@ export default function InventoryTransfersPage() {
           </div>
         )}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
 
       {showModal && (
         <TransferModal businesses={businesses} onClose={() => setShowModal(false)} />

@@ -11,6 +11,7 @@ import {
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
+import { Pagination } from '../components/ui/Pagination';
 import api from '../services/api';
 
 interface NotificationItem {
@@ -26,7 +27,9 @@ interface NotificationItem {
 interface PaginatedNotifications {
   count: number;
   next: string | null;
+  previous: string | null;
   results: NotificationItem[];
+  unread_count: number;
 }
 
 function getNotifLink(n: NotificationItem): string | null {
@@ -69,26 +72,39 @@ export default function NotificationsPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [filter, setFilter] = useState<FilterKey>('all');
+  const [page, setPage] = useState(1);
 
   const { data, isLoading } = useQuery<PaginatedNotifications>({
-    queryKey: ['notifications'],
-    queryFn: () => api.get('/notifications/').then((r) => r.data),
+    queryKey: ['notifications-page', filter, page],
+    queryFn: () => {
+      const params = new URLSearchParams({ page: String(page) });
+      if (filter === 'unread') params.set('unread', 'true');
+      return api.get(`/notifications/?${params}`).then((r) => r.data);
+    },
     refetchInterval: 30_000,
   });
 
   const markAllMutation = useMutation({
     mutationFn: () => api.post('/notifications/mark-all-read/'),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['notifications'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['notifications'] });
+      qc.invalidateQueries({ queryKey: ['notifications-page'] });
+    },
   });
 
   const markOneMutation = useMutation({
     mutationFn: (id: number) => api.post(`/notifications/${id}/read/`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['notifications'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['notifications'] });
+      qc.invalidateQueries({ queryKey: ['notifications-page'] });
+    },
   });
 
   const items = data?.results ?? [];
-  const unreadCount = items.filter((n) => !n.is_read).length;
-  const displayed = filter === 'unread' ? items.filter((n) => !n.is_read) : items;
+  const unreadCount = data?.unread_count ?? 0;
+  const displayed = items;
+  const totalCount = data?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 20));
 
   function handleClick(n: NotificationItem) {
     if (!n.is_read) markOneMutation.mutate(n.id);
@@ -122,7 +138,7 @@ export default function NotificationsPage() {
           <button
             key={f}
             type="button"
-            onClick={() => setFilter(f)}
+            onClick={() => { setFilter(f); setPage(1); }}
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors capitalize',
               filter === f
@@ -155,7 +171,7 @@ export default function NotificationsPage() {
       )}
 
       {/* Notification list */}
-      <div className="space-y-2">
+      <div className="space-y-2 pb-2">
         {displayed.map((n) => {
           const hasLink = !!getNotifLink(n);
           return (
@@ -190,6 +206,8 @@ export default function NotificationsPage() {
           );
         })}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { PlusIcon, XCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 
 interface SaleItem {
@@ -20,6 +21,13 @@ interface Sale {
   total: string;
   customer_name: string | null;
   notes: string;
+}
+
+interface PaginatedSales {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Sale[];
 }
 
 interface Category { id: number; name: string; }
@@ -230,11 +238,16 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
 
 export default function InventorySalesPage() {
   const [showNewSale, setShowNewSale] = useState(false);
+  const [page, setPage] = useState(1);
 
-  const { data, isLoading, error } = useQuery<Sale[]>({
-    queryKey: ['inventory-sales'],
-    queryFn: () => api.get('/inventory/sales/').then(r => r.data),
+  const { data, isLoading, error } = useQuery<PaginatedSales>({
+    queryKey: ['inventory-sales', page],
+    queryFn: () => api.get(`/inventory/sales/?page=${page}`).then(r => r.data),
   });
+
+  const sales = data?.results ?? [];
+  const totalCount = data?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 20));
 
   return (
     <div className="space-y-6">
@@ -274,8 +287,8 @@ export default function InventorySalesPage() {
             <tbody className="divide-y divide-(--border)">
               {isLoading ? (
                 <SkeletonTable rows={6} cols={4} />
-              ) : data && data.length > 0 ? (
-                data.map(sale => (
+              ) : sales.length > 0 ? (
+                sales.map(sale => (
                   <tr key={sale.id} className="hover:bg-(--primary-tint)/30 transition-colors">
                     <td className="px-6 py-4 text-sm text-(--text-secondary) whitespace-nowrap">
                       {format(new Date(sale.sold_at), 'dd MMM yyyy, h:mm a')}
@@ -302,6 +315,8 @@ export default function InventorySalesPage() {
           </table>
         </div>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
 
       {showNewSale && <NewSaleModal onClose={() => setShowNewSale(false)} />}
     </div>

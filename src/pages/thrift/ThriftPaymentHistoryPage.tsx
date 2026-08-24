@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 
 interface ThriftPaymentHistoryItem {
@@ -22,9 +23,11 @@ interface ThriftPaymentHistoryItem {
   resolved_at: string | null;
 }
 
-interface HistoryResponse {
-  collector_payments: ThriftPaymentHistoryItem[];
-  payer_payments: ThriftPaymentHistoryItem[];
+interface ThriftPaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ThriftPaymentHistoryItem[];
 }
 
 function formatCurrency(v: string | number) {
@@ -98,15 +101,28 @@ type ViewTab = 'payer' | 'collector';
 
 export default function ThriftPaymentHistoryPage() {
   const [activeTab, setActiveTab] = useState<ViewTab>('payer');
+  const [payerPage, setPayerPage] = useState(1);
+  const [collectorPage, setCollectorPage] = useState(1);
 
-  const { data, isLoading } = useQuery<HistoryResponse>({
-    queryKey: ['thrift-payment-history'],
-    queryFn: () => api.get('/thrift/my-payment-history/').then(r => r.data),
+  const { data: payerData, isLoading: payerLoading } = useQuery<ThriftPaginatedResponse>({
+    queryKey: ['thrift-ph-payer', payerPage],
+    queryFn: () => api.get(`/thrift/my-payment-history/?type=payer&page=${payerPage}`).then(r => r.data),
   });
 
-  const payerPayments = data?.payer_payments ?? [];
-  const collectorPayments = data?.collector_payments ?? [];
-  const showCollectorTab = collectorPayments.length > 0 || (!isLoading && data);
+  const { data: collectorData, isLoading: collectorLoading } = useQuery<ThriftPaginatedResponse>({
+    queryKey: ['thrift-ph-collector', collectorPage],
+    queryFn: () => api.get(`/thrift/my-payment-history/?type=collector&page=${collectorPage}`).then(r => r.data),
+  });
+
+  const payerCount = payerData?.count ?? 0;
+  const collectorCount = collectorData?.count ?? 0;
+
+  const activePayments = activeTab === 'payer' ? (payerData?.results ?? []) : (collectorData?.results ?? []);
+  const activeLoading = activeTab === 'payer' ? payerLoading : collectorLoading;
+  const activePage = activeTab === 'payer' ? payerPage : collectorPage;
+  const activeTotalCount = activeTab === 'payer' ? payerCount : collectorCount;
+  const activeTotalPages = Math.max(1, Math.ceil(activeTotalCount / 20));
+  const activeSetPage = activeTab === 'payer' ? setPayerPage : setCollectorPage;
 
   return (
     <div className="space-y-6">
@@ -128,28 +144,33 @@ export default function ThriftPaymentHistoryPage() {
             activeTab === 'payer' ? 'bg-teal-600 text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
           )}
         >
-          My Payments ({payerPayments.length})
+          My Payments ({payerCount})
         </button>
-        {showCollectorTab && (
-          <button
-            type="button"
-            onClick={() => setActiveTab('collector')}
-            className={clsx(
-              'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
-              activeTab === 'collector' ? 'bg-teal-600 text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
-            )}
-          >
-            Marked by Me ({collectorPayments.length})
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => setActiveTab('collector')}
+          className={clsx(
+            'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
+            activeTab === 'collector' ? 'bg-teal-600 text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
+          )}
+        >
+          Marked by Me ({collectorCount})
+        </button>
       </div>
 
-      {activeTab === 'payer' && (
-        <PaymentTable payments={payerPayments} loading={isLoading} showMember={false} />
-      )}
-      {activeTab === 'collector' && (
-        <PaymentTable payments={collectorPayments} loading={isLoading} showMember={true} />
-      )}
+      <PaymentTable
+        payments={activePayments}
+        loading={activeLoading}
+        showMember={activeTab === 'collector'}
+      />
+
+      <Pagination
+        page={activePage}
+        totalPages={activeTotalPages}
+        totalCount={activeTotalCount}
+        pageSize={20}
+        onChange={activeSetPage}
+      />
     </div>
   );
 }

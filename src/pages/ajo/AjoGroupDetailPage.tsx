@@ -773,7 +773,7 @@ function PaymentsTab({
                     className={clsx(
                       'w-8 h-8 rounded-lg text-xs font-semibold transition-colors',
                       page === n
-                        ? 'bg-orange-600 text-white'
+                        ? 'bg-(--primary) text-white'
                         : 'border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30',
                     )}
                   >

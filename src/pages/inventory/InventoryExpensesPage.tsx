@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 
 interface Expense {
@@ -14,6 +15,14 @@ interface Expense {
   amount: string;
   spent_at: string;
   created_at: string;
+}
+
+interface PaginatedExpenses {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Expense[];
+  total_amount: string;
 }
 
 const CATEGORIES = [
@@ -125,10 +134,11 @@ export default function InventoryExpensesPage() {
   const qc = useQueryClient();
   const [showAdd, setShowAdd] = useState(false);
   const [editExpense, setEditExpense] = useState<Expense | null>(null);
+  const [page, setPage] = useState(1);
 
-  const { data, isLoading, error } = useQuery<Expense[]>({
-    queryKey: ['inventory-expenses'],
-    queryFn: () => api.get('/inventory/expenses/').then(r => r.data),
+  const { data, isLoading, error } = useQuery<PaginatedExpenses>({
+    queryKey: ['inventory-expenses', page],
+    queryFn: () => api.get(`/inventory/expenses/?page=${page}`).then(r => r.data),
   });
 
   const deleteMutation = useMutation({
@@ -136,7 +146,10 @@ export default function InventoryExpensesPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['inventory-expenses'] }),
   });
 
-  const total = data?.reduce((sum, e) => sum + Number(e.amount), 0) ?? 0;
+  const expenses = data?.results ?? [];
+  const totalCount = data?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 20));
+  const totalAmount = Number(data?.total_amount ?? 0);
 
   return (
     <div className="space-y-6">
@@ -157,10 +170,10 @@ export default function InventoryExpensesPage() {
         </button>
       </div>
 
-      {data && data.length > 0 && (
+      {totalCount > 0 && (
         <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4">
           <p className="text-sm text-red-600 font-medium">Total recorded expenses</p>
-          <p className="text-2xl font-bold text-red-700">{formatCurrency(total)}</p>
+          <p className="text-2xl font-bold text-red-700">{formatCurrency(totalAmount)}</p>
         </div>
       )}
 
@@ -183,8 +196,8 @@ export default function InventoryExpensesPage() {
             <tbody className="divide-y divide-(--border)">
               {isLoading ? (
                 <SkeletonTable rows={5} cols={5} />
-              ) : data && data.length > 0 ? (
-                data.map(e => (
+              ) : expenses.length > 0 ? (
+                expenses.map(e => (
                   <tr key={e.id} className="hover:bg-(--primary-tint)/30 transition-colors">
                     <td className="px-6 py-4 text-sm text-(--text-secondary) whitespace-nowrap">
                       {format(new Date(e.spent_at), 'dd MMM yyyy')}
@@ -227,6 +240,8 @@ export default function InventoryExpensesPage() {
           </table>
         </div>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
 
       {showAdd && <ExpenseModal onClose={() => setShowAdd(false)} />}
       {editExpense && (

@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { PlusIcon, XCircleIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
+import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -25,6 +26,13 @@ interface ProductRequest {
   requested_by_name: string;
   reviewed_by_name: string | null;
   created_at: string;
+}
+
+interface PaginatedRequests {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ProductRequest[];
 }
 
 interface Category {
@@ -199,8 +207,8 @@ export default function InventoryProductRequestsPage() {
   const qc = useQueryClient();
   const [showModal, setShowModal] = useState(false);
   const [filter, setFilter] = useState<FilterStatus>('all');
+  const [page, setPage] = useState(1);
 
-  // Fetch businesses to get bizId and role
   const { data: businesses = [], isLoading: bizLoading } = useQuery<Business[]>({
     queryKey: ['inventory-businesses'],
     queryFn: () => api.get('/inventory/businesses/').then((r) => r.data),
@@ -213,12 +221,13 @@ export default function InventoryProductRequestsPage() {
   const canRequest = myRole === 'branch_admin' || myRole === 'staff';
   const canReview = myRole === 'owner' || myRole === 'manager';
 
-  const { data: requests = [], isLoading: reqLoading } = useQuery<ProductRequest[]>({
-    queryKey: ['inventory-product-requests', bizId],
-    queryFn: () =>
-      api
-        .get(`/inventory/businesses/${bizId}/product-requests/`)
-        .then((r) => r.data),
+  const { data: reqData, isLoading: reqLoading } = useQuery<PaginatedRequests>({
+    queryKey: ['inventory-product-requests', bizId, filter, page],
+    queryFn: () => {
+      const params = new URLSearchParams({ page: String(page) });
+      if (filter !== 'all') params.set('status', filter);
+      return api.get(`/inventory/businesses/${bizId}/product-requests/?${params}`).then((r) => r.data);
+    },
     enabled: !!bizId,
   });
 
@@ -230,8 +239,9 @@ export default function InventoryProductRequestsPage() {
     },
   });
 
-  const filtered =
-    filter === 'all' ? requests : requests.filter((r) => r.status === filter);
+  const requests = reqData?.results ?? [];
+  const totalCount = reqData?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 20));
 
   const isLoading = bizLoading || reqLoading;
 
@@ -264,7 +274,7 @@ export default function InventoryProductRequestsPage() {
           <button
             key={key}
             type="button"
-            onClick={() => setFilter(key)}
+            onClick={() => { setFilter(key); setPage(1); }}
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
               filter === key
@@ -286,13 +296,13 @@ export default function InventoryProductRequestsPage() {
             />
           ))}
         </div>
-      ) : filtered.length === 0 ? (
+      ) : requests.length === 0 ? (
         <div className="rounded-xl bg-(--surface) border border-(--border) px-6 py-16 text-center">
           <p className="text-sm text-(--text-muted)">No product requests yet.</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {filtered.map((req) => (
+          {requests.map((req) => (
             <div
               key={req.id}
               className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5"
@@ -366,6 +376,8 @@ export default function InventoryProductRequestsPage() {
           ))}
         </div>
       )}
+
+      <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
 
       {showModal && bizId && (
         <NewRequestModal bizId={bizId} onClose={() => setShowModal(false)} />

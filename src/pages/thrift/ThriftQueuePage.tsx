@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { format } from 'date-fns';
+import { XCircleIcon } from '@heroicons/react/24/outline';
 import { Skeleton } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 
@@ -57,6 +58,8 @@ function fmt(d: string | null | undefined) {
   try { return format(new Date(d), 'd MMM yyyy'); } catch { return '—'; }
 }
 
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
+
 // ── Skeleton Cards ────────────────────────────────────────────────────────────
 
 function SkeletonCards() {
@@ -81,6 +84,69 @@ function SkeletonCards() {
   );
 }
 
+// ── Flag Amount Modal ─────────────────────────────────────────────────────────
+
+function FlagModal({
+  member,
+  onConfirm,
+  onClose,
+  isPending,
+}: {
+  member: PendingMember;
+  onConfirm: (reason: string) => void;
+  onClose: () => void;
+  isPending: boolean;
+}) {
+  const [reason, setReason] = useState('');
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Flag Amount</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" />
+          </button>
+        </div>
+        <div className="p-6 space-y-4">
+          <p className="text-sm text-(--text-secondary)">
+            Flag <span className="font-semibold text-(--text-primary)">{member.user.first_name} {member.user.last_name}</span>'s
+            contribution of <span className="font-semibold text-(--text-primary)">{formatCurrency(member.personal_amount)}</span> and
+            ask them to correct it. Provide a reason below.
+          </p>
+          <div>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Reason *</label>
+            <textarea
+              rows={3}
+              value={reason}
+              onChange={e => setReason(e.target.value)}
+              placeholder="e.g. Contribution amount doesn't match the group minimum"
+              className={inputCls}
+            />
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={!reason.trim() || isPending}
+              onClick={() => onConfirm(reason.trim())}
+              className="flex-1 rounded-lg bg-yellow-500 text-white py-2.5 text-sm font-semibold hover:bg-yellow-600 disabled:opacity-50 transition-colors"
+            >
+              {isPending ? 'Flagging…' : 'Flag Amount'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 type QueueTab = 'pending' | 'disputed';
@@ -89,6 +155,7 @@ export default function ThriftQueuePage() {
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState<QueueTab>('pending');
   const [actionError, setActionError] = useState<Record<number, string>>({});
+  const [flagTarget, setFlagTarget] = useState<PendingMember | null>(null);
 
   const { data, isLoading, error } = useQuery<CollectorQueueResponse>({
     queryKey: ['thrift-collector-queue'],
@@ -98,15 +165,17 @@ export default function ThriftQueuePage() {
   const reviewMutation = useMutation({
     mutationFn: ({ groupId, memberId, action, reason }: {
       groupId: number; memberId: number; action: string; reason?: string;
-    }) => api.post(`/thrift/${groupId}/members/${memberId}/`, { action, ...(reason ? { reason } : {}) }),
+    }) => api.patch(`/thrift/${groupId}/members/${memberId}/`, { action, ...(reason ? { reason } : {}) }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['thrift-collector-queue'] });
+      setFlagTarget(null);
     },
     onError: (e: any, vars) => {
       setActionError(prev => ({
         ...prev,
         [vars.memberId]: e.response?.data?.detail ?? 'Something went wrong.',
       }));
+      setFlagTarget(null);
     },
   });
 
@@ -188,8 +257,9 @@ export default function ThriftQueuePage() {
                       <p className="text-xs text-(--text-muted)">Requested {fmt(member.created_at)}</p>
                     </div>
 
-                    <div className="flex gap-2 flex-shrink-0">
+                    <div className="flex gap-2 flex-shrink-0 flex-wrap">
                       {member.status === 'amount_pending' ? (
+                        /* Member has proposed corrected amount — approve or reject */
                         <>
                           <button
                             type="button"
@@ -217,6 +287,7 @@ export default function ThriftQueuePage() {
                           </button>
                         </>
                       ) : (
+                        /* Fresh pending member — approve, flag amount, or reject */
                         <>
                           <button
                             type="button"
@@ -229,6 +300,14 @@ export default function ThriftQueuePage() {
                             className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-1.5 hover:bg-green-100 transition-colors disabled:opacity-50"
                           >
                             Approve
+                          </button>
+                          <button
+                            type="button"
+                            disabled={reviewMutation.isPending}
+                            onClick={() => setFlagTarget(member)}
+                            className="text-xs font-semibold text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-1.5 hover:bg-yellow-100 transition-colors disabled:opacity-50"
+                          >
+                            Flag Amount
                           </button>
                           <button
                             type="button"
@@ -299,12 +378,13 @@ export default function ThriftQueuePage() {
                       <p className="text-xs text-(--text-muted)">Marked {fmt(payment.marked_at)}</p>
                     </div>
 
-                    <button
-                      type="button"
+                    {/* Navigate to group to resolve — no direct queue resolution endpoint */}
+                    <Link
+                      to={`/thrift/${payment.group_id}`}
                       className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-100 transition-colors flex-shrink-0"
                     >
-                      Resolve
-                    </button>
+                      View in Group
+                    </Link>
                   </div>
 
                   {/* Dispute reason */}
@@ -320,6 +400,21 @@ export default function ThriftQueuePage() {
             </div>
           )}
         </>
+      )}
+
+      {/* Flag Amount Modal */}
+      {flagTarget && (
+        <FlagModal
+          member={flagTarget}
+          isPending={reviewMutation.isPending}
+          onClose={() => setFlagTarget(null)}
+          onConfirm={reason => reviewMutation.mutate({
+            groupId: flagTarget.group_id,
+            memberId: flagTarget.id,
+            action: 'flag_amount',
+            reason,
+          })}
+        />
       )}
     </div>
   );

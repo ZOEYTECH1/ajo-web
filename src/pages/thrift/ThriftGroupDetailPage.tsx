@@ -44,6 +44,7 @@ interface ThriftGroup {
   member_count: number;
   is_on_trial: boolean;
   is_subscription_active: boolean;
+  is_org_admin: boolean;
   active_cycle: ThriftCycle | null;
   created_at: string;
 }
@@ -284,6 +285,72 @@ function DisputeModal({
   );
 }
 
+// ── Report Collector Modal (payer only) ──────────────────────────────────────
+
+function ReportCollectorModal({ groupId, onClose }: { groupId: number; onClose: () => void }) {
+  const qc = useQueryClient();
+  const [reason, setReason] = useState('');
+  const [err, setErr] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: () => api.post(`/thrift/${groupId}/report/`, { reason }),
+    onSuccess: () => { setSuccess(true); qc.invalidateQueries({ queryKey: ['thrift-group', groupId] }); },
+    onError: (e: any) => setErr(e.response?.data?.reason?.[0] ?? e.response?.data?.detail ?? 'Report failed.'),
+  });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Report Collector</h2>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+        </div>
+        <div className="p-6 space-y-4">
+          {success ? (
+            <div className="flex items-start gap-3 rounded-xl bg-green-50 border border-green-200 px-4 py-4">
+              <CheckCircleIcon className="h-6 w-6 text-green-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-green-800">Report submitted</p>
+                <p className="text-sm text-green-700 mt-0.5">The organisation admin has been notified.</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className="text-sm text-(--text-secondary)">Describe the issue with this collector. This will be sent to the organisation admin for review.</p>
+              <div>
+                <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Reason *</label>
+                <textarea
+                  rows={3}
+                  value={reason}
+                  onChange={e => { setReason(e.target.value); setErr(''); }}
+                  placeholder="Describe what happened…"
+                  className={inputCls}
+                />
+              </div>
+              {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              <div className="flex gap-3">
+                <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+                <button
+                  type="button"
+                  disabled={!reason.trim() || mutation.isPending}
+                  onClick={() => mutation.mutate()}
+                  className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+                >
+                  {mutation.isPending ? 'Submitting…' : 'Submit Report'}
+                </button>
+              </div>
+            </>
+          )}
+          {success && (
+            <button type="button" onClick={onClose} className={cancelBtn}>Close</button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Start Cycle Modal (collector only) ───────────────────────────────────────
 
 function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: number; cycleNumber: number; onClose: () => void }) {
@@ -350,6 +417,7 @@ export default function ThriftGroupDetailPage() {
   const [showMarkPayment, setShowMarkPayment] = useState(false);
   const [disputePaymentId, setDisputePaymentId] = useState<number | null>(null);
   const [showStartCycle, setShowStartCycle] = useState(false);
+  const [showReportCollector, setShowReportCollector] = useState(false);
 
   const [groupQ, membersQ, paymentsQ, cyclesQ] = useQueries({
     queries: [
@@ -378,6 +446,7 @@ export default function ThriftGroupDetailPage() {
   const cycles = cyclesQ.data ?? [];
 
   const isCollector = currentUser?.id === group?.collector?.id;
+  const isOrgAdmin = group?.is_org_admin ?? false;
 
   // Find current user's member record (payer perspective)
   const myMembership = members.find(m => m.user.id === currentUser?.id);
@@ -416,6 +485,11 @@ export default function ThriftGroupDetailPage() {
   const deletePaymentMutation = useMutation({
     mutationFn: (paymentId: number) => api.delete(`/thrift/${groupId}/payments/${paymentId}/`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['thrift-payments', groupId] }),
+  });
+
+  const kycToggleMutation = useMutation({
+    mutationFn: (memberId: number) => api.patch(`/thrift/${groupId}/members/${memberId}/kyc/`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['thrift-members', groupId] }),
   });
 
   if (groupQ.isLoading) {
@@ -468,6 +542,15 @@ export default function ThriftGroupDetailPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            {!isCollector && group.organization && (
+              <button
+                type="button"
+                onClick={() => setShowReportCollector(true)}
+                className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-1.5 hover:bg-red-100 transition-colors"
+              >
+                Report Collector
+              </button>
+            )}
             {isCollector && (
               <button type="button" onClick={() => setShowSettings(true)} className="p-2 rounded-lg border border-(--border) text-(--text-secondary) hover:text-teal-600 hover:border-teal-300 transition-colors" title="Settings">
                 <Cog6ToothIcon className="h-5 w-5" />
@@ -673,7 +756,8 @@ export default function ThriftGroupDetailPage() {
                 <thead className="bg-(--bg)">
                   <tr>
                     {['Name', 'Amount / Period', 'Total Saved', 'Joined', 'Status',
-                      ...(isCollector && memberSubTab === 'pending' ? ['Actions'] : [])
+                      ...(isCollector && memberSubTab === 'pending' ? ['Actions'] : []),
+                      ...(isOrgAdmin ? ['KYC'] : []),
                     ].map(h => (
                       <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
                     ))}
@@ -681,7 +765,7 @@ export default function ThriftGroupDetailPage() {
                 </thead>
                 <tbody className="divide-y divide-(--border)">
                   {membersQ.isLoading ? (
-                    <SkeletonTable rows={3} cols={isCollector && memberSubTab === 'pending' ? 6 : 5} />
+                    <SkeletonTable rows={3} cols={(isCollector && memberSubTab === 'pending' ? 6 : 5) + (isOrgAdmin ? 1 : 0)} />
                   ) : (
                     (() => {
                       const list = isCollector
@@ -690,7 +774,7 @@ export default function ThriftGroupDetailPage() {
                       if (list.length === 0) {
                         return (
                           <tr>
-                            <td colSpan={6} className="px-6 py-12 text-center text-sm text-(--text-muted)">
+                            <td colSpan={(isCollector && memberSubTab === 'pending' ? 6 : 5) + (isOrgAdmin ? 1 : 0)} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                               {memberSubTab === 'pending' ? 'No pending member requests.' : 'No members yet.'}
                             </td>
                           </tr>
@@ -726,6 +810,23 @@ export default function ThriftGroupDetailPage() {
                                   Reject
                                 </button>
                               </div>
+                            </td>
+                          )}
+                          {isOrgAdmin && (
+                            <td className="px-6 py-4">
+                              <button
+                                type="button"
+                                disabled={kycToggleMutation.isPending}
+                                onClick={() => kycToggleMutation.mutate(m.id)}
+                                className={clsx(
+                                  'text-xs font-semibold rounded-lg px-2.5 py-1 transition-colors disabled:opacity-50',
+                                  m.user.is_kyc_verified
+                                    ? 'text-green-700 bg-green-50 border border-green-200 hover:bg-green-100'
+                                    : 'text-(--text-secondary) bg-(--bg) border border-(--border) hover:bg-(--primary-tint)/30',
+                                )}
+                              >
+                                {m.user.is_kyc_verified ? 'KYC ✓' : 'Set KYC'}
+                              </button>
                             </td>
                           )}
                         </tr>
@@ -808,6 +909,9 @@ export default function ThriftGroupDetailPage() {
           cycleNumber={(cycles[cycles.length - 1]?.cycle_number ?? 0) + 1}
           onClose={() => setShowStartCycle(false)}
         />
+      )}
+      {showReportCollector && (
+        <ReportCollectorModal groupId={groupId} onClose={() => setShowReportCollector(false)} />
       )}
     </div>
   );

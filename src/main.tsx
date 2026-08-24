@@ -31,6 +31,7 @@ const ThriftPaymentHistoryPage      = lazy(() => import('./pages/thrift/ThriftPa
 const ThriftQueuePage               = lazy(() => import('./pages/thrift/ThriftQueuePage'));
 const ThriftBillingPage             = lazy(() => import('./pages/thrift/ThriftBillingPage'));
 const ThriftOrgPage                 = lazy(() => import('./pages/thrift/ThriftOrgPage'));
+const ThriftOrgBillingPage          = lazy(() => import('./pages/thrift/ThriftOrgBillingPage'));
 
 // Inventory pages
 const InventoryDashboardPage        = lazy(() => import('./pages/inventory/InventoryDashboardPage'));
@@ -83,6 +84,7 @@ const router = createBrowserRouter([
           { path: 'thrift/queue',                     element: <ThriftQueuePage /> },
           { path: 'thrift/billing',                   element: <ThriftBillingPage /> },
           { path: 'thrift/org/:id',                   element: <ThriftOrgPage /> },
+          { path: 'thrift/org/:id/billing',           element: <ThriftOrgBillingPage /> },
           { path: 'thrift/:id',                       element: <ThriftGroupDetailPage /> },
           { path: 'account',                          element: <AccountPage /> },
           { path: 'account/privacy',                  element: <PrivacyPage /> },

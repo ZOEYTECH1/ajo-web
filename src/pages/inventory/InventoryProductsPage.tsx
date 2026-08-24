@@ -118,13 +118,21 @@ function ProductModal({
 
   const mutation = useMutation({
     mutationFn: () => {
-      if (isEdit && imageFile) {
+      if (imageFile) {
         const fd = new FormData();
-        Object.entries({ ...form, quantity: undefined }).forEach(([k, v]) => {
-          if (v !== undefined && v !== '') fd.append(k, String(v));
-        });
+        fd.append('name', form.name.trim());
+        fd.append('price', form.price);
+        fd.append('cost_price', form.cost_price || '0');
+        fd.append('low_stock_threshold', String(Number(form.low_stock_threshold || 5)));
+        fd.append('discount_percent', String(Number(form.discount_percent || 0)));
+        if (!isEdit) fd.append('quantity', String(Number(form.quantity || 0)));
+        if (form.barcode.trim()) fd.append('barcode', form.barcode.trim());
+        if (form.expiry_date) fd.append('expiry_date', form.expiry_date);
         fd.append('image', imageFile);
-        return api.patch(`/inventory/products/${prodId}/`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+        // Do NOT set Content-Type — Axios sets multipart/form-data with boundary automatically
+        return isEdit
+          ? api.patch(`/inventory/products/${prodId}/`, fd)
+          : api.post(`/inventory/categories/${catId}/products/`, fd);
       }
       const body = {
         name: form.name.trim(),
@@ -198,8 +206,8 @@ function ProductModal({
             <input type="date" value={form.expiry_date} onChange={(e) => setForm(f => ({ ...f, expiry_date: e.target.value }))} className={inputCls} />
           </Field>
 
-          {/* Image upload — edit only */}
-          {isEdit && (
+          {/* Image upload */}
+          {(
             <div>
               <label className="block text-sm font-semibold text-(--text-secondary) mb-2">Product Image</label>
               <div className="flex items-center gap-4">

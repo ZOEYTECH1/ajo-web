@@ -9,17 +9,17 @@
   --primary:        #0035F0;
   --primary-dark:   #0028C2;
   --primary-light:  #4D7EFF;
-  --primary-tint:   #E6ECFF;
+  --primary-tint:   #E4ECFF;
 
-  /* Surface / background */
-  --bg:             #F5F7FA;
-  --surface:        #FFFFFF;
-  --border:         #E5E7EB;
+  /* Surface / background — slate-toned, not pure white */
+  --bg:             #E2E8F0;  /* slate-200: cool gray page */
+  --surface:        #F8FAFC;  /* slate-50: off-white cards */
+  --border:         #CBD5E1;  /* slate-300: clearly visible borders */
 
   /* Text */
-  --text-primary:   #0D1117;
-  --text-secondary: #6B7280;
-  --text-muted:     #9CA3AF;
+  --text-primary:   #0F172A;  /* slate-900 */
+  --text-secondary: #475569;  /* slate-600 */
+  --text-muted:     #64748B;  /* slate-500 */
 
   /* Status */
   --success:        #22C55E;

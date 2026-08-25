@@ -560,7 +560,7 @@ export default function InventoryProductsPage() {
               ) : data && data.length > 0 ? (
                 data.map(p => (
                   <tr key={p.id} className={clsx('hover:bg-(--primary-tint)/30 transition-colors', p.quantity === 0 && 'bg-red-50/30')}>
-                    <td className="px-4 py-3 text-sm font-medium text-(--text-primary)">
+                    <td className="px-4 py-3 text-sm font-semibold text-(--text-primary)">
                       {p.name}
                       {p.barcode && <span className="block text-xs text-(--text-muted)">{p.barcode}</span>}
                     </td>

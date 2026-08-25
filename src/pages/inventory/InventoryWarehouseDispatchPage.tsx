@@ -4,6 +4,7 @@ import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
+import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -30,6 +31,7 @@ const inputCls =
 
 export default function InventoryWarehouseDispatchPage() {
   const qc = useQueryClient();
+  const { selectedId } = useInventoryBusiness();
 
   const [selectedCatId, setSelectedCatId] = useState('');
   const [selectedProdId, setSelectedProdId] = useState('');
@@ -42,8 +44,9 @@ export default function InventoryWarehouseDispatchPage() {
   const [successMsg, setSuccessMsg] = useState('');
 
   const { data: categories = [] } = useQuery<Category[]>({
-    queryKey: ['inventory-categories'],
-    queryFn: () => api.get('/inventory/categories/').then((r) => r.data),
+    queryKey: ['inventory-categories', selectedId],
+    queryFn: () => api.get('/inventory/categories/', { params: { business_id: selectedId } }).then((r) => r.data),
+    enabled: selectedId !== null,
   });
 
   const categoryProducts =

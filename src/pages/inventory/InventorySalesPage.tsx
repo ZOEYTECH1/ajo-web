@@ -7,6 +7,7 @@ import { SkeletonTable } from '../../components/ui/Skeleton';
 import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
+import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 interface SaleItem {
   product_name: string;
@@ -60,7 +61,7 @@ interface CompletedSale {
   sold_at: string;
 }
 
-function NewSaleModal({ onClose }: { onClose: () => void }) {
+function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number | null }) {
   const qc = useQueryClient();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCatId, setSelectedCatId] = useState('');
@@ -81,7 +82,7 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
     setBarcodeErr('');
     setBarcodeLoading(true);
     try {
-      const res = await api.get('/inventory/products/barcode/', { params: { code } });
+      const res = await api.get('/inventory/products/barcode/', { params: { code, business_id: bizId } });
       const prod: Product = res.data;
       if (prod.quantity <= 0) { setBarcodeErr(`"${prod.name}" is out of stock.`); return; }
       setCart(prev => {
@@ -101,8 +102,9 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
   }
 
   const { data: categories } = useQuery<Category[]>({
-    queryKey: ['inventory-categories'],
-    queryFn: () => api.get('/inventory/categories/').then(r => r.data),
+    queryKey: ['inventory-categories', bizId],
+    queryFn: () => api.get('/inventory/categories/', { params: { business_id: bizId } }).then(r => r.data),
+    enabled: !!bizId,
   });
 
   const { data: products } = useQuery<Product[]>({
@@ -112,8 +114,9 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
   });
 
   const { data: customers } = useQuery<Customer[]>({
-    queryKey: ['inventory-customers'],
-    queryFn: () => api.get('/inventory/customers/').then(r => r.data),
+    queryKey: ['inventory-customers', bizId],
+    queryFn: () => api.get('/inventory/customers/', { params: { business_id: bizId } }).then(r => r.data),
+    enabled: !!bizId,
   });
 
   const selectedProduct = products?.find(p => String(p.id) === selectedProdId);
@@ -152,6 +155,7 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
 
   const mutation = useMutation({
     mutationFn: () => api.post('/inventory/sales/', {
+      business_id: bizId,
       customer_id: customerId ? Number(customerId) : null,
       notes: notes.trim(),
       items: cart.map(c => ({ product_id: c.product_id, quantity: c.quantity, unit_price: c.unit_price })),
@@ -438,10 +442,12 @@ export default function InventorySalesPage() {
   const [showNewSale, setShowNewSale] = useState(false);
   const [page, setPage] = useState(1);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const { selectedId } = useInventoryBusiness();
 
   const { data, isLoading, error } = useQuery<PaginatedSales>({
-    queryKey: ['inventory-sales', page],
-    queryFn: () => api.get(`/inventory/sales/?page=${page}`).then(r => r.data),
+    queryKey: ['inventory-sales', page, selectedId],
+    queryFn: () => api.get('/inventory/sales/', { params: { page, business_id: selectedId } }).then(r => r.data),
+    enabled: selectedId !== null,
   });
 
   const sales = data?.results ?? [];
@@ -573,7 +579,7 @@ export default function InventorySalesPage() {
 
       <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
 
-      {showNewSale && <NewSaleModal onClose={() => setShowNewSale(false)} />}
+      {showNewSale && <NewSaleModal onClose={() => setShowNewSale(false)} bizId={selectedId} />}
     </div>
   );
 }

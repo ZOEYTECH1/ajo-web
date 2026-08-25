@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
+import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 interface BestSeller {
   product_name: string;
@@ -24,10 +25,12 @@ function formatCurrency(v: string | number) {
 
 export default function InventoryBestSellersPage() {
   const [days, setDays] = useState(30);
+  const { selectedId } = useInventoryBusiness();
 
   const { data, isLoading, error } = useQuery<BestSeller[]>({
-    queryKey: ['inventory-best-sellers', days],
-    queryFn: () => api.get(`/inventory/best-sellers/?days=${days}&limit=20`).then(r => r.data),
+    queryKey: ['inventory-best-sellers', days, selectedId],
+    queryFn: () => api.get('/inventory/best-sellers/', { params: { days, limit: 20, business_id: selectedId } }).then(r => r.data),
+    enabled: selectedId !== null,
   });
 
   const maxQty = data && data.length > 0 ? Math.max(...data.map(b => b.total_qty)) : 1;

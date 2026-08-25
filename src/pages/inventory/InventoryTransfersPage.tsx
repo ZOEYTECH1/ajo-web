@@ -6,6 +6,7 @@ import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
+import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -75,9 +76,11 @@ interface CartItem {
 
 function TransferModal({
   businesses,
+  bizId,
   onClose,
 }: {
   businesses: Business[];
+  bizId: number | null;
   onClose: () => void;
 }) {
   const qc = useQueryClient();
@@ -91,8 +94,9 @@ function TransferModal({
   const [err, setErr] = useState('');
 
   const { data: categories = [] } = useQuery<Category[]>({
-    queryKey: ['inventory-categories'],
-    queryFn: () => api.get('/inventory/categories/').then((r) => r.data),
+    queryKey: ['inventory-categories', bizId],
+    queryFn: () => api.get('/inventory/categories/', { params: { business_id: bizId } }).then((r) => r.data),
+    enabled: !!bizId,
   });
 
   const { data: products = [] } = useQuery<Product[]>({
@@ -104,6 +108,7 @@ function TransferModal({
   const mutation = useMutation({
     mutationFn: () =>
       api.post('/inventory/transfers/', {
+        business_id: bizId,
         to_business_id: Number(toBizId),
         items: cart.map(({ from_product_id, product_name, quantity }) => ({
           from_product_id,
@@ -256,20 +261,17 @@ function TransferModal({
 export default function InventoryTransfersPage() {
   const [showModal, setShowModal] = useState(false);
   const [page, setPage] = useState(1);
+  const { selectedId, businesses } = useInventoryBusiness();
 
   const { data, isLoading, error } = useQuery<PaginatedTransfers>({
-    queryKey: ['inventory-transfers', page],
-    queryFn: () => api.get(`/inventory/transfers/?page=${page}`).then((r) => r.data),
+    queryKey: ['inventory-transfers', page, selectedId],
+    queryFn: () => api.get('/inventory/transfers/', { params: { page, business_id: selectedId } }).then((r) => r.data),
+    enabled: selectedId !== null,
   });
 
   const transfers = data?.results ?? [];
   const totalCount = data?.count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / 20));
-
-  const { data: businesses = [] } = useQuery<Business[]>({
-    queryKey: ['inventory-businesses'],
-    queryFn: () => api.get('/inventory/businesses/').then((r) => r.data),
-  });
 
   const canTransfer = businesses.some((b) => b.my_role === 'owner' || b.my_role === 'manager');
   const myBusinessIds = useMemo(() => new Set(businesses.map((b) => b.id)), [businesses]);
@@ -368,7 +370,7 @@ export default function InventoryTransfersPage() {
       <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
 
       {showModal && (
-        <TransferModal businesses={businesses} onClose={() => setShowModal(false)} />
+        <TransferModal businesses={businesses} bizId={selectedId} onClose={() => setShowModal(false)} />
       )}
     </div>
   );

@@ -18,6 +18,7 @@ import {
 import { SkeletonCard } from '../../components/ui/Skeleton';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
+import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 /* ── Types matching actual backend response ────────────────────────────── */
 interface LowStockItem {
@@ -96,13 +97,15 @@ function StatCard({
 export default function InventoryDashboardPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
+  const { selectedId } = useInventoryBusiness();
 
   const { data, isLoading, error } = useQuery<DashboardData>({
-    queryKey: ['inventory-dashboard', dateStr],
+    queryKey: ['inventory-dashboard', dateStr, selectedId],
     queryFn: async () => {
-      const response = await api.get('/inventory/dashboard/', { params: { date: dateStr } });
+      const response = await api.get('/inventory/dashboard/', { params: { date: dateStr, business_id: selectedId } });
       return response.data;
     },
+    enabled: selectedId !== null,
   });
 
   const goToPrev = () => setSelectedDate((d) => subDays(d, 1));

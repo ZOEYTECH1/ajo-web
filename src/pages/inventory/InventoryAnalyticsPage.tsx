@@ -7,6 +7,7 @@ import { CurrencyDollarIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 import { SkeletonCard } from '../../components/ui/Skeleton';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
+import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 /* ── Types matching actual backend ────────────────────────────────────── */
 interface ChartPoint {
@@ -49,13 +50,15 @@ function formatCurrency(value: number | string): string {
 export default function InventoryAnalyticsPage() {
   const [period, setPeriod] = useState<Period>('daily');
   const days = PERIODS.find((p) => p.value === period)?.days ?? 14;
+  const { selectedId } = useInventoryBusiness();
 
   const { data, isLoading, error } = useQuery<AnalyticsData>({
-    queryKey: ['inventory-analytics', period, days],
+    queryKey: ['inventory-analytics', period, days, selectedId],
     queryFn: async () => {
-      const response = await api.get('/inventory/analytics/', { params: { period, days } });
+      const response = await api.get('/inventory/analytics/', { params: { period, days, business_id: selectedId } });
       return response.data;
     },
+    enabled: selectedId !== null,
   });
 
   return (

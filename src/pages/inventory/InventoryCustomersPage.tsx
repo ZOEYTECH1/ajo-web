@@ -4,6 +4,7 @@ import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/2
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
+import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 interface Customer {
   id: number;
@@ -37,10 +38,12 @@ function CustomerModal({
   initial,
   customerId,
   onClose,
+  bizId,
 }: {
   initial?: { name: string; phone: string; notes: string };
   customerId?: number;
   onClose: () => void;
+  bizId: number | null;
 }) {
   const qc = useQueryClient();
   const isEdit = !!customerId;
@@ -49,7 +52,7 @@ function CustomerModal({
 
   const mutation = useMutation({
     mutationFn: () => {
-      const body = { name: form.name.trim(), phone: form.phone.trim(), notes: form.notes.trim() };
+      const body = { business_id: bizId, name: form.name.trim(), phone: form.phone.trim(), notes: form.notes.trim() };
       return isEdit
         ? api.patch(`/inventory/customers/${customerId}/`, body)
         : api.post('/inventory/customers/', body);
@@ -174,14 +177,16 @@ function CreditModal({ customer, onClose }: { customer: Customer; onClose: () =>
 
 export default function InventoryCustomersPage() {
   const qc = useQueryClient();
+  const { selectedId } = useInventoryBusiness();
   const [showAdd, setShowAdd] = useState(false);
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
   const [creditCustomer, setCreditCustomer] = useState<Customer | null>(null);
   const [search, setSearch] = useState('');
 
   const { data, isLoading, error } = useQuery<Customer[]>({
-    queryKey: ['inventory-customers'],
-    queryFn: () => api.get('/inventory/customers/').then(r => r.data),
+    queryKey: ['inventory-customers', selectedId],
+    queryFn: () => api.get('/inventory/customers/', { params: { business_id: selectedId } }).then(r => r.data),
+    enabled: selectedId !== null,
   });
 
   const deleteMutation = useMutation({
@@ -309,12 +314,13 @@ export default function InventoryCustomersPage() {
         </div>
       </div>
 
-      {showAdd && <CustomerModal onClose={() => setShowAdd(false)} />}
+      {showAdd && <CustomerModal onClose={() => setShowAdd(false)} bizId={selectedId} />}
       {editCustomer && (
         <CustomerModal
           initial={{ name: editCustomer.name, phone: editCustomer.phone, notes: editCustomer.notes }}
           customerId={editCustomer.id}
           onClose={() => setEditCustomer(null)}
+          bizId={selectedId}
         />
       )}
       {creditCustomer && <CreditModal customer={creditCustomer} onClose={() => setCreditCustomer(null)} />}

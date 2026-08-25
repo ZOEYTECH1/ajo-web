@@ -7,6 +7,7 @@ import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
+import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 interface Expense {
   id: number;
@@ -191,10 +192,12 @@ function ExpenseModal({
   initial,
   expenseId,
   onClose,
+  bizId,
 }: {
   initial?: Partial<ExpenseForm>;
   expenseId?: number;
   onClose: () => void;
+  bizId: number | null;
 }) {
   const qc = useQueryClient();
   const isEdit = !!expenseId;
@@ -214,7 +217,7 @@ function ExpenseModal({
 
   const mutation = useMutation({
     mutationFn: () => {
-      const body = { category: form.category, description: form.description.trim(), amount: form.amount, spent_at: form.spent_at };
+      const body = { business_id: bizId, category: form.category, description: form.description.trim(), amount: form.amount, spent_at: form.spent_at };
       return isEdit
         ? api.patch(`/inventory/expenses/${expenseId}/`, body)
         : api.post('/inventory/expenses/', body);
@@ -290,6 +293,7 @@ function ExpenseModal({
 
 export default function InventoryExpensesPage() {
   const qc = useQueryClient();
+  const { selectedId } = useInventoryBusiness();
   const [showAdd, setShowAdd] = useState(false);
   const [editExpense, setEditExpense] = useState<Expense | null>(null);
   const [showManageCats, setShowManageCats] = useState(false);
@@ -304,8 +308,9 @@ export default function InventoryExpensesPage() {
   }, [period, today.toISOString().slice(0, 7)]);
 
   const { data, isLoading, error } = useQuery<PaginatedExpenses>({
-    queryKey: ['inventory-expenses', page, period],
-    queryFn: () => api.get(`/inventory/expenses/?page=${page}${periodParams}`).then(r => r.data),
+    queryKey: ['inventory-expenses', page, period, selectedId],
+    queryFn: () => api.get(`/inventory/expenses/`, { params: { page, business_id: selectedId, ...(period === 'month' ? { spent_at_after: format(startOfMonth(today), 'yyyy-MM-dd') } : period === 'week' ? { spent_at_after: format(startOfWeek(today, { weekStartsOn: 1 }), 'yyyy-MM-dd') } : {}) } }).then(r => r.data),
+    enabled: selectedId !== null,
   });
 
   const deleteMutation = useMutation({
@@ -514,12 +519,13 @@ export default function InventoryExpensesPage() {
       <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
 
       {showManageCats && <ManageCategoriesModal onClose={() => setShowManageCats(false)} />}
-      {showAdd && <ExpenseModal onClose={() => setShowAdd(false)} />}
+      {showAdd && <ExpenseModal onClose={() => setShowAdd(false)} bizId={selectedId} />}
       {editExpense && (
         <ExpenseModal
           initial={{ category: editExpense.category, description: editExpense.description, amount: editExpense.amount, spent_at: editExpense.spent_at.split('T')[0] }}
           expenseId={editExpense.id}
           onClose={() => setEditExpense(null)}
+          bizId={selectedId}
         />
       )}
     </div>

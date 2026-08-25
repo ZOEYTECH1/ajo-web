@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
+import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -206,18 +207,13 @@ function NewRequestModal({
 
 export default function InventoryProductRequestsPage() {
   const qc = useQueryClient();
+  const { selectedId, selectedBiz, isLoading: bizLoading } = useInventoryBusiness();
   const [showModal, setShowModal] = useState(false);
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [page, setPage] = useState(1);
 
-  const { data: businesses = [], isLoading: bizLoading } = useQuery<Business[]>({
-    queryKey: ['inventory-businesses'],
-    queryFn: () => api.get('/inventory/businesses/').then((r) => r.data),
-  });
-
-  const biz = businesses[0] ?? null;
-  const bizId = biz?.id ?? null;
-  const myRole = biz?.my_role ?? null;
+  const bizId = selectedId;
+  const myRole = selectedBiz?.my_role ?? null;
 
   const canRequest = myRole === 'branch_admin' || myRole === 'staff';
   const canReview = myRole === 'owner' || myRole === 'manager';

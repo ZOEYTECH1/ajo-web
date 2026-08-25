@@ -6,6 +6,7 @@ import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
+import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 interface CustomFieldDef {
   name: string;
@@ -268,18 +269,20 @@ function CustomFieldsModal({ category, onClose }: { category: Category; onClose:
 
 export default function InventoryCategoriesPage() {
   const qc = useQueryClient();
+  const { selectedId } = useInventoryBusiness();
   const [showAdd, setShowAdd] = useState(false);
   const [editCat, setEditCat] = useState<Category | null>(null);
   const [customFieldsCat, setCustomFieldsCat] = useState<Category | null>(null);
   const [mutErr, setMutErr] = useState('');
 
   const { data: categories, isLoading, error } = useQuery<Category[]>({
-    queryKey: ['inventory-categories'],
-    queryFn: () => api.get('/inventory/categories/').then(r => r.data),
+    queryKey: ['inventory-categories', selectedId],
+    queryFn: () => api.get('/inventory/categories/', { params: { business_id: selectedId } }).then(r => r.data),
+    enabled: selectedId !== null,
   });
 
   const createMutation = useMutation({
-    mutationFn: (name: string) => api.post('/inventory/categories/', { name }),
+    mutationFn: (name: string) => api.post('/inventory/categories/', { name, business_id: selectedId }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['inventory-categories'] }); setShowAdd(false); setMutErr(''); },
     onError: (e: any) => {
       const d = e.response?.data;

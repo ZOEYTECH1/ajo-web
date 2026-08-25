@@ -1,10 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import {
   PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowUpIcon,
-  ChartBarIcon, PhotoIcon, ChevronLeftIcon, ChevronRightIcon,
+  ChartBarIcon, ChevronLeftIcon, ChevronRightIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
@@ -85,17 +85,15 @@ type ProductForm = {
 };
 
 function ProductModal({
-  initial, catId, prodId, currentImageUrl, onClose,
+  initial, catId, prodId, onClose,
 }: {
   initial?: Partial<ProductForm>;
   catId: string;
   prodId?: number;
-  currentImageUrl?: string | null;
   onClose: () => void;
 }) {
   const qc = useQueryClient();
   const isEdit = !!prodId;
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState<ProductForm>({
     name: initial?.name ?? '',
     price: initial?.price ?? '',
@@ -106,35 +104,10 @@ function ProductModal({
     expiry_date: initial?.expiry_date ?? '',
     discount_percent: initial?.discount_percent ?? '0',
   });
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [err, setErr] = useState('');
-
-  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-  }
 
   const mutation = useMutation({
     mutationFn: () => {
-      if (imageFile) {
-        const fd = new FormData();
-        fd.append('name', form.name.trim());
-        fd.append('price', form.price);
-        fd.append('cost_price', form.cost_price || '0');
-        fd.append('low_stock_threshold', String(Number(form.low_stock_threshold || 5)));
-        fd.append('discount_percent', String(Number(form.discount_percent || 0)));
-        if (!isEdit) fd.append('quantity', String(Number(form.quantity || 0)));
-        if (form.barcode.trim()) fd.append('barcode', form.barcode.trim());
-        if (form.expiry_date) fd.append('expiry_date', form.expiry_date);
-        fd.append('image', imageFile);
-        // Do NOT set Content-Type — Axios sets multipart/form-data with boundary automatically
-        return isEdit
-          ? api.patch(`/inventory/products/${prodId}/`, fd)
-          : api.post(`/inventory/categories/${catId}/products/`, fd);
-      }
       const body = {
         name: form.name.trim(),
         price: form.price,
@@ -151,7 +124,6 @@ function ProductModal({
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['inventory-products', catId] });
-      if (imagePreview) URL.revokeObjectURL(imagePreview);
       onClose();
     },
     onError: (e: any) => {
@@ -207,43 +179,7 @@ function ProductModal({
             <input type="date" value={form.expiry_date} onChange={(e) => setForm(f => ({ ...f, expiry_date: e.target.value }))} className={inputCls} />
           </Field>
 
-          {/* Image upload */}
-          {(
-            <div>
-              <label className="block text-sm font-semibold text-(--text-secondary) mb-2">Product Image</label>
-              <div className="flex items-center gap-4">
-                {(imagePreview ?? currentImageUrl) && (
-                  <img
-                    src={imagePreview ?? currentImageUrl!}
-                    alt="Product"
-                    className="w-16 h-16 rounded-lg object-cover border border-(--border)"
-                  />
-                )}
-                <div className="flex-1">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="inline-flex items-center gap-2 rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
-                  >
-                    <PhotoIcon className="h-4 w-4" />
-                    {(imagePreview ?? currentImageUrl) ? 'Change image' : 'Upload image'}
-                  </button>
-                  {imageFile && (
-                    <p className="text-xs text-(--text-muted) mt-1 truncate">{imageFile.name}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err &&<p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button type="submit" disabled={mutation.isPending} className={submitBtn}>
@@ -624,15 +560,6 @@ export default function InventoryProductsPage() {
               ) : data && data.length > 0 ? (
                 data.map(p => (
                   <tr key={p.id} className={clsx('hover:bg-(--primary-tint)/30 transition-colors', p.quantity === 0 && 'bg-red-50/30')}>
-                    <td className="px-4 py-3 w-12">
-                      {p.image_url ? (
-                        <img src={p.image_url} alt={p.name} className="w-10 h-10 rounded-lg object-cover border border-(--border)" />
-                      ) : (
-                        <div className="w-10 h-10 rounded-lg bg-(--bg) border border-(--border) flex items-center justify-center text-muted">
-                          <PhotoIcon className="w-5 h-5" />
-                        </div>
-                      )}
-                    </td>
                     <td className="px-4 py-3 text-sm font-medium text-(--text-primary)">
                       {p.name}
                       {p.barcode && <span className="block text-xs text-(--text-muted)">{p.barcode}</span>}
@@ -725,7 +652,6 @@ export default function InventoryProductsPage() {
           }}
           catId={catId}
           prodId={editProduct.id}
-          currentImageUrl={editProduct.image_url}
           onClose={() => setEditProduct(null)}
         />
       )}

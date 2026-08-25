@@ -5,6 +5,7 @@ import { PlusIcon, XCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outli
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
+import { getCategoryEmoji } from '../../utils/inventoryHelpers';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -175,7 +176,7 @@ function TransferModal({
                 <label className="block text-xs text-(--text-secondary) mb-1">Category</label>
                 <select value={selectedCatId} onChange={(e) => { setSelectedCatId(e.target.value); setSelectedProdId(''); }} className={inputCls}>
                   <option value="">Select category…</option>
-                  {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  {categories.map((c) => <option key={c.id} value={c.id}>{getCategoryEmoji(c.name)} {c.name}</option>)}
                 </select>
               </div>
               <div>

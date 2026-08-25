@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
+import { getCategoryEmoji } from '../../utils/inventoryHelpers';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -131,7 +132,7 @@ export default function InventoryWarehouseReceivePage() {
               <option value="">Select category…</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name}
+                  {getCategoryEmoji(c.name)} {c.name}
                 </option>
               ))}
             </select>

@@ -1,10 +1,11 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
+import { getCategoryEmoji } from '../../utils/inventoryHelpers';
 
 interface Category {
   id: number;
@@ -13,11 +14,113 @@ interface Category {
   created_at: string;
 }
 
+const TEMPLATES = [
+  { emoji: '🛒', label: 'Provisions / Groceries' },
+  { emoji: '👗', label: 'Clothes & Fashion' },
+  { emoji: '📱', label: 'Electronics' },
+  { emoji: '🍲', label: 'Food & Cooked Meals' },
+  { emoji: '💄', label: 'Beauty & Cosmetics' },
+  { emoji: '🏗️', label: 'Building Materials' },
+  { emoji: '💊', label: 'Pharmacy / Medicine' },
+  { emoji: '🚗', label: 'Auto Parts & Vehicles' },
+  { emoji: '📚', label: 'Books & Stationery' },
+  { emoji: '🌾', label: 'Farm Produce' },
+  { emoji: '🪑', label: 'Furniture & Household' },
+  { emoji: '📦', label: 'Other Goods' },
+];
+
 const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
 const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
 
-function CategoryModal({
+function AddCategoryModal({
+  onClose,
+  onSave,
+  isPending,
+  err,
+}: {
+  onClose: () => void;
+  onSave: (name: string) => void;
+  isPending: boolean;
+  err: string;
+}) {
+  const [customMode, setCustomMode] = useState(false);
+  const [customName, setCustomName] = useState('');
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
+          <div>
+            <h2 className="text-lg font-bold text-(--text-primary)">What do you sell?</h2>
+            <p className="text-xs text-(--text-secondary) mt-0.5">Pick a category to get started</p>
+          </div>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" />
+          </button>
+        </div>
+
+        <div className="p-6">
+          {customMode ? (
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-semibold text-(--text-primary) mb-1">What type of goods do you sell?</p>
+                <p className="text-xs text-(--text-secondary) mb-3">
+                  Write it in your own words — e.g. "Recharge cards", "Baby clothes", "Spare parts"
+                </p>
+                <input
+                  type="text"
+                  value={customName}
+                  onChange={(e) => setCustomName(e.target.value)}
+                  placeholder="Enter what you sell…"
+                  className={inputCls}
+                  autoFocus
+                  onKeyDown={(e) => { if (e.key === 'Enter' && customName.trim()) onSave(customName.trim()); }}
+                />
+              </div>
+              {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              <div className="flex gap-3">
+                <button type="button" onClick={() => setCustomMode(false)} className={cancelBtn}>← Back</button>
+                <button
+                  type="button"
+                  disabled={!customName.trim() || isPending}
+                  onClick={() => onSave(customName.trim())}
+                  className={submitBtn}
+                >
+                  {isPending ? 'Saving…' : 'Continue →'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {TEMPLATES.map(({ emoji, label }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    disabled={isPending}
+                    onClick={() => {
+                      if (label === 'Other Goods') { setCustomMode(true); return; }
+                      onSave(label);
+                    }}
+                    className="flex flex-col items-center gap-2 rounded-xl border border-(--border) bg-(--bg) hover:border-orange-400 hover:bg-orange-50/50 active:scale-95 p-4 text-center transition-all disabled:opacity-50 cursor-pointer"
+                  >
+                    <span className="text-3xl">{emoji}</span>
+                    <span className="text-xs font-semibold text-(--text-primary) leading-tight">{label}</span>
+                  </button>
+                ))}
+              </div>
+              {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {isPending && <p className="text-sm text-center text-(--text-secondary)">Saving…</p>}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EditCategoryModal({
   initial,
   onClose,
   onSave,
@@ -35,7 +138,7 @@ function CategoryModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">{initial ? 'Edit Category' : 'Add Category'}</h2>
+          <h2 className="text-lg font-bold text-(--text-primary)">Edit Category</h2>
           <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
         </div>
         <div className="p-6 space-y-4">
@@ -45,7 +148,6 @@ function CategoryModal({
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Beverages"
               className={inputCls}
               autoFocus
             />
@@ -127,7 +229,7 @@ export default function InventoryCategoriesPage() {
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
               <tr>
-                {['Category Name', 'Products', 'Actions'].map(h => (
+                {['Category', 'Products', 'Actions'].map(h => (
                   <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
@@ -139,8 +241,9 @@ export default function InventoryCategoriesPage() {
                 categories.map(cat => (
                   <tr key={cat.id} className="hover:bg-(--primary-tint)/30 transition-colors">
                     <td className="px-6 py-4 text-sm font-medium">
-                      <Link to={`/inventory/products/${cat.id}`} className="text-(--primary) hover:underline">
-                        {cat.name}
+                      <Link to={`/inventory/products/${cat.id}`} className="inline-flex items-center gap-2 text-(--primary) hover:underline">
+                        <span className="text-xl leading-none">{getCategoryEmoji(cat.name)}</span>
+                        <span>{cat.name}</span>
                       </Link>
                     </td>
                     <td className="px-6 py-4 text-sm text-(--text-secondary)">{cat.product_count}</td>
@@ -183,8 +286,7 @@ export default function InventoryCategoriesPage() {
       </div>
 
       {showAdd && (
-        <CategoryModal
-          initial=""
+        <AddCategoryModal
           onClose={() => setShowAdd(false)}
           onSave={(name) => createMutation.mutate(name)}
           isPending={createMutation.isPending}
@@ -192,7 +294,7 @@ export default function InventoryCategoriesPage() {
         />
       )}
       {editCat && (
-        <CategoryModal
+        <EditCategoryModal
           initial={editCat.name}
           onClose={() => setEditCat(null)}
           onSave={(name) => updateMutation.mutate({ id: editCat.id, name })}

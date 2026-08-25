@@ -7,6 +7,7 @@ import {
   ChartBarIcon, PhotoIcon, ChevronLeftIcon, ChevronRightIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
+import { getCategoryEmoji } from '../../utils/inventoryHelpers';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 
@@ -579,12 +580,16 @@ export default function InventoryProductsPage() {
       <div className="flex items-center gap-3 flex-wrap">
         <Link to="/inventory/categories" className="text-sm text-(--text-secondary) hover:text-(--primary)">← Categories</Link>
         <span className="text-(--text-secondary)">/</span>
-        <span className="text-sm font-semibold text-(--text-primary)">{category?.name ?? 'Products'}</span>
+        <span className="text-sm font-semibold text-(--text-primary)">
+          {category ? `${getCategoryEmoji(category.name)} ${category.name}` : 'Products'}
+        </span>
       </div>
 
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-(--text-primary)">{category?.name ?? 'Products'}</h1>
+          <h1 className="text-2xl font-bold text-(--text-primary)">
+            {category ? `${getCategoryEmoji(category.name)} ${category.name}` : 'Products'}
+          </h1>
           <p className="text-sm text-(--text-secondary)">Manage products in this category</p>
         </div>
         <button

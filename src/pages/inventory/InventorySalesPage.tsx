@@ -6,6 +6,7 @@ import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
+import { getCategoryEmoji } from '../../utils/inventoryHelpers';
 
 interface SaleItem {
   product_name: string;
@@ -301,7 +302,7 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
                 <label className="block text-xs font-medium text-(--text-secondary) mb-1">Category</label>
                 <select value={selectedCatId} onChange={(e) => { setSelectedCatId(e.target.value); setSelectedProdId(''); setUnitPrice(''); }} className={inputCls}>
                   <option value="">Select category…</option>
-                  {categories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  {categories?.map(c => <option key={c.id} value={c.id}>{getCategoryEmoji(c.name)} {c.name}</option>)}
                 </select>
               </div>
               <div>

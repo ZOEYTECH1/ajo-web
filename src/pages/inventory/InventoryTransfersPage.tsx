@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { PlusIcon, XCircleIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
@@ -272,6 +272,7 @@ export default function InventoryTransfersPage() {
   });
 
   const canTransfer = businesses.some((b) => b.my_role === 'owner' || b.my_role === 'manager');
+  const myBusinessIds = useMemo(() => new Set(businesses.map((b) => b.id)), [businesses]);
 
   return (
     <div className="space-y-6">
@@ -318,10 +319,15 @@ export default function InventoryTransfersPage() {
           </div>
         ) : (
           <div className="divide-y divide-(--border)">
-            {transfers.map((t) => (
+            {transfers.map((t) => {
+              const isSent = myBusinessIds.has(t.from_business);
+              return (
               <div key={t.id} className="p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="flex items-center gap-3">
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isSent ? 'bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400' : 'bg-blue-100 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400'}`}>
+                      {isSent ? 'SENT' : 'RECEIVED'}
+                    </span>
                     <div className="text-sm font-semibold text-(--text-primary)">{t.from_business_name}</div>
                     <ArrowRightIcon className="h-4 w-4 text-(--text-muted)" />
                     <div className="text-sm font-semibold text-(--text-primary)">{t.to_business_name}</div>
@@ -353,7 +359,8 @@ export default function InventoryTransfersPage() {
                   <p className="text-xs text-(--text-muted) mt-1 italic">{t.notes}</p>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

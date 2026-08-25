@@ -1,17 +1,24 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
+
+interface CustomFieldDef {
+  name: string;
+  field_type: 'text' | 'number';
+  required: boolean;
+}
 
 interface Category {
   id: number;
   name: string;
   product_count: number;
   created_at: string;
+  custom_field_defs: CustomFieldDef[];
 }
 
 const TEMPLATES = [
@@ -165,10 +172,105 @@ function EditCategoryModal({
   );
 }
 
+function CustomFieldsModal({ category, onClose }: { category: Category; onClose: () => void }) {
+  const qc = useQueryClient();
+  const [defs, setDefs] = useState<CustomFieldDef[]>(category.custom_field_defs ?? []);
+  const [newName, setNewName] = useState('');
+  const [newType, setNewType] = useState<'text' | 'number'>('text');
+  const [newRequired, setNewRequired] = useState(false);
+  const [err, setErr] = useState('');
+
+  const saveMutation = useMutation({
+    mutationFn: (updated: CustomFieldDef[]) =>
+      api.patch(`/inventory/categories/${category.id}/`, { custom_field_defs: updated }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['inventory-categories'] }); },
+    onError: (e: any) => setErr(e.response?.data?.detail ?? 'Failed to save.'),
+  });
+
+  function addField() {
+    if (!newName.trim()) { setErr('Field name is required.'); return; }
+    if (defs.some(d => d.name.toLowerCase() === newName.trim().toLowerCase())) { setErr('A field with this name already exists.'); return; }
+    const updated = [...defs, { name: newName.trim(), field_type: newType, required: newRequired }];
+    setDefs(updated);
+    saveMutation.mutate(updated);
+    setNewName('');
+    setNewType('text');
+    setNewRequired(false);
+    setErr('');
+  }
+
+  function removeField(name: string) {
+    const updated = defs.filter(d => d.name !== name);
+    setDefs(updated);
+    saveMutation.mutate(updated);
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <div>
+            <h2 className="text-lg font-bold text-(--text-primary)">Custom Fields</h2>
+            <p className="text-xs text-(--text-secondary) mt-0.5">{category.name} — extra attributes per product</p>
+          </div>
+          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+        </div>
+        <div className="p-6 space-y-5">
+          {/* Existing fields */}
+          {defs.length > 0 ? (
+            <div className="space-y-2">
+              {defs.map(d => (
+                <div key={d.name} className="flex items-center justify-between gap-2 rounded-lg border border-(--border) bg-(--bg) px-3 py-2">
+                  <div>
+                    <span className="text-sm font-medium text-(--text-primary)">{d.name}</span>
+                    <span className="ml-2 text-xs text-(--text-muted)">{d.field_type}{d.required ? ' · required' : ''}</span>
+                  </div>
+                  <button type="button" onClick={() => removeField(d.name)} className="p-1 text-(--text-muted) hover:text-red-600 hover:bg-red-50 rounded transition-colors">
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-(--text-muted) text-center py-2">No custom fields yet.</p>
+          )}
+          {/* Add field form */}
+          <div className="rounded-xl border border-(--border) bg-(--bg) p-4 space-y-3">
+            <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide">Add a field</p>
+            <input type="text" value={newName} onChange={e => setNewName(e.target.value)}
+              placeholder="Field name (e.g. Size, Colour, Brand)"
+              className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            <div className="flex gap-3 items-center">
+              <select value={newType} onChange={e => setNewType(e.target.value as 'text' | 'number')}
+                className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="text">Text</option>
+                <option value="number">Number</option>
+              </select>
+              <label className="flex items-center gap-2 text-sm text-(--text-secondary) cursor-pointer select-none">
+                <input type="checkbox" checked={newRequired} onChange={e => setNewRequired(e.target.checked)} className="rounded" />
+                Required
+              </label>
+              <button type="button" onClick={addField} disabled={saveMutation.isPending}
+                className="rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors">
+                Add
+              </button>
+            </div>
+          </div>
+          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          <button type="button" onClick={onClose} className="w-full rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors">
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function InventoryCategoriesPage() {
   const qc = useQueryClient();
   const [showAdd, setShowAdd] = useState(false);
   const [editCat, setEditCat] = useState<Category | null>(null);
+  const [customFieldsCat, setCustomFieldsCat] = useState<Category | null>(null);
   const [mutErr, setMutErr] = useState('');
 
   const { data: categories, isLoading, error } = useQuery<Category[]>({
@@ -249,6 +351,10 @@ export default function InventoryCategoriesPage() {
                     <td className="px-6 py-4 text-sm text-(--text-secondary)">{cat.product_count}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
+                        <button type="button" onClick={() => setCustomFieldsCat(cat)}
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Custom Fields">
+                          <AdjustmentsHorizontalIcon className="h-4 w-4" />
+                        </button>
                         <button
                           type="button"
                           onClick={() => { setMutErr(''); setEditCat(cat); }}
@@ -301,6 +407,9 @@ export default function InventoryCategoriesPage() {
           isPending={updateMutation.isPending}
           err={mutErr}
         />
+      )}
+      {customFieldsCat && (
+        <CustomFieldsModal category={customFieldsCat} onClose={() => setCustomFieldsCat(null)} />
       )}
     </div>
   );

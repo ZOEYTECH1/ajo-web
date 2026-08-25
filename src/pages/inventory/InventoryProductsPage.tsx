@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import {
   PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowUpIcon,
   ChartBarIcon, ChevronLeftIcon, ChevronRightIcon,
-  ClockIcon,
+  ClockIcon, MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
 import { SkeletonTable } from '../../components/ui/Skeleton';
@@ -493,6 +493,8 @@ export default function InventoryProductsPage() {
   const [stockProduct, setStockProduct] = useState<Product | null>(null);
   const [summaryProduct, setSummaryProduct] = useState<Product | null>(null);
   const [historyProduct, setHistoryProduct] = useState<Product | null>(null);
+  const [search, setSearch] = useState('');
+  const [stockFilter, setStockFilter] = useState<'all' | 'in' | 'low' | 'out'>('all');
 
   const { data: category } = useQuery<Category>({
     queryKey: ['inventory-category', catId],
@@ -510,6 +512,15 @@ export default function InventoryProductsPage() {
     mutationFn: (id: number) => api.delete(`/inventory/products/${id}/`),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['inventory-products', catId] }),
   });
+
+  const filteredData = useMemo(() => {
+    let list = data ?? [];
+    if (search.trim()) list = list.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.barcode?.toLowerCase().includes(search.toLowerCase()));
+    if (stockFilter === 'out') list = list.filter(p => p.quantity === 0);
+    else if (stockFilter === 'low') list = list.filter(p => p.quantity > 0 && p.quantity <= p.low_stock_threshold);
+    else if (stockFilter === 'in') list = list.filter(p => p.quantity > p.low_stock_threshold);
+    return list;
+  }, [data, search, stockFilter]);
 
   return (
     <div className="space-y-6">
@@ -538,6 +549,29 @@ export default function InventoryProductsPage() {
         </button>
       </div>
 
+      {/* Search + stock filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-(--text-muted)" />
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search products or barcodes…"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-(--border) text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+        </div>
+        <div className="flex gap-2 flex-wrap">
+          {([['all', 'All'], ['in', 'In Stock'], ['low', 'Low Stock'], ['out', 'Out of Stock']] as const).map(([key, label]) => (
+            <button key={key} type="button" onClick={() => setStockFilter(key)}
+              className={clsx('px-3 py-1.5 rounded-full text-sm font-medium transition-colors',
+                stockFilter === key ? 'bg-orange-600 text-white' : 'bg-(--surface) border border-(--border) text-(--text-secondary) hover:text-(--text-primary)')}>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {error && (
         <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
           Failed to load products. Please refresh.
@@ -557,8 +591,8 @@ export default function InventoryProductsPage() {
             <tbody className="divide-y divide-(--border)">
               {isLoading ? (
                 <SkeletonTable rows={5} cols={8} />
-              ) : data && data.length > 0 ? (
-                data.map(p => (
+              ) : filteredData.length > 0 ? (
+                filteredData.map(p => (
                   <tr key={p.id} className={clsx('hover:bg-(--primary-tint)/30 transition-colors', p.quantity === 0 && 'bg-red-50/30')}>
                     <td className="px-4 py-3 text-sm font-semibold text-(--text-primary)">
                       {p.name}
@@ -628,8 +662,11 @@ export default function InventoryProductsPage() {
               ) : (
                 <tr>
                   <td colSpan={8} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    No products in this category.{' '}
-                    <button type="button" onClick={() => setShowAdd(true)} className="text-orange-600 font-semibold hover:underline">Add the first product.</button>
+                    {search || stockFilter !== 'all' ? 'No products match your filter.' : (
+                      <>No products in this category.{' '}
+                        <button type="button" onClick={() => setShowAdd(true)} className="text-orange-600 font-semibold hover:underline">Add the first product.</button>
+                      </>
+                    )}
                   </td>
                 </tr>
               )}

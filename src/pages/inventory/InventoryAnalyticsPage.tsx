@@ -170,6 +170,60 @@ export default function InventoryAnalyticsPage() {
         )}
       </div>
 
+      {/* Period totals */}
+      {!isLoading && data && data.chart.length > 0 && (() => {
+        const totRev  = data.chart.reduce((s, p) => s + p.revenue, 0);
+        const totExp  = data.chart.reduce((s, p) => s + p.expense, 0);
+        const totProfit = totRev - totExp;
+        return (
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { label: 'Total Revenue', value: totRev, color: 'text-green-600' },
+              { label: 'Total Expenses', value: totExp, color: 'text-red-500' },
+              { label: 'Net Profit', value: totProfit, color: totProfit >= 0 ? 'text-blue-600' : 'text-red-600' },
+            ].map(({ label, value, color }) => (
+              <div key={label} className="bg-(--surface) rounded-xl border border-(--border) p-4 text-center shadow-sm">
+                <p className="text-xs text-(--text-secondary) font-medium mb-1">{label}</p>
+                <p className={`text-lg font-bold ${color}`}>{formatCurrency(value)}</p>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
+
+      {/* Period breakdown table */}
+      {!isLoading && data && data.chart.length > 0 && (
+        <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-(--border)">
+            <h2 className="text-base font-semibold text-(--text-primary)">Period Breakdown</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-(--border)">
+              <thead className="bg-(--bg)">
+                <tr>
+                  {['Period', 'Revenue', 'Expenses', 'Profit'].map(h => (
+                    <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-(--border)">
+                {[...data.chart].reverse().map((row, i) => {
+                  const profit = row.revenue - row.expense;
+                  return (
+                    <tr key={i} className="hover:bg-(--primary-tint)/30 transition-colors">
+                      <td className="px-6 py-3 text-sm font-medium text-(--text-primary)">{row.label}</td>
+                      <td className="px-6 py-3 text-sm text-green-600 font-semibold">{formatCurrency(row.revenue)}</td>
+                      <td className="px-6 py-3 text-sm text-red-500 font-semibold">{formatCurrency(row.expense)}</td>
+                      <td className={`px-6 py-3 text-sm font-semibold ${profit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>{formatCurrency(profit)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {/* Best sellers */}
       <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-(--border)">

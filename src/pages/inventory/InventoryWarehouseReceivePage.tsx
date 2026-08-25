@@ -58,7 +58,7 @@ export default function InventoryWarehouseReceivePage() {
       api.post(`/inventory/products/${selectedProdId}/movements/`, {
         movement_type: 'in',
         quantity: Number(quantity),
-        supplier: supplier.trim(),
+        supplier: supplier.trim() || undefined,
         reference: reference.trim() || undefined,
         note: note.trim() || undefined,
       }),
@@ -87,7 +87,6 @@ export default function InventoryWarehouseReceivePage() {
     if (!selectedCatId) { setErr('Please select a category.'); return; }
     if (!selectedProdId) { setErr('Please select a product.'); return; }
     if (!quantity || Number(quantity) < 1) { setErr('Enter a valid quantity (min 1).'); return; }
-    if (!supplier.trim()) { setErr('Supplier name is required.'); return; }
     mutation.mutate();
   }
 
@@ -176,7 +175,7 @@ export default function InventoryWarehouseReceivePage() {
           {/* Supplier */}
           <div>
             <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
-              Supplier <span className="text-red-500">*</span>
+              Supplier (optional)
             </label>
             <input
               type="text"

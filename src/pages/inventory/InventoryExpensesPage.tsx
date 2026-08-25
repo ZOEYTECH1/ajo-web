@@ -133,6 +133,26 @@ function ManageCategoriesModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+function exportPdf(expenses: Expense[], period: Period) {
+  const label = period === 'month' ? 'This Month' : period === 'week' ? 'This Week' : 'All Time';
+  const rows = expenses.map(e =>
+    `<tr><td>${e.spent_at.slice(0, 10)}</td><td>${e.category_label}</td><td>${(e.description || '—').replace(/</g, '&lt;')}</td><td style="text-align:right">₦${Number(e.amount).toLocaleString()}</td></tr>`
+  ).join('');
+  const total = expenses.reduce((s, e) => s + Number(e.amount), 0);
+  const html = `<!DOCTYPE html><html><head><title>Expenses — ${label}</title>
+<style>body{font-family:Arial,sans-serif;padding:20px}h2{margin-bottom:4px}p{color:#666;font-size:13px;margin-top:0}
+table{width:100%;border-collapse:collapse;margin-top:16px}th,td{border:1px solid #ddd;padding:8px;font-size:13px;text-align:left}
+th{background:#f5f5f5;font-weight:600}tfoot td{font-weight:700;background:#fef3c7}
+@media print{button{display:none}}</style></head>
+<body><h2>Expenses — ${label}</h2><p>Generated: ${new Date().toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+<table><thead><tr><th>Date</th><th>Category</th><th>Description</th><th style="text-align:right">Amount</th></tr></thead>
+<tbody>${rows}</tbody>
+<tfoot><tr><td colspan="3">Total</td><td style="text-align:right">₦${total.toLocaleString()}</td></tr></tfoot>
+</table><script>window.onload=()=>window.print()</script></body></html>`;
+  const w = window.open('', '_blank');
+  if (w) { w.document.write(html); w.document.close(); }
+}
+
 function exportCsvBlob(expenses: Expense[], period: Period) {
   const periodLabel = period === 'month' ? 'this-month' : period === 'week' ? 'this-week' : 'all-time';
   const header = 'Date,Category,Description,Amount (NGN)\n';
@@ -238,7 +258,19 @@ function ExpenseModal({
             <input type="number" min="0.01" step="0.01" value={form.amount} onChange={(e) => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="e.g. 50000" className={inputCls} />
           </Field>
           <Field label="Date *">
-            <input type="date" value={form.spent_at} onChange={(e) => setForm(f => ({ ...f, spent_at: e.target.value }))} className={inputCls} />
+            <div className="space-y-1.5">
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setForm(f => ({ ...f, spent_at: format(new Date(), 'yyyy-MM-dd') }))}
+                  className="px-3 py-1 rounded-full text-xs font-semibold border border-(--border) text-(--text-secondary) hover:bg-orange-50 hover:border-orange-400 hover:text-orange-700 transition-colors">
+                  Today
+                </button>
+                <button type="button" onClick={() => { const d = new Date(); d.setDate(d.getDate() - 1); setForm(f => ({ ...f, spent_at: format(d, 'yyyy-MM-dd') })); }}
+                  className="px-3 py-1 rounded-full text-xs font-semibold border border-(--border) text-(--text-secondary) hover:bg-orange-50 hover:border-orange-400 hover:text-orange-700 transition-colors">
+                  Yesterday
+                </button>
+              </div>
+              <input type="date" value={form.spent_at} onChange={(e) => setForm(f => ({ ...f, spent_at: e.target.value }))} className={inputCls} />
+            </div>
           </Field>
           <Field label="Description (optional)">
             <input type="text" value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} placeholder="e.g. Monthly shop rent" className={inputCls} />
@@ -286,6 +318,16 @@ export default function InventoryExpensesPage() {
   const totalPages = Math.max(1, Math.ceil(totalCount / 20));
   const totalAmount = Number(data?.total_amount ?? 0);
 
+  const byDate = useMemo(() => {
+    const map: Record<string, Expense[]> = {};
+    for (const e of expenses) {
+      const day = e.spent_at.slice(0, 10);
+      if (!map[day]) map[day] = [];
+      map[day].push(e);
+    }
+    return Object.entries(map).sort(([a], [b]) => b.localeCompare(a));
+  }, [expenses]);
+
   const byCategory = useMemo(() => {
     const map: Record<string, { label: string; amount: number }> = {};
     for (const e of expenses) {
@@ -316,14 +358,24 @@ export default function InventoryExpensesPage() {
             Categories
           </button>
           {expenses.length > 0 && (
-            <button
-              type="button"
-              onClick={() => exportCsvBlob(expenses, period)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
-            >
-              <ArrowDownTrayIcon className="h-4 w-4" />
-              Export CSV
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={() => exportCsvBlob(expenses, period)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+              >
+                <ArrowDownTrayIcon className="h-4 w-4" />
+                CSV
+              </button>
+              <button
+                type="button"
+                onClick={() => exportPdf(expenses, period)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+              >
+                <ArrowDownTrayIcon className="h-4 w-4" />
+                PDF
+              </button>
+            </>
           )}
           <button
             type="button"
@@ -413,36 +465,38 @@ export default function InventoryExpensesPage() {
               {isLoading ? (
                 <SkeletonTable rows={5} cols={5} />
               ) : expenses.length > 0 ? (
-                expenses.map(e => (
-                  <tr key={e.id} className="hover:bg-(--primary-tint)/30 transition-colors">
-                    <td className="px-6 py-4 text-sm text-(--text-secondary) whitespace-nowrap">
-                      {format(new Date(e.spent_at), 'dd MMM yyyy')}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-(--text-primary)">{e.category_label}</td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{e.description || '—'}</td>
-                    <td className="px-6 py-4 text-sm font-semibold text-(--text-primary)">{formatCurrency(e.amount)}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => setEditExpense(e)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-orange-600 hover:bg-orange-50 transition-colors"
-                          title="Edit"
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { if (confirm('Delete this expense?')) deleteMutation.mutate(e.id); }}
-                          disabled={deleteMutation.isPending}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors"
-                          title="Delete"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                byDate.map(([day, dayExpenses]) => (
+                  <>
+                    <tr key={`hdr-${day}`} className="bg-(--bg)">
+                      <td colSpan={5} className="px-6 py-2 text-xs font-bold text-(--text-secondary) uppercase tracking-wider">
+                        {format(new Date(day + 'T00:00:00'), 'EEEE, dd MMM yyyy')}
+                        <span className="ml-2 font-normal normal-case text-(--text-muted)">
+                          ({formatCurrency(dayExpenses.reduce((s, e) => s + Number(e.amount), 0))})
+                        </span>
+                      </td>
+                    </tr>
+                    {dayExpenses.map(e => (
+                      <tr key={e.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                        <td className="px-6 py-4 text-sm text-(--text-muted) whitespace-nowrap pl-8">—</td>
+                        <td className="px-6 py-4 text-sm text-(--text-primary)">{e.category_label}</td>
+                        <td className="px-6 py-4 text-sm text-(--text-secondary)">{e.description || '—'}</td>
+                        <td className="px-6 py-4 text-sm font-semibold text-(--text-primary)">{formatCurrency(e.amount)}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-1">
+                            <button type="button" onClick={() => setEditExpense(e)}
+                              className="p-1.5 rounded-lg text-(--text-muted) hover:text-orange-600 hover:bg-orange-50 transition-colors" title="Edit">
+                              <PencilIcon className="h-4 w-4" />
+                            </button>
+                            <button type="button" onClick={() => { if (confirm('Delete this expense?')) deleteMutation.mutate(e.id); }}
+                              disabled={deleteMutation.isPending}
+                              className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete">
+                              <TrashIcon className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </>
                 ))
               ) : (
                 <tr>

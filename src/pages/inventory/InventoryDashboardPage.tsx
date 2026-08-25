@@ -1,4 +1,5 @@
 ﻿import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { format, addDays, subDays, isToday } from 'date-fns';
 import {
@@ -9,6 +10,10 @@ import {
   CubeIcon,
   ExclamationTriangleIcon,
   ClockIcon,
+  ShoppingCartIcon,
+  BanknotesIcon,
+  ArrowDownTrayIcon,
+  ArrowsRightLeftIcon,
 } from '@heroicons/react/24/outline';
 import { SkeletonCard } from '../../components/ui/Skeleton';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
@@ -206,6 +211,25 @@ export default function InventoryDashboardPage() {
           iconBg="bg-yellow-50 dark:bg-yellow-950/40"
           loading={isLoading}
         />
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { to: '/inventory/sales',            icon: <ShoppingCartIcon className="h-6 w-6 text-orange-600" />,  label: 'New Sale',      bg: 'bg-orange-50 dark:bg-orange-950/40' },
+          { to: '/inventory/expenses',          icon: <BanknotesIcon    className="h-6 w-6 text-red-500" />,    label: 'Add Expense',   bg: 'bg-red-50 dark:bg-red-950/40' },
+          { to: '/inventory/warehouse/receive', icon: <ArrowDownTrayIcon className="h-6 w-6 text-blue-600" />,  label: 'Receive Stock', bg: 'bg-blue-50 dark:bg-blue-950/40' },
+          { to: '/inventory/transfers',         icon: <ArrowsRightLeftIcon className="h-6 w-6 text-purple-600" />, label: 'Transfer Stock', bg: 'bg-purple-50 dark:bg-purple-950/40' },
+        ].map(({ to, icon, label, bg }) => (
+          <Link
+            key={to}
+            to={to}
+            className="flex flex-col items-center gap-2 rounded-xl border border-(--border) bg-(--surface) p-4 text-center hover:border-orange-400 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 transition-all shadow-sm"
+          >
+            <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${bg}`}>{icon}</div>
+            <span className="text-xs font-semibold text-(--text-primary)">{label}</span>
+          </Link>
+        ))}
       </div>
 
       {/* Low Stock table */}

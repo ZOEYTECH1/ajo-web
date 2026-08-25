@@ -25,6 +25,7 @@ interface ProductRequest {
   status: 'pending' | 'approved' | 'rejected';
   requested_by_name: string;
   reviewed_by_name: string | null;
+  reviewed_at: string | null;
   created_at: string;
 }
 
@@ -340,6 +341,7 @@ export default function InventoryProductRequestsPage() {
                       <span className="font-medium text-(--text-secondary)">
                         {req.reviewed_by_name}
                       </span>
+                      {req.reviewed_at && ` · ${format(new Date(req.reviewed_at), 'dd MMM yyyy')}`}
                     </p>
                   )}
                 </div>

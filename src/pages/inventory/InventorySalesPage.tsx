@@ -397,6 +397,26 @@ function NewSaleModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+function exportSalesPdf(sales: Sale[]) {
+  const rows = sales.map(s => {
+    const items = s.items.map(i => `${i.product_name} ×${i.quantity} @ ₦${Number(i.unit_price).toLocaleString()}`).join('<br>');
+    return `<tr><td>${format(new Date(s.sold_at), 'dd MMM yyyy HH:mm')}</td><td>${s.customer_name || 'Walk-in'}</td><td>${items}</td><td style="text-align:right">₦${Number(s.total).toLocaleString()}</td></tr>`;
+  }).join('');
+  const total = sales.reduce((s, sale) => s + Number(sale.total), 0);
+  const html = `<!DOCTYPE html><html><head><title>Sales Report</title>
+<style>body{font-family:Arial,sans-serif;padding:20px}h2{margin-bottom:4px}p{color:#666;font-size:13px;margin-top:0}
+table{width:100%;border-collapse:collapse;margin-top:16px}th,td{border:1px solid #ddd;padding:8px;font-size:12px;text-align:left;vertical-align:top}
+th{background:#f5f5f5;font-weight:600}tfoot td{font-weight:700;background:#dcfce7}
+@media print{button{display:none}}</style></head>
+<body><h2>Sales Report</h2><p>Generated: ${new Date().toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+<table><thead><tr><th>Date</th><th>Customer</th><th>Items</th><th style="text-align:right">Total</th></tr></thead>
+<tbody>${rows}</tbody>
+<tfoot><tr><td colspan="3">Total (${sales.length} sale${sales.length !== 1 ? 's' : ''})</td><td style="text-align:right">₦${total.toLocaleString()}</td></tr></tfoot>
+</table><script>window.onload=()=>window.print()</script></body></html>`;
+  const w = window.open('', '_blank');
+  if (w) { w.document.write(html); w.document.close(); }
+}
+
 function exportSalesCsv(sales: Sale[]) {
   const header = 'Date,Customer,Items,Total (NGN)\n';
   const rows = sales.map(s => {
@@ -439,14 +459,18 @@ export default function InventorySalesPage() {
         </div>
         <div className="flex items-center gap-2">
           {sales.length > 0 && (
-            <button
-              type="button"
-              onClick={() => exportSalesCsv(sales)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
-            >
-              <ArrowDownTrayIcon className="h-4 w-4" />
-              Export CSV
-            </button>
+            <>
+              <button type="button" onClick={() => exportSalesCsv(sales)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors">
+                <ArrowDownTrayIcon className="h-4 w-4" />
+                CSV
+              </button>
+              <button type="button" onClick={() => exportSalesPdf(sales)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors">
+                <ArrowDownTrayIcon className="h-4 w-4" />
+                PDF
+              </button>
+            </>
           )}
           <button
             type="button"

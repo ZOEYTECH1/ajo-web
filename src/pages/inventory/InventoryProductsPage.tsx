@@ -7,7 +7,7 @@ import {
   ChartBarIcon, PhotoIcon, ChevronLeftIcon, ChevronRightIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
-import { getCategoryEmoji } from '../../utils/inventoryHelpers';
+import { getCategoryEmoji, getProductEmoji } from '../../utils/inventoryHelpers';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 
@@ -628,8 +628,8 @@ export default function InventoryProductsPage() {
                       {p.image_url ? (
                         <img src={p.image_url} alt={p.name} className="w-10 h-10 rounded-lg object-cover border border-(--border)" />
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-(--bg) border border-(--border) flex items-center justify-center">
-                          <PhotoIcon className="h-5 w-5 text-(--text-muted)" />
+                        <div className="w-10 h-10 rounded-lg bg-(--bg) border border-(--border) flex items-center justify-center text-xl leading-none select-none">
+                          {getProductEmoji(p.name)}
                         </div>
                       )}
                     </td>

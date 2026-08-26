@@ -36,15 +36,16 @@ const sampleDashboard = {
 
 export const handlers = [
   // Auth: login
-  http.post(`${BASE}/token/`, () => {
+  http.post(`${BASE}/auth/login/`, () => {
     return HttpResponse.json({
       access: 'test-access-token',
       refresh: 'test-refresh-token',
+      user: sampleUser,
     });
   }),
 
   // Auth: token refresh
-  http.post(`${BASE}/token/refresh/`, () => {
+  http.post(`${BASE}/auth/token/refresh/`, () => {
     return HttpResponse.json({ access: 'new-test-access-token' });
   }),
 

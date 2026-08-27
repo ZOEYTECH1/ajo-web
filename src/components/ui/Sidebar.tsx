@@ -86,7 +86,7 @@ export function Sidebar({ onClose }: SidebarProps) {
               )
             }
           >
-            <Icon className="h-5 w-5 shrink-0" />
+            <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
             <span className="flex-1">{label}</span>
             {label === 'Notifications' && unreadCount > 0 && (
               <span className="flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold">
@@ -124,7 +124,7 @@ export function Sidebar({ onClose }: SidebarProps) {
           onClick={handleLogout}
           className="flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-(--text-secondary) hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/40 dark:hover:text-red-400 transition-colors"
         >
-          <ArrowRightStartOnRectangleIcon className="h-5 w-5 shrink-0" />
+          <ArrowRightStartOnRectangleIcon className="h-5 w-5 shrink-0" aria-hidden="true" />
           Logout
         </button>
       </div>

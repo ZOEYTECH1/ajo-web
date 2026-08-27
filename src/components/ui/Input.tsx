@@ -11,6 +11,9 @@ interface InputProps {
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
+  autoComplete?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
+  maxLength?: number;
 }
 
 export function Input({
@@ -23,6 +26,9 @@ export function Input({
   placeholder,
   required = false,
   disabled = false,
+  autoComplete,
+  inputMode,
+  maxLength,
 }: InputProps) {
   const inputId = `input-${name}`;
 
@@ -44,6 +50,9 @@ export function Input({
         placeholder={placeholder}
         required={required}
         disabled={disabled}
+        autoComplete={autoComplete}
+        inputMode={inputMode}
+        maxLength={maxLength}
         aria-describedby={error ? `${inputId}-error` : undefined}
         aria-invalid={!!error}
         className={clsx(

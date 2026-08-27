@@ -152,12 +152,10 @@ describe('Layer 7.3 — Secrets: no credentials in source code', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('Layer 7.4 — Deployment pipeline scripts', () => {
-  let pkg: Record<string, unknown>;
-
   it('package.json exists', () => {
     const pkgPath = path.resolve(ROOT, 'package.json');
     expect(fs.existsSync(pkgPath)).toBe(true);
-    pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
   });
 
   it('has "build" script for production builds', () => {

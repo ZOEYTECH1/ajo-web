@@ -14,7 +14,6 @@ import { server } from './mocks/server';
 import { http, HttpResponse } from 'msw';
 
 import LoginPage from '../pages/auth/LoginPage';
-import RegisterPage from '../pages/auth/RegisterPage';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { ThemeProvider } from '../context/ThemeContext';

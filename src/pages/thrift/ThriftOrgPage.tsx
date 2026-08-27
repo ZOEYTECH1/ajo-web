@@ -358,7 +358,7 @@ export default function ThriftOrgPage() {
     );
   }
 
-  const { organization: org, collectors, pending_collectors, groups, payment_stats, recent_reports = [], collector_stats = {} } = data;
+  const { organization: org, collectors, pending_collectors, groups, payment_stats, collector_stats = {} } = data;
   const totalMembers = groups.reduce((sum, g) => sum + g.member_count, 0);
 
   return (

@@ -315,7 +315,7 @@ function DisputeModal({
 
   const canSubmit = (reason.trim().length > 0 || audioBlob != null);
 
-  const mutation = useMutation({
+  const mutation = useMutation<any, Error, void>({
     mutationFn: () => {
       if (audioBlob) {
         const fd = new FormData();

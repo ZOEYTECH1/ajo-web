@@ -10,13 +10,6 @@ import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-interface Business {
-  id: number;
-  name: string;
-  mode: string;
-  my_role: 'owner' | 'manager' | 'branch_admin' | 'staff';
-}
-
 interface ProductRequest {
   id: number;
   branch_name: string;

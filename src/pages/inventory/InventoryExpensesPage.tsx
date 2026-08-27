@@ -301,12 +301,6 @@ export default function InventoryExpensesPage() {
   const [period, setPeriod] = useState<Period>('month');
 
   const today = new Date();
-  const periodParams = useMemo(() => {
-    if (period === 'month') return `&spent_at_after=${format(startOfMonth(today), 'yyyy-MM-dd')}`;
-    if (period === 'week') return `&spent_at_after=${format(startOfWeek(today, { weekStartsOn: 1 }), 'yyyy-MM-dd')}`;
-    return '';
-  }, [period, today.toISOString().slice(0, 7)]);
-
   const { data, isLoading, error } = useQuery<PaginatedExpenses>({
     queryKey: ['inventory-expenses', page, period, selectedId],
     queryFn: () => api.get(`/inventory/expenses/`, { params: { page, business_id: selectedId, ...(period === 'month' ? { spent_at_after: format(startOfMonth(today), 'yyyy-MM-dd') } : period === 'week' ? { spent_at_after: format(startOfWeek(today, { weekStartsOn: 1 }), 'yyyy-MM-dd') } : {}) } }).then(r => r.data),

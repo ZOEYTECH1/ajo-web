@@ -1969,7 +1969,7 @@ export default function AjoGroupDetailPage() {
 
         <div className="p-6">
           {activeTab === 'payments' && (
-            <PaymentsTab payments={payments} groupId={Number(id)} isAdmin={isAdmin} />
+            <PaymentsTab groupId={Number(id)} isAdmin={isAdmin} />
           )}
           {activeTab === 'members' && (
             <MembersTab

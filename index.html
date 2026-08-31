@@ -5,6 +5,35 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scribe</title>
+
+    <!--
+      Content Security Policy
+      – default-src 'self'          : only load resources from this origin by default
+      – script-src 'self' 'unsafe-inline' : Vite dev needs inline scripts; tighten in prod via headers
+      – style-src  'self' 'unsafe-inline' : Tailwind injects inline styles
+      – img-src    'self' data: blob:      : allow inline data URIs (avatars/icons)
+      – connect-src 'self' https://o*.ingest.sentry.io : allow Sentry telemetry
+      – font-src   'self'               : no external font CDNs
+      – object-src 'none'               : block Flash / plugins
+      – frame-ancestors 'none'          : prevent clickjacking (same as X-Frame-Options DENY)
+      – base-uri 'self'                 : prevent base-tag injection attacks
+      – form-action 'self'              : restrict form submissions to same origin
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src  'self' 'unsafe-inline';
+        style-src   'self' 'unsafe-inline';
+        img-src     'self' data: blob:;
+        connect-src 'self' https://o*.ingest.sentry.io https://*.sentry.io;
+        font-src    'self';
+        object-src  'none';
+        frame-ancestors 'none';
+        base-uri    'self';
+        form-action 'self';
+      "
+    />
   </head>
   <body>
     <div id="root"></div>

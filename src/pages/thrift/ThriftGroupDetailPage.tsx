@@ -147,7 +147,7 @@ function SettingsModal({ groupId, group, onClose }: { groupId: number; group: Th
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface)">
           <h2 className="text-lg font-bold text-(--text-primary)">Group Settings</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <div className="p-6 space-y-4">
           <Field label="Group Name">
@@ -156,7 +156,7 @@ function SettingsModal({ groupId, group, onClose }: { groupId: number; group: Th
           <Field label="Description">
             <textarea rows={2} value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} className={inputCls} />
           </Field>
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()} className={submitBtn}>
@@ -208,7 +208,7 @@ function MarkPaymentModal({
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Mark Payment</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <Field label="Member *">
@@ -228,7 +228,7 @@ function MarkPaymentModal({
           <Field label="Notes (optional)">
             <input type="text" value={form.notes} onChange={(e) => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Optional notes" className={inputCls} />
           </Field>
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button type="submit" disabled={mutation.isPending} className={submitBtn}>
@@ -340,7 +340,7 @@ function DisputeModal({
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Dispute Payment</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <div className="p-6 space-y-4">
           <p className="text-sm text-(--text-secondary)">Describe why this payment record is incorrect. You can type a reason, record a voice note, or both.</p>
@@ -393,7 +393,7 @@ function DisputeModal({
             )}
           </div>
 
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button
@@ -421,8 +421,8 @@ function DisputeDetailModal({
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Dispute Details</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
         <div className="p-6 space-y-4">
@@ -507,7 +507,7 @@ function ReportCollectorModal({ groupId, onClose }: { groupId: number; onClose: 
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Report Collector</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <div className="p-6 space-y-4">
           {success ? (
@@ -531,7 +531,7 @@ function ReportCollectorModal({ groupId, onClose }: { groupId: number; onClose: 
                   className={inputCls}
                 />
               </div>
-              {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
                 <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
                 <button
@@ -579,7 +579,7 @@ function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: number; c
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Start Cycle #{cycleNumber}</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -590,7 +590,7 @@ function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: number; c
               <input type="date" value={form.end_date} onChange={(e) => setForm(f => ({ ...f, end_date: e.target.value }))} className={inputCls} />
             </Field>
           </div>
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()} className={submitBtn}>

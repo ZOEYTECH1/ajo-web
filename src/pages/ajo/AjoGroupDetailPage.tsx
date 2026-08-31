@@ -244,8 +244,8 @@ function SubmitPaymentModal({
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Submit Payment</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
@@ -255,8 +255,9 @@ function SubmitPaymentModal({
           </p>
 
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Amount (NGN)</label>
+            <label htmlFor="submit-payment-amount" className="block text-sm font-semibold text-(--text-secondary) mb-1">Amount (NGN)</label>
             <input
+              id="submit-payment-amount"
               type="number"
               min="1"
               value={amount}
@@ -274,9 +275,10 @@ function SubmitPaymentModal({
                 <button
                   type="button"
                   onClick={() => handleFile(null)}
+                  aria-label="Remove receipt image"
                   className="absolute top-2 right-2 bg-red-100 text-red-600 rounded-full p-1 hover:bg-red-200 transition-colors"
                 >
-                  <XCircleIcon className="h-5 w-5" />
+                  <XCircleIcon className="h-5 w-5" aria-hidden="true" />
                 </button>
               </div>
             ) : (
@@ -300,7 +302,7 @@ function SubmitPaymentModal({
           </div>
 
           {err && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>
+            <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>
           )}
 
           <div className="flex gap-3 pt-1">
@@ -375,7 +377,7 @@ function ReceiptViewerModal({ url, onClose }: { url: string; onClose: () => void
           onClick={onClose}
           className="absolute -top-10 right-0 text-white/80 hover:text-white text-sm flex items-center gap-1"
         >
-          <XCircleIcon className="h-6 w-6" />
+          <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           <span>Close</span>
         </button>
         <img
@@ -439,8 +441,8 @@ function GroupSettingsModal({
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Group Settings</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
@@ -460,8 +462,9 @@ function GroupSettingsModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Group Name</label>
+            <label htmlFor="gs-name" className="block text-sm font-semibold text-(--text-secondary) mb-1">Group Name</label>
             <input
+              id="gs-name"
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -470,8 +473,9 @@ function GroupSettingsModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Description</label>
+            <label htmlFor="gs-description" className="block text-sm font-semibold text-(--text-secondary) mb-1">Description</label>
             <textarea
+              id="gs-description"
               rows={3}
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
@@ -480,8 +484,9 @@ function GroupSettingsModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Rules (optional)</label>
+            <label htmlFor="gs-rules" className="block text-sm font-semibold text-(--text-secondary) mb-1">Rules (optional)</label>
             <textarea
+              id="gs-rules"
               rows={3}
               value={form.rules}
               onChange={(e) => setForm((f) => ({ ...f, rules: e.target.value }))}
@@ -491,10 +496,11 @@ function GroupSettingsModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
+            <label htmlFor="gs-grace" className="block text-sm font-semibold text-(--text-secondary) mb-1">
               Grace Period (days, 0–30)
             </label>
             <input
+              id="gs-grace"
               type="number"
               min="0"
               max="30"
@@ -504,7 +510,7 @@ function GroupSettingsModal({
             />
           </div>
 
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           {success && <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">Settings saved!</p>}
 
           <div className="flex gap-3 pt-1">
@@ -559,15 +565,16 @@ function StartCycleModal({
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Start New Cycle</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Start Date</label>
+            <label htmlFor="sc-start" className="block text-sm font-semibold text-(--text-secondary) mb-1">Start Date</label>
             <input
+              id="sc-start"
               type="date"
               value={startDate}
               onChange={(e) => { setStartDate(e.target.value); setErr(''); }}
@@ -575,8 +582,9 @@ function StartCycleModal({
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">End Date</label>
+            <label htmlFor="sc-end" className="block text-sm font-semibold text-(--text-secondary) mb-1">End Date</label>
             <input
+              id="sc-end"
               type="date"
               value={endDate}
               onChange={(e) => { setEndDate(e.target.value); setErr(''); }}
@@ -584,7 +592,7 @@ function StartCycleModal({
             />
           </div>
 
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -1182,7 +1190,7 @@ function MembersTab({
               Are you sure you want to leave this group? This action cannot be undone.
             </p>
             {leaveMutation.isError && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+              <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
                 {(leaveMutation.error as any)?.response?.data?.detail ?? 'Failed to leave group.'}
               </p>
             )}
@@ -1516,7 +1524,7 @@ function CollectionOrderTab({
       )}
 
       {saveErr && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{saveErr}</p>
+        <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{saveErr}</p>
       )}
 
       <ol className="space-y-2">
@@ -1549,8 +1557,9 @@ function CollectionOrderTab({
                       disabled={index === 0}
                       className="p-1 rounded text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30 disabled:opacity-30 transition-colors"
                       title="Move up"
+                      aria-label={`Move ${entry.full_name} up`}
                     >
-                      <ChevronUpIcon className="h-4 w-4" />
+                      <ChevronUpIcon className="h-4 w-4" aria-hidden="true" />
                     </button>
                     <button
                       type="button"
@@ -1558,8 +1567,9 @@ function CollectionOrderTab({
                       disabled={index === localOrder.length - 1}
                       className="p-1 rounded text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30 disabled:opacity-30 transition-colors"
                       title="Move down"
+                      aria-label={`Move ${entry.full_name} down`}
                     >
-                      <ChevronDownIcon className="h-4 w-4" />
+                      <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
                     </button>
                   </div>
                 )}
@@ -1777,9 +1787,10 @@ export default function AjoGroupDetailPage() {
                   type="button"
                   onClick={() => setShowSettings(true)}
                   title="Group settings"
+                  aria-label="Group settings"
                   className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30 transition-colors"
                 >
-                  <Cog6ToothIcon className="h-5 w-5" />
+                  <Cog6ToothIcon className="h-5 w-5" aria-hidden="true" />
                 </button>
               )}
             </div>

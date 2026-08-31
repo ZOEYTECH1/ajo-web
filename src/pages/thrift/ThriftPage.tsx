@@ -94,8 +94,8 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
           <h2 className="text-lg font-bold text-(--text-primary)">Create Thrift Group</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
@@ -134,7 +134,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             <textarea rows={2} value={form.description} onChange={(e) => set('description', e.target.value)} placeholder="What is this group for?" className={inputCls} />
           </Field>
 
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -178,7 +178,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Join Thrift Group</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
 
         <div className="p-6 space-y-4">
@@ -191,9 +191,10 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
                 onChange={(e) => { setCode(e.target.value.toUpperCase()); setErr(''); }}
                 maxLength={8}
                 placeholder="e.g. A1B2C3D4"
+                aria-label="Invite code"
                 className={`${inputCls} tracking-[0.3em] uppercase font-mono text-center text-lg`}
               />
-              {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
                 <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
                 <button type="button" onClick={() => { setErr(''); setStage('amount'); }} disabled={code.trim().length < 6} className={submitBtn}>
@@ -216,7 +217,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
                   className={inputCls}
                 />
               </Field>
-              {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
                 <button type="button" onClick={() => setStage('code')} className={cancelBtn}>Back</button>
                 <button
@@ -308,7 +309,7 @@ export default function ThriftPage() {
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
           Failed to load thrift groups. Please refresh.
         </div>
       )}

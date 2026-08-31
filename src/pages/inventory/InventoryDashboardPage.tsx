@@ -125,9 +125,10 @@ export default function InventoryDashboardPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={goToPrev}
+            aria-label="Previous day"
             className="p-2 rounded-lg border border-(--border) bg-(--surface) text-(--text-secondary) hover:text-(--primary) hover:border-(--primary) transition-colors"
           >
-            <ChevronLeftIcon className="h-4 w-4" />
+            <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
           </button>
 
           <div className="text-center min-w-32.5">
@@ -142,9 +143,10 @@ export default function InventoryDashboardPage() {
           <button
             onClick={goToNext}
             disabled={isToday(selectedDate)}
+            aria-label="Next day"
             className="p-2 rounded-lg border border-(--border) bg-(--surface) text-(--text-secondary) hover:text-(--primary) hover:border-(--primary) transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <ChevronRightIcon className="h-4 w-4" />
+            <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
           </button>
 
           {!isToday(selectedDate) && (
@@ -159,7 +161,7 @@ export default function InventoryDashboardPage() {
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+        <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load dashboard data. Please refresh.
         </div>
       )}

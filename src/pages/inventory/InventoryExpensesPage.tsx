@@ -84,7 +84,7 @@ function ManageCategoriesModal({ onClose }: { onClose: () => void }) {
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">My Expense Categories</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <div className="p-6 space-y-4">
           <div className="flex gap-2">
@@ -105,7 +105,7 @@ function ManageCategoriesModal({ onClose }: { onClose: () => void }) {
               {addMutation.isPending ? '…' : 'Add'}
             </button>
           </div>
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           {cats.length > 0 ? (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {cats.map(c => (
@@ -242,7 +242,7 @@ function ExpenseModal({
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">{isEdit ? 'Edit Expense' : 'Add Expense'}</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <Field label="Category *">
@@ -278,7 +278,7 @@ function ExpenseModal({
           <Field label="Description (optional)">
             <input type="text" value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} placeholder="e.g. Monthly shop rent" className={inputCls} />
           </Field>
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button type="submit" disabled={mutation.isPending} className={submitBtn}>

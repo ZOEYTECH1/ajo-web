@@ -99,8 +99,8 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
           <h2 className="text-lg font-bold text-(--text-primary)">Create Ajo Group</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
@@ -187,7 +187,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             />
           </Field>
 
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -226,8 +226,8 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Join Ajo Group</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
@@ -247,7 +247,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
                   className={`${inputCls} tracking-[0.3em] uppercase font-mono text-center text-lg`}
                 />
               </div>
-              {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
                 <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
                 <button
@@ -356,7 +356,7 @@ export default function AjoGroupsPage() {
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
           Failed to load groups. Please refresh.
         </div>
       )}

@@ -63,8 +63,8 @@ function AddCategoryModal({
             <h2 className="text-lg font-bold text-(--text-primary)">What do you sell?</h2>
             <p className="text-xs text-(--text-secondary) mt-0.5">Pick a category to get started</p>
           </div>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
@@ -86,7 +86,7 @@ function AddCategoryModal({
                   onKeyDown={(e) => { if (e.key === 'Enter' && customName.trim()) onSave(customName.trim()); }}
                 />
               </div>
-              {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
                 <button type="button" onClick={() => setCustomMode(false)} className={cancelBtn}>← Back</button>
                 <button
@@ -118,7 +118,7 @@ function AddCategoryModal({
                   </button>
                 ))}
               </div>
-              {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
               {isPending && <p className="text-sm text-center text-(--text-secondary)">Saving…</p>}
             </div>
           )}
@@ -147,7 +147,7 @@ function EditCategoryModal({
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Edit Category</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <div className="p-6 space-y-4">
           <div>
@@ -160,7 +160,7 @@ function EditCategoryModal({
               autoFocus
             />
           </div>
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button type="button" disabled={!name.trim() || isPending} onClick={() => onSave(name.trim())} className={submitBtn}>
@@ -214,7 +214,7 @@ function CustomFieldsModal({ category, onClose }: { category: Category; onClose:
             <h2 className="text-lg font-bold text-(--text-primary)">Custom Fields</h2>
             <p className="text-xs text-(--text-secondary) mt-0.5">{category.name} — extra attributes per product</p>
           </div>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" /></button>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <div className="p-6 space-y-5">
           {/* Existing fields */}
@@ -257,7 +257,7 @@ function CustomFieldsModal({ category, onClose }: { category: Category; onClose:
               </button>
             </div>
           </div>
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <button type="button" onClick={onClose} className="w-full rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors">
             Done
           </button>

@@ -174,12 +174,13 @@ export default function NotificationsPage() {
       <div className="space-y-2 pb-2">
         {displayed.map((n) => {
           const hasLink = !!getNotifLink(n);
+          const Tag = hasLink ? 'button' : 'div';
           return (
-            <div
+            <Tag
               key={n.id}
-              onClick={() => handleClick(n)}
+              {...(hasLink ? { type: 'button' as const, onClick: () => handleClick(n) } : {})}
               className={clsx(
-                'rounded-xl border border-(--border) p-4 transition-all',
+                'w-full text-left rounded-xl border border-(--border) p-4 transition-all',
                 notifBg(n.notif_type, n.is_read),
                 hasLink ? 'cursor-pointer hover:border-orange-300 hover:shadow-sm' : '',
                 !n.is_read ? 'border-l-4 border-l-blue-400' : '',
@@ -202,7 +203,7 @@ export default function NotificationsPage() {
                   <p className="text-xs text-(--text-muted) mt-1">{timeAgo(n.created_at)}</p>
                 </div>
               </div>
-            </div>
+            </Tag>
           );
         })}
       </div>

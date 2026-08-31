@@ -104,8 +104,8 @@ function FlagModal({
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Flag Amount</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
         <div className="p-6 space-y-4">
@@ -197,7 +197,7 @@ export default function ThriftQueuePage() {
 
       {/* Global error */}
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
           Failed to load queue. Please refresh.
         </div>
       )}
@@ -335,7 +335,7 @@ export default function ThriftQueuePage() {
 
                   {/* Per-item action error */}
                   {actionError[member.id] && (
-                    <p className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2">{actionError[member.id]}</p>
+                    <p role="alert" className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2">{actionError[member.id]}</p>
                   )}
                 </div>
               ))}

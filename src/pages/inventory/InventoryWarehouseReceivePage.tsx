@@ -110,8 +110,8 @@ export default function InventoryWarehouseReceivePage() {
       )}
 
       {err && (
-        <div className="flex items-start gap-3 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-          <XCircleIcon className="h-5 w-5 mt-0.5 shrink-0" />
+        <div role="alert" className="flex items-start gap-3 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <XCircleIcon className="h-5 w-5 mt-0.5 shrink-0" aria-hidden="true" />
           <span>{err}</span>
         </div>
       )}

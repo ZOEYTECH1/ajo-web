@@ -329,7 +329,7 @@ export default function AjoSubscriptionPage() {
           )}
 
           {initiateMutation.isError && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+            <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
               {(initiateMutation.error as any)?.response?.data?.detail ??
                 'Failed to initiate payment. Please try again.'}
             </p>
@@ -359,8 +359,8 @@ export default function AjoSubscriptionPage() {
               </div>
 
               {verifyError && (
-                <div className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2.5">
-                  <XCircleIcon className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                <div role="alert" className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2.5">
+                  <XCircleIcon className="h-4 w-4 text-red-500 shrink-0 mt-0.5" aria-hidden="true" />
                   <p className="text-sm text-red-700">{verifyError}</p>
                 </div>
               )}

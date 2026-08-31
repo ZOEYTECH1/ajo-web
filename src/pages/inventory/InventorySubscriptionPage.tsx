@@ -233,11 +233,12 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
             value={txRef}
             onChange={(e) => setTxRef(e.target.value)}
             placeholder="e.g. FLW-MOCK-abc123"
+            aria-label="Transaction reference for verification"
             className={inputCls}
           />
           {verifyErr && (
-            <div className="flex items-start gap-2 text-sm text-red-600">
-              <XCircleIcon className="h-4 w-4 mt-0.5 shrink-0" />
+            <div role="alert" className="flex items-start gap-2 text-sm text-red-600">
+              <XCircleIcon className="h-4 w-4 mt-0.5 shrink-0" aria-hidden="true" />
               <span>{verifyErr}</span>
             </div>
           )}

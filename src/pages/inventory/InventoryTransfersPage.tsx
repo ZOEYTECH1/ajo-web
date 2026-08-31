@@ -156,8 +156,8 @@ function TransferModal({
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface)">
           <h2 className="text-lg font-bold text-(--text-primary)">New Transfer</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
@@ -218,9 +218,10 @@ function TransferModal({
                   <button
                     type="button"
                     onClick={() => setCart((prev) => prev.filter((_, idx) => idx !== i))}
+                    aria-label="Remove item from transfer"
                     className="text-red-400 hover:text-red-600 transition-colors"
                   >
-                    <XCircleIcon className="h-4 w-4" />
+                    <XCircleIcon className="h-4 w-4" aria-hidden="true" />
                   </button>
                 </div>
               ))}
@@ -237,7 +238,7 @@ function TransferModal({
             <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Add any notes…" className={inputCls} />
           </div>
 
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>

@@ -68,7 +68,7 @@ export function InventoryNav() {
 
           {open && (
             <>
-              <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+              <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setOpen(false)} />
               <div className="absolute left-0 top-full z-20 mt-1 w-64 rounded-xl border border-(--border) bg-(--surface) shadow-lg overflow-hidden">
                 {businesses.map(biz => {
                   const BizIcon = MODE_ICON[biz.mode] ?? BuildingStorefrontIcon;

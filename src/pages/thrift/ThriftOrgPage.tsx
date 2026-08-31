@@ -244,8 +244,8 @@ function InviteModal({ onInvite, onClose, isPending }: {
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Invite Collector</h2>
-          <button type="button" onClick={onClose} className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" />
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
         <div className="p-6 space-y-4">
@@ -253,8 +253,9 @@ function InviteModal({ onInvite, onClose, isPending }: {
             Enter the email address of the collector you want to invite. They'll receive an email with an invite link.
           </p>
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Email address *</label>
+            <label htmlFor="org-invite-email" className="block text-sm font-semibold text-(--text-secondary) mb-1">Email address *</label>
             <input
+              id="org-invite-email"
               type="email"
               value={email}
               onChange={e => { setEmail(e.target.value); setErr(''); }}
@@ -262,7 +263,7 @@ function InviteModal({ onInvite, onClose, isPending }: {
               className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
-          {err && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3">
             <button
               type="button"
@@ -351,7 +352,7 @@ export default function ThriftOrgPage() {
     return (
       <div className="space-y-4">
         <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-teal-600">← Thrift Groups</Link>
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
           Organisation not found or you do not have access.
         </div>
       </div>
@@ -549,7 +550,7 @@ export default function ThriftOrgPage() {
                               </>
                             ) : null}
                             {actionError[c.id] && (
-                              <p className="text-xs text-red-600">{actionError[c.id]}</p>
+                              <p role="alert" className="text-xs text-red-600">{actionError[c.id]}</p>
                             )}
                           </div>
                         </td>

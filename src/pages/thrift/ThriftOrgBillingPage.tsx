@@ -108,7 +108,7 @@ function InvoiceCard({ invoice, orgId }: { invoice: ThriftInvoice; orgId: number
       {/* Pay error */}
       {payError && (
         <div className="px-5 pb-3">
-          <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{payError}</p>
+          <p role="alert" className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{payError}</p>
         </div>
       )}
 
@@ -124,6 +124,7 @@ function InvoiceCard({ invoice, orgId }: { invoice: ThriftInvoice; orgId: number
               value={verifyTxId}
               onChange={(e) => { setVerifyTxId(e.target.value); setVerifyError(''); }}
               placeholder="Transaction ID"
+              aria-label="Transaction ID for verification"
               className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
             <button
@@ -136,7 +137,7 @@ function InvoiceCard({ invoice, orgId }: { invoice: ThriftInvoice; orgId: number
             </button>
           </div>
           {verifyError && (
-            <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{verifyError}</p>
+            <p role="alert" className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{verifyError}</p>
           )}
         </div>
       )}
@@ -248,14 +249,14 @@ export default function ThriftOrgBillingPage() {
 
       {/* Generate error */}
       {generateError && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
           {generateError}
         </div>
       )}
 
       {/* Load error */}
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
           Failed to load invoices. Please refresh.
         </div>
       )}

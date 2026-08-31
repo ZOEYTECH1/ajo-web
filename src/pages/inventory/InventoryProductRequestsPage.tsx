@@ -118,9 +118,10 @@ function NewRequestModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close dialog"
             className="text-(--text-muted) hover:text-(--text-primary)"
           >
-            <XCircleIcon className="h-6 w-6" />
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -169,7 +170,7 @@ function NewRequestModal({
           </div>
 
           {err && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+            <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
               {err}
             </p>
           )}

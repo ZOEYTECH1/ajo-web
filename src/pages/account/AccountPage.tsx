@@ -180,6 +180,7 @@ export default function AccountPage() {
               disabled={photoMutation.isPending}
               className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-orange-600 text-white flex items-center justify-center shadow hover:bg-orange-700 disabled:opacity-50 transition-colors"
               title="Upload photo"
+              aria-label="Upload profile photo"
             >
               {photoMutation.isPending ? (
                 <span className="block h-3 w-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -214,7 +215,7 @@ export default function AccountPage() {
           </div>
         </div>
         {photoErr && (
-          <p className="mt-3 text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{photoErr}</p>
+          <p role="alert" className="mt-3 text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{photoErr}</p>
         )}
       </div>
 
@@ -223,13 +224,13 @@ export default function AccountPage() {
         <h2 className="text-base font-semibold text-(--text-primary) mb-4">Personal Information</h2>
 
         {saveSuccess && (
-          <div className="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
+          <div role="status" className="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
             Profile updated successfully.
           </div>
         )}
 
         {updateMutation.isError && (
-          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <div role="alert" className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
             Failed to update profile. Please try again.
           </div>
         )}
@@ -280,12 +281,12 @@ export default function AccountPage() {
         <h2 className="text-base font-semibold text-(--text-primary) mb-4">Change Password</h2>
 
         {pwSuccess && (
-          <div className="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
+          <div role="status" className="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
             Password changed successfully.
           </div>
         )}
         {pwErr && (
-          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <div role="alert" className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
             {pwErr}
           </div>
         )}
@@ -372,8 +373,8 @@ export default function AccountPage() {
           <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-(--text-primary)">Delete Account</h3>
-              <button type="button" onClick={() => setShowDeleteConfirm(false)} className="text-(--text-muted) hover:text-(--text-primary)">
-                <XCircleIcon className="h-6 w-6" />
+              <button type="button" onClick={() => setShowDeleteConfirm(false)} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+                <XCircleIcon className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
             <p className="text-sm text-(--text-secondary)">
@@ -381,7 +382,7 @@ export default function AccountPage() {
               <span className="font-semibold text-red-600">permanent and cannot be reversed</span>.
             </p>
             {deleteMutation.isError && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+              <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
                 Failed to delete account. Please try again.
               </p>
             )}

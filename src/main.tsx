@@ -5,6 +5,12 @@ import './index.css';
 
 import App, { ProtectedLayout } from './App';
 import { ThemeProvider } from './context/ThemeContext';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { initSentry } from './lib/sentry';
+
+// Initialise Sentry as early as possible.
+// Safe to call with an empty/missing VITE_SENTRY_DSN — it will skip initialisation.
+initSentry();
 
 // Auth pages
 const LoginPage                     = lazy(() => import('./pages/auth/LoginPage'));
@@ -109,9 +115,11 @@ if (!root) throw new Error('Root element not found');
 createRoot(root).render(
   <StrictMode>
     <ThemeProvider>
-      <Suspense fallback={null}>
-        <RouterProvider router={router} />
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={null}>
+          <RouterProvider router={router} />
+        </Suspense>
+      </ErrorBoundary>
     </ThemeProvider>
   </StrictMode>,
 );

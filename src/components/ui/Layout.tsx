@@ -14,6 +14,14 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-(--bg)">
+      {/* Skip-to-content link — visible on focus for keyboard/screen-reader users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-orange-600 focus:text-white focus:font-medium focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
+
       {/* Desktop sidebar */}
       <div className="hidden lg:flex lg:shrink-0" style={{ width: 240 }}>
         <div className="w-full">
@@ -33,10 +41,10 @@ export function Layout({ children }: LayoutProps) {
             <div className="absolute top-0 right-0 -mr-12 pt-2">
               <button
                 type="button"
+                aria-label="Close sidebar"
                 className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                 onClick={() => setSidebarOpen(false)}
               >
-                <span className="sr-only">Close sidebar</span>
                 <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
               </button>
             </div>
@@ -53,10 +61,10 @@ export function Layout({ children }: LayoutProps) {
           <div className="flex items-center gap-3 lg:hidden">
             <button
               type="button"
+              aria-label="Open sidebar"
               className="text-(--text-secondary) hover:text-(--text-primary) transition-colors"
               onClick={() => setSidebarOpen(true)}
             >
-              <span className="sr-only">Open sidebar</span>
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
             <div className="flex items-center gap-2">
@@ -69,20 +77,24 @@ export function Layout({ children }: LayoutProps) {
           <div className="hidden lg:block" />
 
           {/* Theme toggle */}
-          <div className="flex items-center gap-1 p-1 rounded-lg bg-(--bg) border border-(--border)">
-            <ThemeButton active={theme === 'light'} title="Light mode" onClick={() => setTheme('light')}>
+          <div
+            role="group"
+            aria-label="Theme selection"
+            className="flex items-center gap-1 p-1 rounded-lg bg-(--bg) border border-(--border)"
+          >
+            <ThemeButton active={theme === 'light'} aria-label="Switch to light mode" onClick={() => setTheme('light')}>
               <SunIcon className="h-4 w-4" />
             </ThemeButton>
-            <ThemeButton active={theme === 'system'} title="System preference" onClick={() => setTheme('system')}>
+            <ThemeButton active={theme === 'system'} aria-label="Use system colour preference" onClick={() => setTheme('system')}>
               <ComputerDesktopIcon className="h-4 w-4" />
             </ThemeButton>
-            <ThemeButton active={theme === 'dark'} title="Dark mode" onClick={() => setTheme('dark')}>
+            <ThemeButton active={theme === 'dark'} aria-label="Switch to dark mode" onClick={() => setTheme('dark')}>
               <MoonIcon className="h-4 w-4" />
             </ThemeButton>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <main id="main-content" className="flex-1 overflow-y-auto p-4 sm:p-6" tabIndex={-1}>
           {children}
         </main>
       </div>
@@ -93,18 +105,19 @@ export function Layout({ children }: LayoutProps) {
 function ThemeButton({
   active,
   onClick,
-  title,
+  'aria-label': ariaLabel,
   children,
 }: {
   active: boolean;
   onClick: () => void;
-  title: string;
+  'aria-label': string;
   children: ReactNode;
 }) {
   return (
     <button
       type="button"
-      title={title}
+      aria-label={ariaLabel}
+      aria-pressed={active}
       onClick={onClick}
       className={`flex items-center justify-center h-7 w-7 rounded-md transition-all ${
         active

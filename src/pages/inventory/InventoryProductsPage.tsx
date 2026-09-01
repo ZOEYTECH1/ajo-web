@@ -10,6 +10,7 @@ import {
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
+import { useDebounce } from '../../hooks/useDebounce';
 
 interface InventoryMovement {
   id: number;
@@ -494,6 +495,7 @@ export default function InventoryProductsPage() {
   const [summaryProduct, setSummaryProduct] = useState<Product | null>(null);
   const [historyProduct, setHistoryProduct] = useState<Product | null>(null);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search);
   const [stockFilter, setStockFilter] = useState<'all' | 'in' | 'low' | 'out'>('all');
 
   const { data: category } = useQuery<Category>({
@@ -515,7 +517,7 @@ export default function InventoryProductsPage() {
 
   const filteredData = useMemo(() => {
     let list = data ?? [];
-    if (search.trim()) list = list.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.barcode?.toLowerCase().includes(search.toLowerCase()));
+    if (debouncedSearch.trim()) list = list.filter(p => p.name.toLowerCase().includes(debouncedSearch.toLowerCase()) || p.barcode?.toLowerCase().includes(debouncedSearch.toLowerCase()));
     if (stockFilter === 'out') list = list.filter(p => p.quantity === 0);
     else if (stockFilter === 'low') list = list.filter(p => p.quantity > 0 && p.quantity <= p.low_stock_threshold);
     else if (stockFilter === 'in') list = list.filter(p => p.quantity > p.low_stock_threshold);

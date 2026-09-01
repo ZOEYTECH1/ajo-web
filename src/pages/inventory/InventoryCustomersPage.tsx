@@ -5,6 +5,7 @@ import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
+import { useDebounce } from '../../hooks/useDebounce';
 
 interface Customer {
   id: number;
@@ -182,6 +183,7 @@ export default function InventoryCustomersPage() {
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
   const [creditCustomer, setCreditCustomer] = useState<Customer | null>(null);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search);
 
   const { data, isLoading, error } = useQuery<Customer[]>({
     queryKey: ['inventory-customers', selectedId],
@@ -200,8 +202,8 @@ export default function InventoryCustomersPage() {
   };
 
   const filtered = (data ?? []).filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.phone.toLowerCase().includes(search.toLowerCase()),
+    c.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+    c.phone.toLowerCase().includes(debouncedSearch.toLowerCase()),
   );
   const totalCredit = (data ?? []).reduce((sum, c) => sum + Number(c.credit_balance), 0);
 
@@ -305,7 +307,7 @@ export default function InventoryCustomersPage() {
               ) : (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    {search ? `No customers match "${search}".` : <>No customers yet.{' '}<button type="button" onClick={() => setShowAdd(true)} className="text-orange-600 font-semibold hover:underline">Add the first customer.</button></>}
+                    {debouncedSearch ? `No customers match "${debouncedSearch}".` : <>No customers yet.{' '}<button type="button" onClick={() => setShowAdd(true)} className="text-orange-600 font-semibold hover:underline">Add the first customer.</button></>}
                   </td>
                 </tr>
               )}

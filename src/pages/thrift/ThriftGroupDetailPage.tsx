@@ -45,6 +45,7 @@ interface ThriftGroup {
   is_on_trial: boolean;
   is_subscription_active: boolean;
   is_org_admin: boolean;
+  is_collector: boolean;
   active_cycle: ThriftCycle | null;
   created_at: string;
 }
@@ -649,7 +650,7 @@ export default function ThriftGroupDetailPage() {
   const payments = paymentsQ.data ?? [];
   const cycles = cyclesQ.data ?? [];
 
-  const isCollector = currentUser?.id === group?.collector?.id;
+  const isCollector = group?.is_collector ?? false;
   const isOrgAdmin = group?.is_org_admin ?? false;
 
   // Find current user's member record (payer perspective)
@@ -733,8 +734,13 @@ export default function ThriftGroupDetailPage() {
       <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6 space-y-4">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl font-bold text-(--text-primary)">{group.name}</h1>
+              {isCollector && (
+                <span className="bg-teal-100 text-teal-700 text-xs font-semibold px-2 py-0.5 rounded-full ring-1 ring-teal-200">
+                  Collector
+                </span>
+              )}
               {group.is_on_trial && <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2 py-0.5 rounded-full">Trial</span>}
               {!group.is_on_trial && group.is_subscription_active && <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">Active</span>}
             </div>

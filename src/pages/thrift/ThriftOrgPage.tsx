@@ -64,6 +64,31 @@ interface OrgReport {
   reviewed_at: string | null;
 }
 
+interface PaymentSummary {
+  total: number;
+  confirmed: number;
+  disputed: number;
+  pending: number;
+  confirmed_amount: number;
+}
+
+interface RemovalRequest {
+  id: number;
+  status: 'pending' | 'approved' | 'rejected';
+  reason: string;
+  settlement_notes: string;
+  member_name: string;
+  member_email: string;
+  group_id: number;
+  group_name: string;
+  personal_amount: string;
+  total_saved: string;
+  payment_summary: PaymentSummary;
+  resolved_by_name: string | null;
+  created_at: string;
+  resolved_at: string | null;
+}
+
 interface Organization {
   id: number;
   name: string;
@@ -236,6 +261,114 @@ function OrgSkeleton() {
 }
 
 // ── Invite Modal ──────────────────────────────────────────────────────────────
+
+// ── Approve Removal Modal (org admin) ────────────────────────────────────────
+
+function ApproveRemovalModal({
+  orgId, request, onClose,
+}: { orgId: number; request: RemovalRequest; onClose: () => void }) {
+  const qc = useQueryClient();
+  const [settlementNotes, setSettlementNotes] = useState('');
+  const [err, setErr] = useState('');
+
+  const mutation = useMutation({
+    mutationFn: () => api.patch(`/thrift/orgs/${orgId}/removal-requests/${request.id}/`, {
+      action: 'approve',
+      settlement_notes: settlementNotes.trim(),
+    }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['thrift-org-removal-requests', orgId] });
+      onClose();
+    },
+    onError: (e: any) => {
+      const d = e.response?.data;
+      setErr(d?.settlement_notes?.[0] ?? d?.detail ?? 'Something went wrong.');
+    },
+  });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
+          <h2 className="text-lg font-bold text-(--text-primary)">Approve Removal</h2>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
+          </button>
+        </div>
+        <div className="p-6 space-y-4">
+          {/* Member summary */}
+          <div className="rounded-xl bg-(--bg) border border-(--border) p-4 grid grid-cols-2 gap-3 text-sm">
+            <div><p className="text-(--text-muted) text-xs font-medium">Member</p><p className="font-semibold text-(--text-primary) mt-0.5">{request.member_name}</p></div>
+            <div><p className="text-(--text-muted) text-xs font-medium">Group</p><p className="font-semibold text-(--text-primary) mt-0.5">{request.group_name}</p></div>
+            <div><p className="text-(--text-muted) text-xs font-medium">Contribution / period</p><p className="font-semibold text-(--text-primary) mt-0.5">{formatCurrency(request.personal_amount)}</p></div>
+            <div><p className="text-(--text-muted) text-xs font-medium">Total saved</p><p className="font-semibold text-(--text-primary) mt-0.5">{formatCurrency(request.total_saved)}</p></div>
+          </div>
+
+          {/* Payment summary */}
+          <div>
+            <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide mb-2">Payment history</p>
+            <div className="grid grid-cols-4 gap-2 text-center text-xs">
+              <div className="rounded-lg bg-(--bg) border border-(--border) p-2">
+                <p className="font-bold text-(--text-primary) text-base">{request.payment_summary.total}</p>
+                <p className="text-(--text-muted) mt-0.5">Total</p>
+              </div>
+              <div className="rounded-lg bg-green-50 border border-green-100 p-2">
+                <p className="font-bold text-green-700 text-base">{request.payment_summary.confirmed}</p>
+                <p className="text-green-600 mt-0.5">Confirmed</p>
+              </div>
+              <div className="rounded-lg bg-yellow-50 border border-yellow-100 p-2">
+                <p className="font-bold text-yellow-700 text-base">{request.payment_summary.pending}</p>
+                <p className="text-yellow-600 mt-0.5">Pending</p>
+              </div>
+              <div className="rounded-lg bg-red-50 border border-red-100 p-2">
+                <p className="font-bold text-red-700 text-base">{request.payment_summary.disputed}</p>
+                <p className="text-red-600 mt-0.5">Disputed</p>
+              </div>
+            </div>
+            <p className="text-sm text-(--text-secondary) mt-2">
+              Confirmed amount: <span className="font-semibold text-(--text-primary)">{formatCurrency(request.payment_summary.confirmed_amount)}</span>
+            </p>
+          </div>
+
+          {/* Member's reason */}
+          <div>
+            <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide mb-1">Reason for leaving</p>
+            <p className="text-sm text-(--text-primary) bg-(--bg) border border-(--border) rounded-lg px-3 py-2">{request.reason}</p>
+          </div>
+
+          {/* Settlement notes */}
+          <div>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Settlement notes *</label>
+            <p className="text-xs text-(--text-muted) mb-2">
+              Describe what was settled before approving: outstanding amounts refunded or forfeited, disputes resolved, any financial adjustments made.
+            </p>
+            <textarea
+              rows={3}
+              value={settlementNotes}
+              onChange={e => { setSettlementNotes(e.target.value); setErr(''); }}
+              placeholder="e.g. All 6 confirmed payments are on record. ₦5,000 outstanding refunded on 2024-01-15. No active disputes."
+              className={inputCls}
+            />
+          </div>
+
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+
+          <div className="flex gap-3">
+            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+            <button
+              type="button"
+              disabled={!settlementNotes.trim() || mutation.isPending}
+              onClick={() => mutation.mutate()}
+              className="flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors"
+            >
+              {mutation.isPending ? 'Approving…' : 'Confirm & Remove Member'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Create Group Modal (org admin only) ──────────────────────────────────────
 
@@ -433,6 +566,8 @@ export default function ThriftOrgPage() {
   const qc = useQueryClient();
   const [showInvite, setShowInvite] = useState(false);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const [approveRemovalRequest, setApproveRemovalRequest] = useState<RemovalRequest | null>(null);
+  const [removalFilter, setRemovalFilter] = useState<'pending' | 'approved' | 'rejected'>('pending');
   const [actionError, setActionError] = useState<Record<number, string>>({});
   const [reportFilter, setReportFilter] = useState<'all' | 'pending' | 'reviewed' | 'resolved' | 'dismissed'>('all');
 
@@ -449,6 +584,18 @@ export default function ThriftOrgPage() {
       return api.get(`/thrift/orgs/${orgId}/reports/${params}`).then(r => r.data);
     },
     enabled: !!orgId && !!data,
+  });
+
+  const { data: removalRequests = [], isLoading: removalLoading } = useQuery<RemovalRequest[]>({
+    queryKey: ['thrift-org-removal-requests', orgId, removalFilter],
+    queryFn: () => api.get(`/thrift/orgs/${orgId}/removal-requests/?status=${removalFilter}`).then(r => r.data),
+    enabled: !!orgId && !!data,
+  });
+
+  const rejectRemovalMutation = useMutation({
+    mutationFn: ({ requestId, reason }: { requestId: number; reason: string }) =>
+      api.patch(`/thrift/orgs/${orgId}/removal-requests/${requestId}/`, { action: 'reject', reason }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['thrift-org-removal-requests', orgId] }),
   });
 
   const collectorActionMutation = useMutation({
@@ -886,12 +1033,144 @@ export default function ThriftOrgPage() {
         )}
       </div>
 
+      {/* ── Removal Requests ── */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <h2 className="text-base font-bold text-(--text-primary)">
+            Removal Requests
+            {removalRequests.filter(r => r.status === 'pending').length > 0 && removalFilter === 'pending' && (
+              <span className="ml-2 text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                {removalRequests.length} pending
+              </span>
+            )}
+          </h2>
+          <div className="flex gap-1">
+            {(['pending', 'approved', 'rejected'] as const).map(f => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setRemovalFilter(f)}
+                className={clsx(
+                  'text-xs font-semibold px-3 py-1 rounded-full transition-colors capitalize',
+                  removalFilter === f
+                    ? 'bg-teal-600 text-white'
+                    : 'bg-(--bg) border border-(--border) text-(--text-secondary) hover:border-teal-300 hover:text-teal-600',
+                )}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {removalLoading ? (
+          <div className="text-sm text-(--text-secondary) py-4 text-center">Loading…</div>
+        ) : removalRequests.length === 0 ? (
+          <div className="bg-(--surface) rounded-xl border border-(--border) px-6 py-8 text-center text-sm text-(--text-secondary)">
+            No {removalFilter} removal requests.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {removalRequests.map(req => (
+              <div key={req.id} className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-4 space-y-3">
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <div>
+                    <p className="text-sm font-semibold text-(--text-primary)">{req.member_name}</p>
+                    <p className="text-xs text-(--text-secondary) mt-0.5">{req.member_email} · {req.group_name}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={clsx(
+                      'text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize',
+                      req.status === 'approved' ? 'bg-green-100 text-green-700'
+                      : req.status === 'rejected' ? 'bg-(--bg) text-(--text-secondary)'
+                      : 'bg-yellow-100 text-yellow-700',
+                    )}>
+                      {req.status}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Payment mini-stats */}
+                <div className="grid grid-cols-4 gap-2 text-center text-xs">
+                  <div className="rounded-lg bg-(--bg) border border-(--border) p-2">
+                    <p className="font-bold text-(--text-primary)">{req.payment_summary.total}</p>
+                    <p className="text-(--text-muted)">Total</p>
+                  </div>
+                  <div className="rounded-lg bg-green-50 border border-green-100 p-2">
+                    <p className="font-bold text-green-700">{req.payment_summary.confirmed}</p>
+                    <p className="text-green-600">Confirmed</p>
+                  </div>
+                  <div className="rounded-lg bg-yellow-50 border border-yellow-100 p-2">
+                    <p className="font-bold text-yellow-700">{req.payment_summary.pending}</p>
+                    <p className="text-yellow-600">Pending</p>
+                  </div>
+                  <div className="rounded-lg bg-red-50 border border-red-100 p-2">
+                    <p className="font-bold text-red-700">{req.payment_summary.disputed}</p>
+                    <p className="text-red-600">Disputed</p>
+                  </div>
+                </div>
+
+                <div className="text-sm text-(--text-secondary)">
+                  Saved: <span className="font-semibold text-(--text-primary)">{formatCurrency(req.total_saved)}</span>
+                  <span className="mx-2">·</span>
+                  Contribution: <span className="font-semibold text-(--text-primary)">{formatCurrency(req.personal_amount)}/period</span>
+                </div>
+
+                <div>
+                  <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide mb-1">Member's reason</p>
+                  <p className="text-sm text-(--text-primary) bg-(--bg) border border-(--border) rounded-lg px-3 py-2">{req.reason}</p>
+                </div>
+
+                {req.settlement_notes && (
+                  <div>
+                    <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide mb-1">
+                      {req.status === 'approved' ? 'Settlement notes' : 'Rejection reason'}
+                    </p>
+                    <p className="text-sm text-(--text-primary) bg-(--bg) border border-(--border) rounded-lg px-3 py-2">{req.settlement_notes}</p>
+                  </div>
+                )}
+
+                {req.status === 'pending' && (
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setApproveRemovalRequest(req)}
+                      className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-100 transition-colors"
+                    >
+                      Review & Approve
+                    </button>
+                    <button
+                      type="button"
+                      disabled={rejectRemovalMutation.isPending}
+                      onClick={() => {
+                        const reason = prompt('Reason for rejecting this removal request (optional):') ?? '';
+                        rejectRemovalMutation.mutate({ requestId: req.id, reason });
+                      }}
+                      className="text-xs font-semibold text-(--text-secondary) bg-(--bg) border border-(--border) rounded-lg px-3 py-1.5 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors disabled:opacity-50"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* Modals */}
       {showCreateGroup && (
         <CreateGroupModal
           orgId={orgId}
           collectors={collectors}
           onClose={() => setShowCreateGroup(false)}
+        />
+      )}
+      {approveRemovalRequest && (
+        <ApproveRemovalModal
+          orgId={orgId}
+          request={approveRemovalRequest}
+          onClose={() => setApproveRemovalRequest(null)}
         />
       )}
       {showInvite && (

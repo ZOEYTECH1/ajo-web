@@ -32,6 +32,12 @@ interface ThriftCycle {
   created_at: string;
 }
 
+interface RemovalRequest {
+  id: number;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+}
+
 interface ThriftGroup {
   id: number;
   name: string;
@@ -46,6 +52,7 @@ interface ThriftGroup {
   is_subscription_active: boolean;
   is_org_admin: boolean;
   is_collector: boolean;
+  my_removal_request: RemovalRequest | null;
   active_cycle: ThriftCycle | null;
   created_at: string;
 }
@@ -555,6 +562,73 @@ function ReportCollectorModal({ groupId, onClose }: { groupId: number; onClose: 
   );
 }
 
+// ── Request Removal Modal (payer only, org-linked groups) ────────────────────
+
+function RequestRemovalModal({
+  groupId, memberId, onClose, onSuccess,
+}: { groupId: number; memberId: number; onClose: () => void; onSuccess: () => void }) {
+  const [reason, setReason] = useState('');
+  const [err, setErr] = useState('');
+  const [success, setSuccess] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: () => api.post(`/thrift/${groupId}/members/${memberId}/request-removal/`, { reason }),
+    onSuccess: () => { setSuccess(true); onSuccess(); },
+    onError: (e: any) => setErr(e.response?.data?.reason?.[0] ?? e.response?.data?.detail ?? 'Request failed.'),
+  });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
+          <h2 className="text-lg font-bold text-(--text-primary)">Request to Leave Group</h2>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
+        </div>
+        <div className="p-6 space-y-4">
+          {success ? (
+            <div className="flex items-start gap-3 rounded-xl bg-green-50 border border-green-200 px-4 py-4">
+              <CheckCircleIcon className="h-6 w-6 text-green-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-green-800">Request submitted</p>
+                <p className="text-sm text-green-700 mt-0.5">The organisation admin will review your payment history, settle any outstanding amounts, and notify you when complete.</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+                Your removal must be reviewed and settled by the organisation admin. Your payment records will remain on file. You will be notified of the decision.
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Reason for leaving *</label>
+                <textarea
+                  rows={3}
+                  value={reason}
+                  onChange={e => { setReason(e.target.value); setErr(''); }}
+                  placeholder="Describe why you want to leave this group…"
+                  className={inputCls}
+                />
+              </div>
+              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              <div className="flex gap-3">
+                <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+                <button
+                  type="button"
+                  disabled={!reason.trim() || mutation.isPending}
+                  onClick={() => mutation.mutate()}
+                  className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+                >
+                  {mutation.isPending ? 'Submitting…' : 'Submit Request'}
+                </button>
+              </div>
+            </>
+          )}
+          {success && <button type="button" onClick={onClose} className={cancelBtn}>Close</button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Start Cycle Modal (collector only) ───────────────────────────────────────
 
 function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: number; cycleNumber: number; onClose: () => void }) {
@@ -623,6 +697,7 @@ export default function ThriftGroupDetailPage() {
   const [viewDisputePayment, setViewDisputePayment] = useState<ThriftPayment | null>(null);
   const [showStartCycle, setShowStartCycle] = useState(false);
   const [showReportCollector, setShowReportCollector] = useState(false);
+  const [showRequestRemoval, setShowRequestRemoval] = useState(false);
 
   const [groupQ, membersQ, paymentsQ, cyclesQ] = useQueries({
     queries: [
@@ -784,16 +859,36 @@ export default function ThriftGroupDetailPage() {
 
         {/* My membership info (payer) */}
         {!isCollector && myMembership && (
-          <div className="bg-(--bg) rounded-lg border border-(--border) px-4 py-3 text-sm">
-            <span className="text-(--text-secondary)">My contribution: </span>
-            <span className="font-semibold text-(--text-primary)">{formatCurrency(myMembership.personal_amount)}</span>
-            <span className="mx-2 text-(--text-secondary)">·</span>
-            <span className="text-(--text-secondary)">Total saved: </span>
-            <span className="font-semibold text-(--text-primary)">{formatCurrency(myMembership.total_saved)}</span>
-            <span className="mx-2 text-(--text-secondary)">·</span>
-            <MemberStatusBadge status={myMembership.status} />
+          <div className="bg-(--bg) rounded-lg border border-(--border) px-4 py-3 text-sm space-y-2">
+            <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
+              <span className="text-(--text-secondary)">My contribution: </span>
+              <span className="font-semibold text-(--text-primary)">{formatCurrency(myMembership.personal_amount)}</span>
+              <span className="text-(--text-secondary)">·</span>
+              <span className="text-(--text-secondary)">Total saved: </span>
+              <span className="font-semibold text-(--text-primary)">{formatCurrency(myMembership.total_saved)}</span>
+              <span className="text-(--text-secondary)">·</span>
+              <MemberStatusBadge status={myMembership.status} />
+            </div>
             {myMembership.flag_reason && (
-              <p className="mt-1 text-amber-700">{myMembership.flag_reason}</p>
+              <p className="text-amber-700">{myMembership.flag_reason}</p>
+            )}
+            {/* Request removal — only for org-linked groups; org admin handles the settlement */}
+            {group.organization && myMembership.status === 'approved' && (
+              <div className="pt-1">
+                {group.my_removal_request?.status === 'pending' ? (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1">
+                    <ExclamationCircleIcon className="h-3.5 w-3.5" /> Removal request pending review
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowRequestRemoval(true)}
+                    className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
+                  >
+                    Request to Leave Group
+                  </button>
+                )}
+              </div>
             )}
           </div>
         )}
@@ -1127,6 +1222,17 @@ export default function ThriftGroupDetailPage() {
       )}
       {showReportCollector && (
         <ReportCollectorModal groupId={groupId} onClose={() => setShowReportCollector(false)} />
+      )}
+      {showRequestRemoval && myMembership && (
+        <RequestRemovalModal
+          groupId={groupId}
+          memberId={myMembership.id}
+          onClose={() => setShowRequestRemoval(false)}
+          onSuccess={() => {
+            setShowRequestRemoval(false);
+            qc.invalidateQueries({ queryKey: ['thrift-group', groupId] });
+          }}
+        />
       )}
       {viewDisputePayment && (
         <DisputeDetailModal payment={viewDisputePayment} onClose={() => setViewDisputePayment(null)} />

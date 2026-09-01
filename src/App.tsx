@@ -7,7 +7,10 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      staleTime: 30_000,
+      // 5 minutes — stable data (profiles, group details, rate tables) should
+      // not re-fetch on every navigation; individual queries that need fresher
+      // data (notifications) override this with their own staleTime.
+      staleTime: 5 * 60 * 1000,
     },
   },
 });

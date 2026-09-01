@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
@@ -314,11 +314,20 @@ function Field({ label, id, children }: { label: string; id?: string; children: 
 export default function AjoGroupsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
+  const [slowLoad, setSlowLoad] = useState(false);
 
   const { data, isLoading, error } = useQuery<AjoGroup[]>({
     queryKey: ['ajo-groups'],
     queryFn: () => api.get('/groups/').then((r) => r.data),
   });
+
+  // Show a "taking longer than usual" hint after 8s — Render free-plan cold starts
+  // can take 30–60s. Without this users assume the page is broken.
+  useEffect(() => {
+    if (!isLoading) { setSlowLoad(false); return; }
+    const t = setTimeout(() => setSlowLoad(true), 8000);
+    return () => clearTimeout(t);
+  }, [isLoading]);
 
   return (
     <div className="space-y-6">
@@ -354,6 +363,12 @@ export default function AjoGroupsPage() {
           </button>
         </div>
       </div>
+
+      {slowLoad && isLoading && (
+        <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-700">
+          The server is waking up — this can take up to 60 seconds on the first request. Hang tight…
+        </div>
+      )}
 
       {error && (
         <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">

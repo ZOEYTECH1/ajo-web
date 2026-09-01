@@ -222,7 +222,11 @@ function ExpenseModal({
         ? api.patch(`/inventory/expenses/${expenseId}/`, body)
         : api.post('/inventory/expenses/', body);
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['inventory-expenses'] }); onClose(); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['inventory-expenses'] });
+      qc.invalidateQueries({ queryKey: ['inventory-analytics'] });
+      onClose();
+    },
     onError: (e: any) => {
       const d = e.response?.data;
       const first = Object.values(d ?? {})[0];
@@ -309,7 +313,10 @@ export default function InventoryExpensesPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => api.delete(`/inventory/expenses/${id}/`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['inventory-expenses'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['inventory-expenses'] });
+      qc.invalidateQueries({ queryKey: ['inventory-analytics'] });
+    },
   });
 
   const expenses = data?.results ?? [];

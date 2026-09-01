@@ -1,4 +1,5 @@
 ﻿import { useState } from 'react';
+import { format, startOfMonth } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -35,10 +36,14 @@ interface AnalyticsData {
 
 type Period = 'daily' | 'weekly' | 'monthly';
 
-const PERIODS: { value: Period; label: string; days: number }[] = [
-  { value: 'daily',   label: '14 Days',   days: 14 },
-  { value: 'weekly',  label: '12 Weeks',  days: 84 },
-  { value: 'monthly', label: '12 Months', days: 365 },
+// "This Month" passes an explicit start_date so the backend uses the same
+// calendar boundary as the Expenses page "This Month" filter.
+const MONTH_START = format(startOfMonth(new Date()), 'yyyy-MM-dd');
+
+const PERIODS: { value: Period; label: string; days: number; startDate?: string }[] = [
+  { value: 'daily',   label: 'This Month', days: 31,  startDate: MONTH_START },
+  { value: 'weekly',  label: '12 Weeks',   days: 84 },
+  { value: 'monthly', label: '12 Months',  days: 365 },
 ];
 
 function formatCurrency(value: number | string): string {
@@ -49,13 +54,16 @@ function formatCurrency(value: number | string): string {
 
 export default function InventoryAnalyticsPage() {
   const [period, setPeriod] = useState<Period>('daily');
-  const days = PERIODS.find((p) => p.value === period)?.days ?? 14;
+  const selectedPeriod = PERIODS.find((p) => p.value === period) ?? PERIODS[0];
+  const { days, startDate } = selectedPeriod;
   const { selectedId } = useInventoryBusiness();
 
   const { data, isLoading, error } = useQuery<AnalyticsData>({
-    queryKey: ['inventory-analytics', period, days, selectedId],
+    queryKey: ['inventory-analytics', period, startDate ?? days, selectedId],
     queryFn: async () => {
-      const response = await api.get('/inventory/analytics/', { params: { period, days, business_id: selectedId } });
+      const params: Record<string, unknown> = { period, days, business_id: selectedId };
+      if (startDate) params.start_date = startDate;
+      const response = await api.get('/inventory/analytics/', { params });
       return response.data;
     },
     enabled: selectedId !== null,

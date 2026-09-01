@@ -279,6 +279,8 @@ export default function ThriftPage() {
   // Derive role flags from the groups the user is involved in
   const isAnyCollector = groups.some(g => g.collector?.id === currentUser?.id);
   const hasSoloGroup   = groups.some(g => g.collector?.id === currentUser?.id && !g.organization);
+  // A payer is someone who is a member of at least one group where they are not the collector
+  const isAnyPayer     = groups.some(g => g.collector?.id !== currentUser?.id);
 
   return (
     <div className="space-y-6">
@@ -289,10 +291,12 @@ export default function ThriftPage() {
             <p className="text-sm text-(--text-secondary)">Your cooperative savings groups</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            {/* All users: personal payment history */}
-            <Link to="/thrift/history" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
-              My Payment History →
-            </Link>
+            {/* Payers only: collectors don't make payments */}
+            {isAnyPayer && (
+              <Link to="/thrift/history" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
+                My Payment History →
+              </Link>
+            )}
             {/* Collectors only: rotation queue */}
             {isAnyCollector && (
               <Link to="/thrift/queue" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">

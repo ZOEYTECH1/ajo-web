@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { PlusIcon, KeyIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
+import useAuthStore from '../../store/useAuthStore';
 
 interface ThriftGroup {
   id: number;
@@ -22,6 +23,13 @@ interface ThriftGroup {
 
 
 function SubscriptionBadge({ group }: { group: ThriftGroup }) {
+  if (group.organization) {
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-teal-50 text-teal-700">
+        Bank managed
+      </span>
+    );
+  }
   const label = group.is_on_trial ? 'Trial' : group.is_subscription_active ? 'Active' : 'Inactive';
   return (
     <span className={clsx(
@@ -259,11 +267,18 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 export default function ThriftPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
+  const currentUser = useAuthStore((s) => s.user);
 
   const { data, isLoading, error } = useQuery<ThriftGroup[]>({
     queryKey: ['thrift-groups'],
     queryFn: () => api.get('/thrift/').then(r => r.data),
   });
+
+  const groups = data ?? [];
+
+  // Derive role flags from the groups the user is involved in
+  const isAnyCollector = groups.some(g => g.collector?.id === currentUser?.id);
+  const hasSoloGroup   = groups.some(g => g.collector?.id === currentUser?.id && !g.organization);
 
   return (
     <div className="space-y-6">
@@ -274,18 +289,28 @@ export default function ThriftPage() {
             <p className="text-sm text-(--text-secondary)">Your cooperative savings groups</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
+            {/* All users: personal payment history */}
             <Link to="/thrift/history" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
               My Payment History →
             </Link>
-            <Link to="/thrift/queue" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
-              Collector Queue →
-            </Link>
-            <Link to="/thrift/billing" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
-              Billing →
-            </Link>
-            <Link to="/thrift/org/create" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
-              Organisation →
-            </Link>
+            {/* Collectors only: rotation queue */}
+            {isAnyCollector && (
+              <Link to="/thrift/queue" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
+                Collector Queue →
+              </Link>
+            )}
+            {/* Solo collectors only: platform billing (org-linked groups are billed via the org) */}
+            {hasSoloGroup && (
+              <Link to="/thrift/billing" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
+                Billing →
+              </Link>
+            )}
+            {/* Collectors only: create or manage an organisation */}
+            {isAnyCollector && (
+              <Link to="/thrift/org/create" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
+                Organisation →
+              </Link>
+            )}
           </div>
         </div>
         <div className="flex gap-2">

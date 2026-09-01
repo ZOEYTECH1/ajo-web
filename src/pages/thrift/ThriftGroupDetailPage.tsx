@@ -758,8 +758,14 @@ export default function ThriftGroupDetailPage() {
                   Collector
                 </span>
               )}
-              {group.is_on_trial && <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2 py-0.5 rounded-full">Trial</span>}
-              {!group.is_on_trial && group.is_subscription_active && <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">Active</span>}
+              {group.organization
+                ? <span className="bg-teal-50 text-teal-700 text-xs font-semibold px-2 py-0.5 rounded-full ring-1 ring-teal-200 whitespace-nowrap">Bank managed</span>
+                : group.is_on_trial
+                  ? <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2 py-0.5 rounded-full">Trial</span>
+                  : group.is_subscription_active
+                    ? <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-0.5 rounded-full">Active</span>
+                    : null
+              }
             </div>
             <p className="text-sm text-(--text-secondary) capitalize mt-0.5">
               {group.frequency} · {group.cycle_type === 'rolling' ? 'Rolling cycle' : 'Fixed cycle'}

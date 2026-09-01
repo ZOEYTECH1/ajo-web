@@ -65,7 +65,7 @@ const router = createBrowserRouter([
     path: '/',
     children: [
       // Public routes
-      { path: 'org/:slug',        element: <OrgLoginPage /> },
+      { path: 'org',              element: <OrgLoginPage /> },
       { path: 'login',            element: <LoginPage /> },
       { path: 'register',         element: <RegisterPage /> },
       { path: 'verify-otp',       element: <OTPPage /> },

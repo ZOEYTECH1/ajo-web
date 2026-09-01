@@ -276,7 +276,7 @@ export default function ThriftPage() {
 
   const { data: userOrgs = [] } = useQuery<{ id: number; name: string }[]>({
     queryKey: ['thrift-user-orgs'],
-    queryFn: () => api.get('/thrift/org/').then(r => r.data),
+    queryFn: () => api.get('/thrift/orgs/').then(r => r.data),
   });
 
   const groups = data ?? [];

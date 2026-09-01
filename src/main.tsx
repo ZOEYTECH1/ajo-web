@@ -12,6 +12,9 @@ import { initSentry } from './lib/sentry';
 // Safe to call with an empty/missing VITE_SENTRY_DSN — it will skip initialisation.
 initSentry();
 
+// Org portal (public, no auth required)
+const OrgLoginPage                  = lazy(() => import('./pages/org/OrgLoginPage'));
+
 // Auth pages
 const LoginPage                     = lazy(() => import('./pages/auth/LoginPage'));
 const RegisterPage                  = lazy(() => import('./pages/auth/RegisterPage'));
@@ -62,6 +65,7 @@ const router = createBrowserRouter([
     path: '/',
     children: [
       // Public routes
+      { path: 'org/:slug',        element: <OrgLoginPage /> },
       { path: 'login',            element: <LoginPage /> },
       { path: 'register',         element: <RegisterPage /> },
       { path: 'verify-otp',       element: <OTPPage /> },

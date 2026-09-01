@@ -215,7 +215,7 @@ function MarkPaymentModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Mark Payment</h2>
+          <h2 className="text-lg font-bold text-(--text-primary)">Approve Payment</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -240,7 +240,7 @@ function MarkPaymentModal({
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button type="submit" disabled={mutation.isPending} className={submitBtn}>
-              {mutation.isPending ? 'Marking…' : 'Mark Payment'}
+              {mutation.isPending ? 'Approving…' : 'Approve Payment'}
             </button>
           </div>
         </form>
@@ -947,7 +947,7 @@ export default function ThriftGroupDetailPage() {
                 onClick={() => setShowMarkPayment(true)}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 transition-colors"
               >
-                + Mark Payment
+                + Approve Payment
               </button>
             </div>
           )}
@@ -970,7 +970,7 @@ export default function ThriftGroupDetailPage() {
                       <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                         No payments recorded yet.
                         {isCollector && (
-                          <> <button type="button" onClick={() => setShowMarkPayment(true)} className="text-teal-600 font-semibold hover:underline">Mark the first payment.</button></>
+                          <> <button type="button" onClick={() => setShowMarkPayment(true)} className="text-teal-600 font-semibold hover:underline">Approve the first payment.</button></>
                         )}
                       </td>
                     </tr>

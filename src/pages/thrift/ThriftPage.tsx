@@ -274,6 +274,11 @@ export default function ThriftPage() {
     queryFn: () => api.get('/thrift/').then(r => r.data),
   });
 
+  const { data: userOrgs = [] } = useQuery<{ id: number; name: string }[]>({
+    queryKey: ['thrift-user-orgs'],
+    queryFn: () => api.get('/thrift/org/').then(r => r.data),
+  });
+
   const groups = data ?? [];
 
   // Derive role flags from the groups the user is involved in
@@ -281,6 +286,9 @@ export default function ThriftPage() {
   const hasSoloGroup   = groups.some(g => g.collector?.id === currentUser?.id && !g.organization);
   // A payer is someone who is a member of at least one group where they are not the collector
   const isAnyPayer     = groups.some(g => g.collector?.id !== currentUser?.id);
+  // Org admin: user owns or admins at least one organisation
+  const isOrgAdmin     = userOrgs.length > 0;
+  const orgLink        = isOrgAdmin ? `/thrift/org/${userOrgs[0].id}` : '/thrift/org/create';
 
   return (
     <div className="space-y-6">
@@ -309,9 +317,9 @@ export default function ThriftPage() {
                 Billing →
               </Link>
             )}
-            {/* Collectors only: create or manage an organisation */}
-            {isAnyCollector && (
-              <Link to="/thrift/org/create" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
+            {/* Org admins see their dashboard; solo collectors see create form */}
+            {(isOrgAdmin || isAnyCollector) && (
+              <Link to={orgLink} className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
                 Organisation →
               </Link>
             )}

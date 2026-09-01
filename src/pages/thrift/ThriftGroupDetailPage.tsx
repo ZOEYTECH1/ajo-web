@@ -920,8 +920,8 @@ export default function ThriftGroupDetailPage() {
                                   {p.dispute_reason || 'Disputed'} — View details
                                 </button>
                               )}
-                              {/* Collector can delete */}
-                              {isCollector && (
+                              {/* Collector can only delete pending (unconfirmed) payments */}
+                              {isCollector && p.status === 'pending' && (
                                 <button
                                   type="button"
                                   onClick={() => { if (confirm('Delete this payment record?')) deletePaymentMutation.mutate(p.id); }}

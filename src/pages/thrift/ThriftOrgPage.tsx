@@ -6,6 +6,12 @@ import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { Skeleton } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 
+// ── Shared styles ────────────────────────────────────────────────────────────
+
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
+const submitBtn = 'flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors';
+const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 interface OrgUser {
@@ -231,6 +237,135 @@ function OrgSkeleton() {
 
 // ── Invite Modal ──────────────────────────────────────────────────────────────
 
+// ── Create Group Modal (org admin only) ──────────────────────────────────────
+
+function CreateGroupModal({
+  orgId, collectors, onClose,
+}: {
+  orgId: number;
+  collectors: CollectorRecord[];
+  onClose: () => void;
+}) {
+  const qc = useQueryClient();
+  const [form, setForm] = useState({
+    name: '', description: '', frequency: 'monthly',
+    cycle_type: 'rolling', start_date: '', end_date: '',
+    collector_id: '',
+  });
+  const [err, setErr] = useState('');
+
+  function set(key: string, val: string) { setForm(f => ({ ...f, [key]: val })); setErr(''); }
+
+  const activeCollectors = collectors.filter(c => c.status === 'active');
+
+  const mutation = useMutation({
+    mutationFn: () => api.post('/thrift/', {
+      name: form.name.trim(),
+      description: form.description.trim(),
+      frequency: form.frequency,
+      cycle_type: form.cycle_type,
+      start_date: form.start_date || undefined,
+      end_date: form.end_date || undefined,
+      org_id: orgId,
+      collector_id: Number(form.collector_id),
+    }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['thrift-org', orgId] });
+      qc.invalidateQueries({ queryKey: ['thrift-groups'] });
+      onClose();
+    },
+    onError: (e: any) => {
+      const d = e.response?.data;
+      const first = Object.values(d ?? {})[0];
+      setErr(d?.detail ?? (Array.isArray(first) ? first[0] : String(first ?? 'Something went wrong.')));
+    },
+  });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.name.trim()) { setErr('Group name is required.'); return; }
+    if (!form.collector_id) { setErr('Select a collector for this group.'); return; }
+    mutation.mutate();
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
+          <h2 className="text-lg font-bold text-(--text-primary)">Create Thrift Group</h2>
+          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Collector *</label>
+            <select value={form.collector_id} onChange={e => set('collector_id', e.target.value)} className={inputCls}>
+              <option value="">Select a collector…</option>
+              {activeCollectors.map(c => (
+                <option key={c.id} value={c.id}>{c.user.first_name} {c.user.last_name} — {c.user.email}</option>
+              ))}
+            </select>
+            {activeCollectors.length === 0 && (
+              <p className="text-xs text-amber-600 mt-1">No active collectors in this organisation. Invite and activate a collector first.</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Group Name *</label>
+            <input type="text" value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Apapa Market Weekly Thrift" className={inputCls} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Frequency *</label>
+              <select value={form.frequency} onChange={e => set('frequency', e.target.value)} className={inputCls}>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Cycle Type *</label>
+              <select value={form.cycle_type} onChange={e => set('cycle_type', e.target.value)} className={inputCls}>
+                <option value="rolling">Rolling / Open-ended</option>
+                <option value="fixed">Fixed Cycle</option>
+              </select>
+            </div>
+          </div>
+
+          {form.cycle_type === 'fixed' && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Start Date *</label>
+                <input type="date" value={form.start_date} onChange={e => set('start_date', e.target.value)} className={inputCls} />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-(--text-secondary) mb-1">End Date *</label>
+                <input type="date" value={form.end_date} onChange={e => set('end_date', e.target.value)} className={inputCls} />
+              </div>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Description (optional)</label>
+            <textarea rows={2} value={form.description} onChange={e => set('description', e.target.value)} placeholder="What is this group for?" className={inputCls} />
+          </div>
+
+          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+
+          <div className="flex gap-3 pt-1">
+            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+            <button type="submit" disabled={mutation.isPending || activeCollectors.length === 0} className={submitBtn}>
+              {mutation.isPending ? 'Creating…' : 'Create Group'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function InviteModal({ onInvite, onClose, isPending }: {
   onInvite: (email: string) => void;
   onClose: () => void;
@@ -297,6 +432,7 @@ export default function ThriftOrgPage() {
   const orgId = Number(id);
   const qc = useQueryClient();
   const [showInvite, setShowInvite] = useState(false);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [actionError, setActionError] = useState<Record<number, string>>({});
   const [reportFilter, setReportFilter] = useState<'all' | 'pending' | 'reviewed' | 'resolved' | 'dismissed'>('all');
 
@@ -566,7 +702,16 @@ export default function ThriftOrgPage() {
 
       {/* ── Groups ── */}
       <div className="space-y-3">
-        <h2 className="text-base font-bold text-(--text-primary)">Groups</h2>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-base font-bold text-(--text-primary)">Groups</h2>
+          <button
+            type="button"
+            onClick={() => setShowCreateGroup(true)}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 transition-colors"
+          >
+            + Create Group
+          </button>
+        </div>
         <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-(--border)">
@@ -742,6 +887,13 @@ export default function ThriftOrgPage() {
       </div>
 
       {/* Modals */}
+      {showCreateGroup && (
+        <CreateGroupModal
+          orgId={orgId}
+          collectors={collectors}
+          onClose={() => setShowCreateGroup(false)}
+        />
+      )}
       {showInvite && (
         <InviteModal
           isPending={inviteMutation.isPending}

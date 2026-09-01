@@ -146,8 +146,8 @@ export default function InventoryAnalyticsPage() {
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `₦${(v / 1000).toFixed(0)}k`} />
               <Tooltip formatter={(value) => formatCurrency(Number(value ?? 0))} />
               <Legend />
-              <Bar dataKey="revenue" name="Revenue" fill="#22C55E" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="expense" name="Expenses" fill="#EF4444" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="revenue" name="Revenue" fill="#10B981" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="expense" name="Expenses" fill="#F97316" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}
@@ -181,8 +181,8 @@ export default function InventoryAnalyticsPage() {
         return (
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: 'Total Revenue', value: totRev, color: 'text-green-600' },
-              { label: 'Total Expenses', value: totExp, color: 'text-red-500' },
+              { label: 'Total Revenue', value: totRev, color: 'text-emerald-500' },
+              { label: 'Total Expenses', value: totExp, color: 'text-orange-500' },
               { label: 'Net Profit', value: totProfit, color: totProfit >= 0 ? 'text-blue-600' : 'text-red-600' },
             ].map(({ label, value, color }) => (
               <div key={label} className="bg-(--surface) rounded-xl border border-(--border) p-4 text-center shadow-sm">
@@ -215,8 +215,8 @@ export default function InventoryAnalyticsPage() {
                   return (
                     <tr key={i} className="hover:bg-(--primary-tint)/30 transition-colors">
                       <td className="px-6 py-3 text-sm font-medium text-(--text-primary)">{row.label}</td>
-                      <td className="px-6 py-3 text-sm text-green-600 font-semibold">{formatCurrency(row.revenue)}</td>
-                      <td className="px-6 py-3 text-sm text-red-500 font-semibold">{formatCurrency(row.expense)}</td>
+                      <td className="px-6 py-3 text-sm text-emerald-500 font-semibold">{formatCurrency(row.revenue)}</td>
+                      <td className="px-6 py-3 text-sm text-orange-500 font-semibold">{formatCurrency(row.expense)}</td>
                       <td className={`px-6 py-3 text-sm font-semibold ${profit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>{formatCurrency(profit)}</td>
                     </tr>
                   );

@@ -152,7 +152,9 @@ export default function InventoryAnalyticsPage() {
   const totCogs     = chart.reduce((s, p) => s + p.cogs, 0);
   const totExpense  = chart.reduce((s, p) => s + p.expense, 0);
   const grossProfit = totRevenue - totCogs;
-  const netProfit   = totRevenue - totExpense;
+  // Net Profit = Revenue − COGS − Expenses (all costs subtracted)
+  // When COGS = 0 (no cost prices set) this becomes Revenue − Expenses.
+  const netProfit   = totRevenue - totCogs - totExpense;
   const hasCogs     = totCogs > 0;
   // Chart is considered empty when every point has zero in all financial fields
   const chartIsEmpty = chart.length === 0 || chart.every(
@@ -309,7 +311,7 @@ export default function InventoryAnalyticsPage() {
                 iconColor={netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}
                 label="Net Profit"
                 value={fmt(netProfit)}
-                sub="Revenue − Expenses"
+                sub={hasCogs ? 'Revenue − COGS − Expenses' : 'Revenue − Expenses'}
                 highlight={netProfit < 0 ? 'danger' : undefined}
               />
               <KpiCard
@@ -435,7 +437,7 @@ export default function InventoryAnalyticsPage() {
               <tbody className="divide-y divide-(--border)">
                 {[...chart].reverse().map((row, i) => {
                   const gp = row.revenue - row.cogs;
-                  const np = row.revenue - row.expense;
+                  const np = row.net_profit; // backend: revenue − cogs − expenses
                   return (
                     <tr key={i} className="hover:bg-(--primary-tint)/20 transition-colors">
                       <td className="px-4 py-3 text-sm font-medium text-(--text-primary) whitespace-nowrap">{row.label}</td>

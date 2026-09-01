@@ -25,6 +25,11 @@ export default defineConfig({
     // Generate source maps so Sentry can map minified stack traces back to source.
     sourcemap: true,
   },
+  // Pre-bundle CJS packages that expose named exports Vite can't statically
+  // analyse without esbuild converting them to ESM first (e.g. react-is).
+  optimizeDeps: {
+    include: ['react-is', 'recharts'],
+  },
   server: {
     proxy: {
       '/api': {

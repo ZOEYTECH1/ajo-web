@@ -56,3 +56,7 @@ jobs:
         env:
           VITE_API_URL: /api
           VITE_SENTRY_DSN: ''
+          # Required by @sentry/vite-plugin to upload source maps.
+          # Add SENTRY_AUTH_TOKEN as a repository secret in GitHub:
+          # Settings → Secrets and variables → Actions → New repository secret
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

@@ -14,6 +14,7 @@ import {
 import { Table, type Column } from '../../components/ui/Table';
 import api from '../../services/api';
 import useAuthStore from '../../store/useAuthStore';
+import { cloudinaryUrl } from '../../lib/cloudinary';
 
 // ── API shapes ────────────────────────────────────────────────────────────────
 
@@ -381,7 +382,7 @@ function ReceiptViewerModal({ url, onClose }: { url: string; onClose: () => void
           <span>Close</span>
         </button>
         <img
-          src={url}
+          src={cloudinaryUrl(url, 1200, 1200, { crop: 'limit' })}
           alt="Payment receipt"
           className="rounded-xl object-contain max-h-[80vh] w-full"
         />

@@ -8,6 +8,7 @@ import useAuthStore from '../../store/useAuthStore';
 import { getMe, logout } from '../../services/authService';
 import api from '../../services/api';
 import type { User } from '../../services/authService';
+import { cloudinaryUrl } from '../../lib/cloudinary';
 
 interface ProfileUpdatePayload {
   first_name: string;
@@ -165,7 +166,7 @@ export default function AccountPage() {
           <div className="relative shrink-0">
             {user?.profile_photo_url ? (
               <img
-                src={user.profile_photo_url}
+                src={cloudinaryUrl(user.profile_photo_url, 240, 240)}
                 alt={displayName}
                 className="h-20 w-20 rounded-full object-cover border-2 border-(--border)"
               />

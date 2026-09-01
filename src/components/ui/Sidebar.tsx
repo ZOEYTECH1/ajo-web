@@ -13,6 +13,7 @@ import {
 import useAuthStore from '../../store/useAuthStore';
 import { logout } from '../../services/authService';
 import api from '../../services/api';
+import { cloudinaryUrl } from '../../lib/cloudinary';
 
 interface NavItem {
   label: string;
@@ -102,7 +103,7 @@ export function Sidebar({ onClose }: SidebarProps) {
         <div className="flex items-center gap-3 px-3 py-2">
           {user?.profile_photo_url ? (
             <img
-              src={user.profile_photo_url}
+              src={cloudinaryUrl(user.profile_photo_url, 64, 64)}
               alt={displayName}
               className="h-8 w-8 rounded-full object-cover shrink-0"
             />

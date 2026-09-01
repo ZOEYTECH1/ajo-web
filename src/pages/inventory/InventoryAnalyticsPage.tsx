@@ -130,7 +130,7 @@ function nairaFmt(value: number) {
 }
 
 export default function InventoryAnalyticsPage() {
-  const [period, setPeriod] = useState<Period>('daily');
+  const [period, setPeriod] = useState<Period>('monthly');
   const sel = PERIODS.find((p) => p.value === period) ?? PERIODS[0];
   const { selectedId } = useInventoryBusiness();
 
@@ -154,6 +154,10 @@ export default function InventoryAnalyticsPage() {
   const grossProfit = totRevenue - totCogs;
   const netProfit   = totRevenue - totExpense;
   const hasCogs     = totCogs > 0;
+  // Chart is considered empty when every point has zero in all financial fields
+  const chartIsEmpty = chart.length === 0 || chart.every(
+    (p) => p.revenue === 0 && p.expense === 0 && p.cogs === 0
+  );
 
   const s = data?.summary;
 
@@ -331,8 +335,11 @@ export default function InventoryAnalyticsPage() {
         </div>
         {isLoading ? (
           <div className="h-64 rounded-lg bg-(--bg) skeleton" />
-        ) : chart.length === 0 ? (
-          <p className="text-center text-sm text-(--text-muted) py-16">No sales data for this period.</p>
+        ) : chartIsEmpty ? (
+          <div className="py-16 text-center space-y-1">
+            <p className="text-sm font-medium text-(--text-secondary)">No financial activity in this period yet.</p>
+            <p className="text-xs text-(--text-muted)">Switch to "12 Months" to see older data, or record a sale to get started.</p>
+          </div>
         ) : (
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chart} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
@@ -352,7 +359,7 @@ export default function InventoryAnalyticsPage() {
       </section>
 
       {/* ── Section 4: Net Profit Trend ────────────────────────────────────── */}
-      {!isLoading && chart.length > 1 && (
+      {!isLoading && !chartIsEmpty && chart.length > 1 && (
         <section className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
           <div className="mb-4">
             <h2 className="text-base font-semibold text-(--text-primary)">Net Profit Trend</h2>
@@ -389,8 +396,11 @@ export default function InventoryAnalyticsPage() {
         </div>
         {isLoading ? (
           <div className="h-64 rounded-lg bg-(--bg) skeleton" />
-        ) : chart.length === 0 ? (
-          <p className="text-center text-sm text-(--text-muted) py-16">No stock movements for this period.</p>
+        ) : chart.every((p) => p.units_received === 0 && p.units_sold === 0) ? (
+          <div className="py-16 text-center space-y-1">
+            <p className="text-sm font-medium text-(--text-secondary)">No stock movements in this period yet.</p>
+            <p className="text-xs text-(--text-muted)">Switch to "12 Months" to see older activity.</p>
+          </div>
         ) : (
           <ResponsiveContainer width="100%" height={260}>
             <BarChart data={chart} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>

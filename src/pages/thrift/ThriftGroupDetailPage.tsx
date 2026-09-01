@@ -881,14 +881,98 @@ export default function ThriftGroupDetailPage() {
 
       {/* ── Payments Tab ── */}
       {activeTab === 'payments' && (
-        <div className="space-y-4">
-          {isCollector && (
-            <p className="text-sm text-(--text-muted)">
-              Go to the <button type="button" onClick={() => setActiveTab('members')} className="text-teal-600 font-semibold hover:underline">Members tab</button> to approve payments for each member.
-            </p>
+        <div className="space-y-6">
+
+          {/* Collector: record payment per member */}
+          {isCollector && approvedMembers.length > 0 && (
+            <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+              <div className="px-6 py-3 border-b border-(--border) bg-(--bg)">
+                <h3 className="text-sm font-semibold text-(--text-primary)">Approve Payments</h3>
+                <p className="text-xs text-(--text-muted) mt-0.5">Click Approve on a member to record their payment for today.</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-(--border)">
+                  <thead className="bg-(--bg)">
+                    <tr>
+                      {['Member', 'Usual Amount', 'Total Saved', 'Action'].map(h => (
+                        <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-(--border)">
+                    {membersQ.isLoading ? (
+                      <SkeletonTable rows={3} cols={4} />
+                    ) : (
+                      approvedMembers.map(m => (
+                        <tr key={m.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                          <td className="px-6 py-3 text-sm font-medium text-(--text-primary)">{m.user.full_name}</td>
+                          <td className="px-6 py-3 text-sm text-(--text-secondary)">{formatCurrency(m.personal_amount)}</td>
+                          <td className="px-6 py-3 text-sm text-(--text-secondary)">{formatCurrency(m.total_saved)}</td>
+                          <td className="px-6 py-3">
+                            {approvingMemberId === m.id ? (
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs text-(--text-secondary)">₦</span>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={approveAmount}
+                                  onChange={e => setApproveAmount(e.target.value)}
+                                  className="w-24 text-xs rounded border border-(--border) bg-(--bg) px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                                  autoFocus
+                                  onKeyDown={e => {
+                                    if (e.key === 'Enter' && approveAmount && Number(approveAmount) > 0) {
+                                      quickApproveMutation.mutate(
+                                        { memberId: m.id, amount: approveAmount },
+                                        { onSettled: () => { setApprovingMemberId(null); setApproveAmount(''); } },
+                                      );
+                                    }
+                                    if (e.key === 'Escape') { setApprovingMemberId(null); setApproveAmount(''); }
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (!approveAmount || Number(approveAmount) <= 0) return;
+                                    quickApproveMutation.mutate(
+                                      { memberId: m.id, amount: approveAmount },
+                                      { onSettled: () => { setApprovingMemberId(null); setApproveAmount(''); } },
+                                    );
+                                  }}
+                                  disabled={quickApproveMutation.isPending}
+                                  className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-2.5 py-1 hover:bg-teal-100 transition-colors disabled:opacity-50"
+                                >
+                                  {quickApproveMutation.isPending ? '…' : 'Confirm'}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => { setApprovingMemberId(null); setApproveAmount(''); }}
+                                  className="text-xs text-(--text-muted) hover:text-(--text-primary)"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => { setApprovingMemberId(m.id); setApproveAmount(String(m.personal_amount)); }}
+                                className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-2.5 py-1 hover:bg-teal-100 transition-colors"
+                              >
+                                Approve
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           )}
 
+          {/* Payment history */}
           <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+            {isCollector && <div className="px-6 py-3 border-b border-(--border) bg-(--bg)"><h3 className="text-sm font-semibold text-(--text-primary)">Payment History</h3></div>}
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-(--border)">
                 <thead className="bg-(--bg)">
@@ -905,9 +989,6 @@ export default function ThriftGroupDetailPage() {
                     <tr>
                       <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                         No payments recorded yet.
-                        {isCollector && (
-                          <> Go to the <button type="button" onClick={() => setActiveTab('members')} className="text-teal-600 font-semibold hover:underline">Members tab</button> to approve the first payment.</>
-                        )}
                       </td>
                     </tr>
                   ) : (
@@ -921,7 +1002,6 @@ export default function ThriftGroupDetailPage() {
                           <td className="px-6 py-4"><PaymentStatusBadge status={p.status} /></td>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-2">
-                              {/* Payer actions */}
                               {isMyPayment && p.status === 'pending' && (
                                 <>
                                   <button
@@ -951,7 +1031,6 @@ export default function ThriftGroupDetailPage() {
                                   {p.dispute_reason || 'Disputed'} — View details
                                 </button>
                               )}
-                              {/* Collector can only delete pending (unconfirmed) payments */}
                               {isCollector && p.status === 'pending' && (
                                 <button
                                   type="button"
@@ -1002,7 +1081,7 @@ export default function ThriftGroupDetailPage() {
                 <thead className="bg-(--bg)">
                   <tr>
                     {['Name', 'Amount / Period', 'Total Saved', 'Joined', 'Status',
-                      ...(isCollector ? ['Actions'] : []),
+                      ...(isCollector && memberSubTab === 'pending' ? ['Actions'] : []),
                       ...(isOrgAdmin ? ['KYC'] : []),
                     ].map(h => (
                       <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
@@ -1011,7 +1090,7 @@ export default function ThriftGroupDetailPage() {
                 </thead>
                 <tbody className="divide-y divide-(--border)">
                   {membersQ.isLoading ? (
-                    <SkeletonTable rows={3} cols={(isCollector ? 6 : 5) + (isOrgAdmin ? 1 : 0)} />
+                    <SkeletonTable rows={3} cols={(isCollector && memberSubTab === 'pending' ? 6 : 5) + (isOrgAdmin ? 1 : 0)} />
                   ) : (
                     (() => {
                       const list = isCollector
@@ -1020,7 +1099,7 @@ export default function ThriftGroupDetailPage() {
                       if (list.length === 0) {
                         return (
                           <tr>
-                            <td colSpan={(isCollector ? 6 : 5) + (isOrgAdmin ? 1 : 0)} className="px-6 py-12 text-center text-sm text-(--text-muted)">
+                            <td colSpan={(isCollector && memberSubTab === 'pending' ? 6 : 5) + (isOrgAdmin ? 1 : 0)} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                               {memberSubTab === 'pending' ? 'No pending member requests.' : 'No members yet.'}
                             </td>
                           </tr>
@@ -1036,72 +1115,25 @@ export default function ThriftGroupDetailPage() {
                           <td className="px-6 py-4 text-sm text-(--text-secondary)">{formatCurrency(m.total_saved)}</td>
                           <td className="px-6 py-4 text-sm text-(--text-secondary)">{fmt(m.joined_at)}</td>
                           <td className="px-6 py-4"><MemberStatusBadge status={m.status} /></td>
-                          {isCollector && (
+                          {isCollector && memberSubTab === 'pending' && (
                             <td className="px-6 py-4">
                               <div className="flex gap-2">
-                                {memberSubTab === 'approved' ? (
-                                  approvingMemberId === m.id ? (
-                                    <div className="flex items-center gap-1.5">
-                                      <span className="text-xs text-(--text-secondary)">₦</span>
-                                      <input
-                                        type="number"
-                                        min="1"
-                                        value={approveAmount}
-                                        onChange={e => setApproveAmount(e.target.value)}
-                                        className="w-24 text-xs rounded border border-(--border) bg-(--bg) px-2 py-1 focus:outline-none focus:ring-1 focus:ring-teal-500"
-                                        autoFocus
-                                      />
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          if (!approveAmount || Number(approveAmount) <= 0) return;
-                                          quickApproveMutation.mutate(
-                                            { memberId: m.id, amount: approveAmount },
-                                            { onSettled: () => { setApprovingMemberId(null); setApproveAmount(''); } },
-                                          );
-                                        }}
-                                        disabled={quickApproveMutation.isPending}
-                                        className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-2 py-1 hover:bg-teal-100 transition-colors disabled:opacity-50"
-                                      >
-                                        {quickApproveMutation.isPending ? '…' : 'Confirm'}
-                                      </button>
-                                      <button
-                                        type="button"
-                                        onClick={() => { setApprovingMemberId(null); setApproveAmount(''); }}
-                                        className="text-xs text-(--text-muted) hover:text-(--text-primary)"
-                                      >
-                                        Cancel
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <button
-                                      type="button"
-                                      onClick={() => { setApprovingMemberId(m.id); setApproveAmount(String(m.personal_amount)); }}
-                                      className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-2.5 py-1 hover:bg-teal-100 transition-colors"
-                                    >
-                                      Approve Payment
-                                    </button>
-                                  )
-                                ) : (
-                                  <>
-                                    <button
-                                      type="button"
-                                      onClick={() => memberActionMutation.mutate({ memberId: m.id, action: 'approve' })}
-                                      disabled={memberActionMutation.isPending}
-                                      className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors"
-                                    >
-                                      Approve
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => memberActionMutation.mutate({ memberId: m.id, action: 'reject' })}
-                                      disabled={memberActionMutation.isPending}
-                                      className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
-                                    >
-                                      Reject
-                                    </button>
-                                  </>
-                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => memberActionMutation.mutate({ memberId: m.id, action: 'approve' })}
+                                  disabled={memberActionMutation.isPending}
+                                  className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors"
+                                >
+                                  Approve
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => memberActionMutation.mutate({ memberId: m.id, action: 'reject' })}
+                                  disabled={memberActionMutation.isPending}
+                                  className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
+                                >
+                                  Reject
+                                </button>
                               </div>
                             </td>
                           )}

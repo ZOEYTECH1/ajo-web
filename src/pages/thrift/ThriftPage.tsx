@@ -9,6 +9,7 @@ import useAuthStore from '../../store/useAuthStore';
 
 interface ThriftGroup {
   id: number;
+  uuid: string;
   name: string;
   description: string;
   frequency: string;
@@ -366,9 +367,9 @@ export default function ThriftPage() {
                 <SkeletonTable rows={5} cols={7} />
               ) : data && data.length > 0 ? (
                 data.map(group => (
-                  <tr key={group.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                  <tr key={group.uuid} className="hover:bg-(--primary-tint)/30 transition-colors">
                     <td className="px-6 py-4 text-sm font-medium">
-                      <Link to={`/thrift/${group.id}`} className="text-teal-600 hover:underline">{group.name}</Link>
+                      <Link to={`/thrift/${group.uuid}`} className="text-teal-600 hover:underline">{group.name}</Link>
                     </td>
                     <td className="px-6 py-4 text-sm text-(--text-secondary) capitalize">{group.frequency}</td>
                     <td className="px-6 py-4 text-sm text-(--text-secondary) capitalize">{group.cycle_type}</td>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -7,7 +7,7 @@ import { XCircleIcon } from '@heroicons/react/24/outline';
 import { Skeleton } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface QueueUser {
   id: number;
@@ -19,7 +19,7 @@ interface QueueUser {
 interface PendingMember {
   id: number;
   user: QueueUser;
-  group_id: number;
+  group_uuid: string;
   group_name: string;
   personal_amount: string;
   status: 'pending' | 'amount_pending';
@@ -31,7 +31,7 @@ interface DisputedPayment {
   id: number;
   member_id: number;
   member_name: string;
-  group_id: number;
+  group_uuid: string;
   group_name: string;
   amount: string;
   period_date: string;
@@ -45,7 +45,7 @@ interface CollectorQueueResponse {
   disputed_payments: DisputedPayment[];
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', {
@@ -54,13 +54,13 @@ function formatCurrency(v: string | number) {
 }
 
 function fmt(d: string | null | undefined) {
-  if (!d) return '—';
-  try { return format(new Date(d), 'd MMM yyyy'); } catch { return '—'; }
+  if (!d) return 'â€”';
+  try { return format(new Date(d), 'd MMM yyyy'); } catch { return 'â€”'; }
 }
 
 const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
 
-// ── Skeleton Cards ────────────────────────────────────────────────────────────
+// â”€â”€ Skeleton Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function SkeletonCards() {
   return (
@@ -84,7 +84,7 @@ function SkeletonCards() {
   );
 }
 
-// ── Flag Amount Modal ─────────────────────────────────────────────────────────
+// â”€â”€ Flag Amount Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function FlagModal({
   member,
@@ -138,7 +138,7 @@ function FlagModal({
               onClick={() => onConfirm(reason.trim())}
               className="flex-1 rounded-lg bg-yellow-500 text-white py-2.5 text-sm font-semibold hover:bg-yellow-600 disabled:opacity-50 transition-colors"
             >
-              {isPending ? 'Flagging…' : 'Flag Amount'}
+              {isPending ? 'Flaggingâ€¦' : 'Flag Amount'}
             </button>
           </div>
         </div>
@@ -147,7 +147,7 @@ function FlagModal({
   );
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
+// â”€â”€ Main Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 type QueueTab = 'pending' | 'disputed';
 
@@ -163,9 +163,9 @@ export default function ThriftQueuePage() {
   });
 
   const reviewMutation = useMutation({
-    mutationFn: ({ groupId, memberId, action, reason }: {
-      groupId: number; memberId: number; action: string; reason?: string;
-    }) => api.patch(`/thrift/${groupId}/members/${memberId}/`, { action, ...(reason ? { reason } : {}) }),
+    mutationFn: ({ groupUuid, memberId, action, reason }: {
+      groupUuid: string; memberId: number; action: string; reason?: string;
+    }) => api.patch(`/thrift/${groupUuid}/members/${memberId}/`, { action, ...(reason ? { reason } : {}) }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['thrift-collector-queue'] });
       setFlagTarget(null);
@@ -221,7 +221,7 @@ export default function ThriftQueuePage() {
         ))}
       </div>
 
-      {/* ── Pending Members Tab ── */}
+      {/* â”€â”€ Pending Members Tab â”€â”€ */}
       {activeTab === 'pending' && (
         <>
           {isLoading ? (
@@ -242,7 +242,7 @@ export default function ThriftQueuePage() {
                       <p className="text-xs text-(--text-secondary)">
                         Group:{' '}
                         <Link
-                          to={`/thrift/${member.group_id}`}
+                          to={`/thrift/${member.group_uuid}`}
                           className="text-teal-600 hover:underline font-medium"
                         >
                           {member.group_name}
@@ -259,13 +259,13 @@ export default function ThriftQueuePage() {
 
                     <div className="flex gap-2 flex-shrink-0 flex-wrap">
                       {member.status === 'amount_pending' ? (
-                        /* Member has proposed corrected amount — approve or reject */
+                        /* Member has proposed corrected amount â€” approve or reject */
                         <>
                           <button
                             type="button"
                             disabled={reviewMutation.isPending}
                             onClick={() => reviewMutation.mutate({
-                              groupId: member.group_id,
+                              groupUuid: member.group_uuid,
                               memberId: member.id,
                               action: 'approve',
                             })}
@@ -277,7 +277,7 @@ export default function ThriftQueuePage() {
                             type="button"
                             disabled={reviewMutation.isPending}
                             onClick={() => reviewMutation.mutate({
-                              groupId: member.group_id,
+                              groupUuid: member.group_uuid,
                               memberId: member.id,
                               action: 'reject',
                             })}
@@ -287,13 +287,13 @@ export default function ThriftQueuePage() {
                           </button>
                         </>
                       ) : (
-                        /* Fresh pending member — approve, flag amount, or reject */
+                        /* Fresh pending member â€” approve, flag amount, or reject */
                         <>
                           <button
                             type="button"
                             disabled={reviewMutation.isPending}
                             onClick={() => reviewMutation.mutate({
-                              groupId: member.group_id,
+                              groupUuid: member.group_uuid,
                               memberId: member.id,
                               action: 'approve',
                             })}
@@ -313,7 +313,7 @@ export default function ThriftQueuePage() {
                             type="button"
                             disabled={reviewMutation.isPending}
                             onClick={() => reviewMutation.mutate({
-                              groupId: member.group_id,
+                              groupUuid: member.group_uuid,
                               memberId: member.id,
                               action: 'reject',
                             })}
@@ -344,7 +344,7 @@ export default function ThriftQueuePage() {
         </>
       )}
 
-      {/* ── Disputed Payments Tab ── */}
+      {/* â”€â”€ Disputed Payments Tab â”€â”€ */}
       {activeTab === 'disputed' && (
         <>
           {isLoading ? (
@@ -363,7 +363,7 @@ export default function ThriftQueuePage() {
                       <p className="text-xs text-(--text-secondary)">
                         Group:{' '}
                         <Link
-                          to={`/thrift/${payment.group_id}`}
+                          to={`/thrift/${payment.group_uuid}`}
                           className="text-teal-600 hover:underline font-medium"
                         >
                           {payment.group_name}
@@ -372,15 +372,15 @@ export default function ThriftQueuePage() {
                       <p className="text-xs text-(--text-secondary)">
                         Amount:{' '}
                         <span className="font-semibold text-(--text-primary)">{formatCurrency(payment.amount)}</span>
-                        <span className="mx-1.5 text-(--text-muted)">·</span>
+                        <span className="mx-1.5 text-(--text-muted)">Â·</span>
                         Period: <span className="font-medium">{fmt(payment.period_date)}</span>
                       </p>
                       <p className="text-xs text-(--text-muted)">Marked {fmt(payment.marked_at)}</p>
                     </div>
 
-                    {/* Navigate to group to resolve — no direct queue resolution endpoint */}
+                    {/* Navigate to group to resolve â€” no direct queue resolution endpoint */}
                     <Link
-                      to={`/thrift/${payment.group_id}`}
+                      to={`/thrift/${payment.group_uuid}`}
                       className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-100 transition-colors flex-shrink-0"
                     >
                       View in Group
@@ -419,3 +419,5 @@ export default function ThriftQueuePage() {
     </div>
   );
 }
+
+

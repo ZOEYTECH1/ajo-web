@@ -35,7 +35,7 @@ interface PaginatedNotifications {
 function getNotifLink(n: NotificationItem): string | null {
   const d = n.action_data;
   const t = n.notif_type;
-  if (t.startsWith('thrift') && d.group_id) return `/thrift/${d.group_id}`;
+  if (t.startsWith('thrift') && d.group_uuid) return `/thrift/${d.group_uuid}`;
   if (d.group_id) return `/ajo/${d.group_id}`;
   if (d.business_id) return '/inventory/business';
   return null;

@@ -40,6 +40,7 @@ interface RemovalRequest {
 
 interface ThriftGroup {
   id: number;
+  uuid: string;
   name: string;
   description: string;
   frequency: string;
@@ -611,8 +612,7 @@ function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: number; c
 type Tab = 'payments' | 'members' | 'cycles';
 
 export default function ThriftGroupDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const groupId = Number(id);
+  const { uuid: groupId } = useParams<{ uuid: string }>();
   const qc = useQueryClient();
   const currentUser = useAuthStore((s) => s.user);
 

@@ -113,7 +113,7 @@ const router = createBrowserRouter([
           { path: 'thrift/queue',                     element: <ThriftQueuePage /> },
           { path: 'thrift/billing',                   element: <ThriftBillingPage /> },
           { path: 'thrift/org/create',                 element: <ThriftOrgCreatePage /> },
-          { path: 'thrift/:id',                       element: <ThriftGroupDetailPage /> },
+          { path: 'thrift/:uuid',                     element: <ThriftGroupDetailPage /> },
           { path: 'account',                          element: <AccountPage /> },
           { path: 'account/privacy',                  element: <PrivacyPage /> },
           { path: 'inventory/warehouse/receive',       element: <InventoryWarehouseReceivePage /> },

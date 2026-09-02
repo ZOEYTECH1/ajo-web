@@ -10,7 +10,7 @@ interface ThriftPaymentHistoryItem {
   id: number;
   member_id: number;
   member_name: string;
-  group_id: number;
+  group_uuid: string;
   group_name: string;
   amount: string;
   period_date: string;
@@ -80,7 +80,7 @@ function PaymentTable({ payments, loading, showMember }: { payments: ThriftPayme
               payments.map(p => (
                 <tr key={p.id} className="hover:bg-(--primary-tint)/30 transition-colors">
                   <td className="px-6 py-4 text-sm font-medium">
-                    <Link to={`/thrift/${p.group_id}`} className="text-teal-600 hover:underline">{p.group_name}</Link>
+                    <Link to={`/thrift/${p.group_uuid}`} className="text-teal-600 hover:underline">{p.group_name}</Link>
                   </td>
                   {showMember && <td className="px-6 py-4 text-sm text-(--text-secondary)">{p.member_name}</td>}
                   <td className="px-6 py-4 text-sm text-(--text-secondary)">{fmt(p.period_date)}</td>

@@ -265,19 +265,19 @@ function OrgSkeleton() {
 // ── Approve Removal Modal (org admin) ────────────────────────────────────────
 
 function ApproveRemovalModal({
-  orgId, request, onClose,
-}: { orgId: number; request: RemovalRequest; onClose: () => void }) {
+  orgUuid, request, onClose,
+}: { orgUuid: number; request: RemovalRequest; onClose: () => void }) {
   const qc = useQueryClient();
   const [settlementNotes, setSettlementNotes] = useState('');
   const [err, setErr] = useState('');
 
   const mutation = useMutation({
-    mutationFn: () => api.patch(`/thrift/orgs/${orgId}/removal-requests/${request.id}/`, {
+    mutationFn: () => api.patch(`/thrift/orgs/${orgUuid}/removal-requests/${request.id}/`, {
       action: 'approve',
       settlement_notes: settlementNotes.trim(),
     }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['thrift-org-removal-requests', orgId] });
+      qc.invalidateQueries({ queryKey: ['thrift-org-removal-requests', orgUuid] });
       onClose();
     },
     onError: (e: any) => {
@@ -373,9 +373,9 @@ function ApproveRemovalModal({
 // ── Create Group Modal (org admin only) ──────────────────────────────────────
 
 function CreateGroupModal({
-  orgId, collectors, onClose,
+  orgUuid, collectors, onClose,
 }: {
-  orgId: number;
+  orgUuid: number;
   collectors: CollectorRecord[];
   onClose: () => void;
 }) {
@@ -399,11 +399,11 @@ function CreateGroupModal({
       cycle_type: form.cycle_type,
       start_date: form.start_date || undefined,
       end_date: form.end_date || undefined,
-      org_id: orgId,
+      org_uuid: orgUuid,
       collector_id: Number(form.collector_id),
     }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['thrift-org', orgId] });
+      qc.invalidateQueries({ queryKey: ['thrift-org', orgUuid] });
       qc.invalidateQueries({ queryKey: ['thrift-groups'] });
       onClose();
     },
@@ -561,8 +561,7 @@ function InviteModal({ onInvite, onClose, isPending }: {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function ThriftOrgPage() {
-  const { id } = useParams<{ id: string }>();
-  const orgId = Number(id);
+  const { uuid: orgUuid } = useParams<{ uuid: string }>();
   const qc = useQueryClient();
   const [showInvite, setShowInvite] = useState(false);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
@@ -572,37 +571,37 @@ export default function ThriftOrgPage() {
   const [reportFilter, setReportFilter] = useState<'all' | 'pending' | 'reviewed' | 'resolved' | 'dismissed'>('all');
 
   const { data, isLoading, error } = useQuery<OrgDashboard>({
-    queryKey: ['thrift-org', orgId],
-    queryFn: () => api.get(`/thrift/orgs/${orgId}/dashboard/`).then(r => r.data),
-    enabled: !!orgId,
+    queryKey: ['thrift-org', orgUuid],
+    queryFn: () => api.get(`/thrift/orgs/${orgUuid}/dashboard/`).then(r => r.data),
+    enabled: !!orgUuid,
   });
 
   const { data: allReports = [], isLoading: reportsLoading } = useQuery<OrgReport[]>({
-    queryKey: ['thrift-org-reports', orgId, reportFilter],
+    queryKey: ['thrift-org-reports', orgUuid, reportFilter],
     queryFn: () => {
       const params = reportFilter !== 'all' ? `?status=${reportFilter}` : '';
-      return api.get(`/thrift/orgs/${orgId}/reports/${params}`).then(r => r.data);
+      return api.get(`/thrift/orgs/${orgUuid}/reports/${params}`).then(r => r.data);
     },
-    enabled: !!orgId && !!data,
+    enabled: !!orgUuid && !!data,
   });
 
   const { data: removalRequests = [], isLoading: removalLoading } = useQuery<RemovalRequest[]>({
-    queryKey: ['thrift-org-removal-requests', orgId, removalFilter],
-    queryFn: () => api.get(`/thrift/orgs/${orgId}/removal-requests/?status=${removalFilter}`).then(r => r.data),
-    enabled: !!orgId && !!data,
+    queryKey: ['thrift-org-removal-requests', orgUuid, removalFilter],
+    queryFn: () => api.get(`/thrift/orgs/${orgUuid}/removal-requests/?status=${removalFilter}`).then(r => r.data),
+    enabled: !!orgUuid && !!data,
   });
 
   const rejectRemovalMutation = useMutation({
     mutationFn: ({ requestId, reason }: { requestId: number; reason: string }) =>
-      api.patch(`/thrift/orgs/${orgId}/removal-requests/${requestId}/`, { action: 'reject', reason }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['thrift-org-removal-requests', orgId] }),
+      api.patch(`/thrift/orgs/${orgUuid}/removal-requests/${requestId}/`, { action: 'reject', reason }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['thrift-org-removal-requests', orgUuid] }),
   });
 
   const collectorActionMutation = useMutation({
     mutationFn: ({ memberId, action }: { memberId: number; action: string }) =>
-      api.patch(`/thrift/orgs/${orgId}/members/${memberId}/`, { action }),
+      api.patch(`/thrift/orgs/${orgUuid}/members/${memberId}/`, { action }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['thrift-org', orgId] });
+      qc.invalidateQueries({ queryKey: ['thrift-org', orgUuid] });
     },
     onError: (e: any, vars) => {
       setActionError(prev => ({
@@ -613,19 +612,19 @@ export default function ThriftOrgPage() {
   });
 
   const inviteMutation = useMutation({
-    mutationFn: (email: string) => api.post(`/thrift/orgs/${orgId}/members/`, { email }),
+    mutationFn: (email: string) => api.post(`/thrift/orgs/${orgUuid}/members/`, { email }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['thrift-org', orgId] });
+      qc.invalidateQueries({ queryKey: ['thrift-org', orgUuid] });
       setShowInvite(false);
     },
   });
 
   const reportActionMutation = useMutation({
     mutationFn: ({ reportId, action }: { reportId: number; action: 'resolve' | 'dismiss' | 'review' }) =>
-      api.patch(`/thrift/orgs/${orgId}/reports/${reportId}/`, { action }),
+      api.patch(`/thrift/orgs/${orgUuid}/reports/${reportId}/`, { action }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['thrift-org', orgId] });
-      qc.invalidateQueries({ queryKey: ['thrift-org-reports', orgId] });
+      qc.invalidateQueries({ queryKey: ['thrift-org', orgUuid] });
+      qc.invalidateQueries({ queryKey: ['thrift-org-reports', orgUuid] });
     },
   });
 
@@ -674,7 +673,7 @@ export default function ThriftOrgPage() {
               Export CSV
             </button>
             <Link
-              to={`/thrift/org/${orgId}/billing`}
+              to={`/thrift/org/${orgUuid}/billing`}
               className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-100 transition-colors"
             >
               Billing
@@ -1161,14 +1160,14 @@ export default function ThriftOrgPage() {
       {/* Modals */}
       {showCreateGroup && (
         <CreateGroupModal
-          orgId={orgId}
+          orgUuid={orgUuid}
           collectors={collectors}
           onClose={() => setShowCreateGroup(false)}
         />
       )}
       {approveRemovalRequest && (
         <ApproveRemovalModal
-          orgId={orgId}
+          orgUuid={orgUuid}
           request={approveRemovalRequest}
           onClose={() => setApproveRemovalRequest(null)}
         />

@@ -28,7 +28,7 @@ function StatusBadge({ status }: { status: ThriftInvoice['status'] }) {
 
 // ── Invoice Card ──────────────────────────────────────────────────────────────
 
-function InvoiceCard({ invoice, orgId }: { invoice: ThriftInvoice; orgId: number }) {
+function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: number }) {
   const qc = useQueryClient();
   const [verifyTxId, setVerifyTxId] = useState(invoice.tx_ref ?? '');
   const [showVerify, setShowVerify] = useState(false);
@@ -37,7 +37,7 @@ function InvoiceCard({ invoice, orgId }: { invoice: ThriftInvoice; orgId: number
   const [verifySuccess, setVerifySuccess] = useState(false);
 
   const payMutation = useMutation({
-    mutationFn: () => payOrgInvoice(orgId, invoice.id),
+    mutationFn: () => payOrgInvoice(orgUuid, invoice.id),
     onSuccess: (r) => {
       const link = r.payment_link;
       if (link) {
@@ -51,9 +51,9 @@ function InvoiceCard({ invoice, orgId }: { invoice: ThriftInvoice; orgId: number
   });
 
   const verifyMutation = useMutation({
-    mutationFn: () => verifyOrgInvoice(orgId, invoice.id, verifyTxId.trim()),
+    mutationFn: () => verifyOrgInvoice(orgUuid, invoice.id, verifyTxId.trim()),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['thrift-org-billing-invoices', orgId] });
+      qc.invalidateQueries({ queryKey: ['thrift-org-billing-invoices', orgUuid] });
       setVerifySuccess(true);
       setShowVerify(false);
     },
@@ -197,21 +197,20 @@ function SkeletonInvoices() {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function ThriftOrgBillingPage() {
-  const { id } = useParams<{ id: string }>();
-  const orgId = Number(id);
+  const { uuid: orgUuid } = useParams<{ uuid: string }>();
   const qc = useQueryClient();
   const [generateError, setGenerateError] = useState('');
 
   const { data: invoices, isLoading, error } = useQuery<ThriftInvoice[]>({
-    queryKey: ['thrift-org-billing-invoices', orgId],
-    queryFn: () => getOrgInvoices(orgId),
-    enabled: !!orgId,
+    queryKey: ['thrift-org-billing-invoices', orgUuid],
+    queryFn: () => getOrgInvoices(orgUuid),
+    enabled: !!orgUuid,
   });
 
   const generateMutation = useMutation({
-    mutationFn: () => generateOrgInvoice(orgId),
+    mutationFn: () => generateOrgInvoice(orgUuid),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['thrift-org-billing-invoices', orgId] });
+      qc.invalidateQueries({ queryKey: ['thrift-org-billing-invoices', orgUuid] });
       setGenerateError('');
     },
     onError: (e: any) => {
@@ -222,7 +221,7 @@ export default function ThriftOrgBillingPage() {
   return (
     <div className="space-y-6">
       {/* Back link */}
-      <Link to={`/thrift/org/${orgId}`} className="text-sm text-(--text-secondary) hover:text-teal-600">
+      <Link to={`/thrift/org/${orgUuid}`} className="text-sm text-(--text-secondary) hover:text-teal-600">
         ← Organisation
       </Link>
 
@@ -271,7 +270,7 @@ export default function ThriftOrgBillingPage() {
       ) : (
         <div className="space-y-4">
           {invoices.map(invoice => (
-            <InvoiceCard key={invoice.id} invoice={invoice} orgId={orgId} />
+            <InvoiceCard key={invoice.id} invoice={invoice} orgUuid={orgUuid} />
           ))}
         </div>
       )}

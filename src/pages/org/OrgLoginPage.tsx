@@ -6,7 +6,7 @@ import useAuthStore from '../../store/useAuthStore';
 import api from '../../services/api';
 
 interface OrgInfo {
-  id: number;
+  uuid: string;
   name: string;
 }
 
@@ -40,7 +40,7 @@ export default function OrgLoginPage() {
       }
 
       if (userOrgs.length === 1) {
-        navigate(`/thrift/org/${userOrgs[0].id}`, { replace: true });
+        navigate(`/thrift/org/${userOrgs[0].uuid}`, { replace: true });
       } else {
         // Multiple orgs — let them pick
         setOrgs(userOrgs);
@@ -70,7 +70,7 @@ export default function OrgLoginPage() {
                 <button
                   key={org.id}
                   type="button"
-                  onClick={() => navigate(`/thrift/org/${org.id}`, { replace: true })}
+                  onClick={() => navigate(`/thrift/org/${org.uuid}`, { replace: true })}
                   className="w-full text-left rounded-xl border border-(--border) px-4 py-3 text-sm font-semibold text-(--text-primary) hover:border-teal-400 hover:bg-(--primary-tint)/30 transition-colors"
                 >
                   {org.name}

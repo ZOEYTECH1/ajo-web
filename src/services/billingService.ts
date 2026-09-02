@@ -17,14 +17,14 @@ export interface ThriftInvoice {
   }[];
 }
 
-export const getOrgInvoices = (orgId: number): Promise<ThriftInvoice[]> =>
-  api.get(`/thrift/orgs/${orgId}/invoices/`).then((r) => r.data);
+export const getOrgInvoices = (orgUuid: string): Promise<ThriftInvoice[]> =>
+  api.get(`/thrift/orgs/${orgUuid}/invoices/`).then((r) => r.data);
 
-export const generateOrgInvoice = (orgId: number) =>
-  api.post(`/thrift/orgs/${orgId}/invoices/generate/`).then((r) => r.data);
+export const generateOrgInvoice = (orgUuid: string) =>
+  api.post(`/thrift/orgs/${orgUuid}/invoices/generate/`).then((r) => r.data);
 
-export const payOrgInvoice = (orgId: number, invoiceId: number): Promise<{ payment_link?: string }> =>
-  api.post(`/thrift/orgs/${orgId}/invoices/${invoiceId}/pay/`).then((r) => r.data);
+export const payOrgInvoice = (orgUuid: string, invoiceId: number): Promise<{ payment_link?: string }> =>
+  api.post(`/thrift/orgs/${orgUuid}/invoices/${invoiceId}/pay/`).then((r) => r.data);
 
-export const verifyOrgInvoice = (orgId: number, invoiceId: number, txRef: string) =>
-  api.post(`/thrift/orgs/${orgId}/invoices/${invoiceId}/verify/`, { tx_ref: txRef }).then((r) => r.data);
+export const verifyOrgInvoice = (orgUuid: string, invoiceId: number, txRef: string) =>
+  api.post(`/thrift/orgs/${orgUuid}/invoices/${invoiceId}/verify/`, { tx_ref: txRef }).then((r) => r.data);

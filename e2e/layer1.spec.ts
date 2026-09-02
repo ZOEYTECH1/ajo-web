@@ -54,8 +54,9 @@ test.describe('Layer 1.2 — Accessibility: keyboard and ARIA', () => {
     await page.keyboard.press('Tab');
     await expect(page.getByLabel(/password/i)).toBeFocused();
 
-    // Tab to submit button
-    await page.keyboard.press('Tab');
+    // Tab past the "Forgot password?" link to the submit button
+    await page.keyboard.press('Tab'); // focuses "Forgot password?" anchor
+    await page.keyboard.press('Tab'); // focuses submit button
     const focused = await page.evaluate(() => document.activeElement?.tagName);
     expect(['BUTTON', 'INPUT']).toContain(focused);
   });

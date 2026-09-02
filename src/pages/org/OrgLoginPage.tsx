@@ -68,7 +68,7 @@ export default function OrgLoginPage() {
             <div className="space-y-2">
               {orgs.map(org => (
                 <button
-                  key={org.id}
+                  key={org.uuid}
                   type="button"
                   onClick={() => navigate(`/thrift/org/${org.uuid}`, { replace: true })}
                   className="w-full text-left rounded-xl border border-(--border) px-4 py-3 text-sm font-semibold text-(--text-primary) hover:border-teal-400 hover:bg-(--primary-tint)/30 transition-colors"

@@ -13,25 +13,18 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Layer 4.1 — Authentication flow', () => {
   test('successful login redirects away from /login', async ({ page }) => {
-    await page.route('**/api/token/', async route => {
+    const mockUser = {
+      id: 1, email: 'test@example.com', first_name: 'Test', last_name: 'User',
+      full_name: 'Test User', profile_photo: null, phone: '', has_used_trial: false, is_verified: true,
+    };
+    await page.route('**/api/auth/login/', async route => {
       await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          access: 'access_token_value',
-          refresh: 'refresh_token_value',
-          user: {
-            id: 1,
-            email: 'test@example.com',
-            first_name: 'Test',
-            last_name: 'User',
-            phone_number: '+2348000000000',
-            role: 'member',
-            is_email_verified: true,
-            selectedModules: ['inventory'],
-          },
-        }),
+        status: 200, contentType: 'application/json',
+        body: JSON.stringify({ access: 'access_token_value', refresh: 'refresh_token_value', user: mockUser }),
       });
+    });
+    await page.route('**/api/auth/me/', async route => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(mockUser) });
     });
 
     await page.goto('/login');

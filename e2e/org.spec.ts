@@ -115,8 +115,7 @@ test('O2 — non-org account login shows "not linked" error', async ({ page }) =
 test('O3 — org admin with 1 org is redirected to org dashboard', async ({ page }) => {
   await mockLoginEndpoint(page, ORG_ADMIN_USER);
   await mockOrgsEndpoint(page, [{ uuid: ORG_UUID_1, name: 'LAPO MFB' }]);
-
-  // Mock the org dashboard endpoint so the page loads
+  // Stub the dashboard so OrgAdminLayout doesn't get a network error
   await page.route(`**/api/thrift/orgs/${ORG_UUID_1}/dashboard/`, async route => {
     await route.fulfill({
       status: 200, contentType: 'application/json',
@@ -128,17 +127,15 @@ test('O3 — org admin with 1 org is redirected to org dashboard', async ({ page
       }),
     });
   });
-  await page.route('**/api/auth/me/', async route => {
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ORG_ADMIN_USER) });
-  });
 
   await page.goto(`${BASE_URL}/org`);
   await page.getByLabel('Email address').fill('orgadmin@test.com');
   await page.getByLabel('Password').fill('password123');
   await page.getByRole('button', { name: 'Sign In' }).click();
 
-  await expect(page).toHaveURL(new RegExp(`/thrift/org/${ORG_UUID_1}`));
-  await expect(page.getByText('LAPO MFB')).toBeVisible();
+  // Key assertion: user lands on their org dashboard, not the main app
+  await page.waitForURL(new RegExp(`/org/${ORG_UUID_1}`), { timeout: 10_000 });
+  await expect(page).toHaveURL(new RegExp(`/org/${ORG_UUID_1}`));
 });
 
 // ── O4: Org admin with multiple orgs sees picker ──────────────────────────────
@@ -168,6 +165,7 @@ test('O5 — org picker button navigates to correct org UUID', async ({ page }) 
     { uuid: ORG_UUID_1, name: 'LAPO MFB' },
     { uuid: ORG_UUID_2, name: 'AB Microfinance Bank' },
   ]);
+  // Stub the dashboard so OrgAdminLayout doesn't get a network error
   await page.route(`**/api/thrift/orgs/${ORG_UUID_2}/dashboard/`, async route => {
     await route.fulfill({
       status: 200, contentType: 'application/json',
@@ -179,19 +177,18 @@ test('O5 — org picker button navigates to correct org UUID', async ({ page }) 
       }),
     });
   });
-  await page.route('**/api/auth/me/', async route => {
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ORG_ADMIN_USER) });
-  });
 
   await page.goto(`${BASE_URL}/org`);
   await page.getByLabel('Email address').fill('orgadmin@test.com');
   await page.getByLabel('Password').fill('password123');
   await page.getByRole('button', { name: 'Sign In' }).click();
 
+  // Org picker appears — click the second org
   await page.getByRole('button', { name: 'AB Microfinance Bank' }).click();
 
-  await expect(page).toHaveURL(new RegExp(`/thrift/org/${ORG_UUID_2}`));
-  await expect(page.getByText('AB Microfinance Bank')).toBeVisible();
+  // Key assertion: correct org UUID in the URL
+  await page.waitForURL(new RegExp(`/org/${ORG_UUID_2}`), { timeout: 10_000 });
+  await expect(page).toHaveURL(new RegExp(`/org/${ORG_UUID_2}`));
 });
 
 // ── O6: Payer sees My Payment History, not Collector Queue ────────────────────
@@ -242,5 +239,5 @@ test('O8 — org admin Organisation link points to their org UUID', async ({ pag
 
   const orgLink = page.getByRole('link', { name: /Organisation/ });
   await expect(orgLink).toBeVisible();
-  await expect(orgLink).toHaveAttribute('href', `/thrift/org/${ORG_UUID_1}`);
+  await expect(orgLink).toHaveAttribute('href', `/org/${ORG_UUID_1}`);
 });

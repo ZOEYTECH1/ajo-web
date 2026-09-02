@@ -288,7 +288,7 @@ export default function ThriftPage() {
   const isAnyPayer     = groups.some(g => g.collector?.id !== currentUser?.id);
   // Org admin: user owns or admins at least one organisation
   const isOrgAdmin     = userOrgs.length > 0;
-  const orgLink        = isOrgAdmin ? `/thrift/org/${userOrgs[0].uuid}` : '/thrift/org/create';
+  const orgLink        = isOrgAdmin ? `/org/${userOrgs[0].uuid}` : '/thrift/org/create';
 
   return (
     <div className="space-y-6">

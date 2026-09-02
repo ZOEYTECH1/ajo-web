@@ -632,11 +632,8 @@ export default function ThriftOrgPage() {
 
   if (error || !data) {
     return (
-      <div className="space-y-4">
-        <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-teal-600">← Thrift Groups</Link>
-        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-          Organisation not found or you do not have access.
-        </div>
+      <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        Organisation not found or you do not have access.
       </div>
     );
   }
@@ -646,9 +643,6 @@ export default function ThriftOrgPage() {
 
   return (
     <div className="space-y-6">
-      {/* Back link */}
-      <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-teal-600">← Thrift Groups</Link>
-
       {/* Header */}
       <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
         <div className="flex items-start gap-3 flex-wrap justify-between">
@@ -673,7 +667,7 @@ export default function ThriftOrgPage() {
               Export CSV
             </button>
             <Link
-              to={`/thrift/org/${orgUuid}/billing`}
+              to={`/org/${orgUuid}/billing`}
               className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-100 transition-colors"
             >
               Billing
@@ -880,10 +874,8 @@ export default function ThriftOrgPage() {
                 ) : (
                   groups.map(g => (
                     <tr key={g.id} className="hover:bg-(--primary-tint)/30 transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium">
-                        <Link to={`/thrift/${g.id}`} className="text-teal-600 hover:underline">
-                          {g.name}
-                        </Link>
+                      <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">
+                        {g.name}
                       </td>
                       <td className="px-6 py-4 text-sm text-(--text-secondary) capitalize">{g.frequency}</td>
                       <td className="px-6 py-4 text-sm text-(--text-primary) font-medium">{g.member_count}</td>

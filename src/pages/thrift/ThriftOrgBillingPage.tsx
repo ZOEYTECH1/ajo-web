@@ -221,7 +221,7 @@ export default function ThriftOrgBillingPage() {
   return (
     <div className="space-y-6">
       {/* Back link */}
-      <Link to={`/thrift/org/${orgUuid}`} className="text-sm text-(--text-secondary) hover:text-teal-600">
+      <Link to={`/org/${orgUuid}`} className="text-sm text-(--text-secondary) hover:text-teal-600">
         ← Organisation
       </Link>
 

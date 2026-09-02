@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import './index.css';
 
 import App, { ProtectedLayout } from './App';
+import OrgAdminLayout from './layouts/OrgAdminLayout';
 import { ThemeProvider } from './context/ThemeContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { initSentry } from './lib/sentry';
@@ -12,7 +13,7 @@ import { initSentry } from './lib/sentry';
 // Safe to call with an empty/missing VITE_SENTRY_DSN — it will skip initialisation.
 initSentry();
 
-// Org portal (public, no auth required)
+// Org admin portal
 const OrgLoginPage                  = lazy(() => import('./pages/org/OrgLoginPage'));
 
 // Auth pages
@@ -60,12 +61,28 @@ const InventorySubscriptionPage     = lazy(() => import('./pages/inventory/Inven
 const InventoryBestSellersPage      = lazy(() => import('./pages/inventory/InventoryBestSellersPage'));
 
 const router = createBrowserRouter([
+  // ── Organisation admin portal (completely separate from main app) ──────────
+  {
+    path: '/org',
+    children: [
+      { index: true, element: <OrgLoginPage /> },
+      {
+        path: ':uuid',
+        element: <OrgAdminLayout />,
+        children: [
+          { index: true,           element: <ThriftOrgPage /> },
+          { path: 'billing',       element: <ThriftOrgBillingPage /> },
+        ],
+      },
+    ],
+  },
+
+  // ── Main app ──────────────────────────────────────────────────────────────
   {
     element: <App />,
     path: '/',
     children: [
       // Public routes
-      { path: 'org',              element: <OrgLoginPage /> },
       { path: 'login',            element: <LoginPage /> },
       { path: 'register',         element: <RegisterPage /> },
       { path: 'verify-otp',       element: <OTPPage /> },
@@ -96,8 +113,6 @@ const router = createBrowserRouter([
           { path: 'thrift/queue',                     element: <ThriftQueuePage /> },
           { path: 'thrift/billing',                   element: <ThriftBillingPage /> },
           { path: 'thrift/org/create',                 element: <ThriftOrgCreatePage /> },
-          { path: 'thrift/org/:uuid',                  element: <ThriftOrgPage /> },
-          { path: 'thrift/org/:uuid/billing',         element: <ThriftOrgBillingPage /> },
           { path: 'thrift/:id',                       element: <ThriftGroupDetailPage /> },
           { path: 'account',                          element: <AccountPage /> },
           { path: 'account/privacy',                  element: <PrivacyPage /> },

@@ -159,6 +159,7 @@ export default function OrgGroupDetailPage() {
   const [selectedCycleId, setSelectedCycleId] = useState<number | null>(null);
   const [viewDispute, setViewDispute] = useState<Payment | null>(null);
   const [isLive, setIsLive] = useState(false);
+  const [earlyEndAlert, setEarlyEndAlert] = useState<string | null>(null);
 
   const { data: group, isLoading: groupLoading, error: groupError } = useQuery<GroupBrief>({
     queryKey: ['org-group', groupUuid],
@@ -185,10 +186,19 @@ export default function OrgGroupDetailPage() {
   });
 
   // Real-time: the moment a payer confirms or disputes (or the collector marks
-  // a new payment), refresh so the admin sees it without reloading the page.
-  useThriftGroupSocket(groupUuid, () => {
+  // a new payment, or a circle ends), refresh so the admin sees it without
+  // reloading the page.
+  useThriftGroupSocket(groupUuid, (e) => {
     setIsLive(true);
-    qc.invalidateQueries({ queryKey: ['org-group-payments', groupUuid] });
+    if (e.event === 'cycle_end_blocked') {
+      setEarlyEndAlert(`${e.collector_name} tried to end Cycle #${e.cycle_number} early — it runs until ${e.scheduled_end_date}.`);
+    }
+    if (e.event === 'cycle_ended' || e.event === 'cycle_end_blocked') {
+      qc.invalidateQueries({ queryKey: ['org-group', groupUuid] });
+      qc.invalidateQueries({ queryKey: ['org-group-cycles', groupUuid] });
+    } else {
+      qc.invalidateQueries({ queryKey: ['org-group-payments', groupUuid] });
+    }
   });
 
   const sortedCycles = useMemo(
@@ -268,6 +278,15 @@ export default function OrgGroupDetailPage() {
       <Link to={`/org/${orgUuid}`} className="inline-flex items-center gap-1.5 text-sm text-(--text-secondary) hover:text-teal-600">
         <ArrowLeftIcon className="h-4 w-4" /> Back to dashboard
       </Link>
+
+      {earlyEndAlert && (
+        <div role="alert" className="flex items-start justify-between gap-3 rounded-lg bg-yellow-50 border border-yellow-200 px-4 py-3 text-sm text-yellow-800">
+          <span>⚠️ {earlyEndAlert}</span>
+          <button type="button" onClick={() => setEarlyEndAlert(null)} className="text-yellow-800 hover:underline font-semibold shrink-0">
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Header */}
       <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">

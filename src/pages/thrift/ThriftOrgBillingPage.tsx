@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Skeleton } from '../../components/ui/Skeleton';
-import { getOrgInvoices, generateOrgInvoice, payOrgInvoice, verifyOrgInvoice, type ThriftInvoice } from '../../services/billingService';
+import { getOrgInvoices, getOrgBillingStatus, generateOrgInvoice, payOrgInvoice, verifyOrgInvoice, type ThriftInvoice } from '../../services/billingService';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -209,10 +209,18 @@ export default function ThriftOrgBillingPage() {
     enabled: !!orgUuid,
   });
 
+  const { data: billingStatus } = useQuery<{ can_generate_invoice: boolean }>({
+    queryKey: ['thrift-org-billing-status', orgUuid],
+    queryFn: () => getOrgBillingStatus(orgUuid),
+    enabled: !!orgUuid,
+  });
+  const canGenerate = billingStatus?.can_generate_invoice ?? false;
+
   const generateMutation = useMutation({
     mutationFn: () => generateOrgInvoice(orgUuid),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['thrift-org-billing-invoices', orgUuid] });
+      qc.invalidateQueries({ queryKey: ['thrift-org-billing-status', orgUuid] });
       setGenerateError('');
     },
     onError: (e: any) => {
@@ -231,22 +239,28 @@ export default function ThriftOrgBillingPage() {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-(--text-primary)">Organisation Billing</h1>
-          <p className="text-sm text-(--text-secondary)">Consolidated invoices at bank rate (standard −2%)</p>
+          <p className="text-sm text-(--text-secondary)">Consolidated invoices at bank rate (standard −0.25%)</p>
         </div>
         <button
           type="button"
-          disabled={generateMutation.isPending}
+          disabled={generateMutation.isPending || !canGenerate}
           onClick={() => generateMutation.mutate()}
-          className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors"
+          title={canGenerate ? undefined : 'No completed circles are ready to bill yet.'}
+          className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {generateMutation.isPending ? 'Generating…' : "Generate This Month's Invoice"}
+          {generateMutation.isPending ? 'Generating…' : 'Generate Invoice'}
         </button>
       </div>
 
       {/* Info banner */}
       <div className="rounded-lg bg-teal-50 border border-teal-200 px-4 py-3 text-sm text-teal-700">
-        Organisation members receive a 2% discount on the standard rate. All groups across your collectors are consolidated into one monthly invoice.
+        Organisation members receive a 0.25% discount on the standard rate. All groups across your collectors are consolidated whenever a circle completes.
       </div>
+      {!canGenerate && !generateMutation.isPending && (
+        <p className="text-xs text-(--text-muted)">
+          Generate becomes available once one of your collectors' circles completes — it also happens automatically at that point.
+        </p>
+      )}
 
       {/* Generate error */}
       {generateError && (

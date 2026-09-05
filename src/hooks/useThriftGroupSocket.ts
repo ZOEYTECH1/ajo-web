@@ -1,16 +1,19 @@
 import { useEffect, useRef } from 'react';
 
-export interface ThriftGroupEvent {
-  event: 'payment_marked' | 'payment_confirmed' | 'payment_disputed';
-  payment: {
-    id: number;
-    member: number;
-    member_name: string;
-    amount: string;
-    period_date: string;
-    status: 'pending' | 'confirmed' | 'disputed';
-  };
-}
+export type ThriftGroupEvent =
+  | {
+      event: 'payment_marked' | 'payment_confirmed' | 'payment_disputed';
+      payment: {
+        id: number;
+        member: number;
+        member_name: string;
+        amount: string;
+        period_date: string;
+        status: 'pending' | 'confirmed' | 'disputed';
+      };
+    }
+  | { event: 'cycle_ended'; cycle_number: number }
+  | { event: 'cycle_end_blocked'; cycle_number: number; scheduled_end_date: string; collector_name: string };
 
 function wsUrlFor(groupUuid: string, token: string): string {
   const apiUrl = import.meta.env.VITE_API_URL ?? '/api';

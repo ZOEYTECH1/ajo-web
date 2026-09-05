@@ -220,10 +220,17 @@ export default function ThriftBillingPage() {
     queryFn: () => api.get('/thrift/billing/invoices/').then(r => r.data),
   });
 
+  const { data: billingStatus } = useQuery<{ can_generate_invoice: boolean }>({
+    queryKey: ['thrift-billing-status'],
+    queryFn: () => api.get('/thrift/billing/status/').then(r => r.data),
+  });
+  const canGenerate = billingStatus?.can_generate_invoice ?? false;
+
   const generateMutation = useMutation({
     mutationFn: () => api.post('/thrift/billing/invoices/generate/'),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['thrift-billing-invoices'] });
+      qc.invalidateQueries({ queryKey: ['thrift-billing-status'] });
       setGenerateError('');
     },
     onError: (e: any) => {
@@ -241,13 +248,19 @@ export default function ThriftBillingPage() {
         </div>
         <button
           type="button"
-          disabled={generateMutation.isPending}
+          disabled={generateMutation.isPending || !canGenerate}
           onClick={() => generateMutation.mutate()}
-          className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors"
+          title={canGenerate ? undefined : 'No completed circles are ready to bill yet.'}
+          className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {generateMutation.isPending ? 'Generating…' : 'Generate This Month\'s Invoice'}
+          {generateMutation.isPending ? 'Generating…' : 'Generate Invoice'}
         </button>
       </div>
+      {!canGenerate && !generateMutation.isPending && (
+        <p className="text-xs text-(--text-muted)">
+          Generate becomes available once one of your circles completes.
+        </p>
+      )}
 
       {/* Generate error */}
       {generateError && (

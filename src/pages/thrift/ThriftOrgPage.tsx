@@ -876,7 +876,7 @@ export default function ThriftOrgPage() {
                   groups.map(g => (
                     <tr key={g.id} className="hover:bg-(--primary-tint)/30 transition-colors">
                       <td className="px-6 py-4 text-sm font-medium">
-                        <Link to={`/org/${orgUuid}/groups/${g.uuid}`} className="text-teal-600 hover:underline">
+                        <Link to={`/org/${orgUuid}/groups/${g.uuid}`} className="text-teal-600 hover:underline cursor-pointer">
                           {g.name}
                         </Link>
                       </td>

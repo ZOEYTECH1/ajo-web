@@ -29,8 +29,8 @@ interface CollectorRecord {
 }
 
 interface CollectorStats {
-  mobilization_rate: number;
-  dispute_rate: number;
+  mobilization_rate: number | null;
+  dispute_rate: number | null;
   total_amount: number;
   confirmed_amount: number;
   total_count: number;
@@ -779,10 +779,10 @@ export default function ThriftOrgPage() {
                         <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{fullName(c.user)}</td>
                         <td className="px-6 py-4"><CollectorStatusBadge status={c.status} /></td>
                         <td className="px-6 py-4 text-sm text-(--text-secondary)">
-                          {stats ? `${stats.mobilization_rate.toFixed(0)}%` : '—'}
+                          {stats?.mobilization_rate != null ? `${stats.mobilization_rate.toFixed(0)}%` : '—'}
                         </td>
                         <td className="px-6 py-4 text-sm text-(--text-secondary)">
-                          {stats ? `${stats.dispute_rate.toFixed(1)}%` : '—'}
+                          {stats?.dispute_rate != null ? `${stats.dispute_rate.toFixed(1)}%` : '—'}
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex gap-2 flex-wrap">

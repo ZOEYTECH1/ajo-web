@@ -11,8 +11,7 @@ export interface ThriftInvoice {
   line_items: {
     group_name: string;
     member_count: number;
-    rate_percent: number;
-    bank_rate_percent?: number | null;
+    rate_percent: string;
     fee: number | string;
   }[];
 }

@@ -160,7 +160,7 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
                 <tr key={idx} className="hover:bg-(--primary-tint)/20 transition-colors">
                   <td className="px-5 py-3 text-sm text-(--text-primary) font-medium">{item.group_name}</td>
                   <td className="px-5 py-3 text-sm text-(--text-secondary)">{item.member_count}</td>
-                  <td className="px-5 py-3 text-sm text-(--text-secondary)">{item.bank_rate_percent ?? item.rate_percent}</td>
+                  <td className="px-5 py-3 text-sm text-(--text-secondary)">{item.rate_percent}</td>
                   <td className="px-5 py-3 text-sm font-semibold text-(--text-primary)">{formatCurrency(item.fee)}</td>
                 </tr>
               ))}

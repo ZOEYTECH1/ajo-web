@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -54,14 +54,26 @@ function PaymentStatusBadge({ status }: { status: string }) {
 
 export default function OrgGroupDetailPage() {
   const { uuid: orgUuid, groupUuid } = useParams<{ uuid: string; groupUuid: string }>();
-  const [dateFilter, setDateFilter] = useState<'today' | 'all' | 'custom'>('today');
+  // "Today" only makes sense for a daily-collection group — a weekly/monthly
+  // group will almost never have a payment dated exactly today, which reads
+  // as "no data" even when the group has plenty of history. Default to "all"
+  // until we know the frequency, then switch to "today" for daily groups.
+  const [dateFilter, setDateFilter] = useState<'today' | 'all' | 'custom'>('all');
   const [customDate, setCustomDate] = useState(todayISO());
+  const defaultApplied = useRef(false);
 
   const { data: group, isLoading: groupLoading, error: groupError } = useQuery<GroupBrief>({
     queryKey: ['org-group', groupUuid],
     queryFn: () => api.get(`/thrift/${groupUuid}/`).then(r => r.data),
     enabled: !!groupUuid,
   });
+
+  useEffect(() => {
+    if (group && !defaultApplied.current) {
+      defaultApplied.current = true;
+      if (group.frequency === 'daily') setDateFilter('today');
+    }
+  }, [group]);
 
   const { data: payments = [], isLoading: paymentsLoading } = useQuery<Payment[]>({
     queryKey: ['org-group-payments', groupUuid],

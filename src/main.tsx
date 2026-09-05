@@ -32,6 +32,7 @@ initSentry();
 
 // Org admin portal
 const OrgLoginPage                  = lazy(() => import('./pages/org/OrgLoginPage'));
+const OrgGroupDetailPage            = lazy(() => import('./pages/org/OrgGroupDetailPage'));
 
 // Auth pages
 const LoginPage                     = lazy(() => import('./pages/auth/LoginPage'));
@@ -89,6 +90,7 @@ const router = createBrowserRouter([
         children: [
           { index: true,           element: <ThriftOrgPage /> },
           { path: 'billing',       element: <ThriftOrgBillingPage /> },
+          { path: 'groups/:groupUuid', element: <OrgGroupDetailPage /> },
         ],
       },
     ],

@@ -39,6 +39,7 @@ interface CollectorStats {
 
 interface OrgGroup {
   id: number;
+  uuid: string;
   name: string;
   frequency: string;
   member_count: number;
@@ -874,8 +875,10 @@ export default function ThriftOrgPage() {
                 ) : (
                   groups.map(g => (
                     <tr key={g.id} className="hover:bg-(--primary-tint)/30 transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">
-                        {g.name}
+                      <td className="px-6 py-4 text-sm font-medium">
+                        <Link to={`/org/${orgUuid}/groups/${g.uuid}`} className="text-teal-600 hover:underline">
+                          {g.name}
+                        </Link>
                       </td>
                       <td className="px-6 py-4 text-sm text-(--text-secondary) capitalize">{g.frequency}</td>
                       <td className="px-6 py-4 text-sm text-(--text-primary) font-medium">{g.member_count}</td>

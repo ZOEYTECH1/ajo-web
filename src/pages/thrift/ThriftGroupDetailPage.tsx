@@ -768,7 +768,7 @@ export default function ThriftGroupDetailPage() {
               }
             </div>
             <p className="text-sm text-(--text-secondary) capitalize mt-0.5">
-              {group.frequency} · {group.cycle_type === 'rolling' ? 'Rolling cycle' : 'Fixed cycle'}
+              {group.frequency} circle · {group.cycle_type === 'rolling' ? 'Rolling cycle' : 'Fixed cycle'}
               {group.organization && ` · ${group.organization.name}`}
             </p>
             {group.description && <p className="text-sm text-(--text-secondary) mt-1">{group.description}</p>}

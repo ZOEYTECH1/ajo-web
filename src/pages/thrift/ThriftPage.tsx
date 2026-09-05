@@ -110,15 +110,15 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <Field label="Group Name *">
-            <input type="text" value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="e.g. Apapa Market Weekly Thrift" className={inputCls} />
+            <input type="text" value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="e.g. Apapa Market Monthly Thrift" className={inputCls} />
           </Field>
 
-          <Field label="Frequency *">
+          <Field label="Payout Cycle *">
             <select value={form.frequency} onChange={(e) => set('frequency', e.target.value)} className={inputCls}>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
               <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
             </select>
+            <p className="text-xs text-(--text-muted) mt-1">Members contribute daily; this is when the pot pays out and a new cycle starts.</p>
           </Field>
 
           <Field label="Cycle Type *">
@@ -357,7 +357,7 @@ export default function ThriftPage() {
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
               <tr>
-                {['Group Name', 'Frequency', 'Cycle', 'Members', 'Collector', 'Organisation', 'Status'].map(h => (
+                {['Group Name', 'Payout Cycle', 'Cycle Type', 'Members', 'Collector', 'Organisation', 'Status'].map(h => (
                   <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
                 ))}
               </tr>

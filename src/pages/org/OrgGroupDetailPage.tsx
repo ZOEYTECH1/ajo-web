@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -54,26 +54,16 @@ function PaymentStatusBadge({ status }: { status: string }) {
 
 export default function OrgGroupDetailPage() {
   const { uuid: orgUuid, groupUuid } = useParams<{ uuid: string; groupUuid: string }>();
-  // "Today" only makes sense for a daily-collection group — a weekly/monthly
-  // group will almost never have a payment dated exactly today, which reads
-  // as "no data" even when the group has plenty of history. Default to "all"
-  // until we know the frequency, then switch to "today" for daily groups.
-  const [dateFilter, setDateFilter] = useState<'today' | 'all' | 'custom'>('all');
+  // Contributions are always collected daily regardless of the group's payout
+  // circle (monthly/yearly), so "Today" is a meaningful default for every group.
+  const [dateFilter, setDateFilter] = useState<'today' | 'all' | 'custom'>('today');
   const [customDate, setCustomDate] = useState(todayISO());
-  const defaultApplied = useRef(false);
 
   const { data: group, isLoading: groupLoading, error: groupError } = useQuery<GroupBrief>({
     queryKey: ['org-group', groupUuid],
     queryFn: () => api.get(`/thrift/${groupUuid}/`).then(r => r.data),
     enabled: !!groupUuid,
   });
-
-  useEffect(() => {
-    if (group && !defaultApplied.current) {
-      defaultApplied.current = true;
-      if (group.frequency === 'daily') setDateFilter('today');
-    }
-  }, [group]);
 
   const { data: payments = [], isLoading: paymentsLoading } = useQuery<Payment[]>({
     queryKey: ['org-group-payments', groupUuid],
@@ -127,7 +117,7 @@ export default function OrgGroupDetailPage() {
             <div>
               <h1 className="text-lg font-bold text-(--text-primary)">{group?.name}</h1>
               <p className="text-sm text-(--text-secondary) mt-0.5 capitalize">
-                {group?.frequency} · {group?.member_count} member{group?.member_count === 1 ? '' : 's'}
+                {group?.frequency} circle · {group?.member_count} member{group?.member_count === 1 ? '' : 's'}
                 {group?.collector && <> · Collector: {group.collector.first_name} {group.collector.last_name}</>}
               </p>
             </div>

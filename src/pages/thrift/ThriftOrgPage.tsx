@@ -208,7 +208,7 @@ function exportCSV(data: OrgDashboard) {
   }
   rows.push([]);
   rows.push(['=== GROUPS ===']);
-  rows.push(['Group Name', 'Frequency', 'Members', 'Collector']);
+  rows.push(['Group Name', 'Payout Cycle', 'Members', 'Collector']);
   for (const g of data.groups) {
     rows.push([
       g.name, g.frequency, String(g.member_count),
@@ -447,17 +447,17 @@ function CreateGroupModal({
 
           <div>
             <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Group Name *</label>
-            <input type="text" value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Apapa Market Weekly Thrift" className={inputCls} />
+            <input type="text" value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Apapa Market Monthly Thrift" className={inputCls} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Frequency *</label>
+              <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Payout Cycle *</label>
               <select value={form.frequency} onChange={e => set('frequency', e.target.value)} className={inputCls}>
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
               </select>
+              <p className="text-xs text-(--text-muted) mt-1">Members contribute daily; this is when the pot pays out and a new cycle starts.</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Cycle Type *</label>
@@ -858,7 +858,7 @@ export default function ThriftOrgPage() {
             <table className="min-w-full divide-y divide-(--border)">
               <thead className="bg-(--bg)">
                 <tr>
-                  {['Name', 'Frequency', 'Members', 'Collector'].map(h => (
+                  {['Name', 'Payout Cycle', 'Members', 'Collector'].map(h => (
                     <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
                       {h}
                     </th>

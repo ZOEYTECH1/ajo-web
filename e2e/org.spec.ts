@@ -50,7 +50,7 @@ const PAYER_GROUP = {
 };
 
 const COLLECTOR_GROUP = {
-  id: 2, name: 'Collector Group', description: '', frequency: 'weekly', cycle_type: 'rolling',
+  id: 2, name: 'Collector Group', description: '', frequency: 'yearly', cycle_type: 'rolling',
   invite_code: 'COL001', member_count: 3,
   is_on_trial: false, is_subscription_active: true,
   collector: { id: 20, full_name: 'Collector User', email: 'collector@test.com' },

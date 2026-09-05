@@ -1,6 +1,7 @@
 import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import './index.css';
 
 import App, { ProtectedLayout } from './App';
@@ -8,6 +9,22 @@ import OrgAdminLayout from './layouts/OrgAdminLayout';
 import { ThemeProvider } from './context/ThemeContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { initSentry } from './lib/sentry';
+
+// Shared across both route trees below (main app + the standalone org portal) —
+// each previously got its own provider from inside <App/>, which left the org
+// portal's <OrgAdminLayout>/<ThriftOrgPage> without a QueryClient since they
+// render outside <App/>.
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      // 5 minutes — stable data (profiles, group details, rate tables) should
+      // not re-fetch on every navigation; individual queries that need fresher
+      // data (notifications) override this with their own staleTime.
+      staleTime: 5 * 60 * 1000,
+    },
+  },
+});
 
 // Initialise Sentry as early as possible.
 // Safe to call with an empty/missing VITE_SENTRY_DSN — it will skip initialisation.
@@ -135,9 +152,11 @@ createRoot(root).render(
   <StrictMode>
     <ThemeProvider>
       <ErrorBoundary>
-        <Suspense fallback={null}>
-          <RouterProvider router={router} />
-        </Suspense>
+        <QueryClientProvider client={queryClient}>
+          <Suspense fallback={null}>
+            <RouterProvider router={router} />
+          </Suspense>
+        </QueryClientProvider>
       </ErrorBoundary>
     </ThemeProvider>
   </StrictMode>,

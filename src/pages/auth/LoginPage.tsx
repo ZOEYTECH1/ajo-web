@@ -27,12 +27,15 @@ export default function LoginPage() {
       setAuth(user, tokens);
       navigate('/dashboard', { replace: true });
     } catch (err: unknown) {
-      const axiosError = err as { response?: { data?: { detail?: string; non_field_errors?: string[] } } };
+      const axiosError = err as { response?: { data?: Record<string, unknown> } };
+      const data = axiosError.response?.data;
+      const first = data ? Object.values(data)[0] : undefined;
+      const fieldMessage = Array.isArray(first) ? first[0] : typeof first === 'string' ? first : undefined;
       const message =
-        axiosError.response?.data?.detail ||
-        axiosError.response?.data?.non_field_errors?.[0] ||
+        (typeof data?.detail === 'string' ? data.detail : undefined) ||
+        fieldMessage ||
         'Invalid email or password. Please try again.';
-      setError(message);
+      setError(String(message));
     } finally {
       setIsLoading(false);
     }

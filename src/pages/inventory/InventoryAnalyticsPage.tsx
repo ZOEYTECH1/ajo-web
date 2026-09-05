@@ -8,7 +8,7 @@ import {
 import {
   CurrencyDollarIcon, ChartBarIcon, CubeIcon,
   ExclamationTriangleIcon, ShoppingCartIcon, ArrowDownTrayIcon,
-  ArrowUpTrayIcon, BanknotesIcon,
+  BanknotesIcon,
 } from '@heroicons/react/24/outline';
 import { SkeletonCard } from '../../components/ui/Skeleton';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
@@ -348,7 +348,7 @@ export default function InventoryAnalyticsPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="label" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `₦${(v / 1000).toFixed(0)}k`} />
-              <Tooltip formatter={(value: number) => nairaFmt(value)} />
+              <Tooltip formatter={(value) => nairaFmt(Number(value) || 0)} />
               <Legend />
               <Bar dataKey="revenue"  name="Revenue"           fill="#10B981" radius={[4, 4, 0, 0]} />
               {hasCogs && (
@@ -372,7 +372,7 @@ export default function InventoryAnalyticsPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="label" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `₦${(v / 1000).toFixed(0)}k`} />
-              <Tooltip formatter={(value: number) => nairaFmt(value)} />
+              <Tooltip formatter={(value) => nairaFmt(Number(value) || 0)} />
               <Line
                 type="monotone"
                 dataKey="net_profit"

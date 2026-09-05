@@ -28,7 +28,7 @@ function StatusBadge({ status }: { status: ThriftInvoice['status'] }) {
 
 // ── Invoice Card ──────────────────────────────────────────────────────────────
 
-function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: number }) {
+function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: string }) {
   const qc = useQueryClient();
   const [verifyTxId, setVerifyTxId] = useState(invoice.tx_ref ?? '');
   const [showVerify, setShowVerify] = useState(false);
@@ -198,6 +198,8 @@ function SkeletonInvoices() {
 
 export default function ThriftOrgBillingPage() {
   const { uuid: orgUuid } = useParams<{ uuid: string }>();
+  if (!orgUuid) return null;
+
   const qc = useQueryClient();
   const [generateError, setGenerateError] = useState('');
 

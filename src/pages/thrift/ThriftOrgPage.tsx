@@ -267,7 +267,7 @@ function OrgSkeleton() {
 
 function ApproveRemovalModal({
   orgUuid, request, onClose,
-}: { orgUuid: number; request: RemovalRequest; onClose: () => void }) {
+}: { orgUuid: string; request: RemovalRequest; onClose: () => void }) {
   const qc = useQueryClient();
   const [settlementNotes, setSettlementNotes] = useState('');
   const [err, setErr] = useState('');
@@ -376,7 +376,7 @@ function ApproveRemovalModal({
 function CreateGroupModal({
   orgUuid, collectors, onClose,
 }: {
-  orgUuid: number;
+  orgUuid: string;
   collectors: CollectorRecord[];
   onClose: () => void;
 }) {
@@ -563,6 +563,8 @@ function InviteModal({ onInvite, onClose, isPending }: {
 
 export default function ThriftOrgPage() {
   const { uuid: orgUuid } = useParams<{ uuid: string }>();
+  if (!orgUuid) return null;
+
   const qc = useQueryClient();
   const [showInvite, setShowInvite] = useState(false);
   const [showCreateGroup, setShowCreateGroup] = useState(false);

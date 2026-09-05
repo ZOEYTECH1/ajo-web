@@ -409,7 +409,7 @@ export default function ThriftQueuePage() {
           isPending={reviewMutation.isPending}
           onClose={() => setFlagTarget(null)}
           onConfirm={reason => reviewMutation.mutate({
-            groupId: flagTarget.group_id,
+            groupUuid: flagTarget.group_uuid,
             memberId: flagTarget.id,
             action: 'flag_amount',
             reason,

@@ -140,7 +140,7 @@ function MemberStatusBadge({ status }: { status: string }) {
 
 // ── Settings Modal (collector only) ──────────────────────────────────────────
 
-function SettingsModal({ groupId, group, onClose }: { groupId: number; group: ThriftGroup; onClose: () => void }) {
+function SettingsModal({ groupId, group, onClose }: { groupId: string; group: ThriftGroup; onClose: () => void }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({ name: group.name, description: group.description ?? '' });
   const [err, setErr] = useState('');
@@ -182,7 +182,7 @@ function SettingsModal({ groupId, group, onClose }: { groupId: number; group: Th
 
 function DisputeModal({
   groupId, paymentId, onClose,
-}: { groupId: number; paymentId: number; onClose: () => void }) {
+}: { groupId: string; paymentId: number; onClose: () => void }) {
   const qc = useQueryClient();
   const [reason, setReason] = useState('');
   const [err, setErr] = useState('');
@@ -427,7 +427,7 @@ function DisputeDetailModal({
 
 // ── Report Collector Modal (payer only) ──────────────────────────────────────
 
-function ReportCollectorModal({ groupId, onClose }: { groupId: number; onClose: () => void }) {
+function ReportCollectorModal({ groupId, onClose }: { groupId: string; onClose: () => void }) {
   const qc = useQueryClient();
   const [reason, setReason] = useState('');
   const [err, setErr] = useState('');
@@ -495,7 +495,7 @@ function ReportCollectorModal({ groupId, onClose }: { groupId: number; onClose: 
 
 function RequestRemovalModal({
   groupId, memberId, onClose, onSuccess,
-}: { groupId: number; memberId: number; onClose: () => void; onSuccess: () => void }) {
+}: { groupId: string; memberId: number; onClose: () => void; onSuccess: () => void }) {
   const [reason, setReason] = useState('');
   const [err, setErr] = useState('');
   const [success, setSuccess] = useState(false);
@@ -560,7 +560,7 @@ function RequestRemovalModal({
 
 // ── Start Cycle Modal (collector only) ───────────────────────────────────────
 
-function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: number; cycleNumber: number; onClose: () => void }) {
+function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: string; cycleNumber: number; onClose: () => void }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({ start_date: '', end_date: '' });
   const [err, setErr] = useState('');
@@ -613,6 +613,8 @@ type Tab = 'payments' | 'members' | 'cycles';
 
 export default function ThriftGroupDetailPage() {
   const { uuid: groupId } = useParams<{ uuid: string }>();
+  if (!groupId) return null;
+
   const qc = useQueryClient();
   const currentUser = useAuthStore((s) => s.user);
 

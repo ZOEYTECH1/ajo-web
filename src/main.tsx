@@ -34,6 +34,9 @@ initSentry();
 const OrgLoginPage                  = lazy(() => import('./pages/org/OrgLoginPage'));
 const OrgGroupDetailPage            = lazy(() => import('./pages/org/OrgGroupDetailPage'));
 
+// Temporary diagnostic — see src/pages/SentryTestPage.tsx
+const SentryTestPage                = lazy(() => import('./pages/SentryTestPage'));
+
 // Auth pages
 const LoginPage                     = lazy(() => import('./pages/auth/LoginPage'));
 const RegisterPage                  = lazy(() => import('./pages/auth/RegisterPage'));
@@ -103,6 +106,7 @@ const router = createBrowserRouter([
     path: '/',
     children: [
       // Public routes
+      { path: 'sentry-test',      element: <SentryTestPage /> },
       { path: 'login',            element: <LoginPage /> },
       { path: 'register',         element: <RegisterPage /> },
       { path: 'verify-otp',       element: <OTPPage /> },

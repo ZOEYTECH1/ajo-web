@@ -342,6 +342,17 @@ export default function AccountPage() {
         </div>
       )}
 
+      {/* Help & Support */}
+      <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
+        <h2 className="text-base font-semibold text-(--text-primary) mb-3">Support</h2>
+        <Link
+          to="/account/help"
+          className="text-sm text-(--primary) hover:underline font-medium"
+        >
+          Help &amp; Support (FAQ) →
+        </Link>
+      </div>
+
       {/* Privacy & Terms */}
       <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
         <h2 className="text-base font-semibold text-(--text-primary) mb-3">Legal</h2>

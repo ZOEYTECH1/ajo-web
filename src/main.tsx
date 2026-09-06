@@ -45,6 +45,7 @@ const DashboardPage                 = lazy(() => import('./pages/DashboardPage')
 const NotificationsPage             = lazy(() => import('./pages/NotificationsPage'));
 const AccountPage                   = lazy(() => import('./pages/account/AccountPage'));
 const PrivacyPage                   = lazy(() => import('./pages/account/PrivacyPage'));
+const HelpPage                      = lazy(() => import('./pages/account/HelpPage'));
 
 // Ajo pages
 const AjoGroupsPage                 = lazy(() => import('./pages/ajo/AjoGroupsPage'));
@@ -135,6 +136,7 @@ const router = createBrowserRouter([
           { path: 'thrift/:uuid',                     element: <ThriftGroupDetailPage /> },
           { path: 'account',                          element: <AccountPage /> },
           { path: 'account/privacy',                  element: <PrivacyPage /> },
+          { path: 'account/help',                     element: <HelpPage /> },
           { path: 'inventory/warehouse/receive',       element: <InventoryWarehouseReceivePage /> },
           { path: 'inventory/warehouse/dispatch',      element: <InventoryWarehouseDispatchPage /> },
           { path: 'inventory/product-requests',        element: <InventoryProductRequestsPage /> },

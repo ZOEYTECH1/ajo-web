@@ -8,6 +8,7 @@ import App, { ProtectedLayout } from './App';
 import OrgAdminLayout from './layouts/OrgAdminLayout';
 import { ThemeProvider } from './context/ThemeContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { RouteErrorBoundary } from './components/ui/RouteErrorBoundary';
 import { initSentry } from './lib/sentry';
 
 // Shared across both route trees below (main app + the standalone org portal) —
@@ -86,6 +87,7 @@ const router = createBrowserRouter([
   // ── Organisation admin portal (completely separate from main app) ──────────
   {
     path: '/org',
+    errorElement: <RouteErrorBoundary />,
     children: [
       { index: true, element: <OrgLoginPage /> },
       {
@@ -104,6 +106,7 @@ const router = createBrowserRouter([
   {
     element: <App />,
     path: '/',
+    errorElement: <RouteErrorBoundary />,
     children: [
       // Public routes
       { path: 'sentry-test',      element: <SentryTestPage /> },

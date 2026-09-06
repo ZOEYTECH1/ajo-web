@@ -612,8 +612,7 @@ function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: string; c
 type Tab = 'payments' | 'members' | 'cycles';
 
 export default function ThriftGroupDetailPage() {
-  const { uuid: groupId } = useParams<{ uuid: string }>();
-  if (!groupId) return null;
+  const { uuid: groupId = '' } = useParams<{ uuid: string }>();
 
   const qc = useQueryClient();
   const currentUser = useAuthStore((s) => s.user);

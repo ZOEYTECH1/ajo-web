@@ -562,8 +562,7 @@ function InviteModal({ onInvite, onClose, isPending }: {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function ThriftOrgPage() {
-  const { uuid: orgUuid } = useParams<{ uuid: string }>();
-  if (!orgUuid) return null;
+  const { uuid: orgUuid = '' } = useParams<{ uuid: string }>();
 
   const qc = useQueryClient();
   const [showInvite, setShowInvite] = useState(false);

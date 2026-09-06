@@ -197,8 +197,7 @@ function SkeletonInvoices() {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function ThriftOrgBillingPage() {
-  const { uuid: orgUuid } = useParams<{ uuid: string }>();
-  if (!orgUuid) return null;
+  const { uuid: orgUuid = '' } = useParams<{ uuid: string }>();
 
   const qc = useQueryClient();
   const [generateError, setGenerateError] = useState('');

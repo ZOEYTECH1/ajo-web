@@ -129,6 +129,15 @@ function nairaFmt(value: number) {
   return fmt(value);
 }
 
+interface LifetimeTrendEntry {
+  source: 'reported' | 'tracked';
+  label: string;
+  period_start: string;
+  period_end: string;
+  revenue: string;
+  expenses: string;
+}
+
 export default function InventoryAnalyticsPage() {
   const [period, setPeriod] = useState<Period>('monthly');
   const sel = PERIODS.find((p) => p.value === period) ?? PERIODS[0];
@@ -140,6 +149,16 @@ export default function InventoryAnalyticsPage() {
       const params: Record<string, unknown> = { period, days: sel.days, business_id: selectedId };
       if (sel.startDate) params.start_date = sel.startDate;
       const res = await api.get('/inventory/analytics/', { params });
+      return res.data;
+    },
+    enabled: selectedId !== null,
+    staleTime: 60_000,
+  });
+
+  const { data: lifetimeTrend, isLoading: trendLoading } = useQuery<LifetimeTrendEntry[]>({
+    queryKey: ['inventory-lifetime-trend', selectedId],
+    queryFn: async () => {
+      const res = await api.get('/inventory/lifetime-trend/', { params: { business_id: selectedId } });
       return res.data;
     },
     enabled: selectedId !== null,
@@ -162,6 +181,14 @@ export default function InventoryAnalyticsPage() {
   );
 
   const s = data?.summary;
+
+  const trendEntries = lifetimeTrend ?? [];
+  const hasReportedData = trendEntries.some((e) => e.source === 'reported');
+  const trendChart = trendEntries.map((e) => ({
+    label: e.label,
+    reportedRevenue: e.source === 'reported' ? Number(e.revenue) : undefined,
+    trackedRevenue: e.source === 'tracked' ? Number(e.revenue) : undefined,
+  }));
 
   return (
     <div className="space-y-8">
@@ -383,6 +410,30 @@ export default function InventoryAnalyticsPage() {
                 activeDot={{ r: 5 }}
               />
             </LineChart>
+          </ResponsiveContainer>
+        </section>
+      )}
+
+      {/* ── Section 4b: Lifetime Trend (Reported vs Tracked) ───────────────── */}
+      {!trendLoading && hasReportedData && (
+        <section className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
+          <div className="mb-4">
+            <h2 className="text-base font-semibold text-(--text-primary)">Lifetime Revenue Trend</h2>
+            <p className="text-xs text-(--text-muted) mt-0.5">
+              Grey = Self-reported (before this app) &nbsp;·&nbsp; Blue = Tracked in-app, by month.
+              Full business history, independent of the period filter above.
+            </p>
+          </div>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={trendChart} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+              <XAxis dataKey="label" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `₦${(v / 1000).toFixed(0)}k`} />
+              <Tooltip formatter={(value) => nairaFmt(Number(value) || 0)} />
+              <Legend />
+              <Bar dataKey="reportedRevenue" name="Reported (pre-app)" fill="#9CA3AF" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="trackedRevenue"  name="Tracked (in-app)"   fill="#3B82F6" radius={[4, 4, 0, 0]} />
+            </BarChart>
           </ResponsiveContainer>
         </section>
       )}

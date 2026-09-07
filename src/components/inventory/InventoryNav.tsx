@@ -17,6 +17,7 @@ const links = [
   { to: '/inventory/warehouse/dispatch',   label: 'Dispatch',     end: false },
   { to: '/inventory/product-requests',     label: 'Requests',     end: false },
   { to: '/inventory/business',             label: 'Business',     end: false },
+  { to: '/inventory/history',              label: 'History',      end: false },
   { to: '/inventory/subscription',         label: 'Subscription', end: false },
   { to: '/inventory/best-sellers',         label: 'Best Sellers', end: false },
 ];
@@ -44,6 +45,9 @@ export function InventoryNav() {
     qc.invalidateQueries({ queryKey: ['inventory-analytics'] });
     qc.invalidateQueries({ queryKey: ['inventory-transfers'] });
     qc.invalidateQueries({ queryKey: ['inventory-best-sellers'] });
+    qc.invalidateQueries({ queryKey: ['inventory-past-periods'] });
+    qc.invalidateQueries({ queryKey: ['inventory-lifetime-totals'] });
+    qc.invalidateQueries({ queryKey: ['inventory-lifetime-trend'] });
   }
 
   const Icon = MODE_ICON[selectedBiz?.mode ?? 'retail'] ?? BuildingStorefrontIcon;

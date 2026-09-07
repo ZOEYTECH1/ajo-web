@@ -76,6 +76,7 @@ const InventoryProductsPage         = lazy(() => import('./pages/inventory/Inven
 const InventoryExpensesPage         = lazy(() => import('./pages/inventory/InventoryExpensesPage'));
 const InventoryCustomersPage        = lazy(() => import('./pages/inventory/InventoryCustomersPage'));
 const InventoryBusinessPage         = lazy(() => import('./pages/inventory/InventoryBusinessPage'));
+const InventoryBusinessHistoryPage  = lazy(() => import('./pages/inventory/InventoryBusinessHistoryPage'));
 const InventoryTransfersPage        = lazy(() => import('./pages/inventory/InventoryTransfersPage'));
 const InventoryWarehouseReceivePage = lazy(() => import('./pages/inventory/InventoryWarehouseReceivePage'));
 const InventoryWarehouseDispatchPage= lazy(() => import('./pages/inventory/InventoryWarehouseDispatchPage'));
@@ -129,6 +130,7 @@ const router = createBrowserRouter([
           { path: 'inventory/expenses',         element: <InventoryExpensesPage /> },
           { path: 'inventory/customers',        element: <InventoryCustomersPage /> },
           { path: 'inventory/business',         element: <InventoryBusinessPage /> },
+          { path: 'inventory/history',          element: <InventoryBusinessHistoryPage /> },
           { path: 'inventory/transfers',        element: <InventoryTransfersPage /> },
           { path: 'notifications',                    element: <NotificationsPage /> },
           { path: 'ajo',                              element: <AjoGroupsPage /> },

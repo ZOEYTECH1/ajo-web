@@ -9,6 +9,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { beforeAll, afterEach, afterAll, describe, it, expect, vi } from 'vitest';
 import { server } from './mocks/server';
 import { http, HttpResponse } from 'msw';
@@ -30,7 +31,9 @@ function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <QueryClientProvider client={makeQC()}>
-        <MemoryRouter>{children}</MemoryRouter>
+        <GoogleOAuthProvider clientId="test-client-id">
+          <MemoryRouter>{children}</MemoryRouter>
+        </GoogleOAuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
   );

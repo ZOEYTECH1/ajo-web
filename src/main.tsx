@@ -2,6 +2,7 @@ import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import './index.css';
 
 import App, { ProtectedLayout } from './App';
@@ -43,6 +44,7 @@ const LoginPage                     = lazy(() => import('./pages/auth/LoginPage'
 const RegisterPage                  = lazy(() => import('./pages/auth/RegisterPage'));
 const OTPPage                       = lazy(() => import('./pages/auth/OTPPage'));
 const ForgotPasswordPage            = lazy(() => import('./pages/auth/ForgotPasswordPage'));
+const CompleteProfilePage           = lazy(() => import('./pages/auth/CompleteProfilePage'));
 
 // App pages
 const DashboardPage                 = lazy(() => import('./pages/DashboardPage'));
@@ -122,6 +124,7 @@ const router = createBrowserRouter([
         children: [
           { index: true,                        element: <DashboardPage /> },
           { path: 'dashboard',                  element: <DashboardPage /> },
+          { path: 'complete-profile',           element: <CompleteProfilePage /> },
           { path: 'inventory',                  element: <InventoryDashboardPage /> },
           { path: 'inventory/analytics',        element: <InventoryAnalyticsPage /> },
           { path: 'inventory/sales',            element: <InventorySalesPage /> },
@@ -166,9 +169,13 @@ createRoot(root).render(
     <ThemeProvider>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
-          <Suspense fallback={null}>
-            <RouterProvider router={router} />
-          </Suspense>
+          {/* Empty clientId is safe — GoogleLogin just fails to render/authenticate,
+              it doesn't crash the app, same "no-op when unset" pattern as Sentry. */}
+          <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>
+            <Suspense fallback={null}>
+              <RouterProvider router={router} />
+            </Suspense>
+          </GoogleOAuthProvider>
         </QueryClientProvider>
       </ErrorBoundary>
     </ThemeProvider>

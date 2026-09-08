@@ -29,7 +29,8 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
-  phone_number: string;
+  // null for a brand-new Google sign-in — they haven't added a phone number yet.
+  phone_number: string | null;
   role: string;
   profile_photo_url?: string;
   is_email_verified: boolean;
@@ -67,6 +68,23 @@ export async function login(payload: LoginPayload): Promise<LoginResponse> {
 }
 
 /**
+ * Authenticate (or silently create) a user from a Google ID token.
+ * A brand-new account is returned with phone_number: null — the caller
+ * must route to the complete-profile flow to collect it.
+ *
+ * @param idToken - The JWT credential returned by Google Identity Services
+ * @returns Access/refresh tokens and the authenticated user object
+ */
+export async function googleSignIn(idToken: string): Promise<LoginResponse> {
+  const time_zone = detectTimeZone();
+  const response = await api.post<LoginResponse>('/auth/google/', {
+    id_token: idToken,
+    ...(time_zone ? { time_zone } : {}),
+  });
+  return response.data;
+}
+
+/**
  * Register a new user account.
  *
  * @param payload - Registration data (email, password, name, phone)
@@ -87,6 +105,40 @@ export async function register(payload: RegisterPayload): Promise<{ message: str
  */
 export async function verifyEmail(email: string, code: string): Promise<{ message: string }> {
   const response = await api.post<{ message: string }>('/auth/verify-email/', { email, code });
+  return response.data;
+}
+
+/**
+ * Add/replace the phone number for the current (authenticated) user — used
+ * by brand-new Google sign-ins, who start with phone_number: null. Triggers
+ * an SMS OTP to verify it.
+ *
+ * @param phoneNumber - E.164-formatted phone number (e.g. +2348012345678)
+ */
+export async function setPhone(phoneNumber: string): Promise<{ detail: string }> {
+  const response = await api.post<{ detail: string }>('/auth/set-phone/', { phone_number: phoneNumber });
+  return response.data;
+}
+
+/**
+ * Verify the user's phone number using the OTP sent by {@link setPhone}.
+ *
+ * @param email - The account email address
+ * @param code  - The 6-digit OTP received via SMS
+ */
+export async function verifyPhone(email: string, code: string): Promise<{ message: string }> {
+  const response = await api.post<{ message: string }>('/auth/verify-phone/', { email, code });
+  return response.data;
+}
+
+/**
+ * Re-sends an email or phone OTP.
+ *
+ * @param email - The account's email address
+ * @param type  - Whether to re-send to 'email' or 'phone'
+ */
+export async function resendOtp(email: string, type: 'email' | 'phone'): Promise<{ message: string }> {
+  const response = await api.post<{ message: string }>('/auth/resend-otp/', { email, type });
   return response.data;
 }
 

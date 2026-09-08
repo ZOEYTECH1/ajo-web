@@ -41,13 +41,28 @@ export interface LoginResponse extends AuthTokens {
 }
 
 /**
+ * Best-effort browser-detected IANA timezone (e.g. "Africa/Lagos"). The
+ * backend resolves each user's "today" (cycle close eligibility, etc.)
+ * against their own timezone rather than one global clock, so this is sent
+ * on every login/register to keep it in sync — never blocks auth if it fails.
+ */
+function detectTimeZone(): string | undefined {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Authenticate a user with email and password.
  *
  * @param payload - Login credentials (email + password)
  * @returns Access/refresh tokens and the authenticated user object
  */
 export async function login(payload: LoginPayload): Promise<LoginResponse> {
-  const response = await api.post<LoginResponse>('/auth/login/', payload);
+  const time_zone = detectTimeZone();
+  const response = await api.post<LoginResponse>('/auth/login/', { ...payload, ...(time_zone ? { time_zone } : {}) });
   return response.data;
 }
 
@@ -58,7 +73,8 @@ export async function login(payload: LoginPayload): Promise<LoginResponse> {
  * @returns A confirmation message from the server
  */
 export async function register(payload: RegisterPayload): Promise<{ message: string }> {
-  const response = await api.post<{ message: string }>('/auth/register/', payload);
+  const time_zone = detectTimeZone();
+  const response = await api.post<{ message: string }>('/auth/register/', { ...payload, ...(time_zone ? { time_zone } : {}) });
   return response.data;
 }
 

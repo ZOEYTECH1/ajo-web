@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { AjoLoader, AjoLoaderOverlay } from '../../components/ui/AjoLoader';
-import { login, googleSignIn } from '../../services/authService';
+import { login } from '../../services/authService';
+import { useGoogleAuth } from '../../hooks/useGoogleAuth';
 import useAuthStore from '../../store/useAuthStore';
 
 export default function LoginPage() {
@@ -42,24 +43,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
-    if (!credentialResponse.credential) {
-      setError('Google sign-in failed. Please try again.');
-      return;
-    }
-    setError('');
-    setIsLoading(true);
-    try {
-      const { user, ...tokens } = await googleSignIn(credentialResponse.credential);
-      setAuth(user, tokens);
-      navigate(user.phone_number ? '/dashboard' : '/complete-profile', { replace: true });
-    } catch (err: unknown) {
-      const axiosError = err as { response?: { data?: { detail?: string } } };
-      setError(axiosError.response?.data?.detail || 'Google sign-in failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { handleSuccess: handleGoogleSuccess, handleError: handleGoogleError } = useGoogleAuth(setError, setIsLoading);
 
   return (
     <div className="min-h-screen bg-(--bg) flex items-center justify-center px-4 py-12">
@@ -131,7 +115,7 @@ export default function LoginPage() {
           <div className="flex justify-center">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
-              onError={() => setError('Google sign-in failed. Please try again.')}
+              onError={handleGoogleError}
               width="336"
               text="continue_with"
               shape="pill"

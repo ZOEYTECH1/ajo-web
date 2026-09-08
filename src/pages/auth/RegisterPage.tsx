@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { AjoLoader, AjoLoaderOverlay } from '../../components/ui/AjoLoader';
 import { register } from '../../services/authService';
+import { useGoogleAuth } from '../../hooks/useGoogleAuth';
 
 interface FormState {
   first_name: string;
@@ -30,6 +32,8 @@ export default function RegisterPage() {
   const [errors, setErrors]         = useState<FormErrors>({});
   const [serverError, setServerError] = useState('');
   const [isLoading, setIsLoading]   = useState(false);
+
+  const { handleSuccess: handleGoogleSuccess, handleError: handleGoogleError } = useGoogleAuth(setServerError, setIsLoading);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -107,6 +111,22 @@ export default function RegisterPage() {
               Create account
             </Button>
           </form>
+
+          <div className="my-5 flex items-center gap-3">
+            <div className="flex-1 border-t border-(--border)" />
+            <span className="text-xs text-(--text-muted)">or continue with</span>
+            <div className="flex-1 border-t border-(--border)" />
+          </div>
+
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              width="336"
+              text="signup_with"
+              shape="pill"
+            />
+          </div>
 
           <p className="mt-6 text-center text-sm text-(--text-secondary)">
             Already have an account?{' '}

@@ -216,6 +216,10 @@ function SubmitPaymentModal({
       setErr('Enter a valid payment amount.');
       return;
     }
+    if (!file) {
+      setErr('Attach a receipt photo before submitting.');
+      return;
+    }
     mutation.mutate();
   }
 
@@ -269,7 +273,7 @@ function SubmitPaymentModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Receipt (optional)</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Receipt (required)</label>
             {preview ? (
               <div className="relative rounded-xl overflow-hidden border border-(--border)">
                 <img src={preview} alt="Receipt preview" className="w-full h-48 object-cover" />
@@ -310,7 +314,7 @@ function SubmitPaymentModal({
             <button type="button" onClick={onClose} className={`flex-1 ${cancelBtn}`}>Cancel</button>
             <button
               type="submit"
-              disabled={mutation.isPending || !amount.trim()}
+              disabled={mutation.isPending || !amount.trim() || !file}
               className={`flex-1 ${orangeBtn}`}
             >
               {mutation.isPending ? 'Submitting…' : 'Submit Payment'}

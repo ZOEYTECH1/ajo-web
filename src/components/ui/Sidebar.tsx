@@ -21,17 +21,23 @@ interface NavItem {
   label: string;
   to: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  /** Module key this link belongs to, if it's one of the 3 gated modules. */
-  moduleKey?: 'ajo' | 'thrift' | 'inventory';
 }
 
-const navItems: NavItem[] = [
-  { label: 'Dashboard',     to: '/dashboard',     icon: HomeIcon },
-  { label: 'Ajo Groups',    to: '/ajo',           icon: UserGroupIcon, moduleKey: 'ajo' },
-  { label: 'Thrift',        to: '/thrift',        icon: BanknotesIcon, moduleKey: 'thrift' },
-  { label: 'Inventory',     to: '/inventory',     icon: CubeIcon,      moduleKey: 'inventory' },
+const topItems: NavItem[] = [
+  { label: 'Dashboard', to: '/dashboard', icon: HomeIcon },
+];
+
+const bottomItems: NavItem[] = [
   { label: 'Notifications', to: '/notifications', icon: BellIcon },
   { label: 'Account',       to: '/account',       icon: UserCircleIcon },
+];
+
+type ModuleKey = 'ajo' | 'thrift' | 'inventory';
+
+const MODULE_ITEMS: { key: ModuleKey; label: string; to: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; description: string }[] = [
+  { key: 'ajo',       label: 'Ajo Groups', to: '/ajo',       icon: UserGroupIcon, description: 'Run savings circles with scheduled contributions and payouts.' },
+  { key: 'thrift',    label: 'Thrift',     to: '/thrift',    icon: BanknotesIcon, description: 'Cooperative savings groups with flexible contribution tracking.' },
+  { key: 'inventory', label: 'Inventory',  to: '/inventory', icon: CubeIcon,      description: 'Track products, sales, expenses and analytics for your business.' },
 ];
 
 interface Notification { is_read: boolean }
@@ -45,11 +51,13 @@ export function Sidebar({ onClose }: SidebarProps) {
   const navigate = useNavigate();
   const { usesAjo, usesThrift, usesInventory } = useModuleAccess();
 
-  const moduleInUse: Record<string, boolean> = {
+  const moduleInUse: Record<ModuleKey, boolean> = {
     ajo: usesAjo,
     thrift: usesThrift,
     inventory: usesInventory,
   };
+  const activeModules  = MODULE_ITEMS.filter((m) => moduleInUse[m.key]);
+  const exploreModules = MODULE_ITEMS.filter((m) => !moduleInUse[m.key]);
 
   const { data: notifs } = useQuery({
     queryKey: ['notifications'],
@@ -84,44 +92,57 @@ export function Sidebar({ onClose }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        {navItems.map(({ label, to, icon: Icon, moduleKey }) => {
-          // A module the user doesn't actively use yet is still a normal,
-          // fully-clickable link — nothing is locked or gated — just styled
-          // as an "explore" option rather than an active feature, matching
-          // how the mobile app treats modules you haven't picked/used yet.
-          const isUnusedModule = moduleKey !== undefined && !moduleInUse[moduleKey];
-          return (
-            <NavLink
-              key={to}
-              to={to}
-              onClick={onClose}
-              className={({ isActive }) =>
-                clsx(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                  isActive
-                    ? 'text-(--primary) bg-(--primary-tint)'
-                    : isUnusedModule
-                    ? 'text-(--text-muted) hover:bg-(--primary-tint)/30 hover:text-(--text-secondary)'
-                    : 'text-(--text-secondary) hover:bg-(--primary-tint)/50 hover:text-(--text-primary)',
-                )
-              }
-            >
-              <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
-              <span className="flex-1">{label}</span>
-              {isUnusedModule && (
-                <span className="flex items-center gap-1 text-[10px] font-semibold text-(--text-muted) border border-(--border) rounded-full px-1.5 py-0.5">
-                  <SparklesIcon className="h-3 w-3" aria-hidden="true" />
-                  Explore
-                </span>
-              )}
-              {label === 'Notifications' && unreadCount > 0 && (
-                <span className="flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </span>
-              )}
-            </NavLink>
-          );
-        })}
+        {[...topItems, ...activeModules, ...bottomItems].map(({ label, to, icon: Icon }) => (
+          <NavLink
+            key={to}
+            to={to}
+            onClick={onClose}
+            className={({ isActive }) =>
+              clsx(
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                isActive
+                  ? 'text-(--primary) bg-(--primary-tint)'
+                  : 'text-(--text-secondary) hover:bg-(--primary-tint)/50 hover:text-(--text-primary)',
+              )
+            }
+          >
+            <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+            <span className="flex-1">{label}</span>
+            {label === 'Notifications' && unreadCount > 0 && (
+              <span className="flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+          </NavLink>
+        ))}
+
+        {/* Modules not in use yet — kept out of the main nav entirely, shown
+            as a distinct "explore" section with a description of what each
+            one does, matching mobile's discover-card treatment. Not locked —
+            there's no backend access gating on either platform — just
+            de-emphasized until the user actually starts using it. */}
+        {exploreModules.length > 0 && (
+          <div className="pt-4 mt-3 border-t border-(--border) space-y-1.5">
+            <p className="px-3 text-[11px] font-semibold text-(--text-muted) uppercase tracking-wide flex items-center gap-1.5">
+              <SparklesIcon className="h-3.5 w-3.5" aria-hidden="true" />
+              Explore
+            </p>
+            {exploreModules.map(({ key, label, to, icon: Icon, description }) => (
+              <NavLink
+                key={key}
+                to={to}
+                onClick={onClose}
+                className="flex items-start gap-3 px-3 py-2.5 rounded-lg border border-dashed border-(--border) hover:border-(--primary) hover:bg-(--primary-tint)/20 transition-colors"
+              >
+                <Icon className="h-5 w-5 shrink-0 text-(--text-muted) mt-0.5" aria-hidden="true" />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-(--text-secondary)">{label}</p>
+                  <p className="text-xs text-(--text-muted) mt-0.5 leading-snug">{description}</p>
+                </div>
+              </NavLink>
+            ))}
+          </div>
+        )}
       </nav>
 
       {/* User section */}

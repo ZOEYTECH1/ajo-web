@@ -51,7 +51,6 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
     grace_period_days: '7',
     description: '',
     start_date: '',
-    end_date: '',
   });
   const [err, setErr] = useState('');
 
@@ -64,7 +63,6 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
       grace_period_days: Math.min(30, Math.max(0, Number(form.grace_period_days) || 0)),
       description: form.description.trim(),
       start_date: form.start_date || undefined,
-      end_date: form.end_date || undefined,
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ajo-groups'] });
@@ -167,14 +165,12 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             />
           </Field>
 
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="First Cycle Start" id="cg-start">
-              <input id="cg-start" type="date" value={form.start_date} onChange={(e) => set('start_date', e.target.value)} className={inputCls} />
-            </Field>
-            <Field label="First Cycle End" id="cg-end">
-              <input id="cg-end" type="date" value={form.end_date} onChange={(e) => set('end_date', e.target.value)} className={inputCls} />
-            </Field>
-          </div>
+          <Field label="First Cycle Start (optional)" id="cg-start">
+            <input id="cg-start" type="date" value={form.start_date} onChange={(e) => set('start_date', e.target.value)} className={inputCls} />
+            <p className="text-xs text-(--text-muted) mt-1">
+              The cycle's end date is set automatically based on the contribution frequency and collection day.
+            </p>
+          </Field>
 
           <Field label="Description (optional)" id="cg-description">
             <textarea

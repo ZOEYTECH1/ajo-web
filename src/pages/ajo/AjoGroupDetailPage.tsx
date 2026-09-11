@@ -541,12 +541,11 @@ function StartCycleModal({
 }) {
   const qc = useQueryClient();
   const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [err, setErr] = useState('');
 
   const mutation = useMutation({
     mutationFn: () =>
-      api.post(`/groups/${groupId}/cycles/`, { start_date: startDate, end_date: endDate }),
+      api.post(`/groups/${groupId}/cycles/`, { start_date: startDate }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
       onClose();
@@ -561,7 +560,7 @@ function StartCycleModal({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErr('');
-    if (!startDate || !endDate) { setErr('Both dates are required.'); return; }
+    if (!startDate) { setErr('Start date is required.'); return; }
     mutation.mutate();
   }
 
@@ -586,16 +585,9 @@ function StartCycleModal({
               className={inputCls}
             />
           </div>
-          <div>
-            <label htmlFor="sc-end" className="block text-sm font-semibold text-(--text-secondary) mb-1">End Date</label>
-            <input
-              id="sc-end"
-              type="date"
-              value={endDate}
-              onChange={(e) => { setEndDate(e.target.value); setErr(''); }}
-              className={inputCls}
-            />
-          </div>
+          <p className="text-xs text-(--text-muted)">
+            The cycle's end date is set automatically based on the group's contribution frequency and collection day.
+          </p>
 
           {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
 

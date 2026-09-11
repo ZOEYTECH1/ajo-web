@@ -9,23 +9,27 @@ import {
   UserCircleIcon,
   BellIcon,
   ArrowRightStartOnRectangleIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
 import useAuthStore from '../../store/useAuthStore';
 import { logout } from '../../services/authService';
 import api from '../../services/api';
 import { cloudinaryUrl } from '../../lib/cloudinary';
+import { useModuleAccess } from '../../hooks/useModuleAccess';
 
 interface NavItem {
   label: string;
   to: string;
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  /** Module key this link belongs to, if it's one of the 3 gated modules. */
+  moduleKey?: 'ajo' | 'thrift' | 'inventory';
 }
 
 const navItems: NavItem[] = [
   { label: 'Dashboard',     to: '/dashboard',     icon: HomeIcon },
-  { label: 'Ajo Groups',    to: '/ajo',           icon: UserGroupIcon },
-  { label: 'Thrift',        to: '/thrift',        icon: BanknotesIcon },
-  { label: 'Inventory',     to: '/inventory',     icon: CubeIcon },
+  { label: 'Ajo Groups',    to: '/ajo',           icon: UserGroupIcon, moduleKey: 'ajo' },
+  { label: 'Thrift',        to: '/thrift',        icon: BanknotesIcon, moduleKey: 'thrift' },
+  { label: 'Inventory',     to: '/inventory',     icon: CubeIcon,      moduleKey: 'inventory' },
   { label: 'Notifications', to: '/notifications', icon: BellIcon },
   { label: 'Account',       to: '/account',       icon: UserCircleIcon },
 ];
@@ -39,6 +43,13 @@ interface SidebarProps {
 export function Sidebar({ onClose }: SidebarProps) {
   const { user, clearAuth } = useAuthStore();
   const navigate = useNavigate();
+  const { usesAjo, usesThrift, usesInventory } = useModuleAccess();
+
+  const moduleInUse: Record<string, boolean> = {
+    ajo: usesAjo,
+    thrift: usesThrift,
+    inventory: usesInventory,
+  };
 
   const { data: notifs } = useQuery({
     queryKey: ['notifications'],
@@ -73,29 +84,44 @@ export function Sidebar({ onClose }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        {navItems.map(({ label, to, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            onClick={onClose}
-            className={({ isActive }) =>
-              clsx(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                isActive
-                  ? 'text-(--primary) bg-(--primary-tint)'
-                  : 'text-(--text-secondary) hover:bg-(--primary-tint)/50 hover:text-(--text-primary)',
-              )
-            }
-          >
-            <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
-            <span className="flex-1">{label}</span>
-            {label === 'Notifications' && unreadCount > 0 && (
-              <span className="flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold">
-                {unreadCount > 99 ? '99+' : unreadCount}
-              </span>
-            )}
-          </NavLink>
-        ))}
+        {navItems.map(({ label, to, icon: Icon, moduleKey }) => {
+          // A module the user doesn't actively use yet is still a normal,
+          // fully-clickable link — nothing is locked or gated — just styled
+          // as an "explore" option rather than an active feature, matching
+          // how the mobile app treats modules you haven't picked/used yet.
+          const isUnusedModule = moduleKey !== undefined && !moduleInUse[moduleKey];
+          return (
+            <NavLink
+              key={to}
+              to={to}
+              onClick={onClose}
+              className={({ isActive }) =>
+                clsx(
+                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                  isActive
+                    ? 'text-(--primary) bg-(--primary-tint)'
+                    : isUnusedModule
+                    ? 'text-(--text-muted) hover:bg-(--primary-tint)/30 hover:text-(--text-secondary)'
+                    : 'text-(--text-secondary) hover:bg-(--primary-tint)/50 hover:text-(--text-primary)',
+                )
+              }
+            >
+              <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+              <span className="flex-1">{label}</span>
+              {isUnusedModule && (
+                <span className="flex items-center gap-1 text-[10px] font-semibold text-(--text-muted) border border-(--border) rounded-full px-1.5 py-0.5">
+                  <SparklesIcon className="h-3 w-3" aria-hidden="true" />
+                  Explore
+                </span>
+              )}
+              {label === 'Notifications' && unreadCount > 0 && (
+                <span className="flex items-center justify-center h-5 min-w-5 px-1 rounded-full bg-red-500 text-white text-xs font-bold">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </NavLink>
+          );
+        })}
       </nav>
 
       {/* User section */}

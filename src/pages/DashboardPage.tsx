@@ -6,9 +6,11 @@ import {
   BanknotesIcon,
   CubeIcon,
   BellIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
 import useAuthStore from '../store/useAuthStore';
 import api from '../services/api';
+import { useModuleAccess } from '../hooks/useModuleAccess';
 
 interface Notification {
   id: number;
@@ -24,22 +26,38 @@ interface QuickLinkProps {
   description: string;
   iconBg: string;
   iconColor: string;
+  /** Not actively used yet — still a normal link, just styled as a discovery option. */
+  isExplore?: boolean;
 }
 
-function QuickLink({ to, icon: Icon, label, description, iconBg, iconColor }: QuickLinkProps) {
+function QuickLink({ to, icon: Icon, label, description, iconBg, iconColor, isExplore }: QuickLinkProps) {
   return (
     <Link
       to={to}
-      className="group flex items-start gap-4 bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5 hover:border-(--primary) hover:shadow-md transition-all"
+      className={`group flex items-start gap-4 rounded-xl border shadow-sm p-5 transition-all ${
+        isExplore
+          ? 'bg-(--surface) border-dashed border-(--border) opacity-80 hover:opacity-100 hover:border-(--primary)'
+          : 'bg-(--surface) border-(--border) hover:border-(--primary) hover:shadow-md'
+      }`}
     >
       <div className={`shrink-0 h-10 w-10 rounded-lg flex items-center justify-center ${iconBg}`}>
         <Icon className={`h-5 w-5 ${iconColor}`} />
       </div>
       <div>
-        <p className="font-semibold text-(--text-primary) group-hover:text-(--primary) transition-colors">
-          {label}
+        <div className="flex items-center gap-2">
+          <p className="font-semibold text-(--text-primary) group-hover:text-(--primary) transition-colors">
+            {label}
+          </p>
+          {isExplore && (
+            <span className="flex items-center gap-1 text-[10px] font-semibold text-(--text-muted) border border-(--border) rounded-full px-1.5 py-0.5">
+              <SparklesIcon className="h-3 w-3" aria-hidden="true" />
+              Explore
+            </span>
+          )}
+        </div>
+        <p className="text-xs text-(--text-muted) mt-0.5">
+          {isExplore ? `Not set up yet — ${description.toLowerCase()}` : description}
         </p>
-        <p className="text-xs text-(--text-muted) mt-0.5">{description}</p>
       </div>
     </Link>
   );
@@ -65,37 +83,37 @@ export default function DashboardPage() {
   });
 
   const firstName = user?.first_name || 'there';
-  const modules = user?.selectedModules ?? [];
-  const hasInventory = modules.length === 0 || modules.includes('inventory');
-  const hasAjo       = modules.length === 0 || modules.includes('ajo');
-  const hasThrift    = modules.length === 0 || modules.includes('thrift');
+  const { usesAjo, usesThrift, usesInventory } = useModuleAccess();
 
   const quickLinks: QuickLinkProps[] = [
-    hasAjo && {
+    {
       to: '/ajo',
       icon: UserGroupIcon,
       label: 'Ajo Groups',
       description: 'View and manage your savings circles',
       iconBg: 'bg-(--primary-tint)',
       iconColor: 'text-(--primary)',
+      isExplore: !usesAjo,
     },
-    hasThrift && {
+    {
       to: '/thrift',
       icon: BanknotesIcon,
       label: 'Thrift',
       description: 'Your cooperative savings groups',
       iconBg: 'bg-green-50 dark:bg-green-950/40',
       iconColor: 'text-green-600 dark:text-green-400',
+      isExplore: !usesThrift,
     },
-    hasInventory && {
+    {
       to: '/inventory',
       icon: CubeIcon,
       label: 'Inventory',
       description: 'Track products, sales and analytics',
       iconBg: 'bg-purple-50 dark:bg-purple-950/40',
       iconColor: 'text-purple-600 dark:text-purple-400',
+      isExplore: !usesInventory,
     },
-  ].filter(Boolean) as QuickLinkProps[];
+  ];
 
   return (
     <div className="space-y-6">

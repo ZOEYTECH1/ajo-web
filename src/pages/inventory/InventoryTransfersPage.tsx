@@ -212,8 +212,8 @@ function TransferModal({
               {cart.map((item, i) => (
                 <div key={i} className="flex items-center justify-between gap-2 rounded-lg bg-orange-50 border border-orange-100 px-3 py-2">
                   <div>
-                    <p className="text-sm font-medium text-(--text-primary)">{item.product_name}</p>
-                    <p className="text-xs text-(--text-secondary)">Qty: {item.quantity}</p>
+                    <p className="text-sm font-medium text-gray-900">{item.product_name}</p>
+                    <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
                   </div>
                   <button
                     type="button"

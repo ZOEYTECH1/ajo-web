@@ -259,9 +259,12 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
           ) : (
             <>
               <div className="rounded-xl bg-orange-50 border border-orange-100 p-4 text-center">
+                {/* Fixed light box regardless of theme — text here must stay
+                    fixed dark too, not the theme-aware --text-* variables
+                    (those turn near-white in dark mode and disappear here). */}
                 <p className="text-xs text-orange-500 uppercase tracking-wider font-semibold mb-1">Group found</p>
-                <p className="text-lg font-bold text-(--text-primary)">{found?.group_name}</p>
-                <p className="text-sm text-(--text-secondary) mt-1">{found?.message}</p>
+                <p className="text-lg font-bold text-gray-900">{found?.group_name}</p>
+                <p className="text-sm text-gray-600 mt-1">{found?.message}</p>
               </div>
               <p className="text-sm text-(--text-secondary) text-center">
                 Your request will be sent to the group admin for approval.

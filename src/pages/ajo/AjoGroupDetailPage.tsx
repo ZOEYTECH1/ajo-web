@@ -1930,7 +1930,7 @@ export default function AjoGroupDetailPage() {
                 <summary className="cursor-pointer text-xs text-orange-600 font-semibold hover:underline select-none">
                   View group rules
                 </summary>
-                <p className="mt-1.5 text-xs text-(--text-secondary) bg-orange-50 rounded-lg px-3 py-2 leading-relaxed whitespace-pre-line">
+                <p className="mt-1.5 text-xs text-gray-600 bg-orange-50 rounded-lg px-3 py-2 leading-relaxed whitespace-pre-line">
                   {group.rules}
                 </p>
               </details>

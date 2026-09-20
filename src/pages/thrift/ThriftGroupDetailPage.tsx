@@ -390,8 +390,8 @@ function DisputeDetailModal({
           {/* Reason */}
           <div>
             <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide mb-1">Dispute Reason</p>
-            <p className="text-sm text-(--text-primary) bg-red-50 border border-red-100 rounded-lg px-4 py-3 leading-relaxed">
-              {payment.dispute_reason || <span className="italic text-(--text-muted)">No reason provided.</span>}
+            <p className="text-sm text-gray-900 bg-red-50 border border-red-100 rounded-lg px-4 py-3 leading-relaxed">
+              {payment.dispute_reason || <span className="italic text-gray-500">No reason provided.</span>}
             </p>
           </div>
 

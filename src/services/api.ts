@@ -107,7 +107,13 @@ api.interceptors.response.use(
     }
 
     // ── 401 Unauthorized — try to refresh the access token ───────────────
-    const isAuthEndpoint = originalRequest.url?.includes('/auth/');
+    // Only the two endpoints that could themselves cause a refresh loop are
+    // excluded — a 401 there means bad credentials/refresh token, not "access
+    // token expired". Every other /auth/* route (me, profile-photo,
+    // change-password, ...) is a normal authenticated endpoint and needs the
+    // same transparent refresh-and-retry as any other API call; excluding
+    // the whole /auth/ prefix here previously broke that for all of them.
+    const isAuthEndpoint = /\/auth\/(login|token\/refresh)\/?$/.test(originalRequest.url ?? '');
 
     if (status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       const refresh = localStorage.getItem('refresh');

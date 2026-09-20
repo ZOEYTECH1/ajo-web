@@ -32,7 +32,7 @@ export interface User {
   // null for a brand-new Google sign-in — they haven't added a phone number yet.
   phone_number: string | null;
   role: string;
-  profile_photo_url?: string;
+  profile_photo: string | null;
   is_email_verified: boolean;
   selectedModules?: string[];
 }

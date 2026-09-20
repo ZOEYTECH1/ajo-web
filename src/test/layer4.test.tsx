@@ -166,7 +166,8 @@ describe('Layer 4.2 â€” Session management', () => {
   it('clearing auth store sets user to null', () => {
     useAuthStore.setState({
       user: { id: 1, email: 'test@test.com', first_name: 'T', last_name: 'U',
-              phone_number: '+234', role: 'member', is_email_verified: true, selectedModules: [] },
+              phone_number: '+234', role: 'member', profile_photo: null,
+              is_email_verified: true, selectedModules: [] },
       tokens: { access: 'tok', refresh: 'ref' },
     });
     useAuthStore.getState().clearAuth();

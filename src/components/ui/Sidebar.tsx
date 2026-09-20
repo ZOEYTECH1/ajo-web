@@ -148,9 +148,9 @@ export function Sidebar({ onClose }: SidebarProps) {
       {/* User section */}
       <div className="px-3 py-4 border-t border-(--border) space-y-1">
         <div className="flex items-center gap-3 px-3 py-2">
-          {user?.profile_photo_url ? (
+          {user?.profile_photo ? (
             <img
-              src={cloudinaryUrl(user.profile_photo_url, 64, 64)}
+              src={cloudinaryUrl(user.profile_photo, 64, 64)}
               alt={displayName}
               className="h-8 w-8 rounded-full object-cover shrink-0"
             />

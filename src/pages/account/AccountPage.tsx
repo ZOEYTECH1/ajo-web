@@ -164,9 +164,9 @@ export default function AccountPage() {
       <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
         <div className="flex items-center gap-5">
           <div className="relative shrink-0">
-            {user?.profile_photo_url ? (
+            {user?.profile_photo ? (
               <img
-                src={cloudinaryUrl(user.profile_photo_url, 240, 240)}
+                src={cloudinaryUrl(user.profile_photo!, 240, 240)}
                 alt={displayName}
                 className="h-20 w-20 rounded-full object-cover border-2 border-(--border)"
               />
@@ -208,7 +208,7 @@ export default function AccountPage() {
                 <span className="text-yellow-600">Email not verified</span>
               )}
             </p>
-            {!user?.profile_photo_url && (
+            {!user?.profile_photo && (
               <p className="text-xs text-orange-600 mt-1">
                 Add a profile photo — required to join groups.
               </p>

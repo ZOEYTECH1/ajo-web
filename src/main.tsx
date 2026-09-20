@@ -32,6 +32,21 @@ const queryClient = new QueryClient({
 // Safe to call with an empty/missing VITE_SENTRY_DSN — it will skip initialisation.
 initSentry();
 
+// Auto-recover from stale-tab chunk-load failures. Each deploy replaces
+// dist/assets with new content-hashed filenames; a tab left open across a
+// deploy still holds the old module graph, and the first client-side
+// navigation to a lazy route it hasn't loaded yet (e.g. /login right after
+// logout) tries to fetch a chunk that no longer exists on the server — Vite
+// fires this event for exactly that failure. A real full reload fetches the
+// current index.html and chunk manifest, which fixes it; the sessionStorage
+// guard stops a genuinely broken deploy from reload-looping forever.
+window.addEventListener('vite:preloadError', () => {
+  const key = 'vite-reload-on-preload-error';
+  if (sessionStorage.getItem(key)) return;
+  sessionStorage.setItem(key, '1');
+  window.location.reload();
+});
+
 // Org admin portal
 const OrgLoginPage                  = lazy(() => import('./pages/org/OrgLoginPage'));
 const OrgGroupDetailPage            = lazy(() => import('./pages/org/OrgGroupDetailPage'));
@@ -163,6 +178,12 @@ const router = createBrowserRouter([
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Root element not found');
+
+// The reload-on-preload-error guard above only needs to block a loop within
+// one broken reload attempt — once the app has been running fine for a bit,
+// clear it so a genuinely new failure after some future deploy can still
+// auto-recover instead of silently doing nothing for the rest of this tab.
+setTimeout(() => sessionStorage.removeItem('vite-reload-on-preload-error'), 10_000);
 
 createRoot(root).render(
   <StrictMode>

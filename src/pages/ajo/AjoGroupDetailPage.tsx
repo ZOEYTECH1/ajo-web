@@ -957,6 +957,9 @@ function MembersTab({
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ajo-group-members', String(groupId)] });
       qc.invalidateQueries({ queryKey: ['ajo-group', String(groupId)] });
+      // Approving assigns a new collection_slot — the Collection Order tab
+      // reads a separate cached query and was going stale silently.
+      qc.invalidateQueries({ queryKey: ['ajo-group-collection-order', String(groupId)] });
     },
   });
 
@@ -970,15 +973,29 @@ function MembersTab({
 
   const voteMutation = useMutation({
     mutationFn: ({ proposalId, approved }: { proposalId: number; approved: boolean }) =>
-      api.post(`/groups/${groupId}/removals/${proposalId}/vote/`, { approved }),
-    onSuccess: () => {
+      api.post<RemovalProposal>(`/groups/${groupId}/removals/${proposalId}/vote/`, { approved }),
+    onSuccess: (response) => {
       qc.invalidateQueries({ queryKey: ['ajo-group-removals', String(groupId)] });
+      // A passing vote actually removes the member — the members list,
+      // group member_count, and collection order all need to refresh too,
+      // not just the removals list itself.
+      if (response.data.status === 'passed') {
+        qc.invalidateQueries({ queryKey: ['ajo-group-members', String(groupId)] });
+        qc.invalidateQueries({ queryKey: ['ajo-group', String(groupId)] });
+        qc.invalidateQueries({ queryKey: ['ajo-group-collection-order', String(groupId)] });
+      }
     },
   });
 
   const leaveMutation = useMutation({
     mutationFn: () => api.post(`/groups/${groupId}/leave/`),
     onSuccess: () => {
+      // Refresh this group's own cached views too — e.g. if navigation is
+      // interrupted, or the cache is later revisited via back-navigation.
+      qc.invalidateQueries({ queryKey: ['ajo-group', String(groupId)] });
+      qc.invalidateQueries({ queryKey: ['ajo-group-members', String(groupId)] });
+      qc.invalidateQueries({ queryKey: ['ajo-group-collection-order', String(groupId)] });
+      qc.invalidateQueries({ queryKey: ['ajo-groups'] });
       navigate('/ajo');
     },
   });

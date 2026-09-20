@@ -75,6 +75,8 @@ interface PaginatedPayments {
 interface Cycle {
   id: number;
   cycle_number: number;
+  round_number: number;
+  slot_number: number;
   start_date: string;
   end_date: string;
   status: string;
@@ -1217,21 +1219,14 @@ function MembersTab({
 
 // ── Cycles Tab ────────────────────────────────────────────────────────────────
 
-function periodLabel(cycleNumber: number, frequency: string): string {
-  const unit = frequency === 'daily' ? 'Day' : frequency === 'weekly' ? 'Week' : 'Month';
-  return `${unit} ${cycleNumber}`;
-}
-
 function CyclesTab({
   cycles,
   groupId,
   isAdmin,
-  frequency,
 }: {
   cycles: Cycle[];
   groupId: number;
   isAdmin: boolean;
-  frequency: string;
 }) {
   const qc = useQueryClient();
   const [showStartCycle, setShowStartCycle] = useState(false);
@@ -1302,7 +1297,7 @@ function CyclesTab({
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-semibold text-(--text-primary)">Cycle #{cycle.cycle_number}</p>
                       <span className="text-xs font-medium text-(--text-muted) bg-(--bg) rounded-full px-2 py-0.5">
-                        {periodLabel(cycle.cycle_number, frequency)}
+                        Round {cycle.round_number}
                       </span>
                     </div>
                     <p className="text-xs text-(--text-secondary) mt-0.5">
@@ -1410,12 +1405,12 @@ function CollectionOrderTab({
   groupId,
   isAdmin,
   active,
-  activeCycleNumber,
+  activeCycleSlot,
 }: {
   groupId: number;
   isAdmin: boolean;
   active: boolean;
-  activeCycleNumber?: number;
+  activeCycleSlot?: number;
 }) {
   const qc = useQueryClient();
   const { data, isLoading, error } = useQuery<CollectionOrderEntry[]>({
@@ -1436,10 +1431,11 @@ function CollectionOrderTab({
     }
   }, [data]);
 
-  const totalSlots = localOrder.length;
-  const effectiveSlot = activeCycleNumber != null && totalSlots > 0
-    ? ((activeCycleNumber - 1) % totalSlots) + 1
-    : null;
+  // The cycle's own slot_number (server-computed, wraps back to 1 once a
+  // full Round completes) — not re-derived from cycle_number here, since
+  // cycle_number never resets and a local modulo would need to know the
+  // member count *at the time the cycle was created*, not now.
+  const effectiveSlot = activeCycleSlot ?? null;
 
   const saveMutation = useMutation({
     mutationFn: () =>
@@ -1615,7 +1611,10 @@ function HistoryTab({
   return (
     <div className="space-y-3">
       {closedCycles.map((cycle) => {
-        const recipient = sortedOrder[cycle.cycle_number - 1];
+        // cycle.slot_number (server-computed) tells us whose turn this cycle
+        // was — indexing sortedOrder by cycle_number directly breaks once a
+        // Round completes, since cycle_number never resets but slots do.
+        const recipient = sortedOrder.find((s) => s.collection_slot === cycle.slot_number);
         const approvedPays = payments.filter((p) => p.cycle_number === cycle.cycle_number && p.status === 'approved');
         const pot = approvedPays.reduce((sum, p) => sum + Number(p.amount_entered), 0);
         const paidCount = approvedPays.length;
@@ -1628,7 +1627,9 @@ function HistoryTab({
                   <TrophyIcon className="h-4 w-4 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-(--text-primary)">Cycle #{cycle.cycle_number}</p>
+                  <p className="text-sm font-semibold text-(--text-primary)">
+                    Cycle #{cycle.cycle_number} <span className="text-(--text-muted) font-normal">· Round {cycle.round_number}</span>
+                  </p>
                   <p className="text-xs text-(--text-secondary) mt-0.5">
                     {format(new Date(cycle.start_date), 'dd MMM yyyy')} —{' '}
                     {format(new Date(cycle.end_date), 'dd MMM yyyy')}
@@ -1746,6 +1747,16 @@ export default function AjoGroupDetailPage() {
   const activeCycle     = cycles.find((c) => c.status === 'active');
   const approvedMembers = members.filter((m) => m.status === 'approved');
 
+  // A Round is a full rotation — every member has collected once. If the
+  // last closed cycle was the round's last slot and no new cycle has
+  // started yet, prompt the admin — they can also just start one anytime
+  // from the Cycles tab regardless, this is a nudge, not a gate.
+  const lastClosedCycle = [...cycles]
+    .filter((c) => c.status === 'closed')
+    .sort((a, b) => b.cycle_number - a.cycle_number)[0];
+  const roundJustCompleted = !activeCycle && !!lastClosedCycle
+    && lastClosedCycle.slot_number >= lastClosedCycle.total_member_count;
+
   const myActivePay = activeCycle
     ? payments.find(
         (p) => p.submitted_by.id === currentUser?.id && p.cycle_number === activeCycle.cycle_number,
@@ -1812,11 +1823,18 @@ export default function AjoGroupDetailPage() {
               {activeCycle && (
                 <span className="inline-flex items-center gap-1">
                   <CalendarIcon className="h-4 w-4" />
-                  Cycle {activeCycle.cycle_number} ends{' '}
+                  Cycle {activeCycle.cycle_number} (Round {activeCycle.round_number}) ends{' '}
                   {format(new Date(activeCycle.end_date), 'dd MMM yyyy')}
                 </span>
               )}
             </div>
+
+            {roundJustCompleted && (
+              <div className="mt-3 rounded-lg bg-orange-50 border border-orange-200 px-3 py-2 text-sm text-orange-800">
+                🎉 Round {lastClosedCycle!.round_number} complete — every member has collected once.{' '}
+                {isAdmin ? 'Start the next round from the Cycles tab whenever you\'re ready.' : 'Waiting on the admin to start the next round.'}
+              </div>
+            )}
 
             {/* Invite code section — admin only */}
             {isAdmin && (
@@ -1991,10 +2009,10 @@ export default function AjoGroupDetailPage() {
             />
           )}
           {activeTab === 'cycles' && (
-            <CyclesTab cycles={cycles} groupId={Number(id)} isAdmin={isAdmin} frequency={group.contribution_frequency} />
+            <CyclesTab cycles={cycles} groupId={Number(id)} isAdmin={isAdmin} />
           )}
           {activeTab === 'order' && (
-            <CollectionOrderTab groupId={Number(id)} isAdmin={isAdmin} active={activeTab === 'order'} activeCycleNumber={activeCycle?.cycle_number} />
+            <CollectionOrderTab groupId={Number(id)} isAdmin={isAdmin} active={activeTab === 'order'} activeCycleSlot={activeCycle?.slot_number} />
           )}
           {activeTab === 'history' && (
             <HistoryTab

@@ -1328,28 +1328,48 @@ function CyclesTab({
   const [showStartCycle, setShowStartCycle] = useState(false);
   const [expandedDefaulters, setExpandedDefaulters] = useState<Record<number, boolean>>({});
   const [defaulterData, setDefaulterData] = useState<Record<number, DefaultersResponse | string>>({});
+  const [cycleErrors, setCycleErrors] = useState<Record<number, string>>({});
+
+  function extractErrorMessage(e: any): string {
+    const d = e.response?.data;
+    if (d?.detail) return d.detail;
+    const first = Object.values(d ?? {})[0];
+    return Array.isArray(first) ? (first as string[])[0] : String(first ?? 'Something went wrong.');
+  }
 
   const closeCycleMutation = useMutation({
     mutationFn: (cycleId: number) =>
       api.post(`/groups/${groupId}/cycles/${cycleId}/close/`),
-    onSuccess: () => {
+    onSuccess: (_data, cycleId) => {
+      setCycleErrors((prev) => ({ ...prev, [cycleId]: '' }));
       qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
+    },
+    onError: (e: any, cycleId) => {
+      setCycleErrors((prev) => ({ ...prev, [cycleId]: extractErrorMessage(e) }));
     },
   });
 
   const requestForceCloseMutation = useMutation({
     mutationFn: (cycleId: number) =>
       api.post(`/groups/${groupId}/cycles/${cycleId}/request-early-close/`),
-    onSuccess: () => {
+    onSuccess: (_data, cycleId) => {
+      setCycleErrors((prev) => ({ ...prev, [cycleId]: '' }));
       qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
+    },
+    onError: (e: any, cycleId) => {
+      setCycleErrors((prev) => ({ ...prev, [cycleId]: extractErrorMessage(e) }));
     },
   });
 
   const acceptForceCloseMutation = useMutation({
     mutationFn: (cycleId: number) =>
       api.post(`/groups/${groupId}/cycles/${cycleId}/accept-early-close/`),
-    onSuccess: () => {
+    onSuccess: (_data, cycleId) => {
+      setCycleErrors((prev) => ({ ...prev, [cycleId]: '' }));
       qc.invalidateQueries({ queryKey: ['ajo-group-cycles', String(groupId)] });
+    },
+    onError: (e: any, cycleId) => {
+      setCycleErrors((prev) => ({ ...prev, [cycleId]: extractErrorMessage(e) }));
     },
   });
 
@@ -1457,6 +1477,10 @@ function CyclesTab({
                   )}
                 </div>
               </div>
+
+              {cycleErrors[cycle.id] && (
+                <p className="px-4 pb-3 -mt-1 text-xs text-red-600">{cycleErrors[cycle.id]}</p>
+              )}
 
               {expandedDefaulters[cycle.id] && (
                 <div className="border-t border-(--border) bg-(--bg) px-4 py-3">

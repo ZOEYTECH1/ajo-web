@@ -25,6 +25,7 @@ export default function AccountPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [photoErr, setPhotoErr] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveErr, setSaveErr] = useState('');
 
   const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' });
   const [pwErr, setPwErr] = useState('');
@@ -61,8 +62,14 @@ export default function AccountPage() {
     onSuccess: (updated) => {
       setUser(updated);
       queryClient.setQueryData(['me'], updated);
+      setSaveErr('');
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
+    },
+    onError: (e: any) => {
+      const d = e.response?.data;
+      const first = Object.values(d ?? {})[0];
+      setSaveErr(d?.detail ?? (Array.isArray(first) ? (first as string[])[0] : String(first ?? 'Failed to update profile.')));
     },
   });
 
@@ -73,6 +80,7 @@ export default function AccountPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setSaveErr('');
     updateMutation.mutate(form);
   };
 
@@ -230,9 +238,9 @@ export default function AccountPage() {
           </div>
         )}
 
-        {updateMutation.isError && (
+        {saveErr && (
           <div role="alert" className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-            Failed to update profile. Please try again.
+            {saveErr}
           </div>
         )}
 

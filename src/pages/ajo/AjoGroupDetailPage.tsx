@@ -80,6 +80,7 @@ interface Cycle {
   start_date: string;
   end_date: string;
   status: string;
+  is_over: boolean;
   total_member_count: number;
   can_normal_close: boolean;
   force_close_requested: boolean;
@@ -132,6 +133,101 @@ function formatCurrency(v: string | number) {
 
 function fullName(u: UserSnap) {
   return `${u.first_name} ${u.last_name}`.trim() || 'Member';
+}
+
+// Derived from the cycle's own end_date/is_over (server-authoritative) rather
+// than a locally reconstructed day-count — mirrors the mobile app's identical
+// helper, since a cycle IS one period (Group.compute_cycle_end_date backend).
+function computePeriodLabel(cycle: Cycle): string {
+  const diffDays = Math.round((new Date(cycle.end_date).getTime() - Date.now()) / 86_400_000);
+  if (cycle.is_over) {
+    const overdue = Math.abs(diffDays);
+    return `Overdue ${overdue} day${overdue === 1 ? '' : 's'}`;
+  }
+  if (diffDays === 0) return 'Ends today';
+  return `${diffDays} day${diffDays === 1 ? '' : 's'} left`;
+}
+
+// ── Round progress card ─────────────────────────────────────────────────────
+function RoundProgressCard({
+  activeCycle, roundJustCompleted, lastClosedCycle,
+}: {
+  activeCycle: Cycle | undefined;
+  roundJustCompleted: boolean;
+  lastClosedCycle: Cycle | undefined;
+}) {
+  if (!activeCycle) {
+    return (
+      <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-5 flex items-center gap-4">
+        <div className={clsx(
+          'h-11 w-11 rounded-xl flex items-center justify-center shrink-0',
+          roundJustCompleted ? 'bg-orange-50' : 'bg-(--bg)',
+        )}>
+          {roundJustCompleted
+            ? <TrophyIcon className="h-5 w-5 text-orange-600" />
+            : <ClockIcon className="h-5 w-5 text-(--text-muted)" />}
+        </div>
+        <div>
+          <p className="font-bold text-(--text-primary)">
+            {roundJustCompleted ? `Round ${lastClosedCycle?.round_number} complete 🎉` : 'No active cycle'}
+          </p>
+          <p className="text-sm text-(--text-secondary) mt-0.5">
+            {roundJustCompleted ? 'Every member has collected once' : 'Start one from the Cycles tab'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const cycle = activeCycle;
+  const pct = cycle.total_member_count > 0
+    ? Math.min(100, Math.max(0, (cycle.slot_number / cycle.total_member_count) * 100))
+    : 0;
+  const periodLabel = computePeriodLabel(cycle);
+
+  return (
+    <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-5">
+      <div className="flex items-center gap-4">
+        <div className="h-11 w-11 rounded-xl bg-orange-50 flex items-center justify-center shrink-0">
+          <ArrowPathIcon className="h-5 w-5 text-orange-600" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-lg font-extrabold text-(--text-primary)">Round {cycle.round_number}</p>
+          <p className="text-xs text-(--text-secondary) mt-0.5">
+            Cycle {cycle.cycle_number} of {cycle.total_member_count}
+          </p>
+        </div>
+        <StatusBadge value={cycle.status} />
+      </div>
+
+      <div className="mt-4">
+        <div className="h-2 rounded-full bg-(--bg) overflow-hidden">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-orange-400 to-orange-600 transition-all"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <div className="flex items-center justify-between mt-1.5">
+          <p className="text-xs text-(--text-muted)">
+            Member {cycle.slot_number} of {cycle.total_member_count} collecting
+          </p>
+          {periodLabel && (
+            <p className={clsx('text-xs font-semibold', cycle.is_over ? 'text-red-600' : 'text-orange-600')}>
+              {periodLabel}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-3 pt-3 border-t border-(--border) flex items-center gap-1.5 text-xs text-(--text-secondary)">
+        <CalendarIcon className="h-3.5 w-3.5 text-(--text-muted)" />
+        Ends {format(new Date(cycle.end_date), 'dd MMM yyyy')}
+        {cycle.force_close_requested
+          ? ` · ${cycle.force_close_acceptor_count}/${cycle.total_member_count} accepted early close`
+          : ''}
+      </div>
+    </div>
+  );
 }
 
 function StatusBadge({ value }: { value: string }) {
@@ -1815,26 +1911,20 @@ export default function AjoGroupDetailPage() {
                 </p>
               </details>
             )}
-            <div className="mt-3 flex flex-wrap gap-3 text-sm text-(--text-secondary)">
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-(--text-secondary)">
               <span className="inline-flex items-center gap-1">
                 <UserGroupIcon className="h-4 w-4" />
                 {group.member_count} members
               </span>
-              {activeCycle && (
-                <span className="inline-flex items-center gap-1">
-                  <CalendarIcon className="h-4 w-4" />
-                  Cycle {activeCycle.cycle_number} (Round {activeCycle.round_number}) ends{' '}
-                  {format(new Date(activeCycle.end_date), 'dd MMM yyyy')}
+              {(activeCycle || roundJustCompleted) && (
+                <span className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                  <ArrowPathIcon className="h-3.5 w-3.5" />
+                  {activeCycle
+                    ? `Round ${activeCycle.round_number} · Cycle ${activeCycle.cycle_number}`
+                    : `Round ${lastClosedCycle?.round_number} complete`}
                 </span>
               )}
             </div>
-
-            {roundJustCompleted && (
-              <div className="mt-3 rounded-lg bg-orange-50 border border-orange-200 px-3 py-2 text-sm text-orange-800">
-                🎉 Round {lastClosedCycle!.round_number} complete — every member has collected once.{' '}
-                {isAdmin ? 'Start the next round from the Cycles tab whenever you\'re ready.' : 'Waiting on the admin to start the next round.'}
-              </div>
-            )}
 
             {/* Invite code section — admin only */}
             {isAdmin && (
@@ -1949,6 +2039,13 @@ export default function AjoGroupDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Round progress */}
+      <RoundProgressCard
+        activeCycle={activeCycle}
+        roundJustCompleted={roundJustCompleted}
+        lastClosedCycle={lastClosedCycle}
+      />
 
       {/* Pending payments banner — admin only */}
       {isAdmin && pendingPaymentsCount > 0 && (

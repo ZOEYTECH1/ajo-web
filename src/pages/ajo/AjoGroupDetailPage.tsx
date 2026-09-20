@@ -221,7 +221,7 @@ function RoundProgressCard({
 
       <div className="mt-3 pt-3 border-t border-(--border) flex items-center gap-1.5 text-xs text-(--text-secondary)">
         <CalendarIcon className="h-3.5 w-3.5 text-(--text-muted)" />
-        Ends {format(new Date(cycle.end_date), 'dd MMM yyyy')}
+        {format(new Date(cycle.start_date), 'dd MMM yyyy')} – {format(new Date(cycle.end_date), 'dd MMM yyyy')}
         {cycle.force_close_requested
           ? ` · ${cycle.force_close_acceptor_count}/${cycle.total_member_count} accepted early close`
           : ''}

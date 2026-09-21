@@ -581,10 +581,10 @@ function StartCycleModal({ open, groupId, cycleNumber, onClose }: { open: boolea
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <Field label="Start Date">
-            <input type="date" value={form.start_date} onChange={(e) => setForm(f => ({ ...f, start_date: e.target.value }))} className={inputCls} />
+            <input type="date" value={form.start_date} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setForm(f => ({ ...f, start_date: e.target.value }))} className={inputCls} />
           </Field>
           <Field label="End Date (optional)">
-            <input type="date" value={form.end_date} onChange={(e) => setForm(f => ({ ...f, end_date: e.target.value }))} className={inputCls} />
+            <input type="date" value={form.end_date} min={form.start_date || new Date().toISOString().slice(0, 10)} onChange={(e) => setForm(f => ({ ...f, end_date: e.target.value }))} className={inputCls} />
           </Field>
         </div>
         {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}

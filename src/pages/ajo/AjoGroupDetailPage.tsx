@@ -686,6 +686,7 @@ function StartCycleModal({
             id="sc-start"
             type="date"
             value={startDate}
+            min={new Date().toISOString().slice(0, 10)}
             onChange={(e) => { setStartDate(e.target.value); setErr(''); }}
             className={inputCls}
           />

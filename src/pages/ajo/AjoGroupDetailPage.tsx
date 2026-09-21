@@ -86,6 +86,8 @@ interface Cycle {
   can_normal_close: boolean;
   force_close_requested: boolean;
   force_close_acceptor_count: number;
+  collector_id: number | null;
+  collector_name: string | null;
 }
 
 interface RemovalProposal {
@@ -1473,6 +1475,11 @@ function CyclesTab({
                       {format(new Date(cycle.start_date), 'dd MMM yyyy')} —{' '}
                       {format(new Date(cycle.end_date), 'dd MMM yyyy')}
                     </p>
+                    {cycle.status === 'active' && (
+                      <p className={clsx('text-xs font-semibold mt-0.5', cycle.is_over ? 'text-red-600' : 'text-orange-600')}>
+                        {computeStartLabel(cycle) ?? computePeriodLabel(cycle)}
+                      </p>
+                    )}
                     {cycle.force_close_requested && (
                       <p className="mt-1 text-xs text-orange-600 flex items-center gap-1">
                         <ClockIcon className="h-3 w-3" />
@@ -1782,10 +1789,14 @@ function HistoryTab({
   return (
     <div className="space-y-3">
       {closedCycles.map((cycle) => {
-        // cycle.slot_number (server-computed) tells us whose turn this cycle
-        // was — indexing sortedOrder by cycle_number directly breaks once a
-        // Round completes, since cycle_number never resets but slots do.
-        const recipient = sortedOrder.find((s) => s.collection_slot === cycle.slot_number);
+        // Prefer the collector snapshotted server-side when the cycle was
+        // created — the live collection order can be reordered/shuffled
+        // after the fact, which would otherwise silently rewrite history to
+        // show whoever holds that slot *now*. Only cycles created before
+        // this snapshot existed (collector_name null) fall back to matching
+        // slot_number against the current order.
+        const recipientName = cycle.collector_name
+          ?? sortedOrder.find((s) => s.collection_slot === cycle.slot_number)?.full_name;
         const approvedPays = payments.filter((p) => p.cycle_number === cycle.cycle_number && p.status === 'approved');
         const pot = approvedPays.reduce((sum, p) => sum + Number(p.amount_entered), 0);
         const paidCount = approvedPays.length;
@@ -1809,10 +1820,10 @@ function HistoryTab({
               </div>
 
               <div className="flex items-center gap-6">
-                {recipient && (
+                {recipientName && (
                   <div>
                     <p className="text-xs text-(--text-secondary)">Recipient</p>
-                    <p className="text-sm font-semibold text-(--text-primary)">{recipient.full_name}</p>
+                    <p className="text-sm font-semibold text-(--text-primary)">{recipientName}</p>
                   </div>
                 )}
                 <div>

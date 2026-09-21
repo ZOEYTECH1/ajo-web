@@ -149,6 +149,17 @@ function computePeriodLabel(cycle: Cycle): string {
   return `${diffDays} day${diffDays === 1 ? '' : 's'} left`;
 }
 
+// A cycle is already fully live (collecting, payable) from the moment it's
+// created, regardless of start_date — this label is purely so a cycle
+// dated for the future doesn't show a misleading end-date countdown before
+// it's actually begun. It does not affect payment/collection behavior.
+function computeStartLabel(cycle: Cycle): string | null {
+  const diffDays = Math.round((new Date(cycle.start_date).getTime() - Date.now()) / 86_400_000);
+  if (diffDays <= 0) return null;
+  if (diffDays === 1) return 'Starts tomorrow';
+  return `Starts in ${diffDays} days`;
+}
+
 // ── Round progress card ─────────────────────────────────────────────────────
 function RoundProgressCard({
   activeCycle, roundJustCompleted, lastClosedCycle,
@@ -181,9 +192,10 @@ function RoundProgressCard({
   }
 
   const cycle = activeCycle;
-  const pct = cycle.total_member_count > 0
-    ? Math.min(100, Math.max(0, (cycle.slot_number / cycle.total_member_count) * 100))
-    : 0;
+  const startLabel = computeStartLabel(cycle);
+  const pct = startLabel || cycle.total_member_count <= 0
+    ? 0
+    : Math.min(100, Math.max(0, (cycle.slot_number / cycle.total_member_count) * 100));
   const periodLabel = computePeriodLabel(cycle);
 
   return (
@@ -209,13 +221,19 @@ function RoundProgressCard({
           />
         </div>
         <div className="flex items-center justify-between mt-1.5">
-          <p className="text-xs text-(--text-muted)">
-            Member {cycle.slot_number} of {cycle.total_member_count} collecting
-          </p>
-          {periodLabel && (
-            <p className={clsx('text-xs font-semibold', cycle.is_over ? 'text-red-600' : 'text-orange-600')}>
-              {periodLabel}
-            </p>
+          {startLabel ? (
+            <p className="text-xs font-semibold text-(--text-muted)">{startLabel}</p>
+          ) : (
+            <>
+              <p className="text-xs text-(--text-muted)">
+                Member {cycle.slot_number} of {cycle.total_member_count} collecting
+              </p>
+              {periodLabel && (
+                <p className={clsx('text-xs font-semibold', cycle.is_over ? 'text-red-600' : 'text-orange-600')}>
+                  {periodLabel}
+                </p>
+              )}
+            </>
           )}
         </div>
       </div>

@@ -11,6 +11,7 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 import useAuthStore from '../../store/useAuthStore';
 
@@ -140,10 +141,15 @@ function MemberStatusBadge({ status }: { status: string }) {
 
 // ── Settings Modal (collector only) ──────────────────────────────────────────
 
-function SettingsModal({ groupId, group, onClose }: { groupId: string; group: ThriftGroup; onClose: () => void }) {
+function SettingsModal({ open, groupId, group, onClose }: { open: boolean; groupId: string; group: ThriftGroup; onClose: () => void }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({ name: group.name, description: group.description ?? '' });
   const [err, setErr] = useState('');
+
+  useEffect(() => {
+    if (open) { setForm({ name: group.name, description: group.description ?? '' }); setErr(''); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const mutation = useMutation({
     mutationFn: () => api.patch(`/thrift/${groupId}/`, { name: form.name.trim(), description: form.description.trim() }),
@@ -152,29 +158,23 @@ function SettingsModal({ groupId, group, onClose }: { groupId: string; group: Th
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Group Settings</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
-        </div>
-        <div className="p-6 space-y-4">
-          <Field label="Group Name">
-            <input type="text" value={form.name} onChange={(e) => { setForm(f => ({ ...f, name: e.target.value })); setErr(''); }} className={inputCls} />
-          </Field>
-          <Field label="Description">
-            <textarea rows={2} value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} className={inputCls} />
-          </Field>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
-          <div className="flex gap-3">
-            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
-            <button type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()} className={submitBtn}>
-              {mutation.isPending ? 'Saving…' : 'Save'}
-            </button>
-          </div>
+    <Modal open={open} onClose={onClose} title="Group Settings">
+      <div className="space-y-4">
+        <Field label="Group Name">
+          <input type="text" value={form.name} onChange={(e) => { setForm(f => ({ ...f, name: e.target.value })); setErr(''); }} className={inputCls} />
+        </Field>
+        <Field label="Description">
+          <textarea rows={2} value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} className={inputCls} />
+        </Field>
+        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        <div className="flex gap-3">
+          <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+          <button type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()} className={submitBtn}>
+            {mutation.isPending ? 'Saving…' : 'Save'}
+          </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -351,18 +351,12 @@ function DisputeModal({
 // ── Dispute Detail Modal (read-only viewer for collector / org admin) ─────────
 
 function DisputeDetailModal({
-  payment, onClose,
-}: { payment: ThriftPayment; onClose: () => void }) {
+  open, payment, onClose,
+}: { open: boolean; payment: ThriftPayment | null; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Dispute Details</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
-          </button>
-        </div>
-        <div className="p-6 space-y-4">
+    <Modal open={open} onClose={onClose} title="Dispute Details">
+      {payment && (
+        <div className="space-y-4">
           {/* Payment info */}
           <div className="rounded-xl bg-(--bg) border border-(--border) px-4 py-3 grid grid-cols-2 gap-2 text-sm">
             <div>
@@ -420,8 +414,8 @@ function DisputeDetailModal({
             Close
           </button>
         </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 }
 
@@ -560,10 +554,14 @@ function RequestRemovalModal({
 
 // ── Start Cycle Modal (collector only) ───────────────────────────────────────
 
-function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: string; cycleNumber: number; onClose: () => void }) {
+function StartCycleModal({ open, groupId, cycleNumber, onClose }: { open: boolean; groupId: string; cycleNumber: number; onClose: () => void }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({ start_date: '', end_date: '' });
   const [err, setErr] = useState('');
+
+  useEffect(() => {
+    if (open) { setForm({ start_date: '', end_date: '' }); setErr(''); }
+  }, [open]);
 
   const mutation = useMutation({
     mutationFn: () => api.post(`/thrift/${groupId}/cycles/restart/`, { start_date: form.start_date || undefined, end_date: form.end_date || undefined }),
@@ -579,31 +577,25 @@ function StartCycleModal({ groupId, cycleNumber, onClose }: { groupId: string; c
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Start Cycle #{cycleNumber}</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
+    <Modal open={open} onClose={onClose} title={`Start Cycle #${cycleNumber}`}>
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Start Date">
+            <input type="date" value={form.start_date} onChange={(e) => setForm(f => ({ ...f, start_date: e.target.value }))} className={inputCls} />
+          </Field>
+          <Field label="End Date (optional)">
+            <input type="date" value={form.end_date} onChange={(e) => setForm(f => ({ ...f, end_date: e.target.value }))} className={inputCls} />
+          </Field>
         </div>
-        <div className="p-6 space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Start Date">
-              <input type="date" value={form.start_date} onChange={(e) => setForm(f => ({ ...f, start_date: e.target.value }))} className={inputCls} />
-            </Field>
-            <Field label="End Date (optional)">
-              <input type="date" value={form.end_date} onChange={(e) => setForm(f => ({ ...f, end_date: e.target.value }))} className={inputCls} />
-            </Field>
-          </div>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
-          <div className="flex gap-3">
-            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
-            <button type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()} className={submitBtn}>
-              {mutation.isPending ? 'Starting…' : 'Start Cycle'}
-            </button>
-          </div>
+        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        <div className="flex gap-3">
+          <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+          <button type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()} className={submitBtn}>
+            {mutation.isPending ? 'Starting…' : 'Start Cycle'}
+          </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -1230,17 +1222,16 @@ export default function ThriftGroupDetailPage() {
       )}
 
       {/* Modals */}
-      {showSettings && group && <SettingsModal groupId={groupId} group={group} onClose={() => setShowSettings(false)} />}
+      {group && <SettingsModal open={showSettings} groupId={groupId} group={group} onClose={() => setShowSettings(false)} />}
 {disputePaymentId != null && (
         <DisputeModal groupId={groupId} paymentId={disputePaymentId} onClose={() => setDisputePaymentId(null)} />
       )}
-      {showStartCycle && (
-        <StartCycleModal
-          groupId={groupId}
-          cycleNumber={(cycles[cycles.length - 1]?.cycle_number ?? 0) + 1}
-          onClose={() => setShowStartCycle(false)}
-        />
-      )}
+      <StartCycleModal
+        open={showStartCycle}
+        groupId={groupId}
+        cycleNumber={(cycles[cycles.length - 1]?.cycle_number ?? 0) + 1}
+        onClose={() => setShowStartCycle(false)}
+      />
       {showReportCollector && (
         <ReportCollectorModal groupId={groupId} onClose={() => setShowReportCollector(false)} />
       )}
@@ -1255,9 +1246,7 @@ export default function ThriftGroupDetailPage() {
           }}
         />
       )}
-      {viewDisputePayment && (
-        <DisputeDetailModal payment={viewDisputePayment} onClose={() => setViewDisputePayment(null)} />
-      )}
+      <DisputeDetailModal open={viewDisputePayment !== null} payment={viewDisputePayment} onClose={() => setViewDisputePayment(null)} />
     </div>
   );
 }

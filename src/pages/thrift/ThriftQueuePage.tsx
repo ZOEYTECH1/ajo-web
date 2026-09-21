@@ -1,10 +1,10 @@
-﻿import { useState } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { format } from 'date-fns';
-import { XCircleIcon } from '@heroicons/react/24/outline';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 
 // â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -87,28 +87,28 @@ function SkeletonCards() {
 // â”€â”€ Flag Amount Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function FlagModal({
+  open,
   member,
   onConfirm,
   onClose,
   isPending,
 }: {
-  member: PendingMember;
+  open: boolean;
+  member: PendingMember | null;
   onConfirm: (reason: string) => void;
   onClose: () => void;
   isPending: boolean;
 }) {
   const [reason, setReason] = useState('');
 
+  useEffect(() => {
+    if (open) setReason('');
+  }, [open]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Flag Amount</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
-          </button>
-        </div>
-        <div className="p-6 space-y-4">
+    <Modal open={open} onClose={onClose} title="Flag Amount">
+      {member && (
+        <div className="space-y-4">
           <p className="text-sm text-(--text-secondary)">
             Flag <span className="font-semibold text-(--text-primary)">{member.user.first_name} {member.user.last_name}</span>'s
             contribution of <span className="font-semibold text-(--text-primary)">{formatCurrency(member.personal_amount)}</span> and
@@ -142,8 +142,8 @@ function FlagModal({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 }
 
@@ -403,19 +403,18 @@ export default function ThriftQueuePage() {
       )}
 
       {/* Flag Amount Modal */}
-      {flagTarget && (
-        <FlagModal
-          member={flagTarget}
-          isPending={reviewMutation.isPending}
-          onClose={() => setFlagTarget(null)}
-          onConfirm={reason => reviewMutation.mutate({
-            groupUuid: flagTarget.group_uuid,
-            memberId: flagTarget.id,
-            action: 'flag_amount',
-            reason,
-          })}
-        />
-      )}
+      <FlagModal
+        open={flagTarget !== null}
+        member={flagTarget}
+        isPending={reviewMutation.isPending}
+        onClose={() => setFlagTarget(null)}
+        onConfirm={reason => flagTarget && reviewMutation.mutate({
+          groupUuid: flagTarget.group_uuid,
+          memberId: flagTarget.id,
+          action: 'flag_amount',
+          reason,
+        })}
+      />
     </div>
   );
 }

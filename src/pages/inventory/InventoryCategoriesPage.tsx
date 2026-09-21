@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
@@ -129,12 +130,14 @@ function AddCategoryModal({
 }
 
 function EditCategoryModal({
+  open,
   initial,
   onClose,
   onSave,
   isPending,
   err,
 }: {
+  open: boolean;
   initial: string;
   onClose: () => void;
   onSave: (name: string) => void;
@@ -142,34 +145,29 @@ function EditCategoryModal({
   err: string;
 }) {
   const [name, setName] = useState(initial);
+  useEffect(() => { if (open) setName(initial); }, [open, initial]);
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Edit Category</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
+    <Modal open={open} onClose={onClose} title="Edit Category" size="sm">
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Category Name *</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={inputCls}
+            autoFocus
+          />
         </div>
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Category Name *</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className={inputCls}
-              autoFocus
-            />
-          </div>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
-          <div className="flex gap-3">
-            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
-            <button type="button" disabled={!name.trim() || isPending} onClick={() => onSave(name.trim())} className={submitBtn}>
-              {isPending ? 'Saving…' : 'Save'}
-            </button>
-          </div>
+        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        <div className="flex gap-3">
+          <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+          <button type="button" disabled={!name.trim() || isPending} onClick={() => onSave(name.trim())} className={submitBtn}>
+            {isPending ? 'Saving…' : 'Save'}
+          </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -272,6 +270,10 @@ export default function InventoryCategoriesPage() {
   const { selectedId } = useInventoryBusiness();
   const [showAdd, setShowAdd] = useState(false);
   const [editCat, setEditCat] = useState<Category | null>(null);
+  // Modal stays mounted for its close animation, so keep the last targeted
+  // category around for display after editCat is nulled on cancel/save.
+  const [editCatDisplay, setEditCatDisplay] = useState<Category | null>(null);
+  useEffect(() => { if (editCat) setEditCatDisplay(editCat); }, [editCat]);
   const [customFieldsCat, setCustomFieldsCat] = useState<Category | null>(null);
   const [mutErr, setMutErr] = useState('');
 
@@ -402,11 +404,12 @@ export default function InventoryCategoriesPage() {
           err={mutErr}
         />
       )}
-      {editCat && (
+      {editCatDisplay && (
         <EditCategoryModal
-          initial={editCat.name}
+          open={editCat !== null}
+          initial={editCatDisplay.name}
           onClose={() => setEditCat(null)}
-          onSave={(name) => updateMutation.mutate({ id: editCat.id, name })}
+          onSave={(name) => updateMutation.mutate({ id: editCatDisplay.id, name })}
           isPending={updateMutation.isPending}
           err={mutErr}
         />

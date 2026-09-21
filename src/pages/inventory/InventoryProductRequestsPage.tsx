@@ -1,10 +1,11 @@
-﻿import { useState } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { PlusIcon, XCircleIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { Pagination } from '../../components/ui/Pagination';
+import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
@@ -70,9 +71,11 @@ function StatusBadge({ status }: { status: ProductRequest['status'] }) {
 // ── New Request Modal ─────────────────────────────────────────────────────────
 
 function NewRequestModal({
+  open,
   bizId,
   onClose,
 }: {
+  open: boolean;
   bizId: number;
   onClose: () => void;
 }) {
@@ -81,6 +84,10 @@ function NewRequestModal({
   const [productName, setProductName] = useState('');
   const [note, setNote] = useState('');
   const [err, setErr] = useState('');
+
+  useEffect(() => {
+    if (open) { setCategoryId(''); setProductName(''); setNote(''); setErr(''); }
+  }, [open]);
 
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ['inventory-categories'],
@@ -111,89 +118,76 @@ function NewRequestModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">New Product Request</h2>
+    <Modal open={open} onClose={onClose} title="New Product Request">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
+            Category (optional)
+          </label>
+          <select
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+            className={inputCls}
+          >
+            <option value="">Select category…</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
+            Product Name <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+            placeholder="e.g. Indomie Chicken 70g"
+            className={inputCls}
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
+            Note (optional)
+          </label>
+          <textarea
+            rows={3}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="Any additional details for this request…"
+            className={inputCls}
+          />
+        </div>
+
+        {err && (
+          <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+            {err}
+          </p>
+        )}
+
+        <div className="flex gap-3 pt-1">
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close dialog"
-            className="text-(--text-muted) hover:text-(--text-primary)"
+            className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
           >
-            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={mutation.isPending}
+            className="flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+          >
+            {mutation.isPending ? 'Submitting…' : 'Submit Request'}
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
-              Category (optional)
-            </label>
-            <select
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className={inputCls}
-            >
-              <option value="">Select category…</option>
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
-              Product Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              placeholder="e.g. Indomie Chicken 70g"
-              className={inputCls}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">
-              Note (optional)
-            </label>
-            <textarea
-              rows={3}
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Any additional details for this request…"
-              className={inputCls}
-            />
-          </div>
-
-          {err && (
-            <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
-              {err}
-            </p>
-          )}
-
-          <div className="flex gap-3 pt-1">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={mutation.isPending}
-              className="flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors"
-            >
-              {mutation.isPending ? 'Submitting…' : 'Submit Request'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 }
 
@@ -373,8 +367,8 @@ export default function InventoryProductRequestsPage() {
 
       <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
 
-      {showModal && bizId && (
-        <NewRequestModal bizId={bizId} onClose={() => setShowModal(false)} />
+      {bizId && (
+        <NewRequestModal open={showModal} bizId={bizId} onClose={() => setShowModal(false)} />
       )}
     </div>
   );

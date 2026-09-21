@@ -12,6 +12,7 @@ import {
   TrophyIcon, ClockIcon,
 } from '@heroicons/react/24/outline';
 import { Table, type Column } from '../../components/ui/Table';
+import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 import useAuthStore from '../../store/useAuthStore';
 import { cloudinaryUrl } from '../../lib/cloudinary';
@@ -427,17 +428,25 @@ function SubmitPaymentModal({
 // ── Reject Reason Modal ───────────────────────────────────────────────────────
 
 function RejectModal({
+  open,
   onConfirm,
   onCancel,
 }: {
+  open: boolean;
   onConfirm: (reason: string) => void;
   onCancel: () => void;
 }) {
   const [reason, setReason] = useState('');
+  // The modal now stays mounted (Modal's Transition handles show/hide), so
+  // reset the textarea each time it's freshly opened rather than relying on
+  // unmount to clear it — otherwise a leftover reason from a previous reject
+  // would still be sitting there for the next payment.
+  useEffect(() => {
+    if (open) setReason('');
+  }, [open]);
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
-        <h3 className="text-lg font-bold text-(--text-primary)">Reject Payment</h3>
+    <Modal open={open} onClose={onCancel} title="Reject Payment" size="sm">
+      <div className="space-y-4">
         <p className="text-sm text-(--text-secondary)">
           Optionally provide a reason so the member knows what to fix.
         </p>
@@ -459,7 +468,7 @@ function RejectModal({
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -631,15 +640,21 @@ function GroupSettingsModal({
 // ── Start Cycle Modal ─────────────────────────────────────────────────────────
 
 function StartCycleModal({
+  open,
   groupId,
   onClose,
 }: {
+  open: boolean;
   groupId: number;
   onClose: () => void;
 }) {
   const qc = useQueryClient();
   const [startDate, setStartDate] = useState('');
   const [err, setErr] = useState('');
+
+  useEffect(() => {
+    if (open) { setStartDate(''); setErr(''); }
+  }, [open]);
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -663,41 +678,32 @@ function StartCycleModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Start New Cycle</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
+    <Modal open={open} onClose={onClose} title="Start New Cycle" size="sm">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="sc-start" className="block text-sm font-semibold text-(--text-secondary) mb-1">Start Date</label>
+          <input
+            id="sc-start"
+            type="date"
+            value={startDate}
+            onChange={(e) => { setStartDate(e.target.value); setErr(''); }}
+            className={inputCls}
+          />
+        </div>
+        <p className="text-xs text-(--text-muted)">
+          The cycle's end date is set automatically based on the group's contribution frequency and collection day.
+        </p>
+
+        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+
+        <div className="flex gap-3 pt-1">
+          <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+          <button type="submit" disabled={mutation.isPending} className={orangeBtn}>
+            {mutation.isPending ? 'Creating…' : 'Create Cycle'}
           </button>
         </div>
-
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label htmlFor="sc-start" className="block text-sm font-semibold text-(--text-secondary) mb-1">Start Date</label>
-            <input
-              id="sc-start"
-              type="date"
-              value={startDate}
-              onChange={(e) => { setStartDate(e.target.value); setErr(''); }}
-              className={inputCls}
-            />
-          </div>
-          <p className="text-xs text-(--text-muted)">
-            The cycle's end date is set automatically based on the group's contribution frequency and collection day.
-          </p>
-
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
-
-          <div className="flex gap-3 pt-1">
-            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
-            <button type="submit" disabled={mutation.isPending} className={orangeBtn}>
-              {mutation.isPending ? 'Creating…' : 'Create Cycle'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 }
 
@@ -911,12 +917,11 @@ function PaymentsTab({
         </div>
       )}
 
-      {rejectTarget !== null && (
-        <RejectModal
-          onConfirm={(reason) => reviewMutation.mutate({ paymentId: rejectTarget, action: 'reject', reason })}
-          onCancel={() => setRejectTarget(null)}
-        />
-      )}
+      <RejectModal
+        open={rejectTarget !== null}
+        onConfirm={(reason) => reviewMutation.mutate({ paymentId: rejectTarget!, action: 'reject', reason })}
+        onCancel={() => setRejectTarget(null)}
+      />
 
       {receiptUrl && (
         <ReceiptViewerModal url={receiptUrl} onClose={() => setReceiptUrl(null)} />
@@ -1177,38 +1182,40 @@ function MembersTab({
       )}
 
       {/* Propose removal confirm dialog */}
-      {proposePendingId !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
-            <h3 className="text-lg font-bold text-(--text-primary)">Propose Removal</h3>
-            <p className="text-sm text-(--text-secondary)">
-              Propose removing <span className="font-semibold text-(--text-primary)">{proposePendingName}</span> from the group?
-              Other members will vote on whether to approve the removal.
-            </p>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => { setProposePendingId(null); setProposePendingName(''); }}
-                className={cancelBtn}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={proposeRemovalMutation.isPending}
-                onClick={() => {
-                  proposeRemovalMutation.mutate(proposePendingId, {
-                    onSuccess: () => { setProposePendingId(null); setProposePendingName(''); },
-                  });
-                }}
-                className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
-              >
-                {proposeRemovalMutation.isPending ? 'Proposing…' : 'Yes, Propose'}
-              </button>
-            </div>
+      <Modal
+        open={proposePendingId !== null}
+        onClose={() => { setProposePendingId(null); setProposePendingName(''); }}
+        title="Propose Removal"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-(--text-secondary)">
+            Propose removing <span className="font-semibold text-(--text-primary)">{proposePendingName}</span> from the group?
+            Other members will vote on whether to approve the removal.
+          </p>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => { setProposePendingId(null); setProposePendingName(''); }}
+              className={cancelBtn}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={proposeRemovalMutation.isPending}
+              onClick={() => {
+                proposeRemovalMutation.mutate(proposePendingId!, {
+                  onSuccess: () => { setProposePendingId(null); setProposePendingName(''); },
+                });
+              }}
+              className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+            >
+              {proposeRemovalMutation.isPending ? 'Proposing…' : 'Yes, Propose'}
+            </button>
           </div>
         </div>
-      )}
+      </Modal>
 
       {/* Removal proposals */}
       {pendingRemovals.length > 0 && (
@@ -1294,38 +1301,35 @@ function MembersTab({
       )}
 
       {/* Leave group confirm */}
-      {showLeaveConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm p-6 space-y-4">
-            <h3 className="text-lg font-bold text-(--text-primary)">Leave Group</h3>
-            <p className="text-sm text-(--text-secondary)">
-              Are you sure you want to leave this group? This action cannot be undone.
+      <Modal open={showLeaveConfirm} onClose={() => setShowLeaveConfirm(false)} title="Leave Group" size="sm">
+        <div className="space-y-4">
+          <p className="text-sm text-(--text-secondary)">
+            Are you sure you want to leave this group? This action cannot be undone.
+          </p>
+          {leaveMutation.isError && (
+            <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+              {(leaveMutation.error as any)?.response?.data?.detail ?? 'Failed to leave group.'}
             </p>
-            {leaveMutation.isError && (
-              <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
-                {(leaveMutation.error as any)?.response?.data?.detail ?? 'Failed to leave group.'}
-              </p>
-            )}
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => setShowLeaveConfirm(false)}
-                className={cancelBtn}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                disabled={leaveMutation.isPending}
-                onClick={() => leaveMutation.mutate()}
-                className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
-              >
-                {leaveMutation.isPending ? 'Leaving…' : 'Yes, Leave'}
-              </button>
-            </div>
+          )}
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setShowLeaveConfirm(false)}
+              className={cancelBtn}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              disabled={leaveMutation.isPending}
+              onClick={() => leaveMutation.mutate()}
+              className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+            >
+              {leaveMutation.isPending ? 'Leaving…' : 'Yes, Leave'}
+            </button>
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }
@@ -1529,9 +1533,7 @@ function CyclesTab({
         </div>
       )}
 
-      {showStartCycle && (
-        <StartCycleModal groupId={groupId} onClose={() => setShowStartCycle(false)} />
-      )}
+      <StartCycleModal open={showStartCycle} groupId={groupId} onClose={() => setShowStartCycle(false)} />
     </div>
   );
 }

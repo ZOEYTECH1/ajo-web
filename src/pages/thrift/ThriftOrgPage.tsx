@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 
 // ── Shared styles ────────────────────────────────────────────────────────────
@@ -266,14 +267,18 @@ function OrgSkeleton() {
 // ── Approve Removal Modal (org admin) ────────────────────────────────────────
 
 function ApproveRemovalModal({
-  orgUuid, request, onClose,
-}: { orgUuid: string; request: RemovalRequest; onClose: () => void }) {
+  open, orgUuid, request, onClose,
+}: { open: boolean; orgUuid: string; request: RemovalRequest | null; onClose: () => void }) {
   const qc = useQueryClient();
   const [settlementNotes, setSettlementNotes] = useState('');
   const [err, setErr] = useState('');
 
+  useEffect(() => {
+    if (open) { setSettlementNotes(''); setErr(''); }
+  }, [open]);
+
   const mutation = useMutation({
-    mutationFn: () => api.patch(`/thrift/orgs/${orgUuid}/removal-requests/${request.id}/`, {
+    mutationFn: () => api.patch(`/thrift/orgs/${orgUuid}/removal-requests/${request!.id}/`, {
       action: 'approve',
       settlement_notes: settlementNotes.trim(),
     }),
@@ -288,15 +293,9 @@ function ApproveRemovalModal({
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
-          <h2 className="text-lg font-bold text-(--text-primary)">Approve Removal</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
-          </button>
-        </div>
-        <div className="p-6 space-y-4">
+    <Modal open={open} onClose={onClose} title="Approve Removal" size="lg">
+      {request && (
+        <div className="space-y-4">
           {/* Member summary */}
           <div className="rounded-xl bg-(--bg) border border-(--border) p-4 grid grid-cols-2 gap-3 text-sm">
             <div><p className="text-(--text-muted) text-xs font-medium">Member</p><p className="font-semibold text-(--text-primary) mt-0.5">{request.member_name}</p></div>
@@ -366,8 +365,8 @@ function ApproveRemovalModal({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 }
 
@@ -500,7 +499,8 @@ function CreateGroupModal({
   );
 }
 
-function InviteModal({ onInvite, onClose, isPending }: {
+function InviteModal({ open, onInvite, onClose, isPending }: {
+  open: boolean;
   onInvite: (email: string) => void;
   onClose: () => void;
   isPending: boolean;
@@ -508,54 +508,50 @@ function InviteModal({ onInvite, onClose, isPending }: {
   const [email, setEmail] = useState('');
   const [err, setErr] = useState('');
 
+  useEffect(() => {
+    if (open) { setEmail(''); setErr(''); }
+  }, [open]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Invite Collector</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
+    <Modal open={open} onClose={onClose} title="Invite Collector">
+      <div className="space-y-4">
+        <p className="text-sm text-(--text-secondary)">
+          Enter the email address of the collector you want to invite. They'll receive an email with an invite link.
+        </p>
+        <div>
+          <label htmlFor="org-invite-email" className="block text-sm font-semibold text-(--text-secondary) mb-1">Email address *</label>
+          <input
+            id="org-invite-email"
+            type="email"
+            value={email}
+            onChange={e => { setEmail(e.target.value); setErr(''); }}
+            placeholder="collector@example.com"
+            className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
+        </div>
+        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            disabled={!email.trim() || isPending}
+            onClick={() => {
+              if (!email.includes('@')) { setErr('Enter a valid email address.'); return; }
+              onInvite(email.trim());
+            }}
+            className="flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors"
+          >
+            {isPending ? 'Inviting…' : 'Send Invite'}
           </button>
         </div>
-        <div className="p-6 space-y-4">
-          <p className="text-sm text-(--text-secondary)">
-            Enter the email address of the collector you want to invite. They'll receive an email with an invite link.
-          </p>
-          <div>
-            <label htmlFor="org-invite-email" className="block text-sm font-semibold text-(--text-secondary) mb-1">Email address *</label>
-            <input
-              id="org-invite-email"
-              type="email"
-              value={email}
-              onChange={e => { setEmail(e.target.value); setErr(''); }}
-              placeholder="collector@example.com"
-              className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              disabled={!email.trim() || isPending}
-              onClick={() => {
-                if (!email.includes('@')) { setErr('Enter a valid email address.'); return; }
-                onInvite(email.trim());
-              }}
-              className="flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors"
-            >
-              {isPending ? 'Inviting…' : 'Send Invite'}
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -1161,20 +1157,18 @@ export default function ThriftOrgPage() {
           onClose={() => setShowCreateGroup(false)}
         />
       )}
-      {approveRemovalRequest && (
-        <ApproveRemovalModal
-          orgUuid={orgUuid}
-          request={approveRemovalRequest}
-          onClose={() => setApproveRemovalRequest(null)}
-        />
-      )}
-      {showInvite && (
-        <InviteModal
-          isPending={inviteMutation.isPending}
-          onClose={() => setShowInvite(false)}
-          onInvite={email => inviteMutation.mutate(email)}
-        />
-      )}
+      <ApproveRemovalModal
+        open={approveRemovalRequest !== null}
+        orgUuid={orgUuid}
+        request={approveRemovalRequest}
+        onClose={() => setApproveRemovalRequest(null)}
+      />
+      <InviteModal
+        open={showInvite}
+        isPending={inviteMutation.isPending}
+        onClose={() => setShowInvite(false)}
+        onInvite={email => inviteMutation.mutate(email)}
+      />
     </div>
   );
 }

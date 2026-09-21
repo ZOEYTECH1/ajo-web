@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, PaperClipIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
@@ -165,6 +166,11 @@ export default function InventoryBusinessHistoryPage() {
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<PastPeriodRecord | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<PastPeriodRecord | null>(null);
+  // Modal now stays mounted for its close animation, so its content needs
+  // something to read after confirmDelete is nulled on cancel — keep the
+  // last targeted record around for display purposes only.
+  const [deleteDisplay, setDeleteDisplay] = useState<PastPeriodRecord | null>(null);
+  useEffect(() => { if (confirmDelete) setDeleteDisplay(confirmDelete); }, [confirmDelete]);
 
   const { data: records, isLoading } = useQuery<PastPeriodRecord[]>({
     queryKey: ['inventory-past-periods', selectedId],
@@ -293,27 +299,23 @@ export default function InventoryBusinessHistoryPage() {
         />
       )}
 
-      {confirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm p-6">
-            <h2 className="text-lg font-bold text-(--text-primary)">Delete this record?</h2>
-            <p className="text-sm text-(--text-secondary) mt-2">
-              {fmtDate(confirmDelete.period_start)} — {fmtDate(confirmDelete.period_end)} will be removed from your lifetime totals. This cannot be undone.
-            </p>
-            <div className="flex gap-3 mt-5">
-              <button type="button" onClick={() => setConfirmDelete(null)} className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors">Cancel</button>
-              <button
-                type="button"
-                disabled={deleteMutation.isPending}
-                onClick={() => deleteMutation.mutate(confirmDelete.id)}
-                className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
-              >
-                {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
-              </button>
-            </div>
-          </div>
+      <Modal open={confirmDelete !== null} onClose={() => setConfirmDelete(null)} title="Delete this record?" size="sm">
+        <p className="text-sm text-(--text-secondary)">
+          {deleteDisplay && `${fmtDate(deleteDisplay.period_start)} — ${fmtDate(deleteDisplay.period_end)} `}
+          will be removed from your lifetime totals. This cannot be undone.
+        </p>
+        <div className="flex gap-3 mt-5">
+          <button type="button" onClick={() => setConfirmDelete(null)} className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors">Cancel</button>
+          <button
+            type="button"
+            disabled={deleteMutation.isPending}
+            onClick={() => deleteDisplay && deleteMutation.mutate(deleteDisplay.id)}
+            className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+          >
+            {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
+          </button>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }

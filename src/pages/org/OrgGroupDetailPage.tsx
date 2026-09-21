@@ -2,8 +2,9 @@ import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { ArrowLeftIcon, XCircleIcon, SignalIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, SignalIcon } from '@heroicons/react/24/outline';
 import { Skeleton, SkeletonTable } from '../../components/ui/Skeleton';
+import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 import { useThriftGroupSocket } from '../../hooks/useThriftGroupSocket';
 
@@ -85,17 +86,11 @@ function PaymentStatusBadge({ status }: { status: string }) {
   );
 }
 
-function DisputeDetailModal({ payment, onClose }: { payment: Payment; onClose: () => void }) {
+function DisputeDetailModal({ open, payment, onClose }: { open: boolean; payment: Payment | null; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Dispute Details</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
-            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
-          </button>
-        </div>
-        <div className="p-6 space-y-4">
+    <Modal open={open} onClose={onClose} title="Dispute Details">
+      {payment && (
+        <div className="space-y-4">
           <div className="rounded-xl bg-(--bg) border border-(--border) px-4 py-3 grid grid-cols-2 gap-2 text-sm">
             <div>
               <p className="text-(--text-muted) text-xs font-medium">Payer</p>
@@ -145,8 +140,8 @@ function DisputeDetailModal({ payment, onClose }: { payment: Payment; onClose: (
             Close
           </button>
         </div>
-      </div>
-    </div>
+      )}
+    </Modal>
   );
 }
 
@@ -460,7 +455,7 @@ export default function OrgGroupDetailPage() {
         </div>
       </div>
 
-      {viewDispute && <DisputeDetailModal payment={viewDispute} onClose={() => setViewDispute(null)} />}
+      <DisputeDetailModal open={viewDispute !== null} payment={viewDispute} onClose={() => setViewDispute(null)} />
     </div>
   );
 }

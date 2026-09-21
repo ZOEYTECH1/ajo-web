@@ -1,8 +1,9 @@
-﻿import { useState } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -36,11 +37,13 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 // ── Customer Modal ─────────────────────────────────────────────────────────────
 
 function CustomerModal({
+  open,
   initial,
   customerId,
   onClose,
   bizId,
 }: {
+  open: boolean;
   initial?: { name: string; phone: string; notes: string };
   customerId?: number;
   onClose: () => void;
@@ -50,6 +53,11 @@ function CustomerModal({
   const isEdit = !!customerId;
   const [form, setForm] = useState({ name: initial?.name ?? '', phone: initial?.phone ?? '', notes: initial?.notes ?? '' });
   const [err, setErr] = useState('');
+
+  useEffect(() => {
+    if (open) { setForm({ name: initial?.name ?? '', phone: initial?.phone ?? '', notes: initial?.notes ?? '' }); setErr(''); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const mutation = useMutation({
     mutationFn: () => {
@@ -73,43 +81,41 @@ function CustomerModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">{isEdit ? 'Edit Customer' : 'Add Customer'}</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
+    <Modal open={open} onClose={onClose} title={isEdit ? 'Edit Customer' : 'Add Customer'}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Field label="Name *">
+          <input type="text" value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Mrs. Folake Adeniyi" className={inputCls} />
+        </Field>
+        <Field label="Phone (optional)">
+          <input type="tel" value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="e.g. 08012345678" className={inputCls} />
+        </Field>
+        <Field label="Notes (optional)">
+          <input type="text" value={form.notes} onChange={(e) => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="e.g. Bulk buyer" className={inputCls} />
+        </Field>
+        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        <div className="flex gap-3 pt-1">
+          <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+          <button type="submit" disabled={mutation.isPending} className={submitBtn}>
+            {mutation.isPending ? 'Saving…' : isEdit ? 'Save Changes' : 'Add Customer'}
+          </button>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <Field label="Name *">
-            <input type="text" value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Mrs. Folake Adeniyi" className={inputCls} />
-          </Field>
-          <Field label="Phone (optional)">
-            <input type="tel" value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="e.g. 08012345678" className={inputCls} />
-          </Field>
-          <Field label="Notes (optional)">
-            <input type="text" value={form.notes} onChange={(e) => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="e.g. Bulk buyer" className={inputCls} />
-          </Field>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
-          <div className="flex gap-3 pt-1">
-            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
-            <button type="submit" disabled={mutation.isPending} className={submitBtn}>
-              {mutation.isPending ? 'Saving…' : isEdit ? 'Save Changes' : 'Add Customer'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 }
 
 // ── Credit Modal ──────────────────────────────────────────────────────────────
 
-function CreditModal({ customer, onClose }: { customer: Customer; onClose: () => void }) {
+function CreditModal({ open, customer, onClose }: { open: boolean; customer: Customer; onClose: () => void }) {
   const qc = useQueryClient();
   const [direction, setDirection] = useState<'charge' | 'payment'>('charge');
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [err, setErr] = useState('');
+
+  useEffect(() => {
+    if (open) { setDirection('charge'); setAmount(''); setNote(''); setErr(''); }
+  }, [open]);
 
   const mutation = useMutation({
     mutationFn: () => api.post(`/inventory/customers/${customer.id}/credit/`, { direction, amount, note: note.trim() }),
@@ -121,56 +127,50 @@ function CreditModal({ customer, onClose }: { customer: Customer; onClose: () =>
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Manage Credit</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
-        </div>
-        <div className="p-6 space-y-4">
-          <p className="text-sm text-(--text-secondary)">
-            <span className="font-semibold text-(--text-primary)">{customer.name}</span> — current balance:{' '}
-            <span className="font-semibold text-orange-600">{formatCurrency(customer.credit_balance)}</span>
-          </p>
+    <Modal open={open} onClose={onClose} title="Manage Credit" size="sm">
+      <div className="space-y-4">
+        <p className="text-sm text-(--text-secondary)">
+          <span className="font-semibold text-(--text-primary)">{customer.name}</span> — current balance:{' '}
+          <span className="font-semibold text-orange-600">{formatCurrency(customer.credit_balance)}</span>
+        </p>
 
-          <div className="flex gap-2">
-            {(['charge', 'payment'] as const).map(d => (
-              <button
-                key={d}
-                type="button"
-                onClick={() => setDirection(d)}
-                className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors border ${
-                  direction === d ? 'bg-orange-600 text-white border-orange-600' : 'border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30'
-                }`}
-              >
-                {d === 'charge' ? 'Charge (add debt)' : 'Payment (reduce debt)'}
-              </button>
-            ))}
-          </div>
-
-          <Field label="Amount (NGN) *">
-            <input type="number" min="0.01" step="0.01" value={amount} onChange={(e) => { setAmount(e.target.value); setErr(''); }} placeholder="e.g. 1000" className={inputCls} />
-          </Field>
-          <Field label="Note (optional)">
-            <input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Bread x2" className={inputCls} />
-          </Field>
-
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
-
-          <div className="flex gap-3">
-            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+        <div className="flex gap-2">
+          {(['charge', 'payment'] as const).map(d => (
             <button
+              key={d}
               type="button"
-              disabled={!amount || Number(amount) <= 0 || mutation.isPending}
-              onClick={() => mutation.mutate()}
-              className={submitBtn}
+              onClick={() => setDirection(d)}
+              className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors border ${
+                direction === d ? 'bg-orange-600 text-white border-orange-600' : 'border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30'
+              }`}
             >
-              {mutation.isPending ? 'Saving…' : 'Update'}
+              {d === 'charge' ? 'Charge (add debt)' : 'Payment (reduce debt)'}
             </button>
-          </div>
+          ))}
+        </div>
+
+        <Field label="Amount (NGN) *">
+          <input type="number" min="0.01" step="0.01" value={amount} onChange={(e) => { setAmount(e.target.value); setErr(''); }} placeholder="e.g. 1000" className={inputCls} />
+        </Field>
+        <Field label="Note (optional)">
+          <input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Bread x2" className={inputCls} />
+        </Field>
+
+        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+
+        <div className="flex gap-3">
+          <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+          <button
+            type="button"
+            disabled={!amount || Number(amount) <= 0 || mutation.isPending}
+            onClick={() => mutation.mutate()}
+            className={submitBtn}
+          >
+            {mutation.isPending ? 'Saving…' : 'Update'}
+          </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -182,6 +182,12 @@ export default function InventoryCustomersPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
   const [creditCustomer, setCreditCustomer] = useState<Customer | null>(null);
+  // Modals stay mounted for their close animation, so keep the last targeted
+  // customer around for display after the state above is nulled on close.
+  const [editCustomerDisplay, setEditCustomerDisplay] = useState<Customer | null>(null);
+  useEffect(() => { if (editCustomer) setEditCustomerDisplay(editCustomer); }, [editCustomer]);
+  const [creditCustomerDisplay, setCreditCustomerDisplay] = useState<Customer | null>(null);
+  useEffect(() => { if (creditCustomer) setCreditCustomerDisplay(creditCustomer); }, [creditCustomer]);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search);
 
@@ -316,16 +322,19 @@ export default function InventoryCustomersPage() {
         </div>
       </div>
 
-      {showAdd && <CustomerModal onClose={() => setShowAdd(false)} bizId={selectedId} />}
-      {editCustomer && (
+      <CustomerModal open={showAdd} onClose={() => setShowAdd(false)} bizId={selectedId} />
+      {editCustomerDisplay && (
         <CustomerModal
-          initial={{ name: editCustomer.name, phone: editCustomer.phone, notes: editCustomer.notes }}
-          customerId={editCustomer.id}
+          open={editCustomer !== null}
+          initial={{ name: editCustomerDisplay.name, phone: editCustomerDisplay.phone, notes: editCustomerDisplay.notes }}
+          customerId={editCustomerDisplay.id}
           onClose={() => setEditCustomer(null)}
           bizId={selectedId}
         />
       )}
-      {creditCustomer && <CreditModal customer={creditCustomer} onClose={() => setCreditCustomer(null)} />}
+      {creditCustomerDisplay && (
+        <CreditModal open={creditCustomer !== null} customer={creditCustomerDisplay} onClose={() => setCreditCustomer(null)} />
+      )}
     </div>
   );
 }

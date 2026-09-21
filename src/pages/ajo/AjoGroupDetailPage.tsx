@@ -139,8 +139,21 @@ function fullName(u: UserSnap) {
 // Derived from the cycle's own end_date/is_over (server-authoritative) rather
 // than a locally reconstructed day-count — mirrors the mobile app's identical
 // helper, since a cycle IS one period (Group.compute_cycle_end_date backend).
+// Whole calendar-day difference between today (viewer's local date) and a
+// "YYYY-MM-DD" date string — deliberately not Date.now() minus a timestamp,
+// which mixes a precise moment with a date-only value and rounds unstably
+// near the boundary (e.g. 9pm, a few hours before a date's UTC midnight,
+// would round the "1 day away" diff down to 0).
+function daysFromToday(dateStr: string): number {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const target = Date.UTC(y, m - 1, d);
+  const now = new Date();
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((target - today) / 86_400_000);
+}
+
 function computePeriodLabel(cycle: Cycle): string {
-  const diffDays = Math.round((new Date(cycle.end_date).getTime() - Date.now()) / 86_400_000);
+  const diffDays = daysFromToday(cycle.end_date);
   if (cycle.is_over) {
     const overdue = Math.abs(diffDays);
     return `Overdue ${overdue} day${overdue === 1 ? '' : 's'}`;
@@ -154,7 +167,7 @@ function computePeriodLabel(cycle: Cycle): string {
 // dated for the future doesn't show a misleading end-date countdown before
 // it's actually begun. It does not affect payment/collection behavior.
 function computeStartLabel(cycle: Cycle): string | null {
-  const diffDays = Math.round((new Date(cycle.start_date).getTime() - Date.now()) / 86_400_000);
+  const diffDays = daysFromToday(cycle.start_date);
   if (diffDays <= 0) return null;
   if (diffDays === 1) return 'Starts tomorrow';
   return `Starts in ${diffDays} days`;

@@ -1843,9 +1843,109 @@ function HistoryTab({
   );
 }
 
+// ── Audit Log Tab (admin-only) ────────────────────────────────────────────────
+
+interface AuditLogEntry {
+  id: number;
+  action: string;
+  action_display: string;
+  actor: { first_name: string; last_name: string; email: string } | null;
+  extra_data: Record<string, unknown>;
+  timestamp: string;
+}
+
+interface PaginatedAuditLog {
+  count: number;
+  results: AuditLogEntry[];
+}
+
+function summarizeExtraData(data: Record<string, unknown>): string {
+  const skip = new Set(['group_name']); // already shown by context, redundant here
+  const parts = Object.entries(data)
+    .filter(([k, v]) => !skip.has(k) && v !== null && v !== undefined && v !== '')
+    .map(([k, v]) => `${k.replace(/_/g, ' ')}: ${v}`);
+  return parts.join(', ') || '—';
+}
+
+function AuditLogTab({ groupId, active }: { groupId: number; active: boolean }) {
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading } = useQuery<PaginatedAuditLog>({
+    queryKey: ['ajo-group-audit-log', String(groupId), page],
+    queryFn: () => api.get(`/groups/${groupId}/audit-log/?page=${page}`).then((r) => r.data),
+    enabled: active,
+  });
+
+  const entries = data?.results ?? [];
+  const totalCount = data?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 20));
+
+  const cols: Column<Record<string, unknown>>[] = [
+    { key: 'action_display', header: 'Action', render: (v) => String(v ?? '—') },
+    {
+      key: 'actor',
+      header: 'By',
+      render: (v) => v ? fullName(v as UserSnap) : <span className="text-(--text-muted)">System</span>,
+    },
+    {
+      key: 'extra_data',
+      header: 'Details',
+      render: (v) => (
+        <span className="text-xs text-(--text-secondary)">{summarizeExtraData(v as Record<string, unknown>)}</span>
+      ),
+    },
+    {
+      key: 'timestamp',
+      header: 'When',
+      render: (v) => {
+        try { return format(new Date(v as string), 'dd MMM yyyy, HH:mm'); } catch { return v as string; }
+      },
+    },
+  ];
+
+  return (
+    <>
+      <p className="text-xs text-(--text-muted) mb-3">
+        This group's full activity trail — every recorded action, newest first.
+      </p>
+      <Table
+        columns={cols}
+        data={entries as unknown as Record<string, unknown>[]}
+        loading={isLoading}
+        emptyMessage="No activity recorded yet."
+      />
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-4 gap-3 flex-wrap">
+          <p className="text-xs text-(--text-muted)">
+            Showing {(page - 1) * 20 + 1}–{Math.min(page * 20, totalCount)} of {totalCount}
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-(--bg) text-(--text-secondary) disabled:opacity-40 hover:bg-(--primary-tint)/50"
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-(--bg) text-(--text-secondary) disabled:opacity-40 hover:bg-(--primary-tint)/50"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 
-type TabKey = 'payments' | 'members' | 'cycles' | 'order' | 'history';
+type TabKey = 'payments' | 'members' | 'cycles' | 'order' | 'history' | 'audit';
 
 export default function AjoGroupDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -1956,6 +2056,7 @@ export default function AjoGroupDetailPage() {
     { key: 'cycles',   label: 'Cycles',   count: cycles.length },
     { key: 'order',    label: 'Collection Order' },
     { key: 'history',  label: 'History' },
+    ...(isAdmin ? [{ key: 'audit' as const, label: 'Audit Log' }] : []),
   ];
 
   return (
@@ -2204,6 +2305,9 @@ export default function AjoGroupDetailPage() {
               payments={payments}
               active={activeTab === 'history'}
             />
+          )}
+          {activeTab === 'audit' && isAdmin && (
+            <AuditLogTab groupId={Number(id)} active={activeTab === 'audit'} />
           )}
         </div>
       </div>

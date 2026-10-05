@@ -6,6 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scribe</title>
 
+    <!-- PWA: theme color for the browser/OS chrome (Android status bar, task switcher) -->
+    <meta name="theme-color" content="#0035F0" />
+
+    <!--
+      iOS has never implemented the general <link rel="manifest"> installability
+      spec the way Android/Chrome did, so Safari needs these explicit tags to
+      behave like an installed app once added to the home screen (manifest.json
+      is still linked separately below for every other browser/OS).
+    -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Scribe" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+
     <!--
       Content Security Policy
       – default-src 'self'          : only load resources from this origin by default

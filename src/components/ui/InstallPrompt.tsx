@@ -1,23 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ArrowUpOnSquareIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { isIos, isStandalone } from '../../lib/platform';
 
 const DISMISSED_KEY = 'scribe-install-prompt-dismissed';
-
-function isIos(): boolean {
-  const ua = window.navigator.userAgent;
-  if (/iPad|iPhone|iPod/.test(ua)) return true;
-  // iPadOS 13+ reports its UA as a regular Mac, so the only way to tell it
-  // apart from a real Mac is that it (unlike a Mac) supports multi-touch.
-  return navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
-}
-
-function isStandalone(): boolean {
-  return (
-    window.matchMedia('(display-mode: standalone)').matches ||
-    // iOS-only, non-standard property -- not in the lib.dom.d.ts Navigator type.
-    (window.navigator as Navigator & { standalone?: boolean }).standalone === true
-  );
-}
 
 /**
  * iOS never implemented the `beforeinstallprompt` event Android/Chrome use to

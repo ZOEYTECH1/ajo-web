@@ -25,10 +25,24 @@ export default defineConfig({
       //
       // autoUpdate: new deploys take over silently in the background (new SW
       // activates via skipWaiting/clientsClaim, no "update available" prompt
-      // UI to build/maintain). Since every API call is NetworkOnly anyway,
-      // there's no stale-data risk from an old SW lingering a little longer
-      // than ideal -- the only thing it ever controls is static shell assets.
+      // UI to build/maintain).
+      //
+      // injectManifest (not the default generateSW): PWA Phase 3 needs a
+      // hand-written `push`/`notificationclick` listener for Web Push
+      // (src/sw.ts), which generateSW's auto-generated worker has no hook
+      // for. Workbox only precaches the static build manifest there --
+      // there is no runtime-caching route for anything else, so API/
+      // WebSocket requests are simply never intercepted by the service
+      // worker at all and always go straight to the network (this is a
+      // ledger app: no financial response is ever served from a cache).
+      // One tradeoff: generateSW's automatic offline SPA navigateFallback
+      // is gone too -- direct navigation to any route still works today
+      // via vercel.json's rewrite, just not with zero connectivity, which
+      // is offline-first territory this project has explicitly deferred.
       registerType: 'autoUpdate',
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       includeAssets: ['favicon.svg', 'ajo-logo.svg'],
       manifest: {
         name: 'Scribe',
@@ -45,24 +59,11 @@ export default defineConfig({
           { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
-      workbox: {
-        // SPA fallback so a direct/offline navigation to any route still
-        // loads the app shell instead of a service-worker 404.
-        navigateFallback: '/index.html',
-        runtimeCaching: [
-          {
-            // Every API call -- same-origin /api/* in dev (irrelevant, SW is
-            // prod-only) or the cross-origin Render backend in prod (see
-            // VITE_API_URL) -- is a ledger/financial read or write. Never
-            // cache these: NetworkOnly means a request with no connectivity
-            // fails cleanly instead of silently resolving with stale data.
-            // (WebSocket upgrades aren't interceptable by the fetch event at
-            // all, so they need no entry here.)
-            urlPattern: ({ url, sameOrigin }) =>
-              url.pathname.startsWith('/api') || !sameOrigin,
-            handler: 'NetworkOnly',
-          },
-        ],
+      injectManifest: {
+        // Keep the precache list to what actually matters for a fast
+        // repeat load -- images/fonts aren't worth bloating the manifest
+        // with class content-hashed JS/CSS/HTML already covers the shell.
+        globPatterns: ['**/*.{js,css,html}'],
       },
     }),
   ],

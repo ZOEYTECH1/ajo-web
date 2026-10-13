@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline';
 import { Sidebar } from './Sidebar';
 import { InstallPrompt } from './InstallPrompt';
+import { NotificationPrompt } from './NotificationPrompt';
 import { useTheme } from '../../context/ThemeContext';
 import type { ReactNode } from 'react';
 
@@ -101,6 +102,7 @@ export function Layout({ children }: LayoutProps) {
       </div>
 
       <InstallPrompt />
+      <NotificationPrompt />
     </div>
   );
 }

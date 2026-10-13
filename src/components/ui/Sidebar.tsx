@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -15,6 +16,7 @@ import useAuthStore from '../../store/useAuthStore';
 import { logout } from '../../services/authService';
 import api from '../../services/api';
 import { cloudinaryUrl } from '../../lib/cloudinary';
+import { updateAppBadge } from '../../lib/appBadge';
 import { useModuleAccess } from '../../hooks/useModuleAccess';
 
 interface NavItem {
@@ -67,6 +69,12 @@ export function Sidebar({ onClose }: SidebarProps) {
   });
   const notifList: Notification[] = Array.isArray(notifs) ? notifs : (notifs?.results ?? []);
   const unreadCount = notifList.filter((n) => !n.is_read).length;
+
+  // Mirrors the in-app bell badge above onto the home-screen icon itself
+  // (Badging API) -- pure enhancement, already a no-op where unsupported.
+  useEffect(() => {
+    updateAppBadge(unreadCount);
+  }, [unreadCount]);
 
   const handleLogout = async () => {
     try { await logout(); } catch { /* ignore */ }

@@ -1,9 +1,12 @@
 ﻿import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon, TrashIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { format } from 'date-fns';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import { Modal } from '../../components/ui/Modal';
+import { Table, type Column } from '../../components/ui/Table';
+import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 import { useDebounce } from '../../hooks/useDebounce';
@@ -119,7 +122,11 @@ function CreditModal({ open, customer, onClose }: { open: boolean; customer: Cus
 
   const mutation = useMutation({
     mutationFn: () => api.post(`/inventory/customers/${customer.id}/credit/`, { direction, amount, note: note.trim() }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['inventory-customers'] }); onClose(); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['inventory-customers'] });
+      qc.invalidateQueries({ queryKey: ['inventory-customer-credit-history', customer.id] });
+      onClose();
+    },
     onError: (e: any) => {
       const d = e.response?.data;
       setErr(d?.detail ?? d?.amount?.[0] ?? 'Failed to update credit.');
@@ -174,6 +181,123 @@ function CreditModal({ open, customer, onClose }: { open: boolean; customer: Cus
   );
 }
 
+// ── Credit History Modal ────────────────────────────────────────────────────────
+
+interface CreditEntry {
+  id: number;
+  direction: 'charge' | 'payment';
+  amount: string;
+  balance_after: string;
+  note: string;
+  recorded_at: string;
+}
+
+interface PaginatedCreditHistory {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: CreditEntry[];
+}
+
+function DirectionBadge({ value }: { value: 'charge' | 'payment' }) {
+  const isCharge = value === 'charge';
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+      isCharge ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+    }`}>
+      {isCharge ? 'Charge' : 'Payment'}
+    </span>
+  );
+}
+
+const creditHistoryCols: Column<Record<string, unknown>>[] = [
+  {
+    key: 'recorded_at',
+    header: 'Date',
+    render: (v) => {
+      try { return format(new Date(v as string), 'dd MMM yyyy, HH:mm'); } catch { return v as string; }
+    },
+  },
+  {
+    key: 'direction',
+    header: 'Type',
+    render: (v) => <DirectionBadge value={v as 'charge' | 'payment'} />,
+  },
+  {
+    key: 'amount',
+    header: 'Amount',
+    render: (v, row) => (
+      <span className={row.direction === 'charge' ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold'}>
+        {row.direction === 'charge' ? '+' : '-'}{formatCurrency(v as string)}
+      </span>
+    ),
+  },
+  {
+    key: 'balance_after',
+    header: 'Balance After',
+    render: (v) => formatCurrency(v as string),
+  },
+  {
+    key: 'note',
+    header: 'Note',
+    render: (v) => (v as string) || '—',
+  },
+];
+
+function CreditHistoryModal({ open, customer, onClose }: { open: boolean; customer: Customer; onClose: () => void }) {
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    if (open) setPage(1);
+  }, [open]);
+
+  const { data, isLoading, error } = useQuery<PaginatedCreditHistory>({
+    queryKey: ['inventory-customer-credit-history', customer.id, page],
+    queryFn: () => api.get(`/inventory/customers/${customer.id}/credit/`, { params: { page } }).then(r => r.data),
+    enabled: open,
+  });
+
+  const totalPages = data ? Math.ceil(data.count / 20) : 1;
+
+  return (
+    <Modal open={open} onClose={onClose} title={`Credit History — ${customer.name}`} size="lg">
+      <div className="space-y-4">
+        <p className="text-sm text-(--text-secondary)">
+          Current balance:{' '}
+          <span className="font-semibold text-orange-600">{formatCurrency(customer.credit_balance)}</span>
+        </p>
+
+        {error && (
+          <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+            Failed to load credit history. Please refresh.
+          </div>
+        )}
+
+        <Table
+          columns={creditHistoryCols}
+          data={(data?.results ?? []) as unknown as Record<string, unknown>[]}
+          loading={isLoading}
+          emptyMessage="No credit activity yet."
+        />
+
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          totalCount={data?.count ?? 0}
+          pageSize={20}
+          onChange={setPage}
+        />
+
+        <div className="flex justify-end pt-1">
+          <button type="button" onClick={onClose} className="rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors">
+            Close
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function InventoryCustomersPage() {
@@ -182,12 +306,15 @@ export default function InventoryCustomersPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
   const [creditCustomer, setCreditCustomer] = useState<Customer | null>(null);
+  const [historyCustomer, setHistoryCustomer] = useState<Customer | null>(null);
   // Modals stay mounted for their close animation, so keep the last targeted
   // customer around for display after the state above is nulled on close.
   const [editCustomerDisplay, setEditCustomerDisplay] = useState<Customer | null>(null);
   useEffect(() => { if (editCustomer) setEditCustomerDisplay(editCustomer); }, [editCustomer]);
   const [creditCustomerDisplay, setCreditCustomerDisplay] = useState<Customer | null>(null);
   useEffect(() => { if (creditCustomer) setCreditCustomerDisplay(creditCustomer); }, [creditCustomer]);
+  const [historyCustomerDisplay, setHistoryCustomerDisplay] = useState<Customer | null>(null);
+  useEffect(() => { if (historyCustomer) setHistoryCustomerDisplay(historyCustomer); }, [historyCustomer]);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search);
 
@@ -291,6 +418,14 @@ export default function InventoryCustomersPage() {
                         </button>
                         <button
                           type="button"
+                          onClick={() => setHistoryCustomer(c)}
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-orange-600 hover:bg-orange-50 transition-colors"
+                          title="Credit history"
+                        >
+                          <ClockIcon className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => setEditCustomer(c)}
                           className="p-1.5 rounded-lg text-(--text-muted) hover:text-orange-600 hover:bg-orange-50 transition-colors"
                           title="Edit"
@@ -334,6 +469,9 @@ export default function InventoryCustomersPage() {
       )}
       {creditCustomerDisplay && (
         <CreditModal open={creditCustomer !== null} customer={creditCustomerDisplay} onClose={() => setCreditCustomer(null)} />
+      )}
+      {historyCustomerDisplay && (
+        <CreditHistoryModal open={historyCustomer !== null} customer={historyCustomerDisplay} onClose={() => setHistoryCustomer(null)} />
       )}
     </div>
   );

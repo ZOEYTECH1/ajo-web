@@ -51,15 +51,18 @@ interface SidebarProps {
 export function Sidebar({ onClose }: SidebarProps) {
   const { user, clearAuth } = useAuthStore();
   const navigate = useNavigate();
-  const { usesAjo, usesThrift, usesInventory } = useModuleAccess();
+  const { usesAjo, usesThrift, usesInventory, isLoading: modulesLoading } = useModuleAccess();
 
   const moduleInUse: Record<ModuleKey, boolean> = {
     ajo: usesAjo,
     thrift: usesThrift,
     inventory: usesInventory,
   };
-  const activeModules  = MODULE_ITEMS.filter((m) => moduleInUse[m.key]);
-  const exploreModules = MODULE_ITEMS.filter((m) => !moduleInUse[m.key]);
+  // Nothing module-related renders until the real answer is known -- a
+  // module the user doesn't use must never flash into either the main nav
+  // or the "Explore" section while the others are still resolving.
+  const activeModules  = modulesLoading ? [] : MODULE_ITEMS.filter((m) => moduleInUse[m.key]);
+  const exploreModules = modulesLoading ? [] : MODULE_ITEMS.filter((m) => !moduleInUse[m.key]);
 
   const { data: notifs } = useQuery({
     queryKey: ['notifications'],

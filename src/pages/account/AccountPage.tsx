@@ -335,11 +335,11 @@ export default function AccountPage() {
       </div>
 
       {/* Active modules */}
-      {user?.selectedModules && user.selectedModules.length > 0 && (
+      {user?.selected_modules && user.selected_modules.length > 0 && (
         <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
           <h2 className="text-base font-semibold text-(--text-primary) mb-3">Active Modules</h2>
           <div className="flex flex-wrap gap-2">
-            {user.selectedModules.map((mod) => (
+            {user.selected_modules.map((mod) => (
               <span
                 key={mod}
                 className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-50 text-orange-700 capitalize"

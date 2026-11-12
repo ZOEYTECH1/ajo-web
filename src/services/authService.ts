@@ -34,7 +34,10 @@ export interface User {
   role: string;
   profile_photo: string | null;
   is_email_verified: boolean;
-  selectedModules?: string[];
+  // Which of the 3 top-level sections ("ajo" | "thrift" | "inventory") this
+  // account uses -- account-level (not per-device), shared with the mobile
+  // app. Empty array means the user hasn't picked yet.
+  selected_modules: string[];
 }
 
 export interface LoginResponse extends AuthTokens {

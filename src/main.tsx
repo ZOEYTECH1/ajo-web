@@ -60,6 +60,7 @@ const RegisterPage                  = lazy(() => import('./pages/auth/RegisterPa
 const OTPPage                       = lazy(() => import('./pages/auth/OTPPage'));
 const ForgotPasswordPage            = lazy(() => import('./pages/auth/ForgotPasswordPage'));
 const CompleteProfilePage           = lazy(() => import('./pages/auth/CompleteProfilePage'));
+const PickModulesPage               = lazy(() => import('./pages/auth/PickModulesPage'));
 
 // App pages
 const DashboardPage                 = lazy(() => import('./pages/DashboardPage'));
@@ -140,6 +141,7 @@ const router = createBrowserRouter([
           { index: true,                        element: <DashboardPage /> },
           { path: 'dashboard',                  element: <DashboardPage /> },
           { path: 'complete-profile',           element: <CompleteProfilePage /> },
+          { path: 'pick-modules',               element: <PickModulesPage /> },
           { path: 'inventory',                  element: <InventoryDashboardPage /> },
           { path: 'inventory/analytics',        element: <InventoryAnalyticsPage /> },
           { path: 'inventory/sales',            element: <InventorySalesPage /> },

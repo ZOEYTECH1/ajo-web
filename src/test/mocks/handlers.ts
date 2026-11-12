@@ -10,7 +10,7 @@ const sampleUser = {
   phone_number: '+2348000000000',
   role: 'member',
   is_email_verified: true,
-  selectedModules: ['ajo', 'inventory', 'thrift'],
+  selected_modules: ['ajo', 'inventory', 'thrift'],
 };
 
 const sampleDashboard = {

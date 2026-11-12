@@ -135,7 +135,7 @@ describe('Layer 8.2 â€” Secrets management: sensitive data storage', () => 
         HttpResponse.json({
           access: 'tok', refresh: 'ref',
           user: { id: 1, email: 'a@b.com', first_name: 'A', last_name: 'B',
-                  phone_number: '+234', role: 'member', is_email_verified: true, selectedModules: [] },
+                  phone_number: '+234', role: 'member', is_email_verified: true, selected_modules: [] },
         }),
       ),
     );

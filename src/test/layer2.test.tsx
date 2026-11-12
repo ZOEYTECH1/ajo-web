@@ -56,7 +56,7 @@ describe('Layer 2.1 â€” Correct HTTP methods in API calls', () => {
           access: 'tok',
           refresh: 'ref',
           user: { id: 1, email: 'a@b.com', first_name: 'A', last_name: 'B',
-                  phone_number: '+234', role: 'member', is_email_verified: true, selectedModules: [] },
+                  phone_number: '+234', role: 'member', is_email_verified: true, selected_modules: [] },
         });
       }),
     );
@@ -117,7 +117,7 @@ describe('Layer 2.2 â€” Error handling: UI shows appropriate messages', () 
         HttpResponse.json({
           access: 'tok', refresh: 'ref',
           user: { id: 1, email: 'a@b.com', first_name: 'A', last_name: 'B',
-                  phone_number: '+234', role: 'member', is_email_verified: true, selectedModules: [] },
+                  phone_number: '+234', role: 'member', is_email_verified: true, selected_modules: [] },
         }),
       ),
     );
@@ -145,7 +145,7 @@ describe('Layer 2.3 â€” Authentication: tokens stored after login', () => {
         HttpResponse.json({
           access: 'e2e-access', refresh: 'e2e-refresh',
           user: { id: 1, email: 'a@b.com', first_name: 'A', last_name: 'B',
-                  phone_number: '+234', role: 'member', is_email_verified: true, selectedModules: [] },
+                  phone_number: '+234', role: 'member', is_email_verified: true, selected_modules: [] },
         }),
       ),
     );
@@ -167,7 +167,7 @@ describe('Layer 2.3 â€” Authentication: tokens stored after login', () => {
         HttpResponse.json({
           access: 'tok', refresh: 'ref',
           user: { id: 99, email: 'me@example.com', first_name: 'Me', last_name: 'User',
-                  phone_number: '+234', role: 'member', is_email_verified: true, selectedModules: [] },
+                  phone_number: '+234', role: 'member', is_email_verified: true, selected_modules: [] },
         }),
       ),
     );
@@ -198,7 +198,7 @@ describe('Layer 2.4 â€” Response quality: required fields from API', () => 
         const body = { access: 'access-tok', refresh: 'refresh-tok',
                        user: { id: 1, email: 'a@b.com', first_name: 'A', last_name: 'B',
                                phone_number: '+234', role: 'member', is_email_verified: true,
-                               selectedModules: [] } };
+                               selected_modules: [] } };
         captured = body;
         return HttpResponse.json(body);
       }),

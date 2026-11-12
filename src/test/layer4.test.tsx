@@ -52,7 +52,7 @@ const VALID_LOGIN_RESPONSE = {
     phone_number: '+2348000000000',
     role: 'member',
     is_email_verified: true,
-    selectedModules: ['inventory'],
+    selected_modules: ['inventory'],
   },
 };
 
@@ -167,7 +167,7 @@ describe('Layer 4.2 â€” Session management', () => {
     useAuthStore.setState({
       user: { id: 1, email: 'test@test.com', first_name: 'T', last_name: 'U',
               phone_number: '+234', role: 'member', profile_photo: null,
-              is_email_verified: true, selectedModules: [] },
+              is_email_verified: true, selected_modules: [] },
       tokens: { access: 'tok', refresh: 'ref' },
     });
     useAuthStore.getState().clearAuth();

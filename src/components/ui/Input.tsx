@@ -56,14 +56,12 @@ export function Input({
         aria-describedby={error ? `${inputId}-error` : undefined}
         aria-invalid={!!error}
         className={clsx(
-          'w-full rounded-lg px-3 py-2 text-sm text-(--text-primary) placeholder:text-(--text-muted)',
+          'w-full rounded-lg border px-3 py-2 text-sm text-(--text-primary) placeholder:text-(--text-muted)',
           'focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500',
-          'disabled:bg-(--bg) disabled:text-(--text-muted) disabled:cursor-not-allowed disabled:shadow-none',
+          'disabled:bg-(--bg) disabled:text-(--text-muted) disabled:cursor-not-allowed',
           error
-            ? 'border border-red-400 bg-red-50'
-            // "Pressed into the page" inset shadow instead of a flat border --
-            // the other half of soft-UI's raised/pressed card vocabulary.
-            : 'surface-soft-inset bg-(--surface)',
+            ? 'border-red-400 bg-red-50'
+            : 'border-(--border) bg-(--surface)',
         )}
       />
       {error && (

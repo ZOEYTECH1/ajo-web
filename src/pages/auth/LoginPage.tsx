@@ -20,6 +20,12 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!email.trim() || !password) {
+      setError('Please enter both your email and password.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -100,7 +106,6 @@ export default function LoginPage() {
               variant="primary"
               fullWidth
               loading={isLoading}
-              disabled={!email || !password}
             >
               Sign in
             </Button>

@@ -96,18 +96,26 @@ describe('Layer 1.1 â€” Accessibility: correct HTML elements', () => {
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 describe('Layer 1.2 â€” Forms: errors and input preservation', () => {
-  it('Login: submit button is disabled when fields are empty', () => {
+  it('Login: submit button is never disabled just because fields are empty', () => {
+    // Deliberately NOT disabled based on controlled-state field values --
+    // browser autofill routinely fills inputs without firing React's
+    // change event, which left a disabled-by-state button stuck looking
+    // (and in some cases actually staying) disabled even once both fields
+    // visibly had values. Validation happens on submit instead (below).
     render(<Providers><LoginPage /></Providers>);
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /sign in/i })).not.toBeDisabled();
   });
 
-  it('Login: submit button enables when email + password are filled', async () => {
+  it('Login: submitting with empty fields shows a validation error instead of calling the API', async () => {
+    const loginSpy = vi.fn();
+    server.use(http.post('/api/auth/login/', () => { loginSpy(); return HttpResponse.json({}, { status: 200 }); }));
     const user = userEvent.setup();
     render(<Providers><LoginPage /></Providers>);
 
-    await user.type(screen.getByLabelText(/email address/i), 'test@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'password123');
-    expect(screen.getByRole('button', { name: /sign in/i })).not.toBeDisabled();
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+
+    expect(await screen.findByText(/enter both your email and password/i)).toBeInTheDocument();
+    expect(loginSpy).not.toHaveBeenCalled();
   });
 
   it('Login: shows error alert on failed login', async () => {

@@ -199,9 +199,9 @@ describe('Layer 4.3 â€” Protected routes and auth navigation', () => {
     expect(link).toHaveAttribute('href', '/register');
   });
 
-  it('submit button is disabled before user types', () => {
+  it('submit button is not disabled before user types -- validation happens on submit instead', () => {
     render(<Providers><LoginPage /></Providers>);
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /sign in/i })).not.toBeDisabled();
   });
 });
 

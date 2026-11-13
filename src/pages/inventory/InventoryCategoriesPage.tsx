@@ -38,7 +38,7 @@ const TEMPLATES = [
   { emoji: '📦', label: 'Other Goods' },
 ];
 
-const inputCls = 'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
@@ -238,10 +238,10 @@ function CustomFieldsModal({ category, onClose }: { category: Category; onClose:
             <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide">Add a field</p>
             <input type="text" value={newName} onChange={e => setNewName(e.target.value)}
               placeholder="Field name (e.g. Size, Colour, Brand)"
-              className="w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+              className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
             <div className="flex gap-3 items-center">
               <select value={newType} onChange={e => setNewType(e.target.value as 'text' | 'number')}
-                className="flex-1 rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
                 <option value="text">Text</option>
                 <option value="number">Number</option>
               </select>

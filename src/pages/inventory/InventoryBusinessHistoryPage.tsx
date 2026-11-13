@@ -31,7 +31,7 @@ interface LifetimeTotals {
   has_reported_data: boolean;
 }
 
-const inputCls = 'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const fmt = (v: string | number) => `₦${Number(v).toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 const fmtDate = (d: string) => format(new Date(`${d}T00:00:00`), 'd MMM yyyy');
 

@@ -25,7 +25,7 @@ interface Business {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 const PRICE_PER_MONTH = 2000;
 
@@ -162,7 +162,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
       )}
 
       {/* Pricing */}
-      <div className="rounded-lg surface-soft-inset bg-(--surface) px-4 py-3 text-sm text-(--text-secondary)">
+      <div className="rounded-lg bg-(--bg) border border-(--border) px-4 py-3 text-sm text-(--text-secondary)">
         <span className="font-semibold text-(--text-primary)">{fmt(PRICE_PER_MONTH)}</span> / month per business
       </div>
 
@@ -195,7 +195,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
       </div>
 
       {/* What's included */}
-      <div className="rounded-xl surface-soft-inset bg-(--surface) p-4">
+      <div className="rounded-xl bg-(--bg) border border-(--border) p-4">
         <p className="text-sm font-bold text-(--text-primary) mb-3">What's included</p>
         <ul className="space-y-2">
           {FEATURES.map(f => (
@@ -221,7 +221,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
 
       {/* Verify payment section */}
       {showVerify && (
-        <div className="space-y-3 rounded-xl surface-soft-inset bg-(--surface) p-4">
+        <div className="space-y-3 rounded-xl bg-(--bg) border border-(--border) p-4">
           <p className="text-sm font-semibold text-(--text-secondary)">
             Verify Payment
           </p>

@@ -156,13 +156,18 @@ export function InventoryNav() {
             the box, viewport-aware positioning (anchor), and a built-in
             enter/leave transition -- all things a custom click-outside div
             has to hand-roll and easily gets wrong. */}
-        <Menu as="div" className="relative">
+        {/* The trigger is deliberately a distinct soft-UI chip, not another
+            plain-text tab -- it isn't a page link like the ones beside it,
+            it opens a menu, and it should look like a control rather than
+            blend into the row (the same "looks clickable on its own
+            terms" cue GitHub's own "..." button gives its repo tabs). */}
+        <Menu as="div" className="relative ml-1">
           <MenuButton
             className={clsx(
-              'group flex items-center gap-1 shrink-0 px-3 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 data-active:text-(--text-primary)',
+              'group flex items-center gap-1.5 shrink-0 pl-2.5 pr-2 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 active:scale-[0.97]',
               isMoreActive
                 ? 'bg-orange-50 text-orange-600 shadow-(--shadow-soft-sm) dark:bg-orange-950/40'
-                : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--primary-tint)/30',
+                : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
             <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />

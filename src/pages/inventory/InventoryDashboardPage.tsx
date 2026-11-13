@@ -100,7 +100,10 @@ function StatCard({
           {subtitle && <p className="mt-0.5 text-xs text-(--text-muted)">{subtitle}</p>}
         </div>
       </div>
-      <p className="text-lg font-bold text-(--text-primary)">{value}</p>
+      {/* ml-auto keeps it pinned to the right even when flex-wrap drops it
+          to its own line, instead of falling back to the left edge under
+          the icon. */}
+      <p className="text-lg font-bold text-(--text-primary) ml-auto">{value}</p>
     </div>
   );
 }

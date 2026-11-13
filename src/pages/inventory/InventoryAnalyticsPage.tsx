@@ -133,7 +133,13 @@ function KpiCard({
           {sub && <p className="text-xs text-(--text-muted) mt-0.5">{sub}</p>}
         </div>
       </div>
-      <p className="text-base font-bold text-(--text-primary) leading-tight">{value}</p>
+      {/* ml-auto keeps it pinned to the right even when flex-wrap drops it
+          to its own line -- otherwise a wrapped value falls back to the
+          left edge under the icon, which read as an oddly dominant,
+          disconnected line of its own. text-sm (not text-base) so it
+          doesn't visually overpower the label above it once it's alone
+          on a line with nothing to balance it against. */}
+      <p className="text-sm font-bold text-(--text-primary) leading-tight ml-auto">{value}</p>
     </div>
   );
 }

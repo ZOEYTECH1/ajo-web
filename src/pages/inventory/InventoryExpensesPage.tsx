@@ -81,7 +81,7 @@ function ManageCategoriesModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">My Expense Categories</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
@@ -94,18 +94,18 @@ function ManageCategoriesModal({ onClose }: { onClose: () => void }) {
               onChange={e => setNewName(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); if (newName.trim()) addMutation.mutate(); } }}
               placeholder="New category name"
-              className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="flex-1 rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
             <button
               type="button"
               disabled={!newName.trim() || addMutation.isPending}
               onClick={() => addMutation.mutate()}
-              className="rounded-lg bg-orange-600 text-white px-4 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+              className="rounded-lg bg-orange-600 text-white px-4 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {addMutation.isPending ? '…' : 'Add'}
             </button>
           </div>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
           {cats.length > 0 ? (
             <div className="space-y-2 max-h-64 overflow-y-auto">
               {cats.map(c => (
@@ -125,7 +125,7 @@ function ManageCategoriesModal({ onClose }: { onClose: () => void }) {
           ) : (
             <p className="text-sm text-(--text-muted) text-center py-4">No custom categories yet. Add one above.</p>
           )}
-          <button type="button" onClick={onClose} className="w-full rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors">
+          <button type="button" onClick={onClose} className="w-full rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors">
             Done
           </button>
         </div>
@@ -173,9 +173,9 @@ function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(v));
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
-const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+const inputCls = 'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -243,7 +243,7 @@ function ExpenseModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">{isEdit ? 'Edit Expense' : 'Add Expense'}</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
@@ -268,11 +268,11 @@ function ExpenseModal({
             <div className="space-y-1.5">
               <div className="flex gap-2">
                 <button type="button" onClick={() => setForm(f => ({ ...f, spent_at: format(new Date(), 'yyyy-MM-dd') }))}
-                  className="px-3 py-1 rounded-full text-xs font-semibold border border-(--border) text-(--text-secondary) hover:bg-orange-50 hover:border-orange-400 hover:text-orange-700 transition-colors">
+                  className="px-3 py-1 rounded-full text-xs font-semibold surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-orange-50 hover:border-orange-400 hover:text-orange-700 transition-colors">
                   Today
                 </button>
                 <button type="button" onClick={() => { const d = new Date(); d.setDate(d.getDate() - 1); setForm(f => ({ ...f, spent_at: format(d, 'yyyy-MM-dd') })); }}
-                  className="px-3 py-1 rounded-full text-xs font-semibold border border-(--border) text-(--text-secondary) hover:bg-orange-50 hover:border-orange-400 hover:text-orange-700 transition-colors">
+                  className="px-3 py-1 rounded-full text-xs font-semibold surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-orange-50 hover:border-orange-400 hover:text-orange-700 transition-colors">
                   Yesterday
                 </button>
               </div>
@@ -282,7 +282,7 @@ function ExpenseModal({
           <Field label="Description (optional)">
             <input type="text" value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} placeholder="e.g. Monthly shop rent" className={inputCls} />
           </Field>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button type="submit" disabled={mutation.isPending} className={submitBtn}>
@@ -358,7 +358,7 @@ export default function InventoryExpensesPage() {
           <button
             type="button"
             onClick={() => setShowManageCats(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
           >
             <TagIcon className="h-4 w-4" />
             Categories
@@ -368,7 +368,7 @@ export default function InventoryExpensesPage() {
               <button
                 type="button"
                 onClick={() => exportCsvBlob(expenses, period)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
               >
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 CSV
@@ -376,7 +376,7 @@ export default function InventoryExpensesPage() {
               <button
                 type="button"
                 onClick={() => exportPdf(expenses, period)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors"
               >
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 PDF
@@ -386,7 +386,7 @@ export default function InventoryExpensesPage() {
           <button
             type="button"
             onClick={() => setShowAdd(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             Add Expense
@@ -405,7 +405,7 @@ export default function InventoryExpensesPage() {
               'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
               period === key
                 ? 'bg-orange-600 text-white'
-                : 'bg-(--surface) border border-(--border) text-(--text-secondary) hover:text-(--text-primary)',
+                : 'bg-(--surface) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
             {label}
@@ -414,23 +414,23 @@ export default function InventoryExpensesPage() {
       </div>
 
       {totalCount > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 flex items-center justify-between gap-4">
+        <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl px-5 py-4 flex items-center justify-between gap-4 shadow-sm animate-rise-in">
           <div>
-            <p className="text-sm text-red-600 font-medium">
+            <p className="text-sm text-red-600 dark:text-red-400 font-medium">
               {period === 'month' ? 'Total This Month' : period === 'week' ? 'Total This Week' : 'Total All Time'}
             </p>
-            <p className="text-2xl font-bold text-red-700">{formatCurrency(totalAmount || pageTotal)}</p>
+            <p className="text-2xl font-bold text-red-700 dark:text-red-400">{formatCurrency(totalAmount || pageTotal)}</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-red-500 font-medium uppercase">Entries</p>
-            <p className="text-2xl font-bold text-red-700">{totalCount}</p>
+            <p className="text-xs text-red-500 dark:text-red-400 font-medium uppercase">Entries</p>
+            <p className="text-2xl font-bold text-red-700 dark:text-red-400">{totalCount}</p>
           </div>
         </div>
       )}
 
       {/* Category breakdown */}
       {byCategory.length > 1 && (
-        <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5 space-y-3">
+        <div className="surface-soft p-5 space-y-3 animate-rise-in">
           <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide">
             Breakdown by Category {totalPages > 1 && <span className="normal-case font-normal">(this page)</span>}
           </p>
@@ -452,12 +452,12 @@ export default function InventoryExpensesPage() {
       )}
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load expenses. Please refresh.
         </div>
       )}
 
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <div className="surface-soft overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
@@ -482,7 +482,7 @@ export default function InventoryExpensesPage() {
                       </td>
                     </tr>
                     {dayExpenses.map(e => (
-                      <tr key={e.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                      <tr key={e.id} className="hover:bg-(--primary-tint)/30">
                         <td className="px-6 py-4 text-sm text-(--text-muted) whitespace-nowrap pl-8">—</td>
                         <td className="px-6 py-4 text-sm text-(--text-primary)">{e.category_label}</td>
                         <td className="px-6 py-4 text-sm text-(--text-secondary)">{e.description || '—'}</td>

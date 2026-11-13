@@ -31,7 +31,7 @@ interface LifetimeTotals {
   has_reported_data: boolean;
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const inputCls = 'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const fmt = (v: string | number) => `₦${Number(v).toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 const fmtDate = (d: string) => format(new Date(`${d}T00:00:00`), 'd MMM yyyy');
 
@@ -107,7 +107,7 @@ function PastRecordModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface)">
           <h2 className="text-lg font-bold text-(--text-primary)">{isEdit ? 'Edit Past Record' : 'Add Past Record'}</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
@@ -147,10 +147,10 @@ function PastRecordModal({
               Optional — your original CSV, Excel, PDF, or a photo. Kept for your own reference only; nothing in it is read automatically.
             </p>
           </Field>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors">Cancel</button>
-            <button type="submit" disabled={mutation.isPending} className="flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold">Cancel</button>
+            <button type="submit" disabled={mutation.isPending} className="flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold shadow-sm hover:bg-orange-700 hover:shadow-md disabled:opacity-50 transition-all duration-150 active:scale-[0.97]">
               {mutation.isPending ? 'Saving…' : isEdit ? 'Save' : 'Add Record'}
             </button>
           </div>
@@ -206,7 +206,7 @@ export default function InventoryBusinessHistoryPage() {
         <button
           type="button"
           onClick={() => { setEditing(null); setShowModal(true); }}
-          className="flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold shadow-sm hover:bg-orange-700 hover:shadow-md transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" /> Add Past Record
         </button>
@@ -214,7 +214,7 @@ export default function InventoryBusinessHistoryPage() {
 
       {/* Lifetime totals */}
       {totals && (
-        <div className="bg-(--surface) rounded-xl border border-(--border) p-6">
+        <div className="surface-soft animate-rise-in p-6">
           <h2 className="text-sm font-bold uppercase tracking-wide text-(--text-secondary) mb-4">Lifetime Totals</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
             <div>
@@ -242,15 +242,19 @@ export default function InventoryBusinessHistoryPage() {
           {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full rounded-xl" />)}
         </div>
       ) : (records ?? []).length === 0 ? (
-        <div className="bg-(--surface) rounded-xl border border-(--border) p-10 text-center">
+        <div className="surface-soft p-10 text-center">
           <p className="text-sm text-(--text-secondary)">
             No past records yet. Add one if you have activity from before you started using this app that you'd like reflected in your lifetime totals.
           </p>
         </div>
       ) : (
         <div className="space-y-3">
-          {(records ?? []).map((rec) => (
-            <div key={rec.id} className="bg-(--surface) rounded-xl border border-(--border) p-5 flex items-start justify-between gap-4 flex-wrap">
+          {(records ?? []).map((rec, i) => (
+            <div
+              key={rec.id}
+              className="surface-soft-sm surface-soft-interactive animate-rise-in p-5 flex items-start justify-between gap-4 flex-wrap"
+              style={{ '--delay': `${Math.min(i, 6) * 40}ms` } as React.CSSProperties}
+            >
               <div className="flex-1 min-w-[200px]">
                 <p className="text-sm font-bold text-(--text-primary)">{fmtDate(rec.period_start)} — {fmtDate(rec.period_end)}</p>
                 <div className="flex gap-4 mt-1.5 text-sm">
@@ -271,7 +275,7 @@ export default function InventoryBusinessHistoryPage() {
                 <button
                   type="button"
                   onClick={() => { setEditing(rec); setShowModal(true); }}
-                  className="p-2 rounded-lg border border-(--border) text-(--text-secondary) hover:text-orange-600 hover:border-orange-300 transition-colors"
+                  className="p-2 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-orange-600"
                   aria-label="Edit record"
                 >
                   <PencilIcon className="h-4 w-4" />
@@ -279,7 +283,7 @@ export default function InventoryBusinessHistoryPage() {
                 <button
                   type="button"
                   onClick={() => setConfirmDelete(rec)}
-                  className="p-2 rounded-lg border border-(--border) text-(--text-secondary) hover:text-red-600 hover:border-red-300 transition-colors"
+                  className="p-2 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-red-600"
                   aria-label="Delete record"
                 >
                   <TrashIcon className="h-4 w-4" />
@@ -305,12 +309,12 @@ export default function InventoryBusinessHistoryPage() {
           will be removed from your lifetime totals. This cannot be undone.
         </p>
         <div className="flex gap-3 mt-5">
-          <button type="button" onClick={() => setConfirmDelete(null)} className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors">Cancel</button>
+          <button type="button" onClick={() => setConfirmDelete(null)} className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold">Cancel</button>
           <button
             type="button"
             disabled={deleteMutation.isPending}
             onClick={() => deleteDisplay && deleteMutation.mutate(deleteDisplay.id)}
-            className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+            className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold shadow-sm hover:bg-red-700 hover:shadow-md disabled:opacity-50 transition-all duration-150 active:scale-[0.97]"
           >
             {deleteMutation.isPending ? 'Deleting…' : 'Delete'}
           </button>

@@ -38,9 +38,9 @@ const TEMPLATES = [
   { emoji: '📦', label: 'Other Goods' },
 ];
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
-const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+const inputCls = 'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function AddCategoryModal({
   onClose,
@@ -58,7 +58,7 @@ function AddCategoryModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
           <div>
             <h2 className="text-lg font-bold text-(--text-primary)">What do you sell?</h2>
@@ -87,7 +87,7 @@ function AddCategoryModal({
                   onKeyDown={(e) => { if (e.key === 'Enter' && customName.trim()) onSave(customName.trim()); }}
                 />
               </div>
-              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
                 <button type="button" onClick={() => setCustomMode(false)} className={cancelBtn}>← Back</button>
                 <button
@@ -119,7 +119,7 @@ function AddCategoryModal({
                   </button>
                 ))}
               </div>
-              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
               {isPending && <p className="text-sm text-center text-(--text-secondary)">Saving…</p>}
             </div>
           )}
@@ -159,7 +159,7 @@ function EditCategoryModal({
             autoFocus
           />
         </div>
-        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
         <div className="flex gap-3">
           <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
           <button type="button" disabled={!name.trim() || isPending} onClick={() => onSave(name.trim())} className={submitBtn}>
@@ -206,7 +206,7 @@ function CustomFieldsModal({ category, onClose }: { category: Category; onClose:
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <div>
             <h2 className="text-lg font-bold text-(--text-primary)">Custom Fields</h2>
@@ -238,10 +238,10 @@ function CustomFieldsModal({ category, onClose }: { category: Category; onClose:
             <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide">Add a field</p>
             <input type="text" value={newName} onChange={e => setNewName(e.target.value)}
               placeholder="Field name (e.g. Size, Colour, Brand)"
-              className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+              className="w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
             <div className="flex gap-3 items-center">
               <select value={newType} onChange={e => setNewType(e.target.value as 'text' | 'number')}
-                className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                className="flex-1 rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
                 <option value="text">Text</option>
                 <option value="number">Number</option>
               </select>
@@ -250,13 +250,13 @@ function CustomFieldsModal({ category, onClose }: { category: Category; onClose:
                 Required
               </label>
               <button type="button" onClick={addField} disabled={saveMutation.isPending}
-                className="rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors">
+                className="rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100">
                 Add
               </button>
             </div>
           </div>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
-          <button type="button" onClick={onClose} className="w-full rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors">
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
+          <button type="button" onClick={onClose} className="w-full rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors">
             Done
           </button>
         </div>
@@ -318,7 +318,7 @@ export default function InventoryCategoriesPage() {
         <button
           type="button"
           onClick={() => { setMutErr(''); setShowAdd(true); }}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Category
@@ -326,12 +326,12 @@ export default function InventoryCategoriesPage() {
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load categories. Please refresh.
         </div>
       )}
 
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <div className="surface-soft overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
@@ -346,7 +346,7 @@ export default function InventoryCategoriesPage() {
                 <SkeletonTable rows={4} cols={3} />
               ) : categories && categories.length > 0 ? (
                 categories.map(cat => (
-                  <tr key={cat.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                  <tr key={cat.id} className="hover:bg-(--primary-tint)/30">
                     <td className="px-6 py-4 text-sm font-medium">
                       <Link to={`/inventory/products/${cat.id}`} className="inline-flex items-center gap-2 text-(--primary) hover:underline">
                         <span className="text-xl leading-none">{getCategoryEmoji(cat.name)}</span>

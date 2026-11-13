@@ -53,10 +53,10 @@ export default function InventoryBestSellersPage() {
             type="button"
             onClick={() => setDays(d)}
             className={clsx(
-              'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
+              'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-150 active:scale-[0.96]',
               days === d
-                ? 'bg-orange-600 text-white'
-                : 'bg-(--surface) border border-(--border) text-(--text-secondary) hover:text-(--text-primary)',
+                ? 'bg-orange-600 text-white shadow-sm'
+                : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
             {label}
@@ -65,7 +65,7 @@ export default function InventoryBestSellersPage() {
       </div>
 
       {error && (
-        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load best sellers. Please refresh.
         </div>
       )}
@@ -73,19 +73,22 @@ export default function InventoryBestSellersPage() {
       {/* Summary banner */}
       {data && data.length > 0 && (
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-orange-50 border border-orange-200 rounded-xl px-5 py-4">
+          <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-xl px-5 py-4 shadow-sm animate-rise-in">
             <p className="text-xs font-semibold text-orange-600 uppercase tracking-wide">Products Ranked</p>
-            <p className="text-2xl font-bold text-orange-700 mt-1">{data.length}</p>
+            <p className="text-2xl font-bold text-orange-700 dark:text-orange-400 mt-1">{data.length}</p>
           </div>
-          <div className="bg-green-50 border border-green-200 rounded-xl px-5 py-4">
+          <div
+            className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl px-5 py-4 shadow-sm animate-rise-in"
+            style={{ '--delay': '40ms' } as React.CSSProperties}
+          >
             <p className="text-xs font-semibold text-green-600 uppercase tracking-wide">Total Revenue</p>
-            <p className="text-2xl font-bold text-green-700 mt-1">{formatCurrency(totalRevenue)}</p>
+            <p className="text-2xl font-bold text-green-700 dark:text-green-400 mt-1">{formatCurrency(totalRevenue)}</p>
           </div>
         </div>
       )}
 
       {/* Rankings */}
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <div className="surface-soft overflow-hidden animate-rise-in">
         {isLoading ? (
           <div className="p-6 space-y-4 animate-pulse">
             {[1, 2, 3, 4, 5].map(i => (

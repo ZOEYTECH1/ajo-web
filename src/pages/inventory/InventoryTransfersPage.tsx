@@ -59,11 +59,11 @@ interface Product {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const orangeBtn =
-  'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
+  'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn =
-  'rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+  'rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 // ── Transfer Modal ─────────────────────────────────────────────────────────────
 
@@ -153,7 +153,7 @@ function TransferModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface)">
           <h2 className="text-lg font-bold text-(--text-primary)">New Transfer</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
@@ -238,7 +238,7 @@ function TransferModal({
             <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Add any notes…" className={inputCls} />
           </div>
 
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -290,7 +290,7 @@ export default function InventoryTransfersPage() {
           <button
             type="button"
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             New Transfer
@@ -305,12 +305,12 @@ export default function InventoryTransfersPage() {
       )}
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load transfers. Please refresh.
         </div>
       )}
 
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <div className="surface-soft overflow-hidden">
         {isLoading ? (
           <div className="p-6 space-y-3">
             {[1, 2, 3].map((i) => <div key={i} className="h-16 rounded-lg bg-(--bg) skeleton" />)}

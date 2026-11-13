@@ -39,7 +39,7 @@ interface Category {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 type FilterStatus = 'all' | 'pending' | 'approved' | 'rejected';
 
@@ -52,9 +52,9 @@ const FILTERS: { key: FilterStatus; label: string }[] = [
 
 function StatusBadge({ status }: { status: ProductRequest['status'] }) {
   const cls = {
-    pending: 'bg-yellow-100 text-yellow-700',
-    approved: 'bg-green-100 text-green-700',
-    rejected: 'bg-red-100 text-red-700',
+    pending: 'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-700 dark:text-yellow-400',
+    approved: 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400',
+    rejected: 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400',
   }[status];
   return (
     <span
@@ -165,7 +165,7 @@ function NewRequestModal({
         </div>
 
         {err && (
-          <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">
             {err}
           </p>
         )}
@@ -174,14 +174,14 @@ function NewRequestModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+            className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+            className="flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
           >
             {mutation.isPending ? 'Submitting…' : 'Submit Request'}
           </button>
@@ -245,7 +245,7 @@ export default function InventoryProductRequestsPage() {
           <button
             type="button"
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             New Request
@@ -264,7 +264,7 @@ export default function InventoryProductRequestsPage() {
               'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
               filter === key
                 ? 'bg-orange-600 text-white'
-                : 'bg-(--surface) border border-(--border) text-(--text-secondary) hover:text-(--text-primary)',
+                : 'bg-(--surface) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
             {label}
@@ -290,7 +290,7 @@ export default function InventoryProductRequestsPage() {
           {requests.map((req) => (
             <div
               key={req.id}
-              className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5"
+              className="surface-soft p-5"
             >
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="space-y-1">

@@ -113,18 +113,27 @@ function KpiCard({
     highlight === 'warn'   ? 'rounded-xl border border-amber-400 bg-amber-50 dark:bg-amber-950/30 shadow-sm' :
     'surface-soft-sm surface-soft-interactive';
   return (
+    // A row -- icon+label on the left, the number on the right -- rather
+    // than everything packed into one left-aligned block. The 1/2/3/4-col
+    // responsive grid means a card can get quite wide on a large screen;
+    // a left-hugging block left a wide dead strip of empty card on the
+    // right at xl. Spreading content to both edges uses that width
+    // properly at every breakpoint, including the single wide column on
+    // mobile.
     <div
-      className={`p-4 flex items-start gap-3 animate-rise-in ${ring}`}
+      className={`p-4 flex items-center justify-between gap-3 animate-rise-in ${ring}`}
       style={{ '--delay': `${delay}ms` } as React.CSSProperties}
     >
-      <div className={`shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${iconBg}`}>
-        <Icon className={`h-5 w-5 ${iconColor}`} />
+      <div className="flex items-center gap-3 min-w-0">
+        <div className={`shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${iconBg}`}>
+          <Icon className={`h-5 w-5 ${iconColor}`} />
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs text-(--text-secondary) font-medium truncate">{label}</p>
+          {sub && <p className="text-xs text-(--text-muted) mt-0.5 truncate">{sub}</p>}
+        </div>
       </div>
-      <div className="min-w-0">
-        <p className="text-xs text-(--text-secondary) font-medium">{label}</p>
-        <p className="text-lg font-bold text-(--text-primary) leading-tight">{value}</p>
-        {sub && <p className="text-xs text-(--text-muted) mt-0.5">{sub}</p>}
-      </div>
+      <p className="text-lg font-bold text-(--text-primary) leading-tight text-right shrink-0">{value}</p>
     </div>
   );
 }
@@ -224,7 +233,7 @@ export default function InventoryAnalyticsPage() {
       </div>
 
       {error && (
-        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load analytics. Please refresh.
         </div>
       )}

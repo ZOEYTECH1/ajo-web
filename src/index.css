@@ -44,8 +44,8 @@
   --primary-tint:   #1E2A4A;
 
   --bg:             #0D1117;
-  --surface:        #161B22;
-  --border:         #30363D;
+  --surface:        #1A2029;
+  --border:         #3C4654;
 
   --text-primary:   #F0F2F5;
   --text-secondary: #8B949E;
@@ -55,13 +55,19 @@
   --error:          #F87171;
   --warning:        #FCD34D;
 
-  /* Dark mode: base/surface are close in value, so the "highlight" side
-     reads as a faint lighter edge rather than a true light reflection --
-     kept subtle on purpose, a strong highlight looks like a lighting bug. */
-  --shadow-soft-sm: 2px 2px 6px rgba(0, 0, 0, 0.45), -1px -1px 4px rgba(255, 255, 255, 0.025);
-  --shadow-soft:    5px 5px 16px rgba(0, 0, 0, 0.5), -3px -3px 10px rgba(255, 255, 255, 0.03);
-  --shadow-soft-lg: 10px 10px 28px rgba(0, 0, 0, 0.55), -4px -4px 14px rgba(255, 255, 255, 0.03);
-  --shadow-soft-inset: inset 2px 2px 5px rgba(0, 0, 0, 0.5), inset -1px -1px 3px rgba(255, 255, 255, 0.03);
+  /* Dark mode's first pass was nearly invisible: a shadow barely darker
+     than an already-near-black --bg reads as no shadow at all, and a 3%
+     white highlight is below the threshold most displays render visibly.
+     Fixed by: (1) lifting --surface and --border a step further from --bg
+     so cards have real tonal separation on their own, independent of any
+     shadow; (2) a much stronger, wider dark-side shadow that reads as a
+     real halo against --bg; (3) a genuinely visible (not just "present")
+     highlight edge, since dark surfaces have much more headroom before a
+     light edge looks like a rendering bug than light mode does. */
+  --shadow-soft-sm: 3px 3px 8px rgba(0, 0, 0, 0.7), -1px -1px 0 rgba(255, 255, 255, 0.06), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --shadow-soft:    7px 7px 18px rgba(0, 0, 0, 0.75), -2px -2px 0 rgba(255, 255, 255, 0.07), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-soft-lg: 12px 12px 32px rgba(0, 0, 0, 0.8), -3px -3px 0 rgba(255, 255, 255, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-soft-inset: inset 3px 3px 7px rgba(0, 0, 0, 0.65), inset -1px -1px 2px rgba(255, 255, 255, 0.05);
 }
 
 /* ── Base ───────────────────────────────────────────────────────────────── */
@@ -134,14 +140,19 @@ button:disabled { cursor: not-allowed; }
   border: 1px solid var(--border);
   border-radius: 1.25rem;
   box-shadow: var(--shadow-soft);
-  transition: box-shadow 0.25s ease, transform 0.2s ease, border-color 0.2s ease;
+  /* Covers color/background-color too, not just shadow/transform/border --
+     several callers also carry Tailwind's `transition-colors` for a
+     hover:text-* change; since this shorthand always wins (defined after
+     the Tailwind import), omitting color here would silently cancel that
+     utility and make text-color hover snap instead of fade. */
+  transition: box-shadow 0.25s ease, transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
 }
 .surface-soft-sm {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 1rem;
   box-shadow: var(--shadow-soft-sm);
-  transition: box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  transition: box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease;
 }
 /* Add to a .surface-soft(-sm) element that's also a link/button, for a
    gentle lift-on-hover + settle-on-press -- the floating-card equivalent of

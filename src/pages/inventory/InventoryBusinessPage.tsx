@@ -54,17 +54,17 @@ const MODE_LABELS: Record<string, string> = {
 };
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const orangeBtn =
-  'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
+  'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn =
-  'rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+  'rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function RoleBadge({ role }: { role: string }) {
   const colors: Record<string, string> = {
-    owner:        'bg-orange-100 text-orange-700',
-    manager:      'bg-blue-100 text-blue-700',
-    branch_admin: 'bg-purple-100 text-purple-700',
+    owner:        'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-400',
+    manager:      'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400',
+    branch_admin: 'bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-400',
     staff:        'bg-(--bg) text-(--text-secondary)',
   };
   return (
@@ -185,7 +185,7 @@ function CreateLocationModal({ open, businesses, onClose }: { open: boolean; bus
           </div>
         )}
 
-        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
         <div className="flex gap-3 pt-1">
           <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -252,7 +252,7 @@ function InviteModal({ open, bizId, onClose }: { open: boolean; bizId: number; o
             ))}
           </select>
         </div>
-        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
         <div className="flex gap-3 pt-1">
           <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
           <button
@@ -299,7 +299,7 @@ function EditBusinessModal({ biz, onClose }: { biz: Business; onClose: () => voi
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Edit Business</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
@@ -326,7 +326,7 @@ function EditBusinessModal({ biz, onClose }: { biz: Business; onClose: () => voi
               {BUSINESS_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
           </div>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button
@@ -417,7 +417,7 @@ export default function InventoryBusinessPage() {
         <button
           type="button"
           onClick={() => setShowCreate(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Location
@@ -436,7 +436,7 @@ export default function InventoryBusinessPage() {
           <button
             type="button"
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-700 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             Create Business
@@ -459,7 +459,7 @@ export default function InventoryBusinessPage() {
           )}
 
           {selectedBiz && (
-            <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+            <div className="surface-soft overflow-hidden">
               {/* Tabs */}
               <div className="border-b border-(--border) flex">
                 {([
@@ -558,7 +558,7 @@ export default function InventoryBusinessPage() {
                           </thead>
                           <tbody className="divide-y divide-(--border)">
                             {staff.map((m) => (
-                              <tr key={m.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                              <tr key={m.id} className="hover:bg-(--primary-tint)/30">
                                 <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{m.user_name}</td>
                                 <td className="px-6 py-4 text-sm text-(--text-secondary)">{m.user_email}</td>
                                 <td className="px-6 py-4"><RoleBadge role={m.role} /></td>

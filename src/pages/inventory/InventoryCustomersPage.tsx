@@ -24,9 +24,9 @@ function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(v));
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
-const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+const inputCls = 'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -95,7 +95,7 @@ function CustomerModal({
         <Field label="Notes (optional)">
           <input type="text" value={form.notes} onChange={(e) => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="e.g. Bulk buyer" className={inputCls} />
         </Field>
-        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
         <div className="flex gap-3 pt-1">
           <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
           <button type="submit" disabled={mutation.isPending} className={submitBtn}>
@@ -163,7 +163,7 @@ function CreditModal({ open, customer, onClose }: { open: boolean; customer: Cus
           <input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Bread x2" className={inputCls} />
         </Field>
 
-        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
         <div className="flex gap-3">
           <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -203,7 +203,7 @@ function DirectionBadge({ value }: { value: 'charge' | 'payment' }) {
   const isCharge = value === 'charge';
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-      isCharge ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+      isCharge ? 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400' : 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400'
     }`}>
       {isCharge ? 'Charge' : 'Payment'}
     </span>
@@ -268,7 +268,7 @@ function CreditHistoryModal({ open, customer, onClose }: { open: boolean; custom
         </p>
 
         {error && (
-          <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
             Failed to load credit history. Please refresh.
           </div>
         )}
@@ -289,7 +289,7 @@ function CreditHistoryModal({ open, customer, onClose }: { open: boolean; custom
         />
 
         <div className="flex justify-end pt-1">
-          <button type="button" onClick={onClose} className="rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors">
+          <button type="button" onClick={onClose} className="rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30">
             Close
           </button>
         </div>
@@ -352,7 +352,7 @@ export default function InventoryCustomersPage() {
         <button
           type="button"
           onClick={() => setShowAdd(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Customer
@@ -365,25 +365,25 @@ export default function InventoryCustomersPage() {
         value={search}
         onChange={e => setSearch(e.target.value)}
         placeholder="Search by name or phone…"
-        className="w-full max-w-sm rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+        className="w-full max-w-sm rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
       />
 
       {/* Total credit owed banner */}
       {totalCredit > 0 && (
-        <div className="flex items-center gap-3 bg-orange-50 border border-orange-200 rounded-xl px-4 py-3">
-          <span className="text-sm font-semibold text-orange-800">
+        <div className="flex items-center gap-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-xl px-4 py-3 shadow-sm animate-rise-in">
+          <span className="text-sm font-semibold text-orange-800 dark:text-orange-400">
             Total credit owed: <span className="font-bold">{formatCurrency(totalCredit)}</span>
           </span>
         </div>
       )}
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load customers. Please refresh.
         </div>
       )}
 
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <div className="surface-soft overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
@@ -398,7 +398,7 @@ export default function InventoryCustomersPage() {
                 <SkeletonTable rows={4} cols={5} />
               ) : filtered.length > 0 ? (
                 filtered.map(c => (
-                  <tr key={c.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                  <tr key={c.id} className="hover:bg-(--primary-tint)/30">
                     <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{c.name}</td>
                     <td className="px-6 py-4 text-sm text-(--text-secondary)">{c.phone || '—'}</td>
                     <td className="px-6 py-4 text-sm font-semibold">

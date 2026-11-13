@@ -58,9 +58,9 @@ function addDays(dateStr: string, n: number) {
   return d.toISOString().slice(0, 10);
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
-const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+const inputCls = 'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -143,7 +143,7 @@ function ProductModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
           <h2 className="text-lg font-bold text-(--text-primary)">{isEdit ? 'Edit Product' : 'Add Product'}</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
@@ -180,7 +180,7 @@ function ProductModal({
             <input type="date" value={form.expiry_date} onChange={(e) => setForm(f => ({ ...f, expiry_date: e.target.value }))} className={inputCls} />
           </Field>
 
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button type="submit" disabled={mutation.isPending} className={submitBtn}>
@@ -217,7 +217,7 @@ function StockModal({ prodId, catId, productName, onClose }: { prodId: number; c
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Stock Movement</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
@@ -242,7 +242,7 @@ function StockModal({ prodId, catId, productName, onClose }: { prodId: number; c
           <Field label="Note (optional)">
             <input type="text" value={form.note} onChange={(e) => setForm(f => ({ ...f, note: e.target.value }))} placeholder="e.g. Delivery from Lagos" className={inputCls} />
           </Field>
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button
@@ -278,7 +278,7 @@ function MovementHistoryModal({ product, onClose }: { product: Product; onClose:
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-lg max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) shrink-0">
           <div>
             <h2 className="text-lg font-bold text-(--text-primary)">Stock History</h2>
@@ -362,7 +362,7 @@ function DailySummaryModal({ product, onClose }: { product: Product; onClose: ()
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <div>
             <h2 className="text-lg font-bold text-(--text-primary)">Daily Summary</h2>
@@ -403,12 +403,12 @@ function DailySummaryModal({ product, onClose }: { product: Product; onClose: ()
             <>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: 'Opening Stock', value: summary.opening_stock, color: 'text-blue-700', bg: 'bg-blue-50' },
-                  { label: 'Closing Stock', value: summary.closing_stock, color: 'text-orange-700', bg: 'bg-orange-50' },
-                  { label: 'Units Sold', value: summary.units_sold, color: 'text-red-700', bg: 'bg-red-50' },
-                  { label: 'Units Received', value: summary.units_received, color: 'text-green-700', bg: 'bg-green-50' },
+                  { label: 'Opening Stock', value: summary.opening_stock, color: 'text-blue-700 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/30' },
+                  { label: 'Closing Stock', value: summary.closing_stock, color: 'text-orange-700 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-950/30' },
+                  { label: 'Units Sold', value: summary.units_sold, color: 'text-red-700 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-950/30' },
+                  { label: 'Units Received', value: summary.units_received, color: 'text-green-700 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-950/30' },
                 ].map(({ label, value, color, bg }) => (
-                  <div key={label} className={clsx('rounded-xl p-4', bg)}>
+                  <div key={label} className={clsx('rounded-xl p-4 shadow-sm', bg)}>
                     <p className={clsx('text-xs font-semibold uppercase tracking-wide', color)}>{label}</p>
                     <p className={clsx('text-2xl font-bold mt-1', color)}>{value}</p>
                   </div>
@@ -421,7 +421,7 @@ function DailySummaryModal({ product, onClose }: { product: Product; onClose: ()
               </div>
 
               {summary.is_closed && (
-                <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-2 text-sm text-green-700 font-medium">
+                <div className="rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-2 text-sm text-green-700 dark:text-green-400 font-medium">
                   Stock closed for this day
                 </div>
               )}
@@ -434,7 +434,7 @@ function DailySummaryModal({ product, onClose }: { product: Product; onClose: ()
                       type="button"
                       onClick={() => { if (confirm('Close stock for today? This records the current quantity as closing stock.')) closeMutation.mutate(); }}
                       disabled={closeMutation.isPending}
-                      className="w-full rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+                      className="w-full rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
                     >
                       {closeMutation.isPending ? 'Closing…' : 'Close Stock'}
                     </button>
@@ -465,7 +465,7 @@ function DailySummaryModal({ product, onClose }: { product: Product; onClose: ()
                     <button
                       type="button"
                       onClick={() => { setOpeningInput(String(summary.opening_stock)); setShowOpeningInput(true); }}
-                      className="w-full rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+                      className="w-full rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
                     >
                       Set Opening Stock
                     </button>
@@ -544,7 +544,7 @@ export default function InventoryProductsPage() {
         <button
           type="button"
           onClick={() => setShowAdd(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Product
@@ -567,7 +567,7 @@ export default function InventoryProductsPage() {
           {([['all', 'All'], ['in', 'In Stock'], ['low', 'Low Stock'], ['out', 'Out of Stock']] as const).map(([key, label]) => (
             <button key={key} type="button" onClick={() => setStockFilter(key)}
               className={clsx('px-3 py-1.5 rounded-full text-sm font-medium transition-colors',
-                stockFilter === key ? 'bg-orange-600 text-white' : 'bg-(--surface) border border-(--border) text-(--text-secondary) hover:text-(--text-primary)')}>
+                stockFilter === key ? 'bg-orange-600 text-white' : 'bg-(--surface) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)')}>
               {label}
             </button>
           ))}
@@ -575,12 +575,12 @@ export default function InventoryProductsPage() {
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load products. Please refresh.
         </div>
       )}
 
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <div className="surface-soft overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
@@ -595,7 +595,7 @@ export default function InventoryProductsPage() {
                 <SkeletonTable rows={5} cols={8} />
               ) : filteredData.length > 0 ? (
                 filteredData.map(p => (
-                  <tr key={p.id} className={clsx('hover:bg-(--primary-tint)/30 transition-colors', p.quantity === 0 && 'bg-red-50/30')}>
+                  <tr key={p.id} className={clsx('hover:bg-(--primary-tint)/30', p.quantity === 0 && 'bg-red-50/30')}>
                     <td className="px-4 py-3 text-sm font-semibold text-(--text-primary)">
                       {p.name}
                       {p.barcode && <span className="block text-xs text-(--text-muted)">{p.barcode}</span>}

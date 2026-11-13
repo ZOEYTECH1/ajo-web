@@ -25,7 +25,7 @@ interface Business {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 const PRICE_PER_MONTH = 2000;
 
@@ -61,18 +61,18 @@ function fmt(v: string | number) {
 function StatusBadge({ biz }: { biz: Business }) {
   if (biz.is_on_trial)
     return (
-      <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+      <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400">
         Trial Active
       </span>
     );
   if (biz.is_subscription_active)
     return (
-      <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+      <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-400">
         Active
       </span>
     );
   return (
-    <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+    <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400">
       Inactive
     </span>
   );
@@ -121,7 +121,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
   const total = PRICE_PER_MONTH * months;
 
   return (
-    <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6 space-y-5">
+    <div className="surface-soft p-6 space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
@@ -133,7 +133,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
 
       {/* Trial info */}
       {biz.is_on_trial && biz.trial_end && (
-        <div className="rounded-lg bg-yellow-50 border border-yellow-200 px-4 py-3 text-sm text-yellow-700">
+        <div className="rounded-lg bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-800 px-4 py-3 text-sm text-yellow-700 dark:text-yellow-400 shadow-sm">
           You are on a free trial. Trial ends on{' '}
           <span className="font-semibold">
             {format(new Date(biz.trial_end), 'dd MMM yyyy')}
@@ -144,7 +144,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
 
       {/* Active subscription info */}
       {biz.is_subscription_active && biz.subscription_expires && (
-        <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
+        <div className="rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-700 dark:text-green-400 shadow-sm">
           Subscription active — expires on{' '}
           <span className="font-semibold">
             {format(new Date(biz.subscription_expires), 'dd MMM yyyy')}
@@ -155,14 +155,14 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
 
       {/* Success message */}
       {successMsg && (
-        <div className="flex items-start gap-3 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
+        <div className="flex items-start gap-3 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-700 dark:text-green-400 shadow-sm">
           <CheckCircleIcon className="h-5 w-5 mt-0.5 shrink-0" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {/* Pricing */}
-      <div className="rounded-lg bg-(--bg) border border-(--border) px-4 py-3 text-sm text-(--text-secondary)">
+      <div className="rounded-lg surface-soft-inset bg-(--surface) px-4 py-3 text-sm text-(--text-secondary)">
         <span className="font-semibold text-(--text-primary)">{fmt(PRICE_PER_MONTH)}</span> / month per business
       </div>
 
@@ -176,10 +176,10 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
               type="button"
               onClick={() => setMonths(value)}
               className={clsx(
-                'px-4 py-2 rounded-lg text-sm font-medium border transition-colors',
+                'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 active:scale-[0.96]',
                 months === value
-                  ? 'bg-orange-600 text-white border-orange-600'
-                  : 'bg-(--surface) border-(--border) text-(--text-secondary) hover:border-orange-400 hover:text-orange-600',
+                  ? 'bg-orange-600 text-white shadow-sm'
+                  : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-orange-600',
               )}
             >
               {label}
@@ -195,7 +195,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
       </div>
 
       {/* What's included */}
-      <div className="rounded-xl bg-(--bg) border border-(--border) p-4">
+      <div className="rounded-xl surface-soft-inset bg-(--surface) p-4">
         <p className="text-sm font-bold text-(--text-primary) mb-3">What's included</p>
         <ul className="space-y-2">
           {FEATURES.map(f => (
@@ -213,7 +213,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
           type="button"
           disabled={initiateMutation.isPending}
           onClick={() => initiateMutation.mutate()}
-          className="w-full rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+          className="w-full rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
         >
           {initiateMutation.isPending ? 'Redirecting to payment…' : `Subscribe · ${fmt(total)}`}
         </button>
@@ -221,7 +221,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
 
       {/* Verify payment section */}
       {showVerify && (
-        <div className="space-y-3 rounded-xl bg-(--bg) border border-(--border) p-4">
+        <div className="space-y-3 rounded-xl surface-soft-inset bg-(--surface) p-4">
           <p className="text-sm font-semibold text-(--text-secondary)">
             Verify Payment
           </p>
@@ -246,7 +246,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
             <button
               type="button"
               onClick={() => { setShowVerify(false); setVerifyErr(''); }}
-              className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+              className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2 text-sm font-semibold hover:bg-(--primary-tint)/30"
             >
               Cancel
             </button>
@@ -254,7 +254,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
               type="button"
               disabled={!txRef.trim() || verifyMutation.isPending}
               onClick={() => verifyMutation.mutate()}
-              className="flex-1 rounded-lg bg-orange-600 text-white py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+              className="flex-1 rounded-lg bg-orange-600 text-white py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {verifyMutation.isPending ? 'Verifying…' : 'Confirm Payment'}
             </button>
@@ -294,13 +294,15 @@ export default function InventorySubscriptionPage() {
           ))}
         </div>
       ) : businesses.length === 0 ? (
-        <div className="rounded-xl bg-(--surface) border border-(--border) px-6 py-16 text-center">
+        <div className="surface-soft px-6 py-16 text-center">
           <p className="text-sm text-(--text-muted)">No businesses found.</p>
         </div>
       ) : (
         <div className="space-y-6">
-          {businesses.map((biz) => (
-            <BusinessSubscriptionCard key={biz.id} biz={biz} />
+          {businesses.map((biz, i) => (
+            <div key={biz.id} className="animate-rise-in" style={{ '--delay': `${i * 60}ms` } as React.CSSProperties}>
+              <BusinessSubscriptionCard biz={biz} />
+            </div>
           ))}
         </div>
       )}

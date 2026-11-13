@@ -40,9 +40,9 @@ function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(v));
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
-const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+const inputCls = 'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 // ── New Sale Modal ─────────────────────────────────────────────────────────────
 
@@ -197,7 +197,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md p-6 space-y-5">
+        <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md p-6 space-y-5">
           <div className="text-center">
             <div className="text-5xl mb-3">✅</div>
             <h2 className="text-xl font-bold text-(--text-primary)">Sale Recorded!</h2>
@@ -214,7 +214,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
               <button
                 type="button"
                 onClick={() => navigator.share({ title: 'Sale Receipt', text: receiptText }).catch(() => {})}
-                className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+                className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
               >
                 Share Receipt
               </button>
@@ -231,7 +231,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
                 <button
                   type="button"
                   onClick={async () => { if (navigator.clipboard) await navigator.clipboard.writeText(receiptText); }}
-                  className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
+                  className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:text-(--text-primary) transition-colors"
                 >
                   Copy
                 </button>
@@ -245,7 +245,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
                 setBarcodeInput(''); setBarcodeErr('');
                 setCompletedSale(null);
               }}
-              className="flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 transition-colors"
+              className="flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
             >
               New Sale
             </button>
@@ -260,7 +260,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
           <h2 className="text-lg font-bold text-(--text-primary)">New Sale</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
@@ -287,7 +287,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
                   type="button"
                   onClick={lookupBarcode}
                   disabled={!barcodeInput.trim() || barcodeLoading}
-                  className="rounded-lg border border-(--border) text-(--text-secondary) px-4 text-sm font-semibold hover:text-(--text-primary) disabled:opacity-40 transition-colors whitespace-nowrap"
+                  className="rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 text-sm font-semibold hover:text-(--text-primary) disabled:opacity-40 transition-colors whitespace-nowrap"
                 >
                   {barcodeLoading ? '…' : 'Find'}
                 </button>
@@ -387,7 +387,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
             </div>
           </div>
 
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -467,12 +467,12 @@ export default function InventorySalesPage() {
           {sales.length > 0 && (
             <>
               <button type="button" onClick={() => exportSalesCsv(sales)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors">
+                className="inline-flex items-center gap-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors">
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 CSV
               </button>
               <button type="button" onClick={() => exportSalesPdf(sales)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors">
+                className="inline-flex items-center gap-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-3 py-2 text-sm font-semibold hover:text-(--text-primary) transition-colors">
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 PDF
               </button>
@@ -481,7 +481,7 @@ export default function InventorySalesPage() {
           <button
             type="button"
             onClick={() => setShowNewSale(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             New Sale
@@ -490,12 +490,12 @@ export default function InventorySalesPage() {
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load sales. Please refresh.
         </div>
       )}
 
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <div className="surface-soft overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
@@ -513,7 +513,7 @@ export default function InventorySalesPage() {
                   <>
                     <tr
                       key={sale.id}
-                      className="hover:bg-(--primary-tint)/30 transition-colors cursor-pointer"
+                      className="hover:bg-(--primary-tint)/30 cursor-pointer"
                       onClick={() => setExpandedId(expandedId === sale.id ? null : sale.id)}
                     >
                       <td className="px-6 py-4 text-sm text-(--text-secondary) whitespace-nowrap">

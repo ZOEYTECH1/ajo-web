@@ -98,8 +98,13 @@ export function Sidebar({ onClose }: SidebarProps) {
 
   return (
     <aside className="flex flex-col h-full bg-(--surface) border-r border-(--border)">
-      {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-5 border-b border-(--border)">
+      {/* Logo -- a fixed h-19 (not py-5) deliberately matches the main
+          content header's own fixed h-19 in Layout.tsx. Two independent
+          elements sized by padding + content can round to different pixel
+          heights even with "the same" Tailwind classes; a literal shared
+          height is the only way to guarantee their border-bottoms land on
+          the exact same row across the sidebar/content seam. */}
+      <div className="flex items-center gap-3 px-5 h-19 border-b border-(--border)">
         <img src="/ajo-logo.svg" alt="Scribe" className="h-9 w-9 shrink-0" />
         <span className="text-xl font-extrabold tracking-tight text-(--primary)">Scribe</span>
       </div>

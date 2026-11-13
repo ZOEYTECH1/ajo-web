@@ -25,7 +25,7 @@ interface Category {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg surface-soft-inset bg-(--surface) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -117,20 +117,20 @@ export default function InventoryWarehouseDispatchPage() {
       </div>
 
       {successMsg && (
-        <div className="flex items-start gap-3 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
+        <div className="flex items-start gap-3 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-700 dark:text-green-400">
           <CheckCircleIcon className="h-5 w-5 mt-0.5 shrink-0" />
           <span>{successMsg}</span>
         </div>
       )}
 
       {err && (
-        <div role="alert" className="flex items-start gap-3 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="flex items-start gap-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           <XCircleIcon className="h-5 w-5 mt-0.5 shrink-0" aria-hidden="true" />
           <span>{err}</span>
         </div>
       )}
 
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
+      <div className="surface-soft p-6">
         <form onSubmit={handleSubmit} className="space-y-5 max-w-xl">
           {/* Category */}
           <div>
@@ -246,7 +246,7 @@ export default function InventoryWarehouseDispatchPage() {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="w-full sm:w-auto rounded-lg bg-orange-600 text-white px-6 py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors"
+            className="w-full sm:w-auto rounded-lg bg-orange-600 text-white px-6 py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
           >
             {mutation.isPending ? 'Recording…' : 'Record Dispatch'}
           </button>

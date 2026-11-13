@@ -60,7 +60,7 @@ export function InventoryNav() {
           <button
             type="button"
             onClick={() => setOpen(v => !v)}
-            className="flex items-center gap-2 rounded-lg border border-(--border) bg-(--surface) px-3 py-2 text-sm font-semibold text-(--text-primary) hover:border-orange-400 transition-colors"
+            className="flex items-center gap-2 rounded-lg surface-soft-sm surface-soft-interactive px-3 py-2 text-sm font-semibold text-(--text-primary) hover:border-orange-400"
           >
             <Icon className="h-4 w-4 text-orange-600 shrink-0" />
             <span className="max-w-[180px] truncate">{selectedBiz?.name ?? 'Select location'}</span>
@@ -73,7 +73,7 @@ export function InventoryNav() {
           {open && (
             <>
               <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setOpen(false)} />
-              <div className="absolute left-0 top-full z-20 mt-1 w-64 rounded-xl border border-(--border) bg-(--surface) shadow-lg overflow-hidden">
+              <div className="absolute left-0 top-full z-20 mt-1 w-64 surface-soft overflow-hidden">
                 {businesses.map(biz => {
                   const BizIcon = MODE_ICON[biz.mode] ?? BuildingStorefrontIcon;
                   const isSelected = biz.id === selectedBiz?.id;
@@ -102,8 +102,15 @@ export function InventoryNav() {
         </div>
       )}
 
-      {/* Nav links */}
-      <div className="flex gap-1 flex-wrap border-b border-(--border) pb-0">
+      {/* Nav links -- a single horizontally-scrollable row rather than
+          flex-wrap. 14 tabs wrapping onto a second row left that row's own
+          (transparent, per-item) bottom border sitting disconnected from
+          the container's one full-width border-b below it; scrolling
+          instead of wrapping keeps this to one row, so there's exactly one
+          bottom edge, always in the same place. Active state is now a
+          pill background rather than a border-bottom accent, so there's no
+          border-alignment class of bug here to begin with going forward. */}
+      <div className="flex gap-1 overflow-x-auto thin-scrollbar border-b border-(--border) pb-2 -mx-1 px-1">
         {links.map(({ to, label, end }) => (
           <NavLink
             key={to}
@@ -111,10 +118,10 @@ export function InventoryNav() {
             end={end}
             className={({ isActive }) =>
               clsx(
-                'px-4 py-2 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap',
+                'shrink-0 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200',
                 isActive
-                  ? 'border-orange-600 text-orange-600'
-                  : 'border-transparent text-(--text-secondary) hover:text-(--text-primary)',
+                  ? 'bg-orange-50 text-orange-600 shadow-(--shadow-soft-sm) dark:bg-orange-950/40'
+                  : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--primary-tint)/30',
               )
             }
           >

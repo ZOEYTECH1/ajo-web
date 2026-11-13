@@ -46,7 +46,7 @@ export function Modal({ open, onClose, title, children, size = 'md' }: ModalProp
             >
               <DialogPanel
                 className={clsx(
-                  'w-full bg-(--surface) rounded-xl shadow-xl p-6',
+                  'w-full bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) p-6',
                   sizeClasses[size],
                 )}
               >

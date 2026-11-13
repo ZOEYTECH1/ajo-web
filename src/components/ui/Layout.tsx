@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '@heroicons/react/24/outline';
+import { useLocation } from 'react-router-dom';
+import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { Sidebar } from './Sidebar';
 import { InstallPrompt } from './InstallPrompt';
 import { NotificationPrompt } from './NotificationPrompt';
 import { useTheme } from '../../context/ThemeContext';
+import { getBreadcrumb } from '../../lib/breadcrumbs';
 import type { ReactNode } from 'react';
 
 interface LayoutProps {
@@ -13,6 +15,8 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { pathname } = useLocation();
+  const crumbs = getBreadcrumb(pathname);
 
   return (
     <div className="flex h-screen overflow-hidden bg-(--bg)">
@@ -57,8 +61,12 @@ export function Layout({ children }: LayoutProps) {
 
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
-        {/* Top bar */}
-        <header className="flex items-center justify-between px-4 py-3 border-b border-(--border) bg-(--surface)">
+        {/* Top bar -- py-5 deliberately matches Sidebar's logo-block padding
+            (also py-5) so the two headers' bottom borders land on the same
+            Y-offset and read as one continuous line across the sidebar/
+            content seam, instead of two horizontal rules at different
+            heights. */}
+        <header className="flex items-center justify-between px-4 py-5 lg:px-6 border-b border-(--border) bg-(--surface)">
           {/* Mobile: hamburger + logo */}
           <div className="flex items-center gap-3 lg:hidden">
             <button
@@ -75,8 +83,24 @@ export function Layout({ children }: LayoutProps) {
             </div>
           </div>
 
-          {/* Desktop spacer */}
-          <div className="hidden lg:block" />
+          {/* Desktop breadcrumb -- replaces what used to be an empty spacer
+              div here purely to push the theme toggle to the right. */}
+          <nav aria-label="Breadcrumb" className="hidden lg:flex items-center gap-1.5 text-sm min-w-0">
+            {crumbs.map((label, i) => (
+              <span key={i} className="flex items-center gap-1.5 min-w-0">
+                {i > 0 && <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-(--text-muted)" aria-hidden="true" />}
+                <span
+                  className={
+                    i === crumbs.length - 1
+                      ? 'font-semibold text-(--text-primary) truncate'
+                      : 'text-(--text-muted) truncate'
+                  }
+                >
+                  {label}
+                </span>
+              </span>
+            ))}
+          </nav>
 
           {/* Theme toggle */}
           <div

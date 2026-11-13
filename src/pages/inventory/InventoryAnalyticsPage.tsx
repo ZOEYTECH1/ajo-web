@@ -97,6 +97,7 @@ function KpiCard({
   value,
   sub,
   highlight,
+  delay = 0,
 }: {
   icon: React.ElementType;
   iconBg: string;
@@ -105,13 +106,17 @@ function KpiCard({
   value: string;
   sub?: string;
   highlight?: 'warn' | 'danger' | 'ok';
+  delay?: number;
 }) {
   const ring =
-    highlight === 'danger' ? 'border-red-400 bg-red-50 dark:bg-red-950/30' :
-    highlight === 'warn'   ? 'border-amber-400 bg-amber-50 dark:bg-amber-950/30' :
-    'border-(--border) bg-(--surface)';
+    highlight === 'danger' ? 'rounded-xl border border-red-400 bg-red-50 dark:bg-red-950/30 shadow-sm' :
+    highlight === 'warn'   ? 'rounded-xl border border-amber-400 bg-amber-50 dark:bg-amber-950/30 shadow-sm' :
+    'surface-soft-sm surface-soft-interactive';
   return (
-    <div className={`rounded-xl border p-4 flex items-start gap-3 shadow-sm ${ring}`}>
+    <div
+      className={`p-4 flex items-start gap-3 animate-rise-in ${ring}`}
+      style={{ '--delay': `${delay}ms` } as React.CSSProperties}
+    >
       <div className={`shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${iconBg}`}>
         <Icon className={`h-5 w-5 ${iconColor}`} />
       </div>
@@ -200,13 +205,13 @@ export default function InventoryAnalyticsPage() {
           <h1 className="text-2xl font-bold text-(--text-primary)">Analytics</h1>
           <p className="text-sm text-(--text-secondary)">Complete financial and inventory overview</p>
         </div>
-        <div className="flex rounded-lg border border-(--border) bg-(--surface) p-1 gap-1">
+        <div className="flex rounded-lg surface-soft-inset bg-(--surface) p-1 gap-1">
           {PERIODS.map((p) => (
             <button
               key={p.value}
               type="button"
               onClick={() => setPeriod(p.value)}
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
                 period === p.value
                   ? 'bg-(--primary) text-white shadow-sm'
                   : 'text-(--text-secondary) hover:text-(--text-primary)'
@@ -229,7 +234,7 @@ export default function InventoryAnalyticsPage() {
         <h2 className="text-sm font-semibold text-(--text-secondary) uppercase tracking-wide mb-3">
           Inventory Health — Current Snapshot
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {isLoading ? (
             Array.from({ length: 6 }, (_, i) => <SkeletonCard key={i} />)
           ) : (
@@ -241,6 +246,7 @@ export default function InventoryAnalyticsPage() {
                 label="Stock Value"
                 value={fmt(s?.stock_value)}
                 sub="At selling price"
+                delay={0}
               />
               <KpiCard
                 icon={BanknotesIcon}
@@ -249,6 +255,7 @@ export default function InventoryAnalyticsPage() {
                 label="Stock Cost"
                 value={fmt(s?.stock_value_at_cost)}
                 sub="At purchase price"
+                delay={40}
               />
               <KpiCard
                 icon={CubeIcon}
@@ -257,6 +264,7 @@ export default function InventoryAnalyticsPage() {
                 label="Total Products"
                 value={`${s?.total_products ?? 0}`}
                 sub={`${s?.total_units_in_stock ?? 0} units in stock`}
+                delay={80}
               />
               <KpiCard
                 icon={ChartBarIcon}
@@ -265,6 +273,7 @@ export default function InventoryAnalyticsPage() {
                 label="Avg Margin"
                 value={pct(s?.avg_profit_margin)}
                 sub="Weighted by qty on hand"
+                delay={120}
               />
               <KpiCard
                 icon={ExclamationTriangleIcon}
@@ -274,6 +283,7 @@ export default function InventoryAnalyticsPage() {
                 value={`${s?.low_stock_count ?? 0} products`}
                 sub="At or below threshold"
                 highlight={(s?.low_stock_count ?? 0) > 0 ? 'warn' : undefined}
+                delay={160}
               />
               <KpiCard
                 icon={ExclamationTriangleIcon}
@@ -283,6 +293,7 @@ export default function InventoryAnalyticsPage() {
                 value={`${s?.out_of_stock_count ?? 0} products`}
                 sub="Zero units remaining"
                 highlight={(s?.out_of_stock_count ?? 0) > 0 ? 'danger' : undefined}
+                delay={200}
               />
             </>
           )}
@@ -294,7 +305,7 @@ export default function InventoryAnalyticsPage() {
         <h2 className="text-sm font-semibold text-(--text-secondary) uppercase tracking-wide mb-3">
           Period Performance — {sel.rangeLabel}
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {isLoading ? (
             Array.from({ length: 6 }, (_, i) => <SkeletonCard key={i} />)
           ) : (
@@ -306,6 +317,7 @@ export default function InventoryAnalyticsPage() {
                 label="Revenue"
                 value={fmt(totRevenue)}
                 sub="Total sales collected"
+                delay={0}
               />
               <KpiCard
                 icon={ArrowDownTrayIcon}
@@ -314,6 +326,7 @@ export default function InventoryAnalyticsPage() {
                 label="Cost of Goods"
                 value={hasCogs ? fmt(totCogs) : '—'}
                 sub={hasCogs ? 'Purchase cost of items sold' : 'Set cost prices to track'}
+                delay={40}
               />
               <KpiCard
                 icon={ChartBarIcon}
@@ -323,6 +336,7 @@ export default function InventoryAnalyticsPage() {
                 value={hasCogs ? fmt(grossProfit) : '—'}
                 sub="Revenue − Cost of Goods"
                 highlight={hasCogs && grossProfit < 0 ? 'danger' : undefined}
+                delay={80}
               />
               <KpiCard
                 icon={BanknotesIcon}
@@ -331,6 +345,7 @@ export default function InventoryAnalyticsPage() {
                 label="Expenses"
                 value={fmt(totExpense)}
                 sub="Rent, salary, etc."
+                delay={120}
               />
               <KpiCard
                 icon={CurrencyDollarIcon}
@@ -340,6 +355,7 @@ export default function InventoryAnalyticsPage() {
                 value={fmt(netProfit)}
                 sub={hasCogs ? 'Revenue − COGS − Expenses' : 'Revenue − Expenses'}
                 highlight={netProfit < 0 ? 'danger' : undefined}
+                delay={160}
               />
               <KpiCard
                 icon={ShoppingCartIcon}
@@ -348,6 +364,7 @@ export default function InventoryAnalyticsPage() {
                 label="Transactions"
                 value={`${s?.total_sales_count ?? 0}`}
                 sub={`${s?.total_units_sold ?? 0} units sold`}
+                delay={200}
               />
             </>
           )}
@@ -355,7 +372,7 @@ export default function InventoryAnalyticsPage() {
       </section>
 
       {/* ── Section 3: Revenue, COGS & Expenses Chart ──────────────────────── */}
-      <section className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
+      <section className="surface-soft p-6">
         <div className="mb-4">
           <h2 className="text-base font-semibold text-(--text-primary)">Revenue, Cost of Goods & Expenses</h2>
           <p className="text-xs text-(--text-muted) mt-0.5">
@@ -389,7 +406,7 @@ export default function InventoryAnalyticsPage() {
 
       {/* ── Section 4: Net Profit Trend ────────────────────────────────────── */}
       {!isLoading && !chartIsEmpty && chart.length > 1 && (
-        <section className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
+        <section className="surface-soft p-6">
           <div className="mb-4">
             <h2 className="text-base font-semibold text-(--text-primary)">Net Profit Trend</h2>
             <p className="text-xs text-(--text-muted) mt-0.5">Revenue minus operational expenses per period</p>
@@ -416,7 +433,7 @@ export default function InventoryAnalyticsPage() {
 
       {/* ── Section 4b: Lifetime Trend (Reported vs Tracked) ───────────────── */}
       {!trendLoading && hasReportedData && (
-        <section className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
+        <section className="surface-soft p-6">
           <div className="mb-4">
             <h2 className="text-base font-semibold text-(--text-primary)">Lifetime Revenue Trend</h2>
             <p className="text-xs text-(--text-muted) mt-0.5">
@@ -439,7 +456,7 @@ export default function InventoryAnalyticsPage() {
       )}
 
       {/* ── Section 5: Stock Movement Chart ────────────────────────────────── */}
-      <section className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
+      <section className="surface-soft p-6">
         <div className="mb-4">
           <h2 className="text-base font-semibold text-(--text-primary)">Stock Movement</h2>
           <p className="text-xs text-(--text-muted) mt-0.5">
@@ -471,7 +488,7 @@ export default function InventoryAnalyticsPage() {
 
       {/* ── Section 6: Period Breakdown Table ──────────────────────────────── */}
       {!isLoading && chart.length > 0 && (
-        <section className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+        <section className="surface-soft overflow-hidden">
           <div className="px-6 py-4 border-b border-(--border)">
             <h2 className="text-base font-semibold text-(--text-primary)">Period Breakdown</h2>
             <p className="text-xs text-(--text-muted) mt-0.5">Net Profit = Revenue − Expenses &nbsp;|&nbsp; Gross Profit = Revenue − Cost of Goods</p>
@@ -520,7 +537,7 @@ export default function InventoryAnalyticsPage() {
 
       {/* ── Section 7: Top Expense Categories ──────────────────────────────── */}
       {!isLoading && (data?.top_expense_categories ?? []).length > 0 && (
-        <section className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
+        <section className="surface-soft p-6">
           <h2 className="text-base font-semibold text-(--text-primary) mb-4">Expense Breakdown by Category</h2>
           <div className="space-y-3">
             {data!.top_expense_categories.map(({ label, amount }) => {
@@ -542,7 +559,7 @@ export default function InventoryAnalyticsPage() {
       )}
 
       {/* ── Section 8: Best Sellers ─────────────────────────────────────────── */}
-      <section className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <section className="surface-soft overflow-hidden">
         <div className="px-6 py-4 border-b border-(--border)">
           <h2 className="text-base font-semibold text-(--text-primary)">Best Sellers — {sel.rangeLabel}</h2>
           <p className="text-xs text-(--text-muted) mt-0.5">Ranked by units sold. Revenue and margin use actual sale prices.</p>
@@ -592,7 +609,7 @@ export default function InventoryAnalyticsPage() {
       {!isLoading && ((data?.low_stock_products ?? []).length > 0 || (data?.out_of_stock_products ?? []).length > 0) && (
         <section className="grid sm:grid-cols-2 gap-4">
           {(data?.out_of_stock_products ?? []).length > 0 && (
-            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl p-5">
+            <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-xl p-5 shadow-sm animate-rise-in">
               <h3 className="text-sm font-bold text-red-700 dark:text-red-400 mb-3">
                 Out of Stock ({data!.out_of_stock_products.length})
               </h3>
@@ -607,7 +624,10 @@ export default function InventoryAnalyticsPage() {
             </div>
           )}
           {(data?.low_stock_products ?? []).length > 0 && (
-            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-5">
+            <div
+              className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-5 shadow-sm animate-rise-in"
+              style={{ '--delay': '80ms' } as React.CSSProperties}
+            >
               <h3 className="text-sm font-bold text-amber-700 dark:text-amber-400 mb-3">
                 Low Stock ({data!.low_stock_products.length})
               </h3>

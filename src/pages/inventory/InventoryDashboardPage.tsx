@@ -70,6 +70,7 @@ function StatCard({
   icon,
   iconBg,
   loading,
+  delay = 0,
 }: {
   title: string;
   value?: React.ReactNode;
@@ -77,10 +78,14 @@ function StatCard({
   icon: React.ReactNode;
   iconBg: string;
   loading?: boolean;
+  delay?: number;
 }) {
   if (loading) return <SkeletonCard />;
   return (
-    <div className="bg-(--surface) rounded-xl border border-(--border) p-5 flex items-start gap-4 shadow-sm">
+    <div
+      className="surface-soft-sm surface-soft-interactive animate-rise-in p-5 flex items-start gap-4"
+      style={{ '--delay': `${delay}ms` } as React.CSSProperties}
+    >
       <div className={`shrink-0 h-11 w-11 rounded-xl flex items-center justify-center ${iconBg}`}>
         {icon}
       </div>
@@ -126,7 +131,7 @@ export default function InventoryDashboardPage() {
           <button
             onClick={goToPrev}
             aria-label="Previous day"
-            className="p-2 rounded-lg border border-(--border) bg-(--surface) text-(--text-secondary) hover:text-(--primary) hover:border-(--primary) transition-colors"
+            className="p-2 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--primary)"
           >
             <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -144,7 +149,7 @@ export default function InventoryDashboardPage() {
             onClick={goToNext}
             disabled={isToday(selectedDate)}
             aria-label="Next day"
-            className="p-2 rounded-lg border border-(--border) bg-(--surface) text-(--text-secondary) hover:text-(--primary) hover:border-(--primary) transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="p-2 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--primary) disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
           >
             <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -175,6 +180,7 @@ export default function InventoryDashboardPage() {
           icon={<CurrencyDollarIcon className="h-5 w-5 text-green-600" />}
           iconBg="bg-green-50 dark:bg-green-950/40"
           loading={isLoading}
+          delay={0}
         />
         <StatCard
           title="Expenses"
@@ -183,6 +189,7 @@ export default function InventoryDashboardPage() {
           icon={<CurrencyDollarIcon className="h-5 w-5 text-red-500" />}
           iconBg="bg-red-50 dark:bg-red-950/40"
           loading={isLoading}
+          delay={40}
         />
         <StatCard
           title="Profit"
@@ -191,6 +198,7 @@ export default function InventoryDashboardPage() {
           icon={<ArrowTrendingUpIcon className="h-5 w-5 text-blue-600" />}
           iconBg="bg-blue-50 dark:bg-blue-950/40"
           loading={isLoading}
+          delay={80}
         />
         <StatCard
           title="Opening Stock"
@@ -199,6 +207,7 @@ export default function InventoryDashboardPage() {
           icon={<CubeIcon className="h-5 w-5 text-purple-600" />}
           iconBg="bg-purple-50 dark:bg-purple-950/40"
           loading={isLoading}
+          delay={120}
         />
         <StatCard
           title="Closing Stock"
@@ -207,6 +216,7 @@ export default function InventoryDashboardPage() {
           icon={<CubeIcon className="h-5 w-5 text-(--primary)" />}
           iconBg="bg-(--primary-tint)"
           loading={isLoading}
+          delay={160}
         />
         <StatCard
           title="Low Stock Alerts"
@@ -215,6 +225,7 @@ export default function InventoryDashboardPage() {
           icon={<ExclamationTriangleIcon className="h-5 w-5 text-yellow-600" />}
           iconBg="bg-yellow-50 dark:bg-yellow-950/40"
           loading={isLoading}
+          delay={200}
         />
       </div>
 
@@ -225,11 +236,12 @@ export default function InventoryDashboardPage() {
           { to: '/inventory/expenses',          icon: <BanknotesIcon    className="h-6 w-6 text-red-500" />,    label: 'Add Expense',   bg: 'bg-red-50 dark:bg-red-950/40' },
           { to: '/inventory/warehouse/receive', icon: <ArrowDownTrayIcon className="h-6 w-6 text-blue-600" />,  label: 'Receive Stock', bg: 'bg-blue-50 dark:bg-blue-950/40' },
           { to: '/inventory/transfers',         icon: <ArrowsRightLeftIcon className="h-6 w-6 text-purple-600" />, label: 'Transfer Stock', bg: 'bg-purple-50 dark:bg-purple-950/40' },
-        ].map(({ to, icon, label, bg }) => (
+        ].map(({ to, icon, label, bg }, i) => (
           <Link
             key={to}
             to={to}
-            className="flex flex-col items-center gap-2 rounded-xl border border-(--border) bg-(--surface) p-4 text-center hover:border-orange-400 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 transition-all shadow-sm"
+            className="surface-soft-sm surface-soft-interactive animate-rise-in flex flex-col items-center gap-2 p-4 text-center hover:border-orange-300"
+            style={{ '--delay': `${240 + i * 40}ms` } as React.CSSProperties}
           >
             <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${bg}`}>{icon}</div>
             <span className="text-xs font-semibold text-(--text-primary)">{label}</span>
@@ -238,7 +250,7 @@ export default function InventoryDashboardPage() {
       </div>
 
       {/* Low Stock table */}
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <div className="surface-soft overflow-hidden">
         <div className="px-6 py-4 border-b border-(--border)">
           <h2 className="text-base font-semibold text-(--text-primary) flex items-center gap-2">
             <ExclamationTriangleIcon className="h-5 w-5 text-yellow-500" />
@@ -291,7 +303,7 @@ export default function InventoryDashboardPage() {
       </div>
 
       {/* Expiring Soon table */}
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <div className="surface-soft overflow-hidden">
         <div className="px-6 py-4 border-b border-(--border)">
           <h2 className="text-base font-semibold text-(--text-primary) flex items-center gap-2">
             <ClockIcon className="h-5 w-5 text-orange-500" />

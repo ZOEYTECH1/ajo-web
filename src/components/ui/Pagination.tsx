@@ -39,7 +39,7 @@ export function Pagination({
           type="button"
           onClick={() => onChange(Math.max(1, page - 1))}
           disabled={page === 1}
-          className="p-1.5 rounded-lg border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
+          className="p-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) disabled:opacity-40 disabled:pointer-events-none"
         >
           <ChevronLeftIcon className="h-4 w-4" />
         </button>
@@ -55,10 +55,10 @@ export function Pagination({
               type="button"
               onClick={() => onChange(n as number)}
               className={clsx(
-                'w-8 h-8 rounded-lg text-xs font-semibold transition-colors',
+                'w-8 h-8 rounded-lg text-xs font-semibold transition-all duration-150 active:scale-[0.95]',
                 page === n
-                  ? 'bg-(--primary) text-white'
-                  : 'border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30',
+                  ? 'bg-(--primary) text-white shadow-sm'
+                  : 'surface-soft-sm surface-soft-interactive text-(--text-secondary)',
               )}
             >
               {n}
@@ -70,7 +70,7 @@ export function Pagination({
           type="button"
           onClick={() => onChange(Math.min(totalPages, page + 1))}
           disabled={page === totalPages}
-          className="p-1.5 rounded-lg border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
+          className="p-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) disabled:opacity-40 disabled:pointer-events-none"
         >
           <ChevronRightIcon className="h-4 w-4" />
         </button>

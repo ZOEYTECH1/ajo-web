@@ -25,6 +25,15 @@
   --success:        #22C55E;
   --error:          #EF4444;
   --warning:        #F59E0B;
+
+  /* Soft-UI (neumorphism-inspired) shadow pairs -- a warm shadow toward the
+     light source (top-left) and a cool highlight away from it, so cards
+     read as gently raised off the page instead of flat-bordered boxes.
+     Kept high-contrast enough to stay accessible, unlike pure neumorphism. */
+  --shadow-soft-sm: 2px 2px 6px rgba(15, 23, 42, 0.07), -2px -2px 6px rgba(255, 255, 255, 0.8);
+  --shadow-soft:    5px 5px 14px rgba(15, 23, 42, 0.09), -5px -5px 14px rgba(255, 255, 255, 0.75);
+  --shadow-soft-lg: 8px 8px 24px rgba(15, 23, 42, 0.11), -8px -8px 20px rgba(255, 255, 255, 0.7);
+  --shadow-soft-inset: inset 2px 2px 5px rgba(15, 23, 42, 0.08), inset -2px -2px 5px rgba(255, 255, 255, 0.7);
 }
 
 /* ── Dark mode overrides ────────────────────────────────────────────────── */
@@ -45,6 +54,14 @@
   --success:        #4ADE80;
   --error:          #F87171;
   --warning:        #FCD34D;
+
+  /* Dark mode: base/surface are close in value, so the "highlight" side
+     reads as a faint lighter edge rather than a true light reflection --
+     kept subtle on purpose, a strong highlight looks like a lighting bug. */
+  --shadow-soft-sm: 2px 2px 6px rgba(0, 0, 0, 0.45), -1px -1px 4px rgba(255, 255, 255, 0.025);
+  --shadow-soft:    5px 5px 16px rgba(0, 0, 0, 0.5), -3px -3px 10px rgba(255, 255, 255, 0.03);
+  --shadow-soft-lg: 10px 10px 28px rgba(0, 0, 0, 0.55), -4px -4px 14px rgba(255, 255, 255, 0.03);
+  --shadow-soft-inset: inset 2px 2px 5px rgba(0, 0, 0, 0.5), inset -1px -1px 3px rgba(255, 255, 255, 0.03);
 }
 
 /* ── Base ───────────────────────────────────────────────────────────────── */
@@ -106,3 +123,65 @@ button:disabled { cursor: not-allowed; }
   50%       { opacity: 0.4; }
 }
 .skeleton { animation: skeleton-pulse 1.5s ease-in-out infinite; }
+
+/* ── Soft-UI surfaces ───────────────────────────────────────────────────────
+   Shared vocabulary for the "soft-UI hybrid" visual direction: neumorphism's
+   soft raised-off-the-page shadow, kept on a bordered, high-contrast surface
+   rather than pure shadow-only neumorphism, so it stays readable and doesn't
+   rely on subtle value differences for separation. */
+.surface-soft {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.25s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+.surface-soft-sm {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-soft-sm);
+  transition: box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+}
+/* Add to a .surface-soft(-sm) element that's also a link/button, for a
+   gentle lift-on-hover + settle-on-press -- the floating-card equivalent of
+   a neumorphic press. */
+.surface-soft-interactive:hover {
+  box-shadow: var(--shadow-soft-lg);
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+}
+.surface-soft-interactive:active {
+  box-shadow: var(--shadow-soft-sm);
+  transform: translateY(0);
+}
+/* Inset "pressed into the page" treatment for inputs and selected pills --
+   the other half of neumorphism's raised/pressed vocabulary. */
+.surface-soft-inset {
+  box-shadow: var(--shadow-soft-inset);
+  border: 1px solid var(--border);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* ── Entrance animation ─────────────────────────────────────────────────────
+   Applied to cards/sections on mount so a page doesn't just snap into place.
+   Use the --delay custom property (set inline per item) to stagger a grid. */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-rise-in {
+  animation: rise-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise-in, .ajo-ring, .ajo-shield, .skeleton {
+    animation: none !important;
+  }
+  .surface-soft-interactive:hover,
+  .surface-soft-interactive:active {
+    transform: none !important;
+  }
+  * { transition-duration: 0.01ms !important; }
+}

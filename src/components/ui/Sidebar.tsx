@@ -113,10 +113,10 @@ export function Sidebar({ onClose }: SidebarProps) {
             onClick={onClose}
             className={({ isActive }) =>
               clsx(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
                 isActive
-                  ? 'text-(--primary) bg-(--primary-tint)'
-                  : 'text-(--text-secondary) hover:bg-(--primary-tint)/50 hover:text-(--text-primary)',
+                  ? 'text-(--primary) bg-(--primary-tint) shadow-(--shadow-soft-sm)'
+                  : 'text-(--text-secondary) hover:bg-(--primary-tint)/50 hover:text-(--text-primary) hover:translate-x-0.5',
               )
             }
           >
@@ -146,7 +146,7 @@ export function Sidebar({ onClose }: SidebarProps) {
                 key={key}
                 to={to}
                 onClick={() => { addModule(key); onClose?.(); }}
-                className="flex items-start gap-3 px-3 py-2.5 rounded-lg border border-dashed border-(--border) hover:border-(--primary) hover:bg-(--primary-tint)/20 transition-colors"
+                className="flex items-start gap-3 px-3 py-2.5 rounded-lg border border-dashed border-(--border) hover:border-(--primary) hover:bg-(--primary-tint)/20 hover:shadow-(--shadow-soft-sm) transition-all duration-200"
               >
                 <Icon className="h-5 w-5 shrink-0 text-(--text-muted) mt-0.5" aria-hidden="true" />
                 <div className="min-w-0">

@@ -113,33 +113,23 @@ function KpiCard({
     highlight === 'warn'   ? 'rounded-xl border border-amber-400 bg-amber-50 dark:bg-amber-950/30 shadow-sm' :
     'surface-soft-sm surface-soft-interactive';
   return (
-    // flex-wrap, not a fixed two-column row: icon+label sit on the left
-    // and the number sits on the right *when there's room*, filling a wide
-    // card's width properly -- but on a narrower card where that doesn't
-    // fit, the number wraps onto its own line below instead of squeezing
-    // the label/sub into a truncated "..." the way a strict row did. No
-    // text here ever truncates -- every card always shows its full label,
-    // sub, and value.
+    // Icon beside a left-aligned text column: label, then sub, then the
+    // value below both -- all left-aligned, under the label rather than
+    // off to the right or on a disconnected line of its own. Nothing here
+    // competes for horizontal space, so nothing ever needs to truncate or
+    // wrap awkwardly, regardless of card width.
     <div
-      className={`p-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 animate-rise-in ${ring}`}
+      className={`p-4 flex items-start gap-2.5 animate-rise-in ${ring}`}
       style={{ '--delay': `${delay}ms` } as React.CSSProperties}
     >
-      <div className="flex items-center gap-2.5">
-        <div className={`shrink-0 h-9 w-9 rounded-xl flex items-center justify-center ${iconBg}`}>
-          <Icon className={`h-4 w-4 ${iconColor}`} />
-        </div>
-        <div>
-          <p className="text-xs text-(--text-secondary) font-medium">{label}</p>
-          {sub && <p className="text-xs text-(--text-muted) mt-0.5">{sub}</p>}
-        </div>
+      <div className={`shrink-0 h-9 w-9 rounded-xl flex items-center justify-center ${iconBg}`}>
+        <Icon className={`h-4 w-4 ${iconColor}`} />
       </div>
-      {/* ml-auto keeps it pinned to the right even when flex-wrap drops it
-          to its own line -- otherwise a wrapped value falls back to the
-          left edge under the icon, which read as an oddly dominant,
-          disconnected line of its own. text-sm (not text-base) so it
-          doesn't visually overpower the label above it once it's alone
-          on a line with nothing to balance it against. */}
-      <p className="text-sm font-bold text-(--text-primary) leading-tight ml-auto">{value}</p>
+      <div>
+        <p className="text-xs text-(--text-secondary) font-medium">{label}</p>
+        {sub && <p className="text-xs text-(--text-muted) mt-0.5">{sub}</p>}
+        <p className="text-sm font-bold text-(--text-primary) leading-tight mt-2">{value}</p>
+      </div>
     </div>
   );
 }

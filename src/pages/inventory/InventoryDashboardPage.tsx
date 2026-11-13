@@ -82,28 +82,22 @@ function StatCard({
 }) {
   if (loading) return <SkeletonCard />;
   return (
-    // flex-wrap, not a fixed two-column row: icon+title sit on the left
-    // and the value on the right when there's room, filling a wide card
-    // properly -- but on a narrower card the value wraps onto its own
-    // line below instead of squeezing the title/subtitle into a
-    // truncated "...". Nothing here ever truncates.
+    // Icon beside a left-aligned text column: title, then subtitle, then
+    // the value below both -- all left-aligned, under the title rather
+    // than off to the right. Nothing competes for horizontal space, so
+    // nothing ever needs to truncate regardless of card width.
     <div
-      className="surface-soft-sm surface-soft-interactive animate-rise-in p-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2"
+      className="surface-soft-sm surface-soft-interactive animate-rise-in p-5 flex items-start gap-3"
       style={{ '--delay': `${delay}ms` } as React.CSSProperties}
     >
-      <div className="flex items-center gap-3">
-        <div className={`shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${iconBg}`}>
-          {icon}
-        </div>
-        <div>
-          <p className="text-sm text-(--text-secondary) font-medium">{title}</p>
-          {subtitle && <p className="mt-0.5 text-xs text-(--text-muted)">{subtitle}</p>}
-        </div>
+      <div className={`shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${iconBg}`}>
+        {icon}
       </div>
-      {/* ml-auto keeps it pinned to the right even when flex-wrap drops it
-          to its own line, instead of falling back to the left edge under
-          the icon. */}
-      <p className="text-lg font-bold text-(--text-primary) ml-auto">{value}</p>
+      <div>
+        <p className="text-sm text-(--text-secondary) font-medium">{title}</p>
+        {subtitle && <p className="mt-0.5 text-xs text-(--text-muted)">{subtitle}</p>}
+        <p className="text-lg font-bold text-(--text-primary) mt-2">{value}</p>
+      </div>
     </div>
   );
 }

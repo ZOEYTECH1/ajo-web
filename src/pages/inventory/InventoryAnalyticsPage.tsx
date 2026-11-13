@@ -239,7 +239,7 @@ export default function InventoryAnalyticsPage() {
         <h2 className="text-sm font-semibold text-(--text-secondary) uppercase tracking-wide mb-3">
           Inventory Health — Current Snapshot
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {isLoading ? (
             Array.from({ length: 6 }, (_, i) => <SkeletonCard key={i} />)
           ) : (
@@ -310,7 +310,7 @@ export default function InventoryAnalyticsPage() {
         <h2 className="text-sm font-semibold text-(--text-secondary) uppercase tracking-wide mb-3">
           Period Performance — {sel.rangeLabel}
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {isLoading ? (
             Array.from({ length: 6 }, (_, i) => <SkeletonCard key={i} />)
           ) : (

@@ -162,12 +162,18 @@ export function InventoryNav() {
             blend into the row (the same "looks clickable on its own
             terms" cue GitHub's own "..." button gives its repo tabs). */}
         <Menu as="div" className="relative ml-1">
+          {/* No surface-soft-interactive here deliberately -- its
+              hover:translateY lift moves the button's own box, and because
+              MenuItems is anchored (floating-ui) to that box, the open
+              dropdown visibly tracked and jittered along with the lift
+              while hovering the trigger. A trigger for an anchored panel
+              must only change shadow/colour on hover, never position. */}
           <MenuButton
             className={clsx(
               'group flex items-center gap-1.5 shrink-0 pl-2.5 pr-2 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 active:scale-[0.97]',
               isMoreActive
                 ? 'bg-orange-50 text-orange-600 shadow-(--shadow-soft-sm) dark:bg-orange-950/40'
-                : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)',
+                : 'surface-soft-sm hover:shadow-(--shadow-soft-lg) hover:border-(--primary) text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
             <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />

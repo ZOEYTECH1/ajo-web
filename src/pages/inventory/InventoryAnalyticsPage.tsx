@@ -113,27 +113,27 @@ function KpiCard({
     highlight === 'warn'   ? 'rounded-xl border border-amber-400 bg-amber-50 dark:bg-amber-950/30 shadow-sm' :
     'surface-soft-sm surface-soft-interactive';
   return (
-    // A row -- icon+label on the left, the number on the right -- rather
-    // than everything packed into one left-aligned block. The 1/2/3/4-col
-    // responsive grid means a card can get quite wide on a large screen;
-    // a left-hugging block left a wide dead strip of empty card on the
-    // right at xl. Spreading content to both edges uses that width
-    // properly at every breakpoint, including the single wide column on
-    // mobile.
+    // flex-wrap, not a fixed two-column row: icon+label sit on the left
+    // and the number sits on the right *when there's room*, filling a wide
+    // card's width properly -- but on a narrower card where that doesn't
+    // fit, the number wraps onto its own line below instead of squeezing
+    // the label/sub into a truncated "..." the way a strict row did. No
+    // text here ever truncates -- every card always shows its full label,
+    // sub, and value.
     <div
-      className={`p-4 flex items-center justify-between gap-3 animate-rise-in ${ring}`}
+      className={`p-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 animate-rise-in ${ring}`}
       style={{ '--delay': `${delay}ms` } as React.CSSProperties}
     >
-      <div className="flex items-center gap-3 min-w-0">
-        <div className={`shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${iconBg}`}>
-          <Icon className={`h-5 w-5 ${iconColor}`} />
+      <div className="flex items-center gap-2.5">
+        <div className={`shrink-0 h-9 w-9 rounded-xl flex items-center justify-center ${iconBg}`}>
+          <Icon className={`h-4 w-4 ${iconColor}`} />
         </div>
-        <div className="min-w-0">
-          <p className="text-xs text-(--text-secondary) font-medium truncate">{label}</p>
-          {sub && <p className="text-xs text-(--text-muted) mt-0.5 truncate">{sub}</p>}
+        <div>
+          <p className="text-xs text-(--text-secondary) font-medium">{label}</p>
+          {sub && <p className="text-xs text-(--text-muted) mt-0.5">{sub}</p>}
         </div>
       </div>
-      <p className="text-lg font-bold text-(--text-primary) leading-tight text-right shrink-0">{value}</p>
+      <p className="text-base font-bold text-(--text-primary) leading-tight">{value}</p>
     </div>
   );
 }

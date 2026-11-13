@@ -1,34 +1,40 @@
 import { useRef, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useQueryClient } from '@tanstack/react-query';
-import { BuildingStorefrontIcon, CubeIcon, BuildingOfficeIcon, ChevronDownIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/outline';
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react';
+import {
+  BuildingStorefrontIcon, CubeIcon, BuildingOfficeIcon, ChevronDownIcon, EllipsisHorizontalIcon,
+  ArrowDownTrayIcon, ArrowUpTrayIcon, InboxStackIcon,
+  Cog6ToothIcon, ClockIcon, CreditCardIcon, TrophyIcon,
+} from '@heroicons/react/24/outline';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
-// Split into an always-visible primary row and a "More" dropdown (GitHub's
-// own repo-tabs pattern) instead of either wrapping onto a second row or
-// forcing a horizontal scrollbar at 14 tabs wide -- neither reads as
-// "modern" once there are this many destinations. The primary set is the
-// handful used in day-to-day operation; the rest are lower-frequency
-// (setup, reporting, admin) and are just as reachable one click deeper.
+// Split into an always-visible primary row and a "More" menu (GitHub's own
+// repo-tabs overflow pattern) instead of either wrapping onto a second row
+// or forcing a horizontal scrollbar at 14 tabs wide -- neither reads as
+// "modern" once there are this many destinations. The primary 7 are the
+// ones used in day-to-day operation; the rest are lower-frequency
+// (warehouse-specific, setup, reporting, admin) and are just as reachable
+// one click deeper.
 const primaryLinks = [
-  { to: '/inventory',           label: 'Dashboard', end: true },
-  { to: '/inventory/sales',     label: 'Sales',      end: false },
-  { to: '/inventory/categories', label: 'Categories', end: false },
-  { to: '/inventory/expenses',  label: 'Expenses',   end: false },
-  { to: '/inventory/customers', label: 'Customers',  end: false },
-  { to: '/inventory/analytics', label: 'Analytics',  end: false },
+  { to: '/inventory',            label: 'Dashboard',  end: true },
+  { to: '/inventory/sales',      label: 'Sales',       end: false },
+  { to: '/inventory/categories', label: 'Categories',  end: false },
+  { to: '/inventory/expenses',   label: 'Expenses',    end: false },
+  { to: '/inventory/customers',  label: 'Customers',   end: false },
+  { to: '/inventory/analytics',  label: 'Analytics',   end: false },
+  { to: '/inventory/transfers',  label: 'Transfers',   end: false },
 ];
 
 const moreLinks = [
-  { to: '/inventory/transfers',           label: 'Transfers' },
-  { to: '/inventory/warehouse/receive',   label: 'Receive Stock' },
-  { to: '/inventory/warehouse/dispatch',  label: 'Dispatch Stock' },
-  { to: '/inventory/product-requests',    label: 'Product Requests' },
-  { to: '/inventory/business',            label: 'Business Setup' },
-  { to: '/inventory/history',             label: 'Business History' },
-  { to: '/inventory/subscription',        label: 'Subscription' },
-  { to: '/inventory/best-sellers',        label: 'Best Sellers' },
+  { to: '/inventory/warehouse/receive',   label: 'Receive Stock',   icon: ArrowDownTrayIcon },
+  { to: '/inventory/warehouse/dispatch',  label: 'Dispatch Stock',  icon: ArrowUpTrayIcon },
+  { to: '/inventory/product-requests',    label: 'Product Requests', icon: InboxStackIcon },
+  { to: '/inventory/business',            label: 'Business Setup',  icon: Cog6ToothIcon },
+  { to: '/inventory/history',             label: 'Business History', icon: ClockIcon },
+  { to: '/inventory/subscription',        label: 'Subscription',    icon: CreditCardIcon },
+  { to: '/inventory/best-sellers',        label: 'Best Sellers',    icon: TrophyIcon },
 ];
 
 const MODE_ICON: Record<string, React.ElementType> = {
@@ -39,10 +45,10 @@ const MODE_ICON: Record<string, React.ElementType> = {
 
 export function InventoryNav() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const { businesses, selectedBiz, setSelectedId } = useInventoryBusiness();
   const [open, setOpen] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
-  const [moreOpen, setMoreOpen] = useState(false);
   const { pathname } = useLocation();
   const isMoreActive = moreLinks.some((l) => pathname.startsWith(l.to));
 
@@ -142,12 +148,18 @@ export function InventoryNav() {
           </NavLink>
         ))}
 
-        <div className="relative">
-          <button
-            type="button"
-            onClick={() => setMoreOpen((v) => !v)}
+        {/* "More" overflow menu -- Headless UI's Menu rather than a
+            hand-rolled dropdown, for the same reason real design systems
+            (Linear, Vercel, GitHub's newer UI) build on it: proper keyboard
+            nav (arrow keys, Home/End, type-ahead, Escape), focus trapped
+            and returned to the trigger on close, correct ARIA roles out of
+            the box, viewport-aware positioning (anchor), and a built-in
+            enter/leave transition -- all things a custom click-outside div
+            has to hand-roll and easily gets wrong. */}
+        <Menu as="div" className="relative">
+          <MenuButton
             className={clsx(
-              'flex items-center gap-1 shrink-0 px-3 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200',
+              'group flex items-center gap-1 shrink-0 px-3 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 data-active:text-(--text-primary)',
               isMoreActive
                 ? 'bg-orange-50 text-orange-600 shadow-(--shadow-soft-sm) dark:bg-orange-950/40'
                 : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--primary-tint)/30',
@@ -155,34 +167,36 @@ export function InventoryNav() {
           >
             <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />
             More
-            <ChevronDownIcon className={clsx('h-3.5 w-3.5 text-(--text-muted) transition-transform', moreOpen && 'rotate-180')} />
-          </button>
+            <ChevronDownIcon className="h-3.5 w-3.5 text-(--text-muted) transition-transform group-data-open:rotate-180" aria-hidden="true" />
+          </MenuButton>
 
-          {moreOpen && (
-            <>
-              <div className="fixed inset-0 z-10" aria-hidden="true" onClick={() => setMoreOpen(false)} />
-              <div className="absolute left-0 top-full z-20 mt-1 w-56 surface-soft overflow-hidden py-1">
-                {moreLinks.map(({ to, label }) => (
-                  <NavLink
-                    key={to}
-                    to={to}
-                    onClick={() => setMoreOpen(false)}
-                    className={({ isActive }) =>
-                      clsx(
-                        'block px-4 py-2.5 text-sm font-medium transition-colors',
-                        isActive
-                          ? 'bg-orange-50 text-orange-600 dark:bg-orange-950/40'
-                          : 'text-(--text-primary) hover:bg-(--primary-tint)/30',
-                      )
-                    }
+          <MenuItems
+            transition
+            anchor="bottom start"
+            className="z-20 mt-1 w-56 origin-top surface-soft overflow-hidden py-1 transition duration-150 ease-out data-closed:opacity-0 data-closed:scale-95 [--anchor-gap:4px]"
+          >
+            {moreLinks.map(({ to, label, icon: ItemIcon }) => {
+              const isActive = pathname.startsWith(to);
+              return (
+                <MenuItem key={to}>
+                  <button
+                    type="button"
+                    onClick={() => navigate(to)}
+                    className={clsx(
+                      'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-orange-50 text-orange-600 dark:bg-orange-950/40'
+                        : 'text-(--text-primary) data-focus:bg-(--primary-tint)/30',
+                    )}
                   >
+                    <ItemIcon className={clsx('h-4 w-4 shrink-0', isActive ? 'text-orange-600' : 'text-(--text-muted)')} aria-hidden="true" />
                     {label}
-                  </NavLink>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+                  </button>
+                </MenuItem>
+              );
+            })}
+          </MenuItems>
+        </Menu>
       </div>
     </div>
   );

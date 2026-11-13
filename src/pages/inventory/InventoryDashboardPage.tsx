@@ -82,25 +82,25 @@ function StatCard({
 }) {
   if (loading) return <SkeletonCard />;
   return (
-    // Icon+title on the left, the number on the right -- rather than one
-    // left-hugging block -- so the card's content spans its full width
-    // instead of leaving a dead strip on the right at wider breakpoints.
+    // flex-wrap, not a fixed two-column row: icon+title sit on the left
+    // and the value on the right when there's room, filling a wide card
+    // properly -- but on a narrower card the value wraps onto its own
+    // line below instead of squeezing the title/subtitle into a
+    // truncated "...". Nothing here ever truncates.
     <div
-      className="surface-soft-sm surface-soft-interactive animate-rise-in p-5 flex items-center justify-between gap-4"
+      className="surface-soft-sm surface-soft-interactive animate-rise-in p-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-2"
       style={{ '--delay': `${delay}ms` } as React.CSSProperties}
     >
-      <div className="flex items-center gap-4 min-w-0">
-        <div className={`shrink-0 h-11 w-11 rounded-xl flex items-center justify-center ${iconBg}`}>
+      <div className="flex items-center gap-3">
+        <div className={`shrink-0 h-10 w-10 rounded-xl flex items-center justify-center ${iconBg}`}>
           {icon}
         </div>
-        <div className="min-w-0">
-          <p className="text-sm text-(--text-secondary) font-medium truncate">{title}</p>
-          {subtitle && <p className="mt-0.5 text-xs text-(--text-muted) truncate">{subtitle}</p>}
+        <div>
+          <p className="text-sm text-(--text-secondary) font-medium">{title}</p>
+          {subtitle && <p className="mt-0.5 text-xs text-(--text-muted)">{subtitle}</p>}
         </div>
       </div>
-      <div className="text-right shrink-0">
-        <p className="text-xl font-bold text-(--text-primary)">{value}</p>
-      </div>
+      <p className="text-lg font-bold text-(--text-primary)">{value}</p>
     </div>
   );
 }

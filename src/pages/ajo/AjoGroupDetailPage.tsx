@@ -287,9 +287,9 @@ function StatusBadge({ value }: { value: string }) {
 const inputCls =
   'w-full rounded-lg border border-(--border) bg-(--surface) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const orangeBtn =
-  'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
+  'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn =
-  'rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+  'rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 // ── Submit Payment Modal ──────────────────────────────────────────────────────
 
@@ -358,7 +358,7 @@ function SubmitPaymentModal({
   if (success) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div className="bg-(--surface) rounded-2xl shadow-xl p-8 max-w-sm w-full text-center space-y-4">
+        <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) p-8 max-w-sm w-full text-center space-y-4">
           <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto" />
           <h2 className="text-xl font-bold text-(--text-primary)">Payment Submitted!</h2>
           <p className="text-sm text-(--text-secondary)">
@@ -367,7 +367,7 @@ function SubmitPaymentModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full mt-2 rounded-lg bg-orange-600 text-white py-2.5 font-semibold hover:bg-orange-700 transition-colors"
+            className="w-full mt-2 rounded-lg bg-orange-600 text-white py-2.5 font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             Back to Group
           </button>
@@ -378,7 +378,7 @@ function SubmitPaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Submit Payment</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
@@ -439,7 +439,7 @@ function SubmitPaymentModal({
           </div>
 
           {err && (
-            <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>
           )}
 
           <div className="flex gap-3 pt-1">
@@ -583,7 +583,7 @@ function GroupSettingsModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Group Settings</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
@@ -655,7 +655,7 @@ function GroupSettingsModal({
             />
           </div>
 
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
           {success && <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">Settings saved!</p>}
 
           <div className="flex gap-3 pt-1">
@@ -728,7 +728,7 @@ function StartCycleModal({
           The cycle's end date is set automatically based on the group's contribution frequency and collection day.
         </p>
 
-        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
         <div className="flex gap-3 pt-1">
           <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -909,7 +909,7 @@ function PaymentsTab({
               type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
+              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
             >
               ← Prev
             </button>
@@ -932,7 +932,7 @@ function PaymentsTab({
                       'w-8 h-8 rounded-lg text-xs font-semibold transition-colors',
                       page === n
                         ? 'bg-(--primary) text-white'
-                        : 'border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30',
+                        : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30',
                     )}
                   >
                     {n}
@@ -943,7 +943,7 @@ function PaymentsTab({
               type="button"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
+              className="px-2.5 py-1.5 rounded-lg text-xs font-semibold surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
             >
               Next →
             </button>
@@ -1243,7 +1243,7 @@ function MembersTab({
                   onSuccess: () => { setProposePendingId(null); setProposePendingName(''); },
                 });
               }}
-              className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+              className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {proposeRemovalMutation.isPending ? 'Proposing…' : 'Yes, Propose'}
             </button>
@@ -1341,7 +1341,7 @@ function MembersTab({
             Are you sure you want to leave this group? This action cannot be undone.
           </p>
           {leaveMutation.isError && (
-            <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">
               {(leaveMutation.error as any)?.response?.data?.detail ?? 'Failed to leave group.'}
             </p>
           )}
@@ -1357,7 +1357,7 @@ function MembersTab({
               type="button"
               disabled={leaveMutation.isPending}
               onClick={() => leaveMutation.mutate()}
-              className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+              className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {leaveMutation.isPending ? 'Leaving…' : 'Yes, Leave'}
             </button>
@@ -1495,7 +1495,7 @@ function CyclesTab({
                   <button
                     type="button"
                     onClick={() => toggleDefaulters(cycle.id)}
-                    className="px-3 py-1.5 rounded-lg border border-(--border) text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+                    className="px-3 py-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30"
                   >
                     {expandedDefaulters[cycle.id] ? 'Hide Defaulters' : 'Defaulters'}
                   </button>
@@ -1672,7 +1672,7 @@ function CollectionOrderTab({
             <button
               type="button"
               onClick={shuffle}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-(--border) text-(--text-secondary) text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) text-sm font-semibold hover:bg-(--primary-tint)/30"
             >
               <ArrowPathIcon className="h-4 w-4" />
               Shuffle
@@ -1695,7 +1695,7 @@ function CollectionOrderTab({
       )}
 
       {saveErr && (
-        <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{saveErr}</p>
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{saveErr}</p>
       )}
 
       <ol className="space-y-2">
@@ -2013,7 +2013,7 @@ export default function AjoGroupDetailPage() {
 
   if (groupQ.error || !groupQ.data) {
     return (
-      <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-6 text-center text-sm text-red-700">
+      <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-6 text-center text-sm text-red-700 dark:text-red-400">
         Failed to load group details.{' '}
         <Link to="/ajo" className="underline font-medium">Go back</Link>
       </div>
@@ -2079,7 +2079,7 @@ export default function AjoGroupDetailPage() {
                   onClick={() => setShowSettings(true)}
                   title="Group settings"
                   aria-label="Group settings"
-                  className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30 transition-colors"
+                  className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30"
                 >
                   <Cog6ToothIcon className="h-5 w-5" aria-hidden="true" />
                 </button>
@@ -2124,7 +2124,7 @@ export default function AjoGroupDetailPage() {
                   type="button"
                   onClick={() => copyInviteCode(group.invite_code)}
                   title="Copy invite code"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-(--border) text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30"
                 >
                   <ClipboardDocumentIcon className="h-3.5 w-3.5" />
                   {copied ? 'Copied!' : 'Copy'}
@@ -2134,7 +2134,7 @@ export default function AjoGroupDetailPage() {
                   onClick={() => regenerateMutation.mutate()}
                   disabled={regenerateMutation.isPending}
                   title="Regenerate invite code"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-(--border) text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30 disabled:opacity-50 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30 disabled:opacity-50 transition-colors"
                 >
                   <ArrowPathIcon className={clsx('h-3.5 w-3.5', regenerateMutation.isPending && 'animate-spin')} />
                   Regenerate
@@ -2208,7 +2208,7 @@ export default function AjoGroupDetailPage() {
             <button
               type="button"
               onClick={() => setShowSubmit(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-700 transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
             >
               <PlusIcon className="h-4 w-4" />
               Submit My Payment

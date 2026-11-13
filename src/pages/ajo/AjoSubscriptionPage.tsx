@@ -82,7 +82,7 @@ const CYCLE_OPTIONS = [1, 3, 6, 12] as const;
 // ── Shared styles (mirrors the project's existing convention) ─────────────────
 
 const orangeBtn =
-  'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
+  'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 
 const inputCls =
   'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
@@ -188,7 +188,7 @@ export default function AjoSubscriptionPage() {
 
   if (error || !group) {
     return (
-      <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-6 text-center text-sm text-red-700">
+      <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-6 text-center text-sm text-red-700 dark:text-red-400">
         Failed to load group details.{' '}
         <Link to="/ajo" className="underline font-medium">
           Go back
@@ -329,7 +329,7 @@ export default function AjoSubscriptionPage() {
           )}
 
           {initiateMutation.isError && (
-            <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">
               {(initiateMutation.error as any)?.response?.data?.detail ??
                 'Failed to initiate payment. Please try again.'}
             </p>
@@ -359,7 +359,7 @@ export default function AjoSubscriptionPage() {
               </div>
 
               {verifyError && (
-                <div role="alert" className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2.5">
+                <div role="alert" className="flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-3 py-2.5">
                   <XCircleIcon className="h-4 w-4 text-red-500 shrink-0 mt-0.5" aria-hidden="true" />
                   <p className="text-sm text-red-700">{verifyError}</p>
                 </div>
@@ -378,7 +378,7 @@ export default function AjoSubscriptionPage() {
 
           {/* Success state */}
           {verifySuccess && (
-            <div className="flex items-start gap-3 rounded-xl bg-green-50 border border-green-200 px-4 py-4">
+            <div className="flex items-start gap-3 rounded-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-4">
               <CheckCircleIcon className="h-6 w-6 text-green-500 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-semibold text-green-800">Payment verified!</p>

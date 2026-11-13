@@ -57,7 +57,7 @@ function StatusBadge({ status }: { status: string }) {
 function PaymentTable({ payments, loading, showMember }: { payments: ThriftPaymentHistoryItem[]; loading: boolean; showMember: boolean }) {
   const headers = ['Group', ...(showMember ? ['Member'] : []), 'Period Date', 'Amount', 'Marked At', 'Status'];
   return (
-    <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+    <div className="surface-soft overflow-hidden">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-(--border)">
           <thead className="bg-(--bg)">

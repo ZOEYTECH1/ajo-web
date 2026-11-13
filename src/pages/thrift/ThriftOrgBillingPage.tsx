@@ -65,7 +65,7 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
   const canPay = invoice.status === 'pending' || invoice.status === 'overdue';
 
   return (
-    <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+    <div className="surface-soft overflow-hidden">
       {/* Card header */}
       <div className="flex items-start justify-between gap-4 p-5 flex-wrap">
         <div>
@@ -92,13 +92,13 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
               type="button"
               disabled={payMutation.isPending}
               onClick={() => { setPayError(''); payMutation.mutate(); }}
-              className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors"
+              className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {payMutation.isPending ? 'Loading…' : 'Pay Now'}
             </button>
           )}
           {verifySuccess && (
-            <span className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-1.5">
+            <span className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-3 py-1.5">
               Verified!
             </span>
           )}
@@ -108,7 +108,7 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
       {/* Pay error */}
       {payError && (
         <div className="px-5 pb-3">
-          <p role="alert" className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{payError}</p>
+          <p role="alert" className="text-xs text-red-600 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">{payError}</p>
         </div>
       )}
 
@@ -131,13 +131,13 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
               type="button"
               disabled={!verifyTxId.trim() || verifyMutation.isPending}
               onClick={() => verifyMutation.mutate()}
-              className="rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors"
+              className="rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {verifyMutation.isPending ? 'Verifying…' : 'Verify'}
             </button>
           </div>
           {verifyError && (
-            <p role="alert" className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{verifyError}</p>
+            <p role="alert" className="text-xs text-red-600 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">{verifyError}</p>
           )}
         </div>
       )}
@@ -178,7 +178,7 @@ function SkeletonInvoices() {
   return (
     <div className="space-y-4">
       {[1, 2, 3].map(i => (
-        <div key={i} className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5 space-y-3">
+        <div key={i} className="surface-soft p-5 space-y-3">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-2">
               <Skeleton className="h-4 w-36" />
@@ -245,7 +245,7 @@ export default function ThriftOrgBillingPage() {
           disabled={generateMutation.isPending || !canGenerate}
           onClick={() => generateMutation.mutate()}
           title={canGenerate ? undefined : 'No completed circles are ready to bill yet.'}
-          className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
         >
           {generateMutation.isPending ? 'Generating…' : 'Generate Invoice'}
         </button>
@@ -263,14 +263,14 @@ export default function ThriftOrgBillingPage() {
 
       {/* Generate error */}
       {generateError && (
-        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           {generateError}
         </div>
       )}
 
       {/* Load error */}
       {error && (
-        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load invoices. Please refresh.
         </div>
       )}
@@ -279,7 +279,7 @@ export default function ThriftOrgBillingPage() {
       {isLoading ? (
         <SkeletonInvoices />
       ) : !invoices || invoices.length === 0 ? (
-        <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm px-6 py-16 text-center">
+        <div className="surface-soft px-6 py-16 text-center">
           <p className="text-sm text-(--text-muted)">No invoices yet. Generate your first invoice.</p>
         </div>
       ) : (

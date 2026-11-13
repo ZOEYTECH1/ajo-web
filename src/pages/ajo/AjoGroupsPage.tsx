@@ -94,7 +94,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
           <h2 className="text-lg font-bold text-(--text-primary)">Create Ajo Group</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
@@ -183,7 +183,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             />
           </Field>
 
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -219,7 +219,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-sm">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-sm">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Join Ajo Group</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
@@ -243,7 +243,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
                   className={`${inputCls} tracking-[0.3em] uppercase font-mono text-center text-lg`}
                 />
               </div>
-              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
                 <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
                 <button
@@ -295,9 +295,9 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 const inputCls =
   'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
 const submitBtn =
-  'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 disabled:opacity-50 transition-colors';
+  'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn =
-  'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+  'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, id, children }: { label: string; id?: string; children: React.ReactNode }) {
   return (
@@ -347,7 +347,7 @@ export default function AjoGroupsPage() {
           <button
             type="button"
             onClick={() => setShowJoin(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-(--border) text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30"
           >
             <KeyIcon className="h-4 w-4" />
             Join Group
@@ -355,7 +355,7 @@ export default function AjoGroupsPage() {
           <button
             type="button"
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             Create Group
@@ -370,12 +370,12 @@ export default function AjoGroupsPage() {
       )}
 
       {error && (
-        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load groups. Please refresh.
         </div>
       )}
 
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+      <div className="surface-soft overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
@@ -392,7 +392,7 @@ export default function AjoGroupsPage() {
                 <SkeletonTable rows={5} cols={5} />
               ) : data && data.length > 0 ? (
                 data.map((group) => (
-                  <tr key={group.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                  <tr key={group.id} className="hover:bg-(--primary-tint)/30">
                     <td className="px-6 py-4 text-sm font-medium">
                       <Link to={`/ajo/${group.id}`} className="text-(--primary) hover:underline font-semibold">
                         {group.name}

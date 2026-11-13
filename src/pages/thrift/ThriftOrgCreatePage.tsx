@@ -41,7 +41,7 @@ export default function ThriftOrgCreatePage() {
         {BENEFITS.map(b => (
           <div
             key={b.title}
-            className="flex gap-4 bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5"
+            className="flex gap-4 surface-soft p-5"
           >
             <span className="text-2xl leading-none mt-0.5">{b.icon}</span>
             <div>
@@ -68,7 +68,7 @@ export default function ThriftOrgCreatePage() {
 
       <Link
         to="/thrift"
-        className="block w-full text-center rounded-xl border border-(--border) text-(--text-secondary) py-3 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+        className="block w-full text-center rounded-xl surface-soft-sm surface-soft-interactive text-(--text-secondary) py-3 text-sm font-semibold hover:bg-(--primary-tint)/30"
       >
         Back to Thrift Groups
       </Link>

@@ -66,7 +66,7 @@ function SkeletonCards() {
   return (
     <div className="space-y-3">
       {[1, 2, 3].map(i => (
-        <div key={i} className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5">
+        <div key={i} className="surface-soft p-5">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-1/3" />
@@ -128,7 +128,7 @@ function FlagModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+              className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30"
             >
               Cancel
             </button>
@@ -197,7 +197,7 @@ export default function ThriftQueuePage() {
 
       {/* Global error */}
       {error && (
-        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
           Failed to load queue. Please refresh.
         </div>
       )}
@@ -227,13 +227,13 @@ export default function ThriftQueuePage() {
           {isLoading ? (
             <SkeletonCards />
           ) : pendingMembers.length === 0 ? (
-            <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm px-6 py-16 text-center">
+            <div className="surface-soft px-6 py-16 text-center">
               <p className="text-sm text-(--text-muted)">No pending approvals</p>
             </div>
           ) : (
             <div className="space-y-3">
               {pendingMembers.map(member => (
-                <div key={member.id} className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5 space-y-3">
+                <div key={member.id} className="surface-soft p-5 space-y-3">
                   <div className="flex items-start justify-between gap-4 flex-wrap">
                     <div className="space-y-0.5">
                       <p className="text-sm font-semibold text-(--text-primary)">
@@ -269,7 +269,7 @@ export default function ThriftQueuePage() {
                               memberId: member.id,
                               action: 'approve',
                             })}
-                            className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-1.5 hover:bg-green-100 transition-colors disabled:opacity-50"
+                            className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-3 py-1.5 hover:bg-green-100 transition-colors disabled:opacity-50"
                           >
                             Approve Amount
                           </button>
@@ -281,7 +281,7 @@ export default function ThriftQueuePage() {
                               memberId: member.id,
                               action: 'reject',
                             })}
-                            className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-1.5 hover:bg-red-100 transition-colors disabled:opacity-50"
+                            className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-1.5 hover:bg-red-100 transition-colors disabled:opacity-50"
                           >
                             Reject
                           </button>
@@ -297,7 +297,7 @@ export default function ThriftQueuePage() {
                               memberId: member.id,
                               action: 'approve',
                             })}
-                            className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-1.5 hover:bg-green-100 transition-colors disabled:opacity-50"
+                            className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-3 py-1.5 hover:bg-green-100 transition-colors disabled:opacity-50"
                           >
                             Approve
                           </button>
@@ -317,7 +317,7 @@ export default function ThriftQueuePage() {
                               memberId: member.id,
                               action: 'reject',
                             })}
-                            className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-1.5 hover:bg-red-100 transition-colors disabled:opacity-50"
+                            className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-1.5 hover:bg-red-100 transition-colors disabled:opacity-50"
                           >
                             Reject
                           </button>
@@ -350,13 +350,13 @@ export default function ThriftQueuePage() {
           {isLoading ? (
             <SkeletonCards />
           ) : disputedPayments.length === 0 ? (
-            <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm px-6 py-16 text-center">
+            <div className="surface-soft px-6 py-16 text-center">
               <p className="text-sm text-(--text-muted)">No disputed payments</p>
             </div>
           ) : (
             <div className="space-y-3">
               {disputedPayments.map(payment => (
-                <div key={payment.id} className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5 space-y-3">
+                <div key={payment.id} className="surface-soft p-5 space-y-3">
                   <div className="flex items-start justify-between gap-4 flex-wrap">
                     <div className="space-y-0.5">
                       <p className="text-sm font-semibold text-(--text-primary)">{payment.member_name}</p>
@@ -388,7 +388,7 @@ export default function ThriftQueuePage() {
                   </div>
 
                   {/* Dispute reason */}
-                  <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-800">
+                  <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-3 py-2 text-xs text-red-800 dark:text-red-400">
                     <span className="font-semibold">Dispute reason: </span>{payment.dispute_reason}
                   </div>
 

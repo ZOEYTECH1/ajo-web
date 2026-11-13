@@ -101,8 +101,8 @@ function fmt(d: string | null | undefined) {
 }
 
 const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
-const submitBtn = 'flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+const submitBtn = 'flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -166,7 +166,7 @@ function SettingsModal({ open, groupId, group, onClose }: { open: boolean; group
         <Field label="Description">
           <textarea rows={2} value={form.description} onChange={(e) => setForm(f => ({ ...f, description: e.target.value }))} className={inputCls} />
         </Field>
-        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
         <div className="flex gap-3">
           <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
           <button type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()} className={submitBtn}>
@@ -274,7 +274,7 @@ function DisputeModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Dispute Payment</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
@@ -303,7 +303,7 @@ function DisputeModal({
                     'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
                     recording
                       ? 'bg-red-600 text-white hover:bg-red-700 animate-pulse'
-                      : 'bg-(--bg) border border-(--border) text-(--text-secondary) hover:text-teal-600 hover:border-teal-300',
+                      : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-teal-600 hover:border-teal-300',
                   )}
                 >
                   <span className={clsx('inline-block w-2.5 h-2.5 rounded-full', recording ? 'bg-white' : 'bg-red-500')} />
@@ -330,14 +330,14 @@ function DisputeModal({
             )}
           </div>
 
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
             <button
               type="button"
               disabled={!canSubmit || mutation.isPending}
               onClick={() => mutation.mutate()}
-              className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+              className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {mutation.isPending ? 'Submitting…' : 'Submit Dispute'}
             </button>
@@ -409,7 +409,7 @@ function DisputeDetailModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+            className="w-full rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30"
           >
             Close
           </button>
@@ -435,14 +435,14 @@ function ReportCollectorModal({ groupId, onClose }: { groupId: string; onClose: 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Report Collector</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <div className="p-6 space-y-4">
           {success ? (
-            <div className="flex items-start gap-3 rounded-xl bg-green-50 border border-green-200 px-4 py-4">
+            <div className="flex items-start gap-3 rounded-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-4">
               <CheckCircleIcon className="h-6 w-6 text-green-500 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-semibold text-green-800">Report submitted</p>
@@ -462,14 +462,14 @@ function ReportCollectorModal({ groupId, onClose }: { groupId: string; onClose: 
                   className={inputCls}
                 />
               </div>
-              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
                 <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
                 <button
                   type="button"
                   disabled={!reason.trim() || mutation.isPending}
                   onClick={() => mutation.mutate()}
-                  className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+                  className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
                 >
                   {mutation.isPending ? 'Submitting…' : 'Submit Report'}
                 </button>
@@ -502,14 +502,14 @@ function RequestRemovalModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-md">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
           <h2 className="text-lg font-bold text-(--text-primary)">Request to Leave Group</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
         <div className="p-6 space-y-4">
           {success ? (
-            <div className="flex items-start gap-3 rounded-xl bg-green-50 border border-green-200 px-4 py-4">
+            <div className="flex items-start gap-3 rounded-xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 px-4 py-4">
               <CheckCircleIcon className="h-6 w-6 text-green-500 shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-semibold text-green-800">Request submitted</p>
@@ -531,14 +531,14 @@ function RequestRemovalModal({
                   className={inputCls}
                 />
               </div>
-              {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+              {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
                 <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
                 <button
                   type="button"
                   disabled={!reason.trim() || mutation.isPending}
                   onClick={() => mutation.mutate()}
-                  className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+                  className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
                 >
                   {mutation.isPending ? 'Submitting…' : 'Submit Request'}
                 </button>
@@ -587,7 +587,7 @@ function StartCycleModal({ open, groupId, cycleNumber, onClose }: { open: boolea
             <input type="date" value={form.end_date} min={form.start_date || new Date().toISOString().slice(0, 10)} onChange={(e) => setForm(f => ({ ...f, end_date: e.target.value }))} className={inputCls} />
           </Field>
         </div>
-        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
         <div className="flex gap-3">
           <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
           <button type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()} className={submitBtn}>
@@ -718,7 +718,7 @@ export default function ThriftGroupDetailPage() {
 
   if (groupQ.error || !group) {
     return (
-      <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+      <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
         Group not found or you do not have access.{' '}
         <Link to="/thrift" className="underline">Back to groups</Link>
       </div>
@@ -741,7 +741,7 @@ export default function ThriftGroupDetailPage() {
       <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-teal-600">← All Thrift Groups</Link>
 
       {/* Header card */}
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6 space-y-4">
+      <div className="surface-soft p-6 space-y-4">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -772,13 +772,13 @@ export default function ThriftGroupDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowReportCollector(true)}
-                className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-1.5 hover:bg-red-100 transition-colors"
+                className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-1.5 hover:bg-red-100 transition-colors"
               >
                 Report Collector
               </button>
             )}
             {isCollector && (
-              <button type="button" onClick={() => setShowSettings(true)} className="p-2 rounded-lg border border-(--border) text-(--text-secondary) hover:text-teal-600 hover:border-teal-300 transition-colors" title="Settings">
+              <button type="button" onClick={() => setShowSettings(true)} className="p-2 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-teal-600 hover:border-teal-300 transition-colors" title="Settings">
                 <Cog6ToothIcon className="h-5 w-5" />
               </button>
             )}
@@ -824,7 +824,7 @@ export default function ThriftGroupDetailPage() {
                   <button
                     type="button"
                     onClick={() => setShowRequestRemoval(true)}
-                    className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
+                    className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
                   >
                     Request to Leave Group
                   </button>
@@ -884,7 +884,7 @@ export default function ThriftGroupDetailPage() {
 
           {/* Collector: record payment per member */}
           {isCollector && approvedMembers.length > 0 && (
-            <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+            <div className="surface-soft overflow-hidden">
               <div className="px-6 py-3 border-b border-(--border) bg-(--bg)">
                 <h3 className="text-sm font-semibold text-(--text-primary)">Approve Payments</h3>
                 <p className="text-xs text-(--text-muted) mt-0.5">Click Approve on a member to record their payment for today.</p>
@@ -903,7 +903,7 @@ export default function ThriftGroupDetailPage() {
                       <SkeletonTable rows={3} cols={4} />
                     ) : (
                       approvedMembers.map(m => (
-                        <tr key={m.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                        <tr key={m.id} className="hover:bg-(--primary-tint)/30">
                           <td className="px-6 py-3 text-sm font-medium text-(--text-primary)">{m.user.full_name}</td>
                           <td className="px-6 py-3 text-sm text-(--text-secondary)">{formatCurrency(m.personal_amount)}</td>
                           <td className="px-6 py-3 text-sm text-(--text-secondary)">{formatCurrency(m.total_saved)}</td>
@@ -970,7 +970,7 @@ export default function ThriftGroupDetailPage() {
           )}
 
           {/* Payment history */}
-          <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+          <div className="surface-soft overflow-hidden">
             {isCollector && <div className="px-6 py-3 border-b border-(--border) bg-(--bg)"><h3 className="text-sm font-semibold text-(--text-primary)">Payment History</h3></div>}
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-(--border)">
@@ -994,7 +994,7 @@ export default function ThriftGroupDetailPage() {
                     payments.map(p => {
                       const isMyPayment = myMembership && p.member === myMembership.id;
                       return (
-                        <tr key={p.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                        <tr key={p.id} className="hover:bg-(--primary-tint)/30">
                           <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{p.member_name}</td>
                           <td className="px-6 py-4 text-sm text-(--text-secondary)">{fmt(p.period_date)}</td>
                           <td className="px-6 py-4 text-sm text-(--text-secondary)">{formatCurrency(p.amount)}</td>
@@ -1007,14 +1007,14 @@ export default function ThriftGroupDetailPage() {
                                     type="button"
                                     onClick={() => confirmPaymentMutation.mutate(p.id)}
                                     disabled={confirmPaymentMutation.isPending}
-                                    className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors"
+                                    className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors"
                                   >
                                     <CheckCircleIcon className="h-3.5 w-3.5" /> Confirm
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => setDisputePaymentId(p.id)}
-                                    className="inline-flex items-center gap-1 text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
+                                    className="inline-flex items-center gap-1 text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
                                   >
                                     <ExclamationCircleIcon className="h-3.5 w-3.5" /> Dispute
                                   </button>
@@ -1074,7 +1074,7 @@ export default function ThriftGroupDetailPage() {
             </div>
           )}
 
-          <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+          <div className="surface-soft overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-(--border)">
                 <thead className="bg-(--bg)">
@@ -1105,7 +1105,7 @@ export default function ThriftGroupDetailPage() {
                         );
                       }
                       return list.map(m => (
-                        <tr key={m.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                        <tr key={m.id} className="hover:bg-(--primary-tint)/30">
                           <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">
                             {m.user.full_name}
                             {m.flag_reason && <p className="text-xs text-amber-600 mt-0.5">{m.flag_reason}</p>}
@@ -1121,7 +1121,7 @@ export default function ThriftGroupDetailPage() {
                                   type="button"
                                   onClick={() => memberActionMutation.mutate({ memberId: m.id, action: 'approve' })}
                                   disabled={memberActionMutation.isPending}
-                                  className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors"
+                                  className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors"
                                 >
                                   Approve
                                 </button>
@@ -1129,7 +1129,7 @@ export default function ThriftGroupDetailPage() {
                                   type="button"
                                   onClick={() => memberActionMutation.mutate({ memberId: m.id, action: 'reject' })}
                                   disabled={memberActionMutation.isPending}
-                                  className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
+                                  className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
                                 >
                                   Reject
                                 </button>
@@ -1145,7 +1145,7 @@ export default function ThriftGroupDetailPage() {
                                 className={clsx(
                                   'text-xs font-semibold rounded-lg px-2.5 py-1 transition-colors disabled:opacity-50',
                                   m.user.is_kyc_verified
-                                    ? 'text-green-700 bg-green-50 border border-green-200 hover:bg-green-100'
+                                    ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 hover:bg-green-100'
                                     : 'text-(--text-secondary) bg-(--bg) border border-(--border) hover:bg-(--primary-tint)/30',
                                 )}
                               >
@@ -1172,7 +1172,7 @@ export default function ThriftGroupDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowStartCycle(true)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
               >
                 + Start New Cycle
               </button>
@@ -1188,7 +1188,7 @@ export default function ThriftGroupDetailPage() {
           ) : (
             <div className="space-y-3">
               {[...cycles].reverse().map(c => (
-                <div key={c.id} className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-4 flex items-center justify-between gap-4 flex-wrap">
+                <div key={c.id} className="surface-soft p-4 flex items-center justify-between gap-4 flex-wrap">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-(--text-primary)">Cycle #{c.cycle_number}</span>
@@ -1209,7 +1209,7 @@ export default function ThriftGroupDetailPage() {
                       type="button"
                       onClick={() => { if (confirm(`End Cycle #${c.cycle_number}?`)) endCycleMutation.mutate(c.id); }}
                       disabled={endCycleMutation.isPending}
-                      className="text-sm font-semibold text-(--text-secondary) border border-(--border) rounded-lg px-4 py-2 hover:bg-(--primary-tint)/30 transition-colors disabled:opacity-50"
+                      className="text-sm font-semibold text-(--text-secondary) border border-(--border) rounded-lg px-4 py-2 hover:bg-(--primary-tint)/30 disabled:opacity-50"
                     >
                       End Cycle
                     </button>

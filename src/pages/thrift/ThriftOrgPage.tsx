@@ -10,8 +10,8 @@ import api from '../../services/api';
 // ── Shared styles ────────────────────────────────────────────────────────────
 
 const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
-const submitBtn = 'flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors';
-const cancelBtn = 'flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors';
+const submitBtn = 'flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -166,9 +166,9 @@ function ReportStatusBadge({ status }: { status: OrgReport['status'] }) {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string | number }) {
+function StatCard({ label, value, delay = 0 }: { label: string; value: string | number; delay?: number }) {
   return (
-    <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5">
+    <div className="surface-soft surface-soft-interactive animate-rise-in p-5" style={{ '--delay': `${delay}ms` } as React.CSSProperties}>
       <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{label}</p>
       <p className="text-2xl font-bold text-(--text-primary) mt-1">{value}</p>
     </div>
@@ -241,13 +241,13 @@ function OrgSkeleton() {
   return (
     <div className="space-y-6">
       <Skeleton className="h-4 w-24" />
-      <div className="bg-(--surface) rounded-xl border border-(--border) p-6 space-y-3">
+      <div className="surface-soft p-6 space-y-3">
         <Skeleton className="h-7 w-48" />
         <Skeleton className="h-4 w-32" />
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map(i => (
-          <div key={i} className="bg-(--surface) rounded-xl border border-(--border) p-5 space-y-2">
+          <div key={i} className="surface-soft p-5 space-y-2">
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-7 w-16" />
           </div>
@@ -351,7 +351,7 @@ function ApproveRemovalModal({
             />
           </div>
 
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -359,7 +359,7 @@ function ApproveRemovalModal({
               type="button"
               disabled={!settlementNotes.trim() || mutation.isPending}
               onClick={() => mutation.mutate()}
-              className="flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors"
+              className="flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {mutation.isPending ? 'Approving…' : 'Confirm & Remove Member'}
             </button>
@@ -423,7 +423,7 @@ function CreateGroupModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-(--surface) rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
           <h2 className="text-lg font-bold text-(--text-primary)">Create Thrift Group</h2>
           <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
@@ -485,7 +485,7 @@ function CreateGroupModal({
             <textarea rows={2} value={form.description} onChange={e => set('description', e.target.value)} placeholder="What is this group for?" className={inputCls} />
           </div>
 
-          {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
@@ -529,12 +529,12 @@ function InviteModal({ open, onInvite, onClose, isPending }: {
             className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
         </div>
-        {err && <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+        {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
         <div className="flex gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
+            className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30"
           >
             Cancel
           </button>
@@ -545,7 +545,7 @@ function InviteModal({ open, onInvite, onClose, isPending }: {
               if (!email.includes('@')) { setErr('Enter a valid email address.'); return; }
               onInvite(email.trim());
             }}
-            className="flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors"
+            className="flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
           >
             {isPending ? 'Inviting…' : 'Send Invite'}
           </button>
@@ -630,7 +630,7 @@ export default function ThriftOrgPage() {
 
   if (error || !data) {
     return (
-      <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+      <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
         Organisation not found or you do not have access.
       </div>
     );
@@ -642,14 +642,14 @@ export default function ThriftOrgPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-6">
+      <div className="surface-soft p-6">
         <div className="flex items-start gap-3 flex-wrap justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl font-bold text-(--text-primary)">{org.name}</h1>
               <OrgTypeBadge type={org.org_type} />
               {org.is_verified && (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-full px-2.5 py-0.5">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-full px-2.5 py-0.5">
                   <CheckBadgeIcon className="h-3.5 w-3.5" />
                   Verified
                 </span>
@@ -660,7 +660,7 @@ export default function ThriftOrgPage() {
             <button
               type="button"
               onClick={() => exportCSV(data)}
-              className="text-xs font-semibold text-(--text-secondary) bg-(--bg) border border-(--border) rounded-lg px-3 py-1.5 hover:bg-(--primary-tint)/30 transition-colors"
+              className="text-xs font-semibold text-(--text-secondary) bg-(--bg) border border-(--border) rounded-lg px-3 py-1.5 hover:bg-(--primary-tint)/30"
             >
               Export CSV
             </button>
@@ -673,7 +673,7 @@ export default function ThriftOrgPage() {
             <button
               type="button"
               onClick={() => setShowInvite(true)}
-              className="text-xs font-semibold text-white bg-teal-600 rounded-lg px-3 py-1.5 hover:bg-teal-700 transition-colors"
+              className="text-xs font-semibold text-white bg-teal-600 rounded-lg px-3 py-1.5 hover:bg-teal-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
             >
               Invite Collector
             </button>
@@ -682,11 +682,11 @@ export default function ThriftOrgPage() {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <StatCard label="Total Collectors" value={collectors.length} />
-        <StatCard label="Active Groups" value={groups.length} />
-        <StatCard label="Total Members" value={totalMembers} />
-        <StatCard label="Total Collected" value={formatCurrency(payment_stats.total_collected)} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard label="Total Collectors" value={collectors.length} delay={0} />
+        <StatCard label="Active Groups" value={groups.length} delay={40} />
+        <StatCard label="Total Members" value={totalMembers} delay={80} />
+        <StatCard label="Total Collected" value={formatCurrency(payment_stats.total_collected)} delay={120} />
       </div>
 
       {/* ── Pending Collector Approvals ── */}
@@ -698,7 +698,7 @@ export default function ThriftOrgPage() {
               {pending_collectors.length}
             </span>
           </h2>
-          <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+          <div className="surface-soft overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-(--border)">
                 <thead className="bg-(--bg)">
@@ -712,7 +712,7 @@ export default function ThriftOrgPage() {
                 </thead>
                 <tbody className="divide-y divide-(--border)">
                   {pending_collectors.map(c => (
-                    <tr key={c.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                    <tr key={c.id} className="hover:bg-(--primary-tint)/30">
                       <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{fullName(c.user)}</td>
                       <td className="px-6 py-4 text-sm text-(--text-secondary)">{c.user.email}</td>
                       <td className="px-6 py-4">
@@ -721,7 +721,7 @@ export default function ThriftOrgPage() {
                             type="button"
                             disabled={collectorActionMutation.isPending}
                             onClick={() => collectorActionMutation.mutate({ memberId: c.id, action: 'approve' })}
-                            className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
+                            className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
                           >
                             Approve
                           </button>
@@ -729,7 +729,7 @@ export default function ThriftOrgPage() {
                             type="button"
                             disabled={collectorActionMutation.isPending}
                             onClick={() => collectorActionMutation.mutate({ memberId: c.id, action: 'reject' })}
-                            className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
+                            className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
                           >
                             Reject
                           </button>
@@ -750,7 +750,7 @@ export default function ThriftOrgPage() {
       {/* ── Collectors ── */}
       <div className="space-y-3">
         <h2 className="text-base font-bold text-(--text-primary)">Collectors</h2>
-        <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+        <div className="surface-soft overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-(--border)">
               <thead className="bg-(--bg)">
@@ -773,7 +773,7 @@ export default function ThriftOrgPage() {
                   collectors.map(c => {
                     const stats = collector_stats[String(c.id)];
                     return (
-                      <tr key={c.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                      <tr key={c.id} className="hover:bg-(--primary-tint)/30">
                         <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{fullName(c.user)}</td>
                         <td className="px-6 py-4"><CollectorStatusBadge status={c.status} /></td>
                         <td className="px-6 py-4 text-sm text-(--text-secondary)">
@@ -798,7 +798,7 @@ export default function ThriftOrgPage() {
                                   type="button"
                                   disabled={collectorActionMutation.isPending}
                                   onClick={() => { if (confirm(`Remove ${fullName(c.user)} from this organisation?`)) collectorActionMutation.mutate({ memberId: c.id, action: 'remove' }); }}
-                                  className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
+                                  className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
                                 >
                                   Remove
                                 </button>
@@ -809,7 +809,7 @@ export default function ThriftOrgPage() {
                                   type="button"
                                   disabled={collectorActionMutation.isPending}
                                   onClick={() => collectorActionMutation.mutate({ memberId: c.id, action: 'activate' })}
-                                  className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
+                                  className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
                                 >
                                   Activate
                                 </button>
@@ -817,7 +817,7 @@ export default function ThriftOrgPage() {
                                   type="button"
                                   disabled={collectorActionMutation.isPending}
                                   onClick={() => { if (confirm(`Remove ${fullName(c.user)} from this organisation?`)) collectorActionMutation.mutate({ memberId: c.id, action: 'remove' }); }}
-                                  className="text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
+                                  className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
                                 >
                                   Remove
                                 </button>
@@ -845,12 +845,12 @@ export default function ThriftOrgPage() {
           <button
             type="button"
             onClick={() => setShowCreateGroup(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             + Create Group
           </button>
         </div>
-        <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm overflow-hidden">
+        <div className="surface-soft overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-(--border)">
               <thead className="bg-(--bg)">
@@ -871,7 +871,7 @@ export default function ThriftOrgPage() {
                   </tr>
                 ) : (
                   groups.map(g => (
-                    <tr key={g.id} className="hover:bg-(--primary-tint)/30 transition-colors">
+                    <tr key={g.id} className="hover:bg-(--primary-tint)/30">
                       <td className="px-6 py-4 text-sm font-medium">
                         <Link to={`/org/${orgUuid}/groups/${g.uuid}`} className="text-teal-600 hover:underline cursor-pointer">
                           {g.name}
@@ -892,7 +892,7 @@ export default function ThriftOrgPage() {
       </div>
 
       {/* ── Payment Stats ── */}
-      <div className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-5">
+      <div className="surface-soft p-5">
         <h2 className="text-base font-bold text-(--text-primary) mb-4">Payment Summary</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
           <div>
@@ -944,7 +944,7 @@ export default function ThriftOrgPage() {
                   'text-xs font-semibold px-3 py-1 rounded-full transition-colors capitalize',
                   reportFilter === f
                     ? 'bg-teal-600 text-white'
-                    : 'bg-(--bg) border border-(--border) text-(--text-secondary) hover:border-teal-300 hover:text-teal-600',
+                    : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:border-teal-300 hover:text-teal-600',
                 )}
               >
                 {f}
@@ -962,7 +962,7 @@ export default function ThriftOrgPage() {
         ) : (
           <div className="space-y-3">
             {allReports.map(report => (
-              <div key={report.id} className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-4 space-y-2">
+              <div key={report.id} className="surface-soft p-4 space-y-2">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -991,7 +991,7 @@ export default function ThriftOrgPage() {
                         type="button"
                         disabled={reportActionMutation.isPending}
                         onClick={() => reportActionMutation.mutate({ reportId: report.id, action: 'resolve' })}
-                        className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
+                        className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
                       >
                         Resolve
                       </button>
@@ -999,7 +999,7 @@ export default function ThriftOrgPage() {
                         type="button"
                         disabled={reportActionMutation.isPending}
                         onClick={() => reportActionMutation.mutate({ reportId: report.id, action: 'dismiss' })}
-                        className="text-xs font-semibold text-(--text-secondary) bg-(--bg) border border-(--border) rounded-lg px-2.5 py-1 hover:bg-(--primary-tint)/30 transition-colors disabled:opacity-50"
+                        className="text-xs font-semibold text-(--text-secondary) bg-(--bg) border border-(--border) rounded-lg px-2.5 py-1 hover:bg-(--primary-tint)/30 disabled:opacity-50"
                       >
                         Dismiss
                       </button>
@@ -1011,7 +1011,7 @@ export default function ThriftOrgPage() {
                         type="button"
                         disabled={reportActionMutation.isPending}
                         onClick={() => reportActionMutation.mutate({ reportId: report.id, action: 'resolve' })}
-                        className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
+                        className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
                       >
                         Resolve
                       </button>
@@ -1045,7 +1045,7 @@ export default function ThriftOrgPage() {
                   'text-xs font-semibold px-3 py-1 rounded-full transition-colors capitalize',
                   removalFilter === f
                     ? 'bg-teal-600 text-white'
-                    : 'bg-(--bg) border border-(--border) text-(--text-secondary) hover:border-teal-300 hover:text-teal-600',
+                    : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:border-teal-300 hover:text-teal-600',
                 )}
               >
                 {f}
@@ -1063,7 +1063,7 @@ export default function ThriftOrgPage() {
         ) : (
           <div className="space-y-3">
             {removalRequests.map(req => (
-              <div key={req.id} className="bg-(--surface) rounded-xl border border-(--border) shadow-sm p-4 space-y-3">
+              <div key={req.id} className="surface-soft p-4 space-y-3">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
                     <p className="text-sm font-semibold text-(--text-primary)">{req.member_name}</p>

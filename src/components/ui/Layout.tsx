@@ -78,7 +78,7 @@ export function Layout({ children }: LayoutProps) {
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
             <div className="flex items-center gap-2">
-              <img src="/ajo-logo.svg" alt="Ajo" className="h-10 w-10" />
+              <img src="/ajo-logo.svg" alt="Ajo" className="h-12 w-12" />
               <span className="text-lg font-extrabold text-(--primary)">Ajo</span>
             </div>
           </div>

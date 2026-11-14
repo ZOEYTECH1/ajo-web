@@ -8,19 +8,16 @@ import { WelcomeSplash } from '../../components/ui/WelcomeSplash';
 import { login } from '../../services/authService';
 import { useGoogleAuth } from '../../hooks/useGoogleAuth';
 import useAuthStore from '../../store/useAuthStore';
-import { consumeSplashForLogin } from '../../lib/splashFlag';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
 
-  // Only set right before navigating here from an explicit logout (see
-  // Sidebar.tsx's handleLogout) -- a first-time visit, a direct link, or a
-  // session-expiry redirect never sets this, so the splash only plays on
-  // the logout -> login transition the user asked for. consumeSplashForLogin
-  // reads the flag once and clears it, so it won't replay on a later
-  // remount of this same page within the tab.
-  const [showSplash, setShowSplash] = useState(() => consumeSplashForLogin());
+  // Plays every time this page mounts -- first-ever visit, a plain reload,
+  // or landing here from an explicit logout -- matching the mobile app's
+  // splash showing on every cold start rather than being gated to one
+  // specific path here.
+  const [showSplash, setShowSplash] = useState(true);
 
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');

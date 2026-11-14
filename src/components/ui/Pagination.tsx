@@ -57,7 +57,7 @@ export function Pagination({
               className={clsx(
                 'w-8 h-8 rounded-lg text-xs font-semibold transition-all duration-150 active:scale-[0.95]',
                 page === n
-                  ? 'bg-(--primary) text-white shadow-sm'
+                  ? 'bg-(--accent) text-white shadow-sm'
                   : 'surface-soft-sm surface-soft-interactive text-(--text-secondary)',
               )}
             >

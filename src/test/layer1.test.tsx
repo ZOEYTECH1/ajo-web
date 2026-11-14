@@ -174,9 +174,9 @@ describe('Layer 1.2 â€” Forms: errors and input preservation', () => {
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 describe('Layer 1.3 â€” Consistency: design system tokens', () => {
-  it('Button: primary variant uses (--primary) background', () => {
+  it('Button: primary variant uses (--accent) background', () => {
     render(<Button>Primary</Button>);
-    expect(screen.getByRole('button').className).toContain('bg-(--primary)');
+    expect(screen.getByRole('button').className).toContain('bg-(--accent)');
   });
 
   it('Button: primary variant uses white text', () => {

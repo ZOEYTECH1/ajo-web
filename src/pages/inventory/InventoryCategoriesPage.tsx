@@ -39,7 +39,7 @@ const TEMPLATES = [
 ];
 
 const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
-const submitBtn = 'flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const submitBtn = 'flex-1 rounded-lg bg-(--accent) text-white py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function AddCategoryModal({
@@ -250,7 +250,7 @@ function CustomFieldsModal({ category, onClose }: { category: Category; onClose:
                 Required
               </label>
               <button type="button" onClick={addField} disabled={saveMutation.isPending}
-                className="rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100">
+                className="rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100">
                 Add
               </button>
             </div>
@@ -318,7 +318,7 @@ export default function InventoryCategoriesPage() {
         <button
           type="button"
           onClick={() => { setMutErr(''); setShowAdd(true); }}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Category

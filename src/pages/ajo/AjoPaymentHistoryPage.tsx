@@ -152,7 +152,7 @@ export default function AjoPaymentHistoryPage() {
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
               filter === key
-                ? 'bg-(--primary) text-white'
+                ? 'bg-(--accent) text-white'
                 : 'bg-(--bg) text-(--text-secondary) hover:bg-(--primary-tint)/50',
             )}
           >

@@ -25,7 +25,7 @@ function formatCurrency(v: string | number) {
 }
 
 const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
-const submitBtn = 'flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const submitBtn = 'flex-1 rounded-lg bg-(--accent) text-white py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -148,7 +148,7 @@ function CreditModal({ open, customer, onClose }: { open: boolean; customer: Cus
               type="button"
               onClick={() => setDirection(d)}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors border ${
-                direction === d ? 'bg-(--primary) text-white border-(--primary)' : 'border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30'
+                direction === d ? 'bg-(--accent) text-white border-(--accent)' : 'border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30'
               }`}
             >
               {d === 'charge' ? 'Charge (add debt)' : 'Payment (reduce debt)'}
@@ -352,7 +352,7 @@ export default function InventoryCustomersPage() {
         <button
           type="button"
           onClick={() => setShowAdd(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Customer

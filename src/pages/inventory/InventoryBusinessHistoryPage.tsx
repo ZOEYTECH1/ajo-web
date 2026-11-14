@@ -150,7 +150,7 @@ function PastRecordModal({
           {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold">Cancel</button>
-            <button type="submit" disabled={mutation.isPending} className="flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold shadow-sm hover:bg-(--primary-dark) hover:shadow-md disabled:opacity-50 transition-all duration-150 active:scale-[0.97]">
+            <button type="submit" disabled={mutation.isPending} className="flex-1 rounded-lg bg-(--accent) text-white py-2.5 text-sm font-semibold shadow-sm hover:bg-(--accent-dark) hover:shadow-md disabled:opacity-50 transition-all duration-150 active:scale-[0.97]">
               {mutation.isPending ? 'Saving…' : isEdit ? 'Save' : 'Add Record'}
             </button>
           </div>
@@ -206,7 +206,7 @@ export default function InventoryBusinessHistoryPage() {
         <button
           type="button"
           onClick={() => { setEditing(null); setShowModal(true); }}
-          className="flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold shadow-sm hover:bg-(--primary-dark) hover:shadow-md transition-all duration-150 active:scale-[0.97]"
+          className="flex items-center gap-1.5 rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold shadow-sm hover:bg-(--accent-dark) hover:shadow-md transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" /> Add Past Record
         </button>

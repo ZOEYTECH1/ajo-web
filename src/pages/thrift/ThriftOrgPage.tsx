@@ -10,7 +10,7 @@ import api from '../../services/api';
 // ── Shared styles ────────────────────────────────────────────────────────────
 
 const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
-const submitBtn = 'flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const submitBtn = 'flex-1 rounded-lg bg-(--accent) text-white py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -359,7 +359,7 @@ function ApproveRemovalModal({
               type="button"
               disabled={!settlementNotes.trim() || mutation.isPending}
               onClick={() => mutation.mutate()}
-              className="flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="flex-1 rounded-lg bg-(--accent) text-white py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {mutation.isPending ? 'Approving…' : 'Confirm & Remove Member'}
             </button>
@@ -545,7 +545,7 @@ function InviteModal({ open, onInvite, onClose, isPending }: {
               if (!email.includes('@')) { setErr('Enter a valid email address.'); return; }
               onInvite(email.trim());
             }}
-            className="flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+            className="flex-1 rounded-lg bg-(--accent) text-white py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
           >
             {isPending ? 'Inviting…' : 'Send Invite'}
           </button>
@@ -845,7 +845,7 @@ export default function ThriftOrgPage() {
           <button
             type="button"
             onClick={() => setShowCreateGroup(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             + Create Group
           </button>
@@ -943,7 +943,7 @@ export default function ThriftOrgPage() {
                 className={clsx(
                   'text-xs font-semibold px-3 py-1 rounded-full transition-colors capitalize',
                   reportFilter === f
-                    ? 'bg-(--primary) text-white'
+                    ? 'bg-(--accent) text-white'
                     : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:border-(--primary)/40 hover:text-(--primary)',
                 )}
               >
@@ -1044,7 +1044,7 @@ export default function ThriftOrgPage() {
                 className={clsx(
                   'text-xs font-semibold px-3 py-1 rounded-full transition-colors capitalize',
                   removalFilter === f
-                    ? 'bg-(--primary) text-white'
+                    ? 'bg-(--accent) text-white'
                     : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:border-(--primary)/40 hover:text-(--primary)',
                 )}
               >

@@ -142,7 +142,7 @@ export default function NotificationsPage() {
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors capitalize',
               filter === f
-                ? 'bg-(--primary) text-white'
+                ? 'bg-(--accent) text-white'
                 : 'bg-(--surface) border border-(--border) text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >

@@ -218,7 +218,7 @@ export default function InventoryAnalyticsPage() {
               onClick={() => setPeriod(p.value)}
               className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
                 period === p.value
-                  ? 'bg-(--primary) text-white shadow-sm'
+                  ? 'bg-(--accent) text-white shadow-sm'
                   : 'text-(--text-secondary) hover:text-(--text-primary)'
               }`}
             >

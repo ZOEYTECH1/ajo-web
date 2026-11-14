@@ -82,7 +82,7 @@ const CYCLE_OPTIONS = [1, 3, 6, 12] as const;
 // ── Shared styles (mirrors the project's existing convention) ─────────────────
 
 const orangeBtn =
-  'rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+  'rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 
 const inputCls =
   'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
@@ -296,7 +296,7 @@ export default function AjoSubscriptionPage() {
                   className={clsx(
                     'flex-1 py-2 rounded-lg text-sm font-semibold border transition-colors',
                     selectedCycles === n
-                      ? 'bg-(--primary) text-white border-(--primary)'
+                      ? 'bg-(--accent) text-white border-(--accent)'
                       : 'bg-(--surface) text-(--text-secondary) border-(--border) hover:border-(--primary-light) hover:text-(--primary)',
                   )}
                 >

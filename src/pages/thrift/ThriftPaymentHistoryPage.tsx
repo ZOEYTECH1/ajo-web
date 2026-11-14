@@ -141,7 +141,7 @@ export default function ThriftPaymentHistoryPage() {
           onClick={() => setActiveTab('payer')}
           className={clsx(
             'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
-            activeTab === 'payer' ? 'bg-(--primary) text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
+            activeTab === 'payer' ? 'bg-(--accent) text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
           )}
         >
           My Payments ({payerCount})
@@ -151,7 +151,7 @@ export default function ThriftPaymentHistoryPage() {
           onClick={() => setActiveTab('collector')}
           className={clsx(
             'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
-            activeTab === 'collector' ? 'bg-(--primary) text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
+            activeTab === 'collector' ? 'bg-(--accent) text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
           )}
         >
           Marked by Me ({collectorCount})

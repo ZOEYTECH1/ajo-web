@@ -14,15 +14,14 @@
   --primary-light:  #4D7EFF;
   --primary-tint:   #E4ECFF;
 
-  /* Accent: the logo's own naira-badge green (public/ajo-logo.svg
-     #naira-badge), used for the active tab/nav indicator so it stands out
-     from the primary blue that already dominates everything else (plain
-     text links, borders, the logo wordmark) instead of blending into it.
-     Same hex as --success deliberately kept as a separate token -- this
-     is a navigation/identity colour, not a "this number is positive"
-     status colour, and the two may need to diverge later. */
-  --accent:      #22C55E;
-  --accent-dark: #16A34A;
+  /* Accent: a rich metallic gold, used for both the active tab/nav
+     indicator and every solid-fill action button -- per explicit user
+     request this replaced the naira-badge green that was here before
+     (see git history for that version). Stands out from the primary blue
+     that already dominates everything else (plain text links, borders,
+     the logo wordmark) instead of blending into it. */
+  --accent:      #D4AF37;
+  --accent-dark: #B8962A;
 
   /* Surface / background — slate-toned, not pure white */
   --bg:             #E2E8F0;  /* slate-200: cool gray page */
@@ -56,8 +55,8 @@
   --primary-light:  #6B96FF;
   --primary-tint:   #1E2A4A;
 
-  --accent:      #4ADE80;
-  --accent-dark: #22C55E;
+  --accent:      #E8C25E;
+  --accent-dark: #D4AF37;
 
   /* Navy-tinted near-black rather than a neutral charcoal -- ties dark
      mode back to the brand blue (public/ajo-logo.svg) instead of reading

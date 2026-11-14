@@ -220,7 +220,7 @@ export default function InventoryWarehouseReceivePage() {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="w-full sm:w-auto rounded-lg bg-(--primary) text-white px-6 py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+            className="w-full sm:w-auto rounded-lg bg-(--accent) text-white px-6 py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
           >
             {mutation.isPending ? 'Recording…' : 'Record Receipt'}
           </button>

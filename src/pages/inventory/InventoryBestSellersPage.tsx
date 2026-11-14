@@ -55,7 +55,7 @@ export default function InventoryBestSellersPage() {
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-150 active:scale-[0.96]',
               days === d
-                ? 'bg-(--primary) text-white shadow-sm'
+                ? 'bg-(--accent) text-white shadow-sm'
                 : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >

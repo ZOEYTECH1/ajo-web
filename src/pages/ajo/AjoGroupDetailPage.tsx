@@ -287,7 +287,7 @@ function StatusBadge({ value }: { value: string }) {
 const inputCls =
   'w-full rounded-lg border border-(--border) bg-(--surface) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
 const orangeBtn =
-  'rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+  'rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn =
   'rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
@@ -367,7 +367,7 @@ function SubmitPaymentModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full mt-2 rounded-lg bg-(--primary) text-white py-2.5 font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="w-full mt-2 rounded-lg bg-(--accent) text-white py-2.5 font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             Back to Group
           </button>
@@ -876,7 +876,7 @@ function PaymentsTab({
             className={clsx(
               'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors',
               filter === key
-                ? 'bg-(--primary) text-white'
+                ? 'bg-(--accent) text-white'
                 : 'bg-(--bg) text-(--text-secondary) hover:bg-(--primary-tint)/50',
             )}
           >
@@ -931,7 +931,7 @@ function PaymentsTab({
                     className={clsx(
                       'w-8 h-8 rounded-lg text-xs font-semibold transition-colors',
                       page === n
-                        ? 'bg-(--primary) text-white'
+                        ? 'bg-(--accent) text-white'
                         : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30',
                     )}
                   >
@@ -1684,7 +1684,7 @@ function CollectionOrderTab({
               className={clsx(
                 'inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors',
                 isDirty
-                  ? 'bg-(--primary) text-white hover:bg-(--primary-dark) disabled:opacity-50'
+                  ? 'bg-(--accent) text-white hover:bg-(--accent-dark) disabled:opacity-50'
                   : 'bg-(--bg) text-(--text-muted) cursor-not-allowed',
               )}
             >
@@ -2208,7 +2208,7 @@ export default function AjoGroupDetailPage() {
             <button
               type="button"
               onClick={() => setShowSubmit(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-(--primary) text-white px-5 py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+              className="inline-flex items-center gap-2 rounded-lg bg-(--accent) text-white px-5 py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
             >
               <PlusIcon className="h-4 w-4" />
               Submit My Payment

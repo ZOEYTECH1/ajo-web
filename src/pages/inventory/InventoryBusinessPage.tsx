@@ -56,7 +56,7 @@ const MODE_LABELS: Record<string, string> = {
 const inputCls =
   'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
 const orangeBtn =
-  'rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+  'rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn =
   'rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
@@ -417,7 +417,7 @@ export default function InventoryBusinessPage() {
         <button
           type="button"
           onClick={() => setShowCreate(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Location
@@ -436,7 +436,7 @@ export default function InventoryBusinessPage() {
           <button
             type="button"
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-5 py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-(--accent) text-white px-5 py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             Create Business

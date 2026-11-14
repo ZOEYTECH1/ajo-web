@@ -178,7 +178,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
               className={clsx(
                 'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 active:scale-[0.96]',
                 months === value
-                  ? 'bg-(--primary) text-white shadow-sm'
+                  ? 'bg-(--accent) text-white shadow-sm'
                   : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--primary)',
               )}
             >
@@ -213,7 +213,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
           type="button"
           disabled={initiateMutation.isPending}
           onClick={() => initiateMutation.mutate()}
-          className="w-full rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+          className="w-full rounded-lg bg-(--accent) text-white py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
         >
           {initiateMutation.isPending ? 'Redirecting to payment…' : `Subscribe · ${fmt(total)}`}
         </button>
@@ -254,7 +254,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
               type="button"
               disabled={!txRef.trim() || verifyMutation.isPending}
               onClick={() => verifyMutation.mutate()}
-              className="flex-1 rounded-lg bg-(--primary) text-white py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="flex-1 rounded-lg bg-(--accent) text-white py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {verifyMutation.isPending ? 'Verifying…' : 'Confirm Payment'}
             </button>

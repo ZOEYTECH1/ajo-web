@@ -92,7 +92,7 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
               type="button"
               disabled={payMutation.isPending}
               onClick={() => { setPayError(''); payMutation.mutate(); }}
-              className="inline-flex items-center rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="inline-flex items-center rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {payMutation.isPending ? 'Loading…' : 'Pay Now'}
             </button>
@@ -131,7 +131,7 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
               type="button"
               disabled={!verifyTxId.trim() || verifyMutation.isPending}
               onClick={() => verifyMutation.mutate()}
-              className="rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {verifyMutation.isPending ? 'Verifying…' : 'Verify'}
             </button>
@@ -245,7 +245,7 @@ export default function ThriftOrgBillingPage() {
           disabled={generateMutation.isPending || !canGenerate}
           onClick={() => generateMutation.mutate()}
           title={canGenerate ? undefined : 'No completed circles are ready to bill yet.'}
-          className="inline-flex items-center rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+          className="inline-flex items-center rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
         >
           {generateMutation.isPending ? 'Generating…' : 'Generate Invoice'}
         </button>

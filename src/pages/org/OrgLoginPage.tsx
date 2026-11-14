@@ -139,7 +139,7 @@ export default function OrgLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) disabled:opacity-50 transition-colors"
+              className="w-full rounded-lg bg-(--accent) text-white py-2.5 text-sm font-semibold hover:bg-(--accent-dark) disabled:opacity-50 transition-colors"
             >
               {isLoading ? 'Signing in…' : 'Sign In'}
             </button>

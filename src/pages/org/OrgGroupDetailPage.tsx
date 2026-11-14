@@ -318,7 +318,7 @@ export default function OrgGroupDetailPage() {
             onClick={() => setViewMode(mode)}
             className={clsx(
               'text-xs font-semibold rounded-lg px-3 py-1.5 border transition-colors capitalize',
-              viewMode === mode ? 'bg-(--primary) text-white border-(--primary)' : 'border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30',
+              viewMode === mode ? 'bg-(--accent) text-white border-(--accent)' : 'border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30',
             )}
           >
             {mode === 'all' ? 'All Circles' : mode}

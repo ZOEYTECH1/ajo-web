@@ -181,7 +181,7 @@ function NewRequestModal({
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+            className="flex-1 rounded-lg bg-(--accent) text-white py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
           >
             {mutation.isPending ? 'Submitting…' : 'Submit Request'}
           </button>
@@ -245,7 +245,7 @@ export default function InventoryProductRequestsPage() {
           <button
             type="button"
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             New Request
@@ -263,7 +263,7 @@ export default function InventoryProductRequestsPage() {
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
               filter === key
-                ? 'bg-(--primary) text-white'
+                ? 'bg-(--accent) text-white'
                 : 'bg-(--surface) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >

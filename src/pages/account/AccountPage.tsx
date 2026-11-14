@@ -188,7 +188,7 @@ export default function AccountPage() {
               type="button"
               onClick={() => fileRef.current?.click()}
               disabled={photoMutation.isPending}
-              className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-(--primary) text-white flex items-center justify-center shadow hover:bg-(--primary-dark) disabled:opacity-50 transition-colors"
+              className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-(--accent) text-white flex items-center justify-center shadow hover:bg-(--accent-dark) disabled:opacity-50 transition-colors"
               title="Upload photo"
               aria-label="Upload profile photo"
             >

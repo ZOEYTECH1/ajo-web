@@ -156,7 +156,7 @@ function ThemeButton({
       onClick={onClick}
       className={`flex items-center justify-center h-7 w-7 rounded-md transition-all ${
         active
-          ? 'bg-(--primary) text-white shadow-sm'
+          ? 'bg-(--accent) text-white shadow-sm'
           : 'text-(--text-muted) hover:text-(--text-primary)'
       }`}
     >

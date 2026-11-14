@@ -484,7 +484,7 @@ export default function InventoryAnalyticsPage() {
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="units_received" name="Received" fill="#14325C" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="units_received" name="Received" fill="#0035F0" radius={[4, 4, 0, 0]} />
               <Bar dataKey="units_sold"     name="Dispatched / Sold" fill="#F59E0B" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>

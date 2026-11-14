@@ -5,12 +5,14 @@
 
 /* ── Design tokens ─────────────────────────────────────────────────────── */
 :root {
-  /* Primary brand: bank-admin navy -- deeper and less saturated than the
-     old vivid #0035F0, which read as "tech startup" more than "bank". */
-  --primary:        #14325C;
-  --primary-dark:   #0D213D;
-  --primary-light:  #2E5590;
-  --primary-tint:   #E4EAF2;
+  /* Primary brand: matches the app logo's own blue exactly (public/ajo-logo.svg
+     -- shield/centre-figure #0035F0, documents/side-figures #0028C2, ring
+     arc/right-figure #4D7EFF) so the "Scribe" wordmark next to the mark
+     never reads as a different colour from the mark itself. */
+  --primary:        #0035F0;
+  --primary-dark:   #0028C2;
+  --primary-light:  #4D7EFF;
+  --primary-tint:   #E4ECFF;
 
   /* Secondary brand: one unified accent across every module (Ajo, Thrift,
      Inventory previously had their own orange/teal) -- a restrained gold,
@@ -50,10 +52,10 @@
 
 /* ── Dark mode overrides ────────────────────────────────────────────────── */
 .dark {
-  --primary:        #5B82B8;
-  --primary-dark:   #3C5E8F;
-  --primary-light:  #7FA0CC;
-  --primary-tint:   #1B2838;
+  --primary:        #4D7EFF;
+  --primary-dark:   #0035F0;
+  --primary-light:  #6B96FF;
+  --primary-tint:   #1E2A4A;
 
   --secondary:       #D6A855;
   --secondary-dark:  #B8862E;

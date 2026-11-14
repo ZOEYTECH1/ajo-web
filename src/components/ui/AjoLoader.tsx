@@ -8,8 +8,8 @@ interface AjoLoaderProps {
 export function AjoLoader({ size = 64, label = 'Loading…' }: AjoLoaderProps) {
   const { isDark } = useTheme();
 
-  const ringLight  = isDark ? '#7FA0CC' : '#2E5590';
-  const ringDark   = isDark ? '#3C5E8F' : '#0D213D';
+  const ringLight  = isDark ? '#6B96FF' : '#4D7EFF';
+  const ringDark   = isDark ? '#0035F0' : '#0028C2';
   const shieldFill = isDark ? '#4ADE80' : '#22C55E';
 
   return (

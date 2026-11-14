@@ -105,7 +105,7 @@ export function Sidebar({ onClose }: SidebarProps) {
           height is the only way to guarantee their border-bottoms land on
           the exact same row across the sidebar/content seam. */}
       <div className="flex items-center gap-3 px-5 h-19 border-b border-(--border)">
-        <img src="/ajo-logo.svg" alt="Scribe" className="h-9 w-9 shrink-0" />
+        <img src="/ajo-logo.svg" alt="Scribe" className="h-13 w-13 shrink-0" />
         <span className="text-xl font-extrabold tracking-tight text-(--primary)">Scribe</span>
       </div>
 

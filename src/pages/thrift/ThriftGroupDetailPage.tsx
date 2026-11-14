@@ -100,8 +100,8 @@ function fmt(d: string | null | undefined) {
   return new Date(d).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
-const submitBtn = 'flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
+const submitBtn = 'flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -303,7 +303,7 @@ function DisputeModal({
                     'inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
                     recording
                       ? 'bg-red-600 text-white hover:bg-red-700 animate-pulse'
-                      : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--secondary) hover:border-(--secondary)/40',
+                      : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--primary) hover:border-(--primary)/40',
                   )}
                 >
                   <span className={clsx('inline-block w-2.5 h-2.5 rounded-full', recording ? 'bg-white' : 'bg-red-500')} />
@@ -738,7 +738,7 @@ export default function ThriftGroupDetailPage() {
   return (
     <div className="space-y-6">
       {/* Back link */}
-      <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-(--secondary)">← All Thrift Groups</Link>
+      <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-(--primary)">← All Thrift Groups</Link>
 
       {/* Header card */}
       <div className="surface-soft p-6 space-y-4">
@@ -747,12 +747,12 @@ export default function ThriftGroupDetailPage() {
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl font-bold text-(--text-primary)">{group.name}</h1>
               {isCollector && (
-                <span className="bg-(--secondary-light)/30 text-(--secondary-dark) text-xs font-semibold px-2 py-0.5 rounded-full ring-1 ring-(--secondary)/30">
+                <span className="bg-(--primary-light)/30 text-(--primary-dark) text-xs font-semibold px-2 py-0.5 rounded-full ring-1 ring-(--primary)/30">
                   Collector
                 </span>
               )}
               {group.organization
-                ? <span className="bg-(--secondary-tint) text-(--secondary-dark) text-xs font-semibold px-2 py-0.5 rounded-full ring-1 ring-(--secondary)/30 whitespace-nowrap">Bank managed</span>
+                ? <span className="bg-(--primary-tint) text-(--primary-dark) text-xs font-semibold px-2 py-0.5 rounded-full ring-1 ring-(--primary)/30 whitespace-nowrap">Bank managed</span>
                 : group.is_on_trial
                   ? <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2 py-0.5 rounded-full">Trial</span>
                   : group.is_subscription_active
@@ -778,7 +778,7 @@ export default function ThriftGroupDetailPage() {
               </button>
             )}
             {isCollector && (
-              <button type="button" onClick={() => setShowSettings(true)} className="p-2 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--secondary) hover:border-(--secondary)/40 transition-colors" title="Settings">
+              <button type="button" onClick={() => setShowSettings(true)} className="p-2 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--primary) hover:border-(--primary)/40 transition-colors" title="Settings">
                 <Cog6ToothIcon className="h-5 w-5" />
               </button>
             )}
@@ -788,7 +788,7 @@ export default function ThriftGroupDetailPage() {
         {/* Active cycle badge */}
         {activeCycle ? (
           <div className="flex items-center gap-2 text-sm">
-            <span className="bg-(--secondary-tint) text-(--secondary-dark) px-2.5 py-1 rounded-full text-xs font-semibold">
+            <span className="bg-(--primary-tint) text-(--primary-dark) px-2.5 py-1 rounded-full text-xs font-semibold">
               Cycle #{activeCycle.cycle_number} active
             </span>
             {activeCycle.start_date && <span className="text-(--text-secondary)">Started {fmt(activeCycle.start_date)}</span>}
@@ -840,7 +840,7 @@ export default function ThriftGroupDetailPage() {
             <div className="flex items-center gap-2 bg-(--bg) border border-(--border) rounded-lg px-3 py-2">
               <span className="text-xs text-(--text-secondary) font-medium uppercase tracking-wide">Invite Code</span>
               <span className="font-mono font-bold text-(--text-primary) tracking-widest">{group.invite_code}</span>
-              <button type="button" onClick={copyInviteCode} className="ml-1 text-(--secondary) hover:text-(--secondary-dark)" title="Copy">
+              <button type="button" onClick={copyInviteCode} className="ml-1 text-(--primary) hover:text-(--primary-dark)" title="Copy">
                 {copyState === 'copied' ? <span className="text-xs font-semibold">Copied!</span> : <ClipboardDocumentIcon className="h-4 w-4" />}
               </button>
             </div>
@@ -848,7 +848,7 @@ export default function ThriftGroupDetailPage() {
               type="button"
               onClick={() => regenMutation.mutate()}
               disabled={regenMutation.isPending}
-              className="flex items-center gap-1 text-xs text-(--text-secondary) hover:text-(--secondary) transition-colors"
+              className="flex items-center gap-1 text-xs text-(--text-secondary) hover:text-(--primary) transition-colors"
             >
               <ArrowPathIcon className={clsx('h-4 w-4', regenMutation.isPending && 'animate-spin')} />
               Regenerate
@@ -868,7 +868,7 @@ export default function ThriftGroupDetailPage() {
               className={clsx(
                 'px-4 py-2 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap',
                 activeTab === t.key
-                  ? 'border-(--secondary) text-(--secondary)'
+                  ? 'border-(--primary) text-(--primary)'
                   : 'border-transparent text-(--text-secondary) hover:text-(--text-primary)',
               )}
             >
@@ -916,7 +916,7 @@ export default function ThriftGroupDetailPage() {
                                   min="1"
                                   value={approveAmount}
                                   onChange={e => setApproveAmount(e.target.value)}
-                                  className="w-24 text-xs rounded border border-(--border) bg-(--bg) px-2 py-1 focus:outline-none focus:ring-1 focus:ring-(--secondary)"
+                                  className="w-24 text-xs rounded border border-(--border) bg-(--bg) px-2 py-1 focus:outline-none focus:ring-1 focus:ring-(--primary)"
                                   autoFocus
                                   onKeyDown={e => {
                                     if (e.key === 'Enter' && approveAmount && Number(approveAmount) > 0) {
@@ -938,7 +938,7 @@ export default function ThriftGroupDetailPage() {
                                     );
                                   }}
                                   disabled={quickApproveMutation.isPending}
-                                  className="text-xs font-semibold text-(--secondary-dark) bg-(--secondary-tint) border border-(--secondary)/30 rounded-lg px-2.5 py-1 hover:bg-(--secondary-light)/30 transition-colors disabled:opacity-50"
+                                  className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-lg px-2.5 py-1 hover:bg-(--primary-light)/30 transition-colors disabled:opacity-50"
                                 >
                                   {quickApproveMutation.isPending ? '…' : 'Confirm'}
                                 </button>
@@ -954,7 +954,7 @@ export default function ThriftGroupDetailPage() {
                               <button
                                 type="button"
                                 onClick={() => { setApprovingMemberId(m.id); setApproveAmount(String(m.personal_amount)); }}
-                                className="text-xs font-semibold text-(--secondary-dark) bg-(--secondary-tint) border border-(--secondary)/30 rounded-lg px-2.5 py-1 hover:bg-(--secondary-light)/30 transition-colors"
+                                className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-lg px-2.5 py-1 hover:bg-(--primary-light)/30 transition-colors"
                               >
                                 Approve
                               </button>
@@ -1065,7 +1065,7 @@ export default function ThriftGroupDetailPage() {
                   onClick={() => setMemberSubTab(t)}
                   className={clsx(
                     'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
-                    memberSubTab === t ? 'bg-(--secondary) text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
+                    memberSubTab === t ? 'bg-(--primary) text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
                   )}
                 >
                   {t === 'approved' ? `Approved (${approvedMembers.length})` : `Pending (${pendingMembers.length})`}
@@ -1172,7 +1172,7 @@ export default function ThriftGroupDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowStartCycle(true)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
               >
                 + Start New Cycle
               </button>
@@ -1194,7 +1194,7 @@ export default function ThriftGroupDetailPage() {
                       <span className="font-semibold text-(--text-primary)">Cycle #{c.cycle_number}</span>
                       <span className={clsx(
                         'text-xs font-semibold px-2 py-0.5 rounded-full',
-                        c.status === 'active' ? 'bg-(--secondary-light)/30 text-(--secondary-dark)' : 'bg-(--bg) text-(--text-secondary)',
+                        c.status === 'active' ? 'bg-(--primary-light)/30 text-(--primary-dark)' : 'bg-(--bg) text-(--text-secondary)',
                       )}>
                         {c.status}
                       </span>

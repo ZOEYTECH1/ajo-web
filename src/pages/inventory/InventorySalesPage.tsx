@@ -40,8 +40,8 @@ function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(v));
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
-const submitBtn = 'flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
+const submitBtn = 'flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 // ── New Sale Modal ─────────────────────────────────────────────────────────────
@@ -245,7 +245,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
                 setBarcodeInput(''); setBarcodeErr('');
                 setCompletedSale(null);
               }}
-              className="flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+              className="flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
             >
               New Sale
             </button>
@@ -481,7 +481,7 @@ export default function InventorySalesPage() {
           <button
             type="button"
             onClick={() => setShowNewSale(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             New Sale
@@ -568,7 +568,7 @@ export default function InventorySalesPage() {
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                     No sales recorded yet.{' '}
-                    <button type="button" onClick={() => setShowNewSale(true)} className="text-(--secondary) font-semibold hover:underline">Record the first sale.</button>
+                    <button type="button" onClick={() => setShowNewSale(true)} className="text-(--primary) font-semibold hover:underline">Record the first sale.</button>
                   </td>
                 </tr>
               )}

@@ -25,7 +25,7 @@ interface Category {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -246,7 +246,7 @@ export default function InventoryWarehouseDispatchPage() {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="w-full sm:w-auto rounded-lg bg-(--secondary) text-white px-6 py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+            className="w-full sm:w-auto rounded-lg bg-(--primary) text-white px-6 py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
           >
             {mutation.isPending ? 'Recording…' : 'Record Dispatch'}
           </button>

@@ -58,7 +58,7 @@ function fmt(d: string | null | undefined) {
   try { return format(new Date(d), 'd MMM yyyy'); } catch { return 'â€”'; }
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
 
 // â”€â”€ Skeleton Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -212,7 +212,7 @@ export default function ThriftQueuePage() {
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
               activeTab === t.key
-                ? 'bg-(--secondary) text-white'
+                ? 'bg-(--primary) text-white'
                 : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
             )}
           >
@@ -243,7 +243,7 @@ export default function ThriftQueuePage() {
                         Group:{' '}
                         <Link
                           to={`/thrift/${member.group_uuid}`}
-                          className="text-(--secondary) hover:underline font-medium"
+                          className="text-(--primary) hover:underline font-medium"
                         >
                           {member.group_name}
                         </Link>
@@ -364,7 +364,7 @@ export default function ThriftQueuePage() {
                         Group:{' '}
                         <Link
                           to={`/thrift/${payment.group_uuid}`}
-                          className="text-(--secondary) hover:underline font-medium"
+                          className="text-(--primary) hover:underline font-medium"
                         >
                           {payment.group_name}
                         </Link>
@@ -381,7 +381,7 @@ export default function ThriftQueuePage() {
                     {/* Navigate to group to resolve â€” no direct queue resolution endpoint */}
                     <Link
                       to={`/thrift/${payment.group_uuid}`}
-                      className="text-xs font-semibold text-(--secondary-dark) bg-(--secondary-tint) border border-(--secondary)/30 rounded-lg px-3 py-1.5 hover:bg-(--secondary-light)/30 transition-colors flex-shrink-0"
+                      className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-lg px-3 py-1.5 hover:bg-(--primary-light)/30 transition-colors flex-shrink-0"
                     >
                       View in Group
                     </Link>

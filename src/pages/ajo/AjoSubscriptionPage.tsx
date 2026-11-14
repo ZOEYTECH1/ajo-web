@@ -82,10 +82,10 @@ const CYCLE_OPTIONS = [1, 3, 6, 12] as const;
 // ── Shared styles (mirrors the project's existing convention) ─────────────────
 
 const orangeBtn =
-  'rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+  'rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
 
 // ── Status badge ──────────────────────────────────────────────────────────────
 
@@ -276,7 +276,7 @@ export default function AjoSubscriptionPage() {
           </dd>
 
           <dt className="text-(--text-secondary) font-semibold">Fee per cycle</dt>
-          <dd className="text-(--secondary) font-bold">{formatCurrency(feePerCycle)}</dd>
+          <dd className="text-(--primary) font-bold">{formatCurrency(feePerCycle)}</dd>
         </dl>
       </div>
 
@@ -296,8 +296,8 @@ export default function AjoSubscriptionPage() {
                   className={clsx(
                     'flex-1 py-2 rounded-lg text-sm font-semibold border transition-colors',
                     selectedCycles === n
-                      ? 'bg-(--secondary) text-white border-(--secondary)'
-                      : 'bg-(--surface) text-(--text-secondary) border-(--border) hover:border-(--secondary-light) hover:text-(--secondary)',
+                      ? 'bg-(--primary) text-white border-(--primary)'
+                      : 'bg-(--surface) text-(--text-secondary) border-(--border) hover:border-(--primary-light) hover:text-(--primary)',
                   )}
                 >
                   {n}

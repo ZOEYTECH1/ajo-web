@@ -188,10 +188,10 @@ function RoundProgressCard({
       <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-5 flex items-center gap-4">
         <div className={clsx(
           'h-11 w-11 rounded-xl flex items-center justify-center shrink-0',
-          roundJustCompleted ? 'bg-(--secondary-tint)' : 'bg-(--bg)',
+          roundJustCompleted ? 'bg-(--primary-tint)' : 'bg-(--bg)',
         )}>
           {roundJustCompleted
-            ? <TrophyIcon className="h-5 w-5 text-(--secondary)" />
+            ? <TrophyIcon className="h-5 w-5 text-(--primary)" />
             : <ClockIcon className="h-5 w-5 text-(--text-muted)" />}
         </div>
         <div>
@@ -216,8 +216,8 @@ function RoundProgressCard({
   return (
     <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-5">
       <div className="flex items-center gap-4">
-        <div className="h-11 w-11 rounded-xl bg-(--secondary-tint) flex items-center justify-center shrink-0">
-          <ArrowPathIcon className="h-5 w-5 text-(--secondary)" />
+        <div className="h-11 w-11 rounded-xl bg-(--primary-tint) flex items-center justify-center shrink-0">
+          <ArrowPathIcon className="h-5 w-5 text-(--primary)" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-lg font-extrabold text-(--text-primary)">Round {cycle.round_number}</p>
@@ -231,7 +231,7 @@ function RoundProgressCard({
       <div className="mt-4">
         <div className="h-2 rounded-full bg-(--bg) overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-(--secondary-light) to-(--secondary) transition-all"
+            className="h-full rounded-full bg-gradient-to-r from-(--primary-light) to-(--primary) transition-all"
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -244,7 +244,7 @@ function RoundProgressCard({
                 Member {cycle.slot_number} of {cycle.total_member_count} collecting
               </p>
               {periodLabel && (
-                <p className={clsx('text-xs font-semibold', cycle.is_over ? 'text-red-600' : 'text-(--secondary)')}>
+                <p className={clsx('text-xs font-semibold', cycle.is_over ? 'text-red-600' : 'text-(--primary)')}>
                   {periodLabel}
                 </p>
               )}
@@ -285,9 +285,9 @@ function StatusBadge({ value }: { value: string }) {
 // ── Shared style constants ────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) bg-(--surface) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+  'w-full rounded-lg border border-(--border) bg-(--surface) text-(--text-primary) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
 const orangeBtn =
-  'rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+  'rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn =
   'rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
@@ -367,7 +367,7 @@ function SubmitPaymentModal({
           <button
             type="button"
             onClick={onClose}
-            className="w-full mt-2 rounded-lg bg-(--secondary) text-white py-2.5 font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="w-full mt-2 rounded-lg bg-(--primary) text-white py-2.5 font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             Back to Group
           </button>
@@ -422,7 +422,7 @@ function SubmitPaymentModal({
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="w-full rounded-xl border-2 border-dashed border-(--border) py-8 flex flex-col items-center gap-2 hover:border-(--secondary-light) hover:bg-(--secondary-tint) transition-colors"
+                className="w-full rounded-xl border-2 border-dashed border-(--border) py-8 flex flex-col items-center gap-2 hover:border-(--primary-light) hover:bg-(--primary-tint) transition-colors"
               >
                 <PaperClipIcon className="h-8 w-8 text-(--text-muted)" />
                 <span className="text-sm font-medium text-(--text-secondary)">Attach receipt photo</span>
@@ -876,7 +876,7 @@ function PaymentsTab({
             className={clsx(
               'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors',
               filter === key
-                ? 'bg-(--secondary) text-white'
+                ? 'bg-(--primary) text-white'
                 : 'bg-(--bg) text-(--text-secondary) hover:bg-(--primary-tint)/50',
             )}
           >
@@ -1171,7 +1171,7 @@ function MembersTab({
           className={clsx(
             'px-4 py-2 text-sm font-medium transition-colors',
             memberSubTab === 'approved'
-              ? 'border-b-2 border-(--secondary) text-(--secondary)'
+              ? 'border-b-2 border-(--primary) text-(--primary)'
               : 'text-(--text-secondary) hover:text-(--text-primary)',
           )}
         >
@@ -1185,13 +1185,13 @@ function MembersTab({
             className={clsx(
               'px-4 py-2 text-sm font-medium transition-colors',
               memberSubTab === 'pending'
-                ? 'border-b-2 border-(--secondary) text-(--secondary)'
+                ? 'border-b-2 border-(--primary) text-(--primary)'
                 : 'text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
             Pending
             {pendingMembers.length > 0 && (
-              <span className="ml-1.5 text-xs bg-(--secondary-light)/30 text-(--secondary) rounded-full px-1.5 py-0.5">
+              <span className="ml-1.5 text-xs bg-(--primary-light)/30 text-(--primary) rounded-full px-1.5 py-0.5">
                 {pendingMembers.length}
               </span>
             )}
@@ -1306,7 +1306,7 @@ function MembersTab({
                 <div>
                   <div className="h-2 bg-(--bg) rounded-full overflow-hidden">
                     <div
-                      className="h-2 bg-(--secondary) rounded-full transition-all"
+                      className="h-2 bg-(--primary) rounded-full transition-all"
                       style={{ width: `${Math.round((proposal.yes_count / proposal.eligible_count) * 100)}%` }}
                     />
                   </div>
@@ -1476,12 +1476,12 @@ function CyclesTab({
                       {format(new Date(cycle.end_date), 'dd MMM yyyy')}
                     </p>
                     {cycle.status === 'active' && (
-                      <p className={clsx('text-xs font-semibold mt-0.5', cycle.is_over ? 'text-red-600' : 'text-(--secondary)')}>
+                      <p className={clsx('text-xs font-semibold mt-0.5', cycle.is_over ? 'text-red-600' : 'text-(--primary)')}>
                         {computeStartLabel(cycle) ?? computePeriodLabel(cycle)}
                       </p>
                     )}
                     {cycle.force_close_requested && (
-                      <p className="mt-1 text-xs text-(--secondary) flex items-center gap-1">
+                      <p className="mt-1 text-xs text-(--primary) flex items-center gap-1">
                         <ClockIcon className="h-3 w-3" />
                         Early close: {cycle.force_close_acceptor_count}/{cycle.total_member_count} accepted
                       </p>
@@ -1518,7 +1518,7 @@ function CyclesTab({
                       type="button"
                       onClick={() => requestForceCloseMutation.mutate(cycle.id)}
                       disabled={requestForceCloseMutation.isPending}
-                      className="px-3 py-1.5 rounded-lg bg-(--secondary-light)/30 text-(--secondary) text-xs font-semibold hover:bg-(--secondary)/30 disabled:opacity-50 transition-colors"
+                      className="px-3 py-1.5 rounded-lg bg-(--primary-light)/30 text-(--primary) text-xs font-semibold hover:bg-(--primary)/30 disabled:opacity-50 transition-colors"
                     >
                       {requestForceCloseMutation.isPending ? 'Requesting…' : 'Request Early Close'}
                     </button>
@@ -1530,7 +1530,7 @@ function CyclesTab({
                       type="button"
                       onClick={() => acceptForceCloseMutation.mutate(cycle.id)}
                       disabled={acceptForceCloseMutation.isPending}
-                      className="px-3 py-1.5 rounded-lg bg-(--secondary-light)/30 text-(--secondary) text-xs font-semibold hover:bg-(--secondary)/30 disabled:opacity-50 transition-colors"
+                      className="px-3 py-1.5 rounded-lg bg-(--primary-light)/30 text-(--primary) text-xs font-semibold hover:bg-(--primary)/30 disabled:opacity-50 transition-colors"
                     >
                       {acceptForceCloseMutation.isPending ? 'Accepting…' : 'Accept Early Close'}
                     </button>
@@ -1560,7 +1560,7 @@ function CyclesTab({
                       {(defaulterData[cycle.id] as DefaultersResponse).defaulters.map((d) => (
                         <li key={d.id} className="text-xs text-(--text-secondary)">
                           {d.user.first_name} {d.user.last_name}{' '}
-                          <span className="text-(--secondary)">· paid {formatCurrency(d.total_approved)}</span>
+                          <span className="text-(--primary)">· paid {formatCurrency(d.total_approved)}</span>
                         </li>
                       ))}
                     </ul>
@@ -1684,7 +1684,7 @@ function CollectionOrderTab({
               className={clsx(
                 'inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors',
                 isDirty
-                  ? 'bg-(--secondary) text-white hover:bg-(--secondary-dark) disabled:opacity-50'
+                  ? 'bg-(--primary) text-white hover:bg-(--primary-dark) disabled:opacity-50'
                   : 'bg-(--bg) text-(--text-muted) cursor-not-allowed',
               )}
             >
@@ -1708,17 +1708,17 @@ function CollectionOrderTab({
                 className={clsx(
                   'flex items-center gap-3 rounded-lg border px-4 py-3',
                   isCurrent
-                    ? 'bg-(--secondary-tint) border-(--secondary)/30'
+                    ? 'bg-(--primary-tint) border-(--primary)/30'
                     : 'border-(--border) bg-(--surface)',
                 )}
               >
-                <span className={clsx('text-sm font-bold w-6 text-right shrink-0', isCurrent ? 'text-(--secondary)' : 'text-(--text-muted)')}>
+                <span className={clsx('text-sm font-bold w-6 text-right shrink-0', isCurrent ? 'text-(--primary)' : 'text-(--text-muted)')}>
                   {index + 1}
                 </span>
-                {isCurrent && <TrophyIcon className="h-4 w-4 text-(--secondary) shrink-0" />}
-                <span className={clsx('text-sm font-medium flex-1', isCurrent ? 'text-(--secondary-dark) font-semibold' : 'text-(--text-secondary)')}>{entry.full_name}</span>
+                {isCurrent && <TrophyIcon className="h-4 w-4 text-(--primary) shrink-0" />}
+                <span className={clsx('text-sm font-medium flex-1', isCurrent ? 'text-(--primary-dark) font-semibold' : 'text-(--text-secondary)')}>{entry.full_name}</span>
                 {isCurrent && (
-                  <span className="text-xs font-semibold bg-(--secondary-light)/30 text-(--secondary) rounded-full px-2 py-0.5">Now</span>
+                  <span className="text-xs font-semibold bg-(--primary-light)/30 text-(--primary) rounded-full px-2 py-0.5">Now</span>
                 )}
                 {isAdmin && (
                   <div className="flex gap-1">
@@ -1805,8 +1805,8 @@ function HistoryTab({
           <div key={cycle.id} className="rounded-xl border border-(--border) p-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full bg-(--secondary-light)/30 flex items-center justify-center shrink-0">
-                  <TrophyIcon className="h-4 w-4 text-(--secondary)" />
+                <div className="h-9 w-9 rounded-full bg-(--primary-light)/30 flex items-center justify-center shrink-0">
+                  <TrophyIcon className="h-4 w-4 text-(--primary)" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-(--text-primary)">
@@ -2090,10 +2090,10 @@ export default function AjoGroupDetailPage() {
             )}
             {group.rules && (
               <details className="mt-2 group/rules">
-                <summary className="cursor-pointer text-xs text-(--secondary) font-semibold hover:underline select-none">
+                <summary className="cursor-pointer text-xs text-(--primary) font-semibold hover:underline select-none">
                   View group rules
                 </summary>
-                <p className="mt-1.5 text-xs text-gray-600 bg-(--secondary-tint) rounded-lg px-3 py-2 leading-relaxed whitespace-pre-line">
+                <p className="mt-1.5 text-xs text-gray-600 bg-(--primary-tint) rounded-lg px-3 py-2 leading-relaxed whitespace-pre-line">
                   {group.rules}
                 </p>
               </details>
@@ -2104,7 +2104,7 @@ export default function AjoGroupDetailPage() {
                 {group.member_count} members
               </span>
               {(activeCycle || roundJustCompleted) && (
-                <span className="inline-flex items-center gap-1.5 bg-(--secondary-tint) text-(--secondary-dark) text-xs font-semibold px-2.5 py-1 rounded-full">
+                <span className="inline-flex items-center gap-1.5 bg-(--primary-tint) text-(--primary-dark) text-xs font-semibold px-2.5 py-1 rounded-full">
                   <ArrowPathIcon className="h-3.5 w-3.5" />
                   {activeCycle
                     ? `Round ${activeCycle.round_number} · Cycle ${activeCycle.cycle_number}`
@@ -2144,9 +2144,9 @@ export default function AjoGroupDetailPage() {
           </div>
 
           <div className="flex flex-col items-end gap-2">
-            <div className="bg-(--secondary-tint) rounded-lg px-5 py-3 text-center">
-              <p className="text-(--secondary) font-bold text-xl">{formatCurrency(group.contribution_amount)}</p>
-              <p className="text-(--secondary) text-xs capitalize">{group.contribution_frequency}</p>
+            <div className="bg-(--primary-tint) rounded-lg px-5 py-3 text-center">
+              <p className="text-(--primary) font-bold text-xl">{formatCurrency(group.contribution_amount)}</p>
+              <p className="text-(--primary) text-xs capitalize">{group.contribution_frequency}</p>
             </div>
             {(group.is_on_trial || !group.is_subscription_active) && (
               <Link
@@ -2192,7 +2192,7 @@ export default function AjoGroupDetailPage() {
           </div>
           <div>
             <p className="text-xs text-(--text-secondary)">All-Time Approved</p>
-            <p className="font-medium text-(--secondary)">
+            <p className="font-medium text-(--primary)">
               {formatCurrency(
                 payments
                   .filter((p) => p.status === 'approved')
@@ -2208,7 +2208,7 @@ export default function AjoGroupDetailPage() {
             <button
               type="button"
               onClick={() => setShowSubmit(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-(--secondary) text-white px-5 py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+              className="inline-flex items-center gap-2 rounded-lg bg-(--primary) text-white px-5 py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
             >
               <PlusIcon className="h-4 w-4" />
               Submit My Payment
@@ -2265,7 +2265,7 @@ export default function AjoGroupDetailPage() {
               className={clsx(
                 'px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors',
                 activeTab === key
-                  ? 'border-b-2 border-(--secondary) text-(--secondary)'
+                  ? 'border-b-2 border-(--primary) text-(--primary)'
                   : 'text-(--text-secondary) hover:text-(--text-primary)',
               )}
             >

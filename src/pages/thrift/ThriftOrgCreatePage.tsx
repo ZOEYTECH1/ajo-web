@@ -22,11 +22,11 @@ const BENEFITS = [
 export default function ThriftOrgCreatePage() {
   return (
     <div className="max-w-lg mx-auto py-10 px-4 space-y-8">
-      <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-(--secondary)">← Thrift Groups</Link>
+      <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-(--primary)">← Thrift Groups</Link>
 
       <div className="flex flex-col items-center text-center gap-4">
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-(--secondary-tint) border border-(--secondary-light)/30">
-          <BuildingOffice2Icon className="h-10 w-10 text-(--secondary)" />
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-(--primary-tint) border border-(--primary-light)/30">
+          <BuildingOffice2Icon className="h-10 w-10 text-(--primary)" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-(--text-primary)">Organisation Onboarding</h1>
@@ -52,13 +52,13 @@ export default function ThriftOrgCreatePage() {
         ))}
       </div>
 
-      <div className="bg-(--secondary-tint) border border-(--secondary)/30 rounded-xl p-5 text-center space-y-2">
-        <p className="text-sm font-semibold text-(--secondary-dark)">Ready to get started?</p>
-        <p className="text-sm text-(--secondary-dark) leading-relaxed">
+      <div className="bg-(--primary-tint) border border-(--primary)/30 rounded-xl p-5 text-center space-y-2">
+        <p className="text-sm font-semibold text-(--primary-dark)">Ready to get started?</p>
+        <p className="text-sm text-(--primary-dark) leading-relaxed">
           Contact us at{' '}
           <a
             href="mailto:support@ajo.app"
-            className="font-bold underline hover:text-(--secondary-dark)"
+            className="font-bold underline hover:text-(--primary-dark)"
           >
             support@ajo.app
           </a>{' '}

@@ -251,7 +251,7 @@ export default function OrgGroupDetailPage() {
   if (groupError) {
     return (
       <div className="space-y-4">
-        <Link to={`/org/${orgUuid}`} className="inline-flex items-center gap-1.5 text-sm text-(--text-secondary) hover:text-(--secondary)">
+        <Link to={`/org/${orgUuid}`} className="inline-flex items-center gap-1.5 text-sm text-(--text-secondary) hover:text-(--primary)">
           <ArrowLeftIcon className="h-4 w-4" /> Back to dashboard
         </Link>
         <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
@@ -270,7 +270,7 @@ export default function OrgGroupDetailPage() {
 
   return (
     <div className="space-y-6">
-      <Link to={`/org/${orgUuid}`} className="inline-flex items-center gap-1.5 text-sm text-(--text-secondary) hover:text-(--secondary)">
+      <Link to={`/org/${orgUuid}`} className="inline-flex items-center gap-1.5 text-sm text-(--text-secondary) hover:text-(--primary)">
         <ArrowLeftIcon className="h-4 w-4" /> Back to dashboard
       </Link>
 
@@ -318,7 +318,7 @@ export default function OrgGroupDetailPage() {
             onClick={() => setViewMode(mode)}
             className={clsx(
               'text-xs font-semibold rounded-lg px-3 py-1.5 border transition-colors capitalize',
-              viewMode === mode ? 'bg-(--secondary) text-white border-(--secondary)' : 'border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30',
+              viewMode === mode ? 'bg-(--primary) text-white border-(--primary)' : 'border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30',
             )}
           >
             {mode === 'all' ? 'All Circles' : mode}
@@ -330,7 +330,7 @@ export default function OrgGroupDetailPage() {
             type="date"
             value={anchorDate}
             onChange={e => setAnchorDate(e.target.value)}
-            className="text-xs font-semibold rounded-lg px-3 py-1.5 border border-(--border) text-(--text-secondary) focus:outline-none focus:ring-2 focus:ring-(--secondary)"
+            className="text-xs font-semibold rounded-lg px-3 py-1.5 border border-(--border) text-(--text-secondary) focus:outline-none focus:ring-2 focus:ring-(--primary)"
           />
         )}
 
@@ -338,7 +338,7 @@ export default function OrgGroupDetailPage() {
           <select
             value={selectedCycleId ?? ''}
             onChange={e => setSelectedCycleId(e.target.value ? Number(e.target.value) : null)}
-            className="text-xs font-semibold rounded-lg px-3 py-1.5 border border-(--border) text-(--text-secondary) focus:outline-none focus:ring-2 focus:ring-(--secondary)"
+            className="text-xs font-semibold rounded-lg px-3 py-1.5 border border-(--border) text-(--text-secondary) focus:outline-none focus:ring-2 focus:ring-(--primary)"
           >
             <option value="">Select a circle…</option>
             {sortedCycles.map(c => (

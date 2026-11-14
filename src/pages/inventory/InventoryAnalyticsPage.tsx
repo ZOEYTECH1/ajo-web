@@ -335,8 +335,8 @@ export default function InventoryAnalyticsPage() {
               />
               <KpiCard
                 icon={ChartBarIcon}
-                iconBg={grossProfit >= 0 ? 'bg-(--secondary-tint) dark:bg-(--secondary-tint)/40' : 'bg-red-50 dark:bg-red-950/40'}
-                iconColor={grossProfit >= 0 ? 'text-(--secondary)' : 'text-red-600'}
+                iconBg={grossProfit >= 0 ? 'bg-(--primary-tint) dark:bg-(--primary-tint)/40' : 'bg-red-50 dark:bg-red-950/40'}
+                iconColor={grossProfit >= 0 ? 'text-(--primary)' : 'text-red-600'}
                 label="Gross Profit"
                 value={hasCogs ? fmt(grossProfit) : '—'}
                 sub="Revenue − Cost of Goods"
@@ -345,8 +345,8 @@ export default function InventoryAnalyticsPage() {
               />
               <KpiCard
                 icon={BanknotesIcon}
-                iconBg="bg-(--secondary-tint) dark:bg-(--secondary-tint)/40"
-                iconColor="text-(--secondary)"
+                iconBg="bg-(--primary-tint) dark:bg-(--primary-tint)/40"
+                iconColor="text-(--primary)"
                 label="Expenses"
                 value={fmt(totExpense)}
                 sub="Rent, salary, etc."
@@ -516,8 +516,8 @@ export default function InventoryAnalyticsPage() {
                       <td className="px-4 py-3 text-sm font-medium text-(--text-primary) whitespace-nowrap">{row.label}</td>
                       <td className="px-4 py-3 text-sm text-emerald-600 font-semibold whitespace-nowrap">{fmt(row.revenue)}</td>
                       {hasCogs && <td className="px-4 py-3 text-sm text-violet-600 font-semibold whitespace-nowrap">{row.cogs > 0 ? fmt(row.cogs) : '—'}</td>}
-                      {hasCogs && <td className={`px-4 py-3 text-sm font-semibold whitespace-nowrap ${gp >= 0 ? 'text-(--secondary)' : 'text-red-600'}`}>{row.cogs > 0 ? fmt(gp) : '—'}</td>}
-                      <td className="px-4 py-3 text-sm text-(--secondary) font-semibold whitespace-nowrap">{fmt(row.expense)}</td>
+                      {hasCogs && <td className={`px-4 py-3 text-sm font-semibold whitespace-nowrap ${gp >= 0 ? 'text-(--primary)' : 'text-red-600'}`}>{row.cogs > 0 ? fmt(gp) : '—'}</td>}
+                      <td className="px-4 py-3 text-sm text-(--primary) font-semibold whitespace-nowrap">{fmt(row.expense)}</td>
                       <td className={`px-4 py-3 text-sm font-semibold whitespace-nowrap ${np >= 0 ? 'text-blue-600' : 'text-red-600'}`}>{fmt(np)}</td>
                       <td className="px-4 py-3 text-sm text-(--text-secondary) whitespace-nowrap">{row.units_sold}</td>
                     </tr>
@@ -529,8 +529,8 @@ export default function InventoryAnalyticsPage() {
                   <td className="px-4 py-3 text-sm font-bold text-(--text-primary)">TOTAL</td>
                   <td className="px-4 py-3 text-sm font-bold text-emerald-600">{fmt(totRevenue)}</td>
                   {hasCogs && <td className="px-4 py-3 text-sm font-bold text-violet-600">{fmt(totCogs)}</td>}
-                  {hasCogs && <td className={`px-4 py-3 text-sm font-bold ${grossProfit >= 0 ? 'text-(--secondary)' : 'text-red-600'}`}>{fmt(grossProfit)}</td>}
-                  <td className="px-4 py-3 text-sm font-bold text-(--secondary)">{fmt(totExpense)}</td>
+                  {hasCogs && <td className={`px-4 py-3 text-sm font-bold ${grossProfit >= 0 ? 'text-(--primary)' : 'text-red-600'}`}>{fmt(grossProfit)}</td>}
+                  <td className="px-4 py-3 text-sm font-bold text-(--primary)">{fmt(totExpense)}</td>
                   <td className={`px-4 py-3 text-sm font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>{fmt(netProfit)}</td>
                   <td className="px-4 py-3 text-sm font-bold text-(--text-secondary)">{s?.total_units_sold ?? 0}</td>
                 </tr>
@@ -554,7 +554,7 @@ export default function InventoryAnalyticsPage() {
                     <span className="text-(--text-secondary)">{fmt(amount)} <span className="text-(--text-muted)">({pctVal}%)</span></span>
                   </div>
                   <div className="h-2 bg-(--border) rounded-full overflow-hidden">
-                    <div className="h-2 bg-(--secondary) rounded-full transition-all" style={{ width: `${pctVal}%` }} />
+                    <div className="h-2 bg-(--primary) rounded-full transition-all" style={{ width: `${pctVal}%` }} />
                   </div>
                 </div>
               );
@@ -593,7 +593,7 @@ export default function InventoryAnalyticsPage() {
                       <td className="px-4 py-3 text-sm text-(--text-secondary)">{item.total_qty}</td>
                       <td className="px-4 py-3 text-sm font-semibold text-emerald-600">{fmt(item.total_revenue)}</td>
                       <td className="px-4 py-3 text-sm text-violet-600">{item.cogs != null ? fmt(item.cogs) : <span className="text-(--text-muted)">—</span>}</td>
-                      <td className={`px-4 py-3 text-sm font-semibold ${gp == null ? '' : gp >= 0 ? 'text-(--secondary)' : 'text-red-600'}`}>
+                      <td className={`px-4 py-3 text-sm font-semibold ${gp == null ? '' : gp >= 0 ? 'text-(--primary)' : 'text-red-600'}`}>
                         {gp != null ? fmt(gp) : <span className="text-(--text-muted)">—</span>}
                       </td>
                       <td className={`px-4 py-3 text-sm font-semibold ${item.profit_margin == null ? '' : item.profit_margin >= 0 ? 'text-blue-600' : 'text-red-600'}`}>

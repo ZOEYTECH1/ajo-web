@@ -58,8 +58,8 @@ function addDays(dateStr: string, n: number) {
   return d.toISOString().slice(0, 10);
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
-const submitBtn = 'flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
+const submitBtn = 'flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -379,7 +379,7 @@ function DailySummaryModal({ product, onClose }: { product: Product; onClose: ()
           <div className="text-center">
             <p className="text-sm font-semibold text-(--text-primary)">{fmtDate(date)}</p>
             {!isToday && (
-              <button type="button" onClick={() => setDate(today)} className="text-xs text-(--secondary) font-semibold hover:underline mt-0.5">
+              <button type="button" onClick={() => setDate(today)} className="text-xs text-(--primary) font-semibold hover:underline mt-0.5">
                 Jump to today
               </button>
             )}
@@ -404,7 +404,7 @@ function DailySummaryModal({ product, onClose }: { product: Product; onClose: ()
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { label: 'Opening Stock', value: summary.opening_stock, color: 'text-blue-700 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/30' },
-                  { label: 'Closing Stock', value: summary.closing_stock, color: 'text-(--secondary-dark) dark:text-(--secondary-light)', bg: 'bg-(--secondary-tint) dark:bg-(--secondary-tint)/30' },
+                  { label: 'Closing Stock', value: summary.closing_stock, color: 'text-(--primary-dark) dark:text-(--primary-light)', bg: 'bg-(--primary-tint) dark:bg-(--primary-tint)/30' },
                   { label: 'Units Sold', value: summary.units_sold, color: 'text-red-700 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-950/30' },
                   { label: 'Units Received', value: summary.units_received, color: 'text-green-700 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-950/30' },
                 ].map(({ label, value, color, bg }) => (
@@ -434,7 +434,7 @@ function DailySummaryModal({ product, onClose }: { product: Product; onClose: ()
                       type="button"
                       onClick={() => { if (confirm('Close stock for today? This records the current quantity as closing stock.')) closeMutation.mutate(); }}
                       disabled={closeMutation.isPending}
-                      className="w-full rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+                      className="w-full rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
                     >
                       {closeMutation.isPending ? 'Closing…' : 'Close Stock'}
                     </button>
@@ -544,7 +544,7 @@ export default function InventoryProductsPage() {
         <button
           type="button"
           onClick={() => setShowAdd(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Product
@@ -560,14 +560,14 @@ export default function InventoryProductsPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search products or barcodes…"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-(--border) text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-(--border) text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)"
           />
         </div>
         <div className="flex gap-2 flex-wrap">
           {([['all', 'All'], ['in', 'In Stock'], ['low', 'Low Stock'], ['out', 'Out of Stock']] as const).map(([key, label]) => (
             <button key={key} type="button" onClick={() => setStockFilter(key)}
               className={clsx('px-3 py-1.5 rounded-full text-sm font-medium transition-colors',
-                stockFilter === key ? 'bg-(--secondary) text-white' : 'bg-(--surface) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)')}>
+                stockFilter === key ? 'bg-(--primary) text-white' : 'bg-(--surface) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)')}>
               {label}
             </button>
           ))}
@@ -643,7 +643,7 @@ export default function InventoryProductsPage() {
                         <button
                           type="button"
                           onClick={() => setEditProduct(p)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--secondary) hover:bg-(--secondary-tint) transition-colors"
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors"
                           title="Edit"
                         >
                           <PencilIcon className="h-4 w-4" />
@@ -666,7 +666,7 @@ export default function InventoryProductsPage() {
                   <td colSpan={8} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                     {search || stockFilter !== 'all' ? 'No products match your filter.' : (
                       <>No products in this category.{' '}
-                        <button type="button" onClick={() => setShowAdd(true)} className="text-(--secondary) font-semibold hover:underline">Add the first product.</button>
+                        <button type="button" onClick={() => setShowAdd(true)} className="text-(--primary) font-semibold hover:underline">Add the first product.</button>
                       </>
                     )}
                   </td>

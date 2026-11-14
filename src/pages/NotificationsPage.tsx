@@ -53,7 +53,7 @@ function NotifIcon({ type }: { type: string }) {
   if (type.startsWith('thrift')) return <BanknotesIcon className="h-5 w-5 text-blue-600" />;
   if (type.startsWith('inventory')) return <CubeIcon className="h-5 w-5 text-purple-600" />;
   if (type.includes('low_stock') || type.includes('expiry')) return <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600" />;
-  return <UserGroupIcon className="h-5 w-5 text-(--secondary)" />;
+  return <UserGroupIcon className="h-5 w-5 text-(--primary)" />;
 }
 
 function notifBg(type: string, isRead: boolean): string {
@@ -142,7 +142,7 @@ export default function NotificationsPage() {
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors capitalize',
               filter === f
-                ? 'bg-(--secondary) text-white'
+                ? 'bg-(--primary) text-white'
                 : 'bg-(--surface) border border-(--border) text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
@@ -182,7 +182,7 @@ export default function NotificationsPage() {
               className={clsx(
                 'w-full text-left rounded-xl border border-(--border) p-4 transition-all',
                 notifBg(n.notif_type, n.is_read),
-                hasLink ? 'cursor-pointer hover:border-(--secondary)/40 hover:shadow-sm' : '',
+                hasLink ? 'cursor-pointer hover:border-(--primary)/40 hover:shadow-sm' : '',
                 !n.is_read ? 'border-l-4 border-l-blue-400' : '',
               )}
             >

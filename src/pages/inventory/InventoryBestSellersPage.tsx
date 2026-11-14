@@ -55,7 +55,7 @@ export default function InventoryBestSellersPage() {
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-150 active:scale-[0.96]',
               days === d
-                ? 'bg-(--secondary) text-white shadow-sm'
+                ? 'bg-(--primary) text-white shadow-sm'
                 : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
@@ -73,9 +73,9 @@ export default function InventoryBestSellersPage() {
       {/* Summary banner */}
       {data && data.length > 0 && (
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-(--secondary-tint) dark:bg-(--secondary-tint)/30 border border-(--secondary)/30 dark:border-(--secondary-dark) rounded-xl px-5 py-4 shadow-sm animate-rise-in">
-            <p className="text-xs font-semibold text-(--secondary) uppercase tracking-wide">Products Ranked</p>
-            <p className="text-2xl font-bold text-(--secondary-dark) dark:text-(--secondary-light) mt-1">{data.length}</p>
+          <div className="bg-(--primary-tint) dark:bg-(--primary-tint)/30 border border-(--primary)/30 dark:border-(--primary-dark) rounded-xl px-5 py-4 shadow-sm animate-rise-in">
+            <p className="text-xs font-semibold text-(--primary) uppercase tracking-wide">Products Ranked</p>
+            <p className="text-2xl font-bold text-(--primary-dark) dark:text-(--primary-light) mt-1">{data.length}</p>
           </div>
           <div
             className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl px-5 py-4 shadow-sm animate-rise-in"
@@ -122,7 +122,7 @@ export default function InventoryBestSellersPage() {
                     <div
                       className={clsx(
                         'h-2.5 rounded-full transition-all duration-500',
-                        idx === 0 ? 'bg-yellow-500' : idx === 1 ? 'bg-slate-400' : idx === 2 ? 'bg-amber-600' : 'bg-(--secondary)',
+                        idx === 0 ? 'bg-yellow-500' : idx === 1 ? 'bg-slate-400' : idx === 2 ? 'bg-amber-600' : 'bg-(--primary)',
                       )}
                       style={{ width: `${barPct}%` }}
                     />

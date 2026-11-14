@@ -59,9 +59,9 @@ interface Product {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
 const orangeBtn =
-  'rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+  'rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn =
   'rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
@@ -210,7 +210,7 @@ function TransferModal({
             <div className="space-y-2">
               <p className="text-sm font-semibold text-(--text-secondary)">Items to transfer</p>
               {cart.map((item, i) => (
-                <div key={i} className="flex items-center justify-between gap-2 rounded-lg bg-(--secondary-tint) border border-(--secondary-light)/30 px-3 py-2">
+                <div key={i} className="flex items-center justify-between gap-2 rounded-lg bg-(--primary-tint) border border-(--primary-light)/30 px-3 py-2">
                   <div>
                     <p className="text-sm font-medium text-gray-900">{item.product_name}</p>
                     <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
@@ -290,7 +290,7 @@ export default function InventoryTransfersPage() {
           <button
             type="button"
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--primary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             New Transfer

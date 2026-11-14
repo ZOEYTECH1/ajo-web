@@ -31,7 +31,7 @@ interface LifetimeTotals {
   has_reported_data: boolean;
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)';
 const fmt = (v: string | number) => `₦${Number(v).toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 const fmtDate = (d: string) => format(new Date(`${d}T00:00:00`), 'd MMM yyyy');
 
@@ -141,7 +141,7 @@ function PastRecordModal({
               type="file"
               accept=".csv,.xlsx,.xls,.pdf,image/*"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              className="w-full text-sm text-(--text-secondary) file:mr-3 file:rounded-lg file:border-0 file:bg-(--secondary-tint) file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-(--secondary-dark) hover:file:bg-(--secondary-light)/30"
+              className="w-full text-sm text-(--text-secondary) file:mr-3 file:rounded-lg file:border-0 file:bg-(--primary-tint) file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-(--primary-dark) hover:file:bg-(--primary-light)/30"
             />
             <p className="mt-1 text-xs text-(--text-muted)">
               Optional — your original CSV, Excel, PDF, or a photo. Kept for your own reference only; nothing in it is read automatically.
@@ -150,7 +150,7 @@ function PastRecordModal({
           {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose} className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold">Cancel</button>
-            <button type="submit" disabled={mutation.isPending} className="flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold shadow-sm hover:bg-(--secondary-dark) hover:shadow-md disabled:opacity-50 transition-all duration-150 active:scale-[0.97]">
+            <button type="submit" disabled={mutation.isPending} className="flex-1 rounded-lg bg-(--primary) text-white py-2.5 text-sm font-semibold shadow-sm hover:bg-(--primary-dark) hover:shadow-md disabled:opacity-50 transition-all duration-150 active:scale-[0.97]">
               {mutation.isPending ? 'Saving…' : isEdit ? 'Save' : 'Add Record'}
             </button>
           </div>
@@ -206,7 +206,7 @@ export default function InventoryBusinessHistoryPage() {
         <button
           type="button"
           onClick={() => { setEditing(null); setShowModal(true); }}
-          className="flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold shadow-sm hover:bg-(--secondary-dark) hover:shadow-md transition-all duration-150 active:scale-[0.97]"
+          className="flex items-center gap-1.5 rounded-lg bg-(--primary) text-white px-4 py-2 text-sm font-semibold shadow-sm hover:bg-(--primary-dark) hover:shadow-md transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" /> Add Past Record
         </button>
@@ -229,7 +229,7 @@ export default function InventoryBusinessHistoryPage() {
             </div>
             <div className="sm:border-l sm:border-(--border) sm:pl-4">
               <p className="text-(--text-muted)">Combined</p>
-              <p className="text-lg font-bold text-(--secondary) mt-0.5">{fmt(totals.combined_revenue)}</p>
+              <p className="text-lg font-bold text-(--primary) mt-0.5">{fmt(totals.combined_revenue)}</p>
               <p className="text-xs text-(--text-muted)">− {fmt(totals.combined_expenses)} expenses</p>
             </div>
           </div>
@@ -264,7 +264,7 @@ export default function InventoryBusinessHistoryPage() {
                 {rec.notes && <p className="text-sm text-(--text-secondary) mt-1.5">{rec.notes}</p>}
                 <div className="flex items-center gap-3 mt-2">
                   {rec.attachment && (
-                    <a href={rec.attachment} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-semibold text-(--secondary) hover:underline">
+                    <a href={rec.attachment} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-semibold text-(--primary) hover:underline">
                       <PaperClipIcon className="h-3.5 w-3.5" /> View source file
                     </a>
                   )}
@@ -275,7 +275,7 @@ export default function InventoryBusinessHistoryPage() {
                 <button
                   type="button"
                   onClick={() => { setEditing(rec); setShowModal(true); }}
-                  className="p-2 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--secondary)"
+                  className="p-2 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--primary)"
                   aria-label="Edit record"
                 >
                   <PencilIcon className="h-4 w-4" />

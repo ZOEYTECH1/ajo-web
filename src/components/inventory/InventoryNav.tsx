@@ -78,9 +78,9 @@ export function InventoryNav() {
           <button
             type="button"
             onClick={() => setOpen(v => !v)}
-            className="flex items-center gap-2 rounded-lg surface-soft-sm surface-soft-interactive px-3 py-2 text-sm font-semibold text-(--text-primary) hover:border-(--secondary-light)"
+            className="flex items-center gap-2 rounded-lg surface-soft-sm surface-soft-interactive px-3 py-2 text-sm font-semibold text-(--text-primary) hover:border-(--primary-light)"
           >
-            <Icon className="h-4 w-4 text-(--secondary) shrink-0" />
+            <Icon className="h-4 w-4 text-(--primary) shrink-0" />
             <span className="max-w-[180px] truncate">{selectedBiz?.name ?? 'Select location'}</span>
             <span className="text-xs font-normal text-(--text-muted) capitalize ml-0.5">
               ({selectedBiz?.mode ?? ''})
@@ -104,11 +104,11 @@ export function InventoryNav() {
                         'flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition-colors',
                         biz.parent_business && 'pl-8',
                         isSelected
-                          ? 'bg-(--secondary-tint) text-(--secondary-dark) font-semibold'
+                          ? 'bg-(--primary) text-white font-semibold'
                           : 'text-(--text-primary) hover:bg-(--primary-tint)/30',
                       )}
                     >
-                      <BizIcon className={clsx('h-4 w-4 shrink-0', isSelected ? 'text-(--secondary)' : 'text-(--text-muted)')} />
+                      <BizIcon className={clsx('h-4 w-4 shrink-0', isSelected ? 'text-white' : 'text-(--text-muted)')} />
                       <span className="flex-1 truncate">{biz.name}</span>
                       <span className="text-xs text-(--text-muted) capitalize">{biz.mode}</span>
                     </button>
@@ -139,7 +139,7 @@ export function InventoryNav() {
               clsx(
                 'shrink-0 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200',
                 isActive
-                  ? 'bg-(--secondary-tint) text-(--secondary) shadow-(--shadow-soft-sm) dark:bg-(--secondary-tint)/40'
+                  ? 'bg-(--primary) text-white shadow-(--shadow-soft-sm)'
                   : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--primary-tint)/30',
               )
             }
@@ -172,13 +172,19 @@ export function InventoryNav() {
             className={clsx(
               'group flex items-center gap-1.5 shrink-0 pl-2.5 pr-2 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 active:scale-[0.97]',
               isMoreActive
-                ? 'bg-(--secondary-tint) text-(--secondary) shadow-(--shadow-soft-sm) dark:bg-(--secondary-tint)/40'
+                ? 'bg-(--primary) text-white shadow-(--shadow-soft-sm)'
                 : 'surface-soft-sm hover:shadow-(--shadow-soft-lg) hover:border-(--primary) text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
             <EllipsisHorizontalIcon className="h-5 w-5" aria-hidden="true" />
             More
-            <ChevronDownIcon className="h-3.5 w-3.5 text-(--text-muted) transition-transform group-data-open:rotate-180" aria-hidden="true" />
+            <ChevronDownIcon
+              className={clsx(
+                'h-3.5 w-3.5 transition-transform group-data-open:rotate-180',
+                isMoreActive ? 'text-white' : 'text-(--text-muted)',
+              )}
+              aria-hidden="true"
+            />
           </MenuButton>
 
           <MenuItems
@@ -196,11 +202,11 @@ export function InventoryNav() {
                     className={clsx(
                       'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors',
                       isActive
-                        ? 'bg-(--secondary-tint) text-(--secondary) dark:bg-(--secondary-tint)/40'
+                        ? 'bg-(--primary) text-white'
                         : 'text-(--text-primary) data-focus:bg-(--primary-tint)/30',
                     )}
                   >
-                    <ItemIcon className={clsx('h-4 w-4 shrink-0', isActive ? 'text-(--secondary)' : 'text-(--text-muted)')} aria-hidden="true" />
+                    <ItemIcon className={clsx('h-4 w-4 shrink-0', isActive ? 'text-white' : 'text-(--text-muted)')} aria-hidden="true" />
                     {label}
                   </button>
                 </MenuItem>

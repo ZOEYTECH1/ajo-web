@@ -14,20 +14,6 @@
   --primary-light:  #4D7EFF;
   --primary-tint:   #E4ECFF;
 
-  /* Secondary brand: one unified accent across every module (Ajo, Thrift,
-     Inventory previously had their own orange/teal) -- a richer, more
-     saturated metallic gold so it carries similar visual energy to the
-     vivid logo blue instead of receding next to it (an earlier, more
-     muted gold read as mismatched once --primary went back to the vivid
-     logo blue rather than navy). Deliberately not Tailwind's amber scale,
-     and deliberately more yellow/less orange than --warning (#F59E0B) --
-     a brand accent that doubles as a warning colour would make a plain
-     CTA read as an alert. */
-  --secondary:       #D4AF37;
-  --secondary-dark:  #B8962A;
-  --secondary-light: #E6C863;
-  --secondary-tint:  #FBF2DC;
-
   /* Surface / background — slate-toned, not pure white */
   --bg:             #E2E8F0;  /* slate-200: cool gray page */
   --surface:        #F8FAFC;  /* slate-50: off-white cards */
@@ -59,11 +45,6 @@
   --primary-dark:   #0035F0;
   --primary-light:  #6B96FF;
   --primary-tint:   #1E2A4A;
-
-  --secondary:       #E8C25E;
-  --secondary-dark:  #D4AF37;
-  --secondary-light: #F0D485;
-  --secondary-tint:  #332812;
 
   /* Navy-tinted near-black rather than a neutral charcoal -- ties dark
      mode back to the brand blue (public/ajo-logo.svg) instead of reading

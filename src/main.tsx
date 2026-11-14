@@ -1,4 +1,4 @@
-import { lazy, StrictMode, Suspense, useState } from 'react';
+import { lazy, StrictMode, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -10,7 +10,6 @@ import OrgAdminLayout from './layouts/OrgAdminLayout';
 import { ThemeProvider } from './context/ThemeContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { RouteErrorBoundary } from './components/ui/RouteErrorBoundary';
-import { WelcomeSplash } from './components/ui/WelcomeSplash';
 import { initSentry } from './lib/sentry';
 
 // Shared across both route trees below (main app + the standalone org portal) —
@@ -188,36 +187,20 @@ if (!root) throw new Error('Root element not found');
 // auto-recover instead of silently doing nothing for the rest of this tab.
 setTimeout(() => sessionStorage.removeItem('vite-reload-on-preload-error'), 10_000);
 
-// Shown as an overlay on top of the real app on every fresh page load (not
-// on client-side route changes -- this module only runs once per load), so
-// it's the first thing a user sees, matching the mobile app's cold-start
-// splash (screen/AjoSplashScreen.tsx). The app underneath mounts and starts
-// fetching in parallel rather than waiting behind it.
-function Root() {
-  const [showSplash, setShowSplash] = useState(true);
-
-  return (
-    <>
-      {showSplash && <WelcomeSplash onComplete={() => setShowSplash(false)} />}
-      <ThemeProvider>
-        <ErrorBoundary>
-          <QueryClientProvider client={queryClient}>
-            {/* Empty clientId is safe — GoogleLogin just fails to render/authenticate,
-                it doesn't crash the app, same "no-op when unset" pattern as Sentry. */}
-            <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>
-              <Suspense fallback={null}>
-                <RouterProvider router={router} />
-              </Suspense>
-            </GoogleOAuthProvider>
-          </QueryClientProvider>
-        </ErrorBoundary>
-      </ThemeProvider>
-    </>
-  );
-}
-
 createRoot(root).render(
   <StrictMode>
-    <Root />
+    <ThemeProvider>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          {/* Empty clientId is safe — GoogleLogin just fails to render/authenticate,
+              it doesn't crash the app, same "no-op when unset" pattern as Sentry. */}
+          <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>
+            <Suspense fallback={null}>
+              <RouterProvider router={router} />
+            </Suspense>
+          </GoogleOAuthProvider>
+        </QueryClientProvider>
+      </ErrorBoundary>
+    </ThemeProvider>
   </StrictMode>,
 );

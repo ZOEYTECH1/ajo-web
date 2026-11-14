@@ -4,13 +4,23 @@ import { GoogleLogin } from '@react-oauth/google';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { AjoLoader, AjoLoaderOverlay } from '../../components/ui/AjoLoader';
+import { WelcomeSplash } from '../../components/ui/WelcomeSplash';
 import { login } from '../../services/authService';
 import { useGoogleAuth } from '../../hooks/useGoogleAuth';
 import useAuthStore from '../../store/useAuthStore';
+import { consumeSplashForLogin } from '../../lib/splashFlag';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { setAuth } = useAuthStore();
+
+  // Only set right before navigating here from an explicit logout (see
+  // Sidebar.tsx's handleLogout) -- a first-time visit, a direct link, or a
+  // session-expiry redirect never sets this, so the splash only plays on
+  // the logout -> login transition the user asked for. consumeSplashForLogin
+  // reads the flag once and clears it, so it won't replay on a later
+  // remount of this same page within the tab.
+  const [showSplash, setShowSplash] = useState(() => consumeSplashForLogin());
 
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
@@ -53,6 +63,10 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-(--bg) flex items-center justify-center px-4 py-12">
+      {/* Fully covers the login screen below until its own animations have
+          completely finished -- it decides when to go away, nothing here
+          cuts it short. */}
+      {showSplash && <WelcomeSplash onComplete={() => setShowSplash(false)} />}
       {isLoading && <AjoLoaderOverlay message="Signing you in…" />}
 
       <div className="w-full max-w-md">

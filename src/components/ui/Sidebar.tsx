@@ -17,6 +17,7 @@ import { logout } from '../../services/authService';
 import api from '../../services/api';
 import { cloudinaryUrl } from '../../lib/cloudinary';
 import { updateAppBadge } from '../../lib/appBadge';
+import { markSplashForLogin } from '../../lib/splashFlag';
 import { useModuleAccess } from '../../hooks/useModuleAccess';
 
 interface NavItem {
@@ -85,6 +86,7 @@ export function Sidebar({ onClose }: SidebarProps) {
   const handleLogout = async () => {
     try { await logout(); } catch { /* ignore */ }
     clearAuth();
+    markSplashForLogin();
     navigate('/login', { replace: true });
   };
 

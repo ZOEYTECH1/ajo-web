@@ -38,7 +38,11 @@ export function WelcomeSplash({ onComplete }: WelcomeSplashProps) {
         alt="Scribe"
         className="h-40 w-40 sm:h-56 sm:w-56 animate-splash-logo-in"
       />
-      <div className="mt-10 h-1 w-8 rounded-full bg-(--primary) animate-splash-bar-in" />
+      <span className="mt-4 text-2xl sm:text-3xl font-extrabold tracking-wide text-(--primary) animate-splash-bar-in">
+        Scribe
+      </span>
+      {/* Underline sized to the name above it, not an arbitrary short dash. */}
+      <div className="mt-2 h-1 w-24 sm:w-28 rounded-full bg-(--primary) animate-splash-bar-in" />
     </div>
   );
 }

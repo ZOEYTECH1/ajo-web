@@ -71,7 +71,14 @@ export function InventoryNav() {
   const Icon = MODE_ICON[selectedBiz?.mode ?? 'retail'] ?? BuildingStorefrontIcon;
 
   return (
-    <div className="space-y-2">
+    // Sticky so the business switcher and tabs stay reachable on long
+    // pages (Analytics, Products) without scrolling all the way back up.
+    // top-0 is relative to <main>'s own scroll container, not the
+    // viewport. bg-(--bg) matches that container's background (same
+    // token) so content scrolling underneath doesn't show through once
+    // this is stuck in place -- no edge-bleed/negative-margin trick
+    // needed since the colours already line up exactly.
+    <div className="sticky top-0 z-10 bg-(--bg) pb-2 space-y-2">
       {/* Business switcher — only shown when multiple locations exist */}
       {businesses.length > 1 && (
         <div className="relative" ref={dropRef}>

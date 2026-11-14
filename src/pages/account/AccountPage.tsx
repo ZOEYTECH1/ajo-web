@@ -180,7 +180,7 @@ export default function AccountPage() {
                 className="h-20 w-20 rounded-full object-cover border-2 border-(--border)"
               />
             ) : (
-              <div className="h-20 w-20 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-2xl font-bold border-2 border-(--border)">
+              <div className="h-20 w-20 rounded-full bg-(--secondary-light)/30 text-(--secondary) flex items-center justify-center text-2xl font-bold border-2 border-(--border)">
                 {initials}
               </div>
             )}
@@ -188,7 +188,7 @@ export default function AccountPage() {
               type="button"
               onClick={() => fileRef.current?.click()}
               disabled={photoMutation.isPending}
-              className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-orange-600 text-white flex items-center justify-center shadow hover:bg-orange-700 disabled:opacity-50 transition-colors"
+              className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-(--secondary) text-white flex items-center justify-center shadow hover:bg-(--secondary-dark) disabled:opacity-50 transition-colors"
               title="Upload photo"
               aria-label="Upload profile photo"
             >
@@ -218,7 +218,7 @@ export default function AccountPage() {
               )}
             </p>
             {!user?.profile_photo && (
-              <p className="text-xs text-orange-600 mt-1">
+              <p className="text-xs text-(--secondary) mt-1">
                 Add a profile photo — required to join groups.
               </p>
             )}
@@ -342,7 +342,7 @@ export default function AccountPage() {
             {user.selected_modules.map((mod) => (
               <span
                 key={mod}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-50 text-orange-700 capitalize"
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-(--secondary-tint) text-(--secondary-dark) capitalize"
               >
                 {mod}
               </span>

@@ -74,7 +74,7 @@ export default function OrgLoginPage() {
                   key={org.uuid}
                   type="button"
                   onClick={() => navigate(`/org/${org.uuid}`, { replace: true })}
-                  className="w-full text-left rounded-xl border border-(--border) px-4 py-3 text-sm font-semibold text-(--text-primary) hover:border-teal-400 hover:bg-(--primary-tint)/30 transition-colors"
+                  className="w-full text-left rounded-xl border border-(--border) px-4 py-3 text-sm font-semibold text-(--text-primary) hover:border-(--secondary-light) hover:bg-(--primary-tint)/30 transition-colors"
                 >
                   {org.name}
                 </button>
@@ -116,7 +116,7 @@ export default function OrgLoginPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2.5 text-sm text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2.5 text-sm text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-(--secondary)"
               />
             </div>
 
@@ -132,14 +132,14 @@ export default function OrgLoginPage() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2.5 text-sm text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full rounded-lg border border-(--border) bg-(--bg) px-3 py-2.5 text-sm text-(--text-primary) focus:outline-none focus:ring-2 focus:ring-(--secondary)"
               />
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 disabled:opacity-50 transition-colors"
+              className="w-full rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) disabled:opacity-50 transition-colors"
             >
               {isLoading ? 'Signing in…' : 'Sign In'}
             </button>
@@ -147,7 +147,7 @@ export default function OrgLoginPage() {
 
           <p className="text-center text-xs text-(--text-muted)">
             Not an organisation admin?{' '}
-            <a href="/login" className="text-teal-600 hover:underline font-medium">Sign in here</a>
+            <a href="/login" className="text-(--secondary) hover:underline font-medium">Sign in here</a>
           </p>
         </div>
       </div>

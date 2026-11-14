@@ -54,15 +54,15 @@ const MODE_LABELS: Record<string, string> = {
 };
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
 const orangeBtn =
-  'rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+  'rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn =
   'rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function RoleBadge({ role }: { role: string }) {
   const colors: Record<string, string> = {
-    owner:        'bg-orange-100 dark:bg-orange-950/50 text-orange-700 dark:text-orange-400',
+    owner:        'bg-(--secondary-light)/30 dark:bg-(--secondary-tint)/50 text-(--secondary-dark) dark:text-(--secondary-light)',
     manager:      'bg-blue-100 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400',
     branch_admin: 'bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-400',
     staff:        'bg-(--bg) text-(--text-secondary)',
@@ -152,7 +152,7 @@ function CreateLocationModal({ open, businesses, onClose }: { open: boolean; bus
                   onClick={() => { setMode(key); if (key !== 'branch') setParentId(null); setErr(''); }}
                   className={clsx(
                     'w-full flex items-start gap-3 rounded-xl border-2 p-4 text-left transition-all',
-                    isActive ? `border-orange-500 ${bg}` : 'border-(--border) bg-(--surface) hover:border-orange-300',
+                    isActive ? `border-(--secondary) ${bg}` : 'border-(--border) bg-(--surface) hover:border-(--secondary)/40',
                     isDisabled && 'opacity-40 cursor-not-allowed',
                   )}
                 >
@@ -160,9 +160,9 @@ function CreateLocationModal({ open, businesses, onClose }: { open: boolean; bus
                   <div>
                     <p className={clsx('text-sm font-semibold', isActive ? color : 'text-(--text-primary)')}>{label}</p>
                     <p className="text-xs text-(--text-secondary) mt-0.5">{desc}</p>
-                    {isDisabled && <p className="text-xs text-orange-600 font-semibold mt-1">Create a retail store or warehouse first.</p>}
+                    {isDisabled && <p className="text-xs text-(--secondary) font-semibold mt-1">Create a retail store or warehouse first.</p>}
                   </div>
-                  {isActive && <span className="ml-auto text-orange-600 text-lg shrink-0">✓</span>}
+                  {isActive && <span className="ml-auto text-(--secondary) text-lg shrink-0">✓</span>}
                 </button>
               );
             })}
@@ -354,12 +354,12 @@ function BusinessCard({ biz, selected, onClick }: { biz: Business; selected: boo
       className={clsx(
         'w-full text-left rounded-xl border p-4 transition-all',
         selected
-          ? 'border-orange-500 bg-orange-50 shadow-sm'
-          : 'border-(--border) bg-(--surface) hover:border-orange-300',
+          ? 'border-(--secondary) bg-(--secondary-tint) shadow-sm'
+          : 'border-(--border) bg-(--surface) hover:border-(--secondary)/40',
       )}
     >
       <div className="flex items-center gap-3">
-        <BuildingStorefrontIcon className={clsx('h-8 w-8', selected ? 'text-orange-600' : 'text-(--text-muted)')} />
+        <BuildingStorefrontIcon className={clsx('h-8 w-8', selected ? 'text-(--secondary)' : 'text-(--text-muted)')} />
         <div>
           <p className="font-semibold text-(--text-primary)">{biz.name}</p>
           <p className="text-xs text-(--text-secondary) capitalize">{MODE_LABELS[biz.mode] ?? biz.mode} · <RoleBadge role={biz.my_role} /></p>
@@ -417,7 +417,7 @@ export default function InventoryBusinessPage() {
         <button
           type="button"
           onClick={() => setShowCreate(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Location
@@ -436,7 +436,7 @@ export default function InventoryBusinessPage() {
           <button
             type="button"
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-5 py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-5 py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             Create Business
@@ -473,7 +473,7 @@ export default function InventoryBusinessPage() {
                     className={clsx(
                       'flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors',
                       activeTab === key
-                        ? 'border-b-2 border-orange-600 text-orange-600'
+                        ? 'border-b-2 border-(--secondary) text-(--secondary)'
                         : 'text-(--text-secondary) hover:text-(--text-primary)',
                     )}
                   >

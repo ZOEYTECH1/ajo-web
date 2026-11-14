@@ -107,7 +107,7 @@ function InvoiceCard({ invoice }: { invoice: Invoice }) {
               type="button"
               disabled={payMutation.isPending}
               onClick={() => { setPayError(''); payMutation.mutate(); }}
-              className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="inline-flex items-center rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {payMutation.isPending ? 'Loading…' : 'Pay Now'}
             </button>
@@ -140,13 +140,13 @@ function InvoiceCard({ invoice }: { invoice: Invoice }) {
               onChange={(e) => { setVerifyTxId(e.target.value); setVerifyError(''); }}
               placeholder="Transaction ID"
               aria-label="Transaction ID for verification"
-              className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)"
             />
             <button
               type="button"
               disabled={!verifyTxId.trim() || verifyMutation.isPending}
               onClick={() => verifyMutation.mutate()}
-              className="rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {verifyMutation.isPending ? 'Verifying…' : 'Verify'}
             </button>
@@ -251,7 +251,7 @@ export default function ThriftBillingPage() {
           disabled={generateMutation.isPending || !canGenerate}
           onClick={() => generateMutation.mutate()}
           title={canGenerate ? undefined : 'No completed circles are ready to bill yet.'}
-          className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+          className="inline-flex items-center rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
         >
           {generateMutation.isPending ? 'Generating…' : 'Generate Invoice'}
         </button>

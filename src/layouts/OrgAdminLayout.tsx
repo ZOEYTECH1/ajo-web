@@ -56,7 +56,7 @@ export default function OrgAdminLayout() {
         style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
       >
         <div className="flex items-center gap-3">
-          <span className="text-base font-extrabold text-teal-600 tracking-tight">Ajo</span>
+          <span className="text-base font-extrabold text-(--secondary) tracking-tight">Ajo</span>
           <span style={{ color: 'var(--border)' }}>|</span>
           <span className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
             Organisation Admin
@@ -85,9 +85,9 @@ export default function OrgAdminLayout() {
           <div className="px-4 py-5 border-b" style={{ borderColor: 'var(--border)' }}>
             <div className="flex items-center gap-2.5">
               <span
-                className="flex-shrink-0 h-9 w-9 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center"
+                className="flex-shrink-0 h-9 w-9 rounded-lg bg-(--secondary-tint) border border-(--secondary-light)/30 flex items-center justify-center"
               >
-                <BuildingOffice2Icon className="h-5 w-5 text-teal-600" />
+                <BuildingOffice2Icon className="h-5 w-5 text-(--secondary)" />
               </span>
               <div className="min-w-0">
                 <p
@@ -113,8 +113,8 @@ export default function OrgAdminLayout() {
                 className={({ isActive }) => clsx(
                   'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                   isActive
-                    ? 'bg-teal-50 text-teal-700 font-semibold border border-teal-100'
-                    : 'hover:bg-teal-50/50',
+                    ? 'bg-(--secondary-tint) text-(--secondary-dark) font-semibold border border-(--secondary-light)/30'
+                    : 'hover:bg-(--secondary-tint)/50',
                 )}
                 style={({ isActive }) => isActive ? {} : { color: 'var(--text-secondary)' }}
               >

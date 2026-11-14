@@ -58,9 +58,9 @@ export function Button({
     // size/color -- soft shadows only separate cleanly from a same-tone
     // background. A crisp shadow that lifts on hover gives the same
     // "tactile" feel without washing the color out.
-    primary: 'bg-orange-600 text-white shadow-sm hover:bg-orange-700 hover:shadow-md focus:ring-orange-500',
+    primary: 'bg-(--secondary) text-white shadow-sm hover:bg-(--secondary-dark) hover:shadow-md focus:ring-(--secondary)',
     secondary:
-      'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary) focus:ring-orange-500',
+      'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary) focus:ring-(--secondary)',
     danger: 'bg-red-600 text-white shadow-sm hover:bg-red-700 hover:shadow-md focus:ring-red-500',
   };
 

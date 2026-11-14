@@ -24,8 +24,8 @@ function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(v));
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
-const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+const submitBtn = 'flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -138,7 +138,7 @@ function CreditModal({ open, customer, onClose }: { open: boolean; customer: Cus
       <div className="space-y-4">
         <p className="text-sm text-(--text-secondary)">
           <span className="font-semibold text-(--text-primary)">{customer.name}</span> — current balance:{' '}
-          <span className="font-semibold text-orange-600">{formatCurrency(customer.credit_balance)}</span>
+          <span className="font-semibold text-(--secondary)">{formatCurrency(customer.credit_balance)}</span>
         </p>
 
         <div className="flex gap-2">
@@ -148,7 +148,7 @@ function CreditModal({ open, customer, onClose }: { open: boolean; customer: Cus
               type="button"
               onClick={() => setDirection(d)}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors border ${
-                direction === d ? 'bg-orange-600 text-white border-orange-600' : 'border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30'
+                direction === d ? 'bg-(--secondary) text-white border-(--secondary)' : 'border-(--border) text-(--text-secondary) hover:bg-(--primary-tint)/30'
               }`}
             >
               {d === 'charge' ? 'Charge (add debt)' : 'Payment (reduce debt)'}
@@ -264,7 +264,7 @@ function CreditHistoryModal({ open, customer, onClose }: { open: boolean; custom
       <div className="space-y-4">
         <p className="text-sm text-(--text-secondary)">
           Current balance:{' '}
-          <span className="font-semibold text-orange-600">{formatCurrency(customer.credit_balance)}</span>
+          <span className="font-semibold text-(--secondary)">{formatCurrency(customer.credit_balance)}</span>
         </p>
 
         {error && (
@@ -352,7 +352,7 @@ export default function InventoryCustomersPage() {
         <button
           type="button"
           onClick={() => setShowAdd(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Customer
@@ -365,13 +365,13 @@ export default function InventoryCustomersPage() {
         value={search}
         onChange={e => setSearch(e.target.value)}
         placeholder="Search by name or phone…"
-        className="w-full max-w-sm rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+        className="w-full max-w-sm rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)"
       />
 
       {/* Total credit owed banner */}
       {totalCredit > 0 && (
-        <div className="flex items-center gap-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-xl px-4 py-3 shadow-sm animate-rise-in">
-          <span className="text-sm font-semibold text-orange-800 dark:text-orange-400">
+        <div className="flex items-center gap-3 bg-(--secondary-tint) dark:bg-(--secondary-tint)/30 border border-(--secondary)/30 dark:border-(--secondary-dark) rounded-xl px-4 py-3 shadow-sm animate-rise-in">
+          <span className="text-sm font-semibold text-(--secondary-dark) dark:text-(--secondary-light)">
             Total credit owed: <span className="font-bold">{formatCurrency(totalCredit)}</span>
           </span>
         </div>
@@ -402,7 +402,7 @@ export default function InventoryCustomersPage() {
                     <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{c.name}</td>
                     <td className="px-6 py-4 text-sm text-(--text-secondary)">{c.phone || '—'}</td>
                     <td className="px-6 py-4 text-sm font-semibold">
-                      <span className={Number(c.credit_balance) > 0 ? 'text-orange-600' : 'text-(--text-secondary)'}>
+                      <span className={Number(c.credit_balance) > 0 ? 'text-(--secondary)' : 'text-(--text-secondary)'}>
                         {formatCurrency(c.credit_balance)}
                       </span>
                     </td>
@@ -412,14 +412,14 @@ export default function InventoryCustomersPage() {
                         <button
                           type="button"
                           onClick={() => setCreditCustomer(c)}
-                          className="text-xs font-semibold text-orange-700 bg-orange-50 border border-orange-200 rounded-lg px-2.5 py-1 hover:bg-orange-100 transition-colors"
+                          className="text-xs font-semibold text-(--secondary-dark) bg-(--secondary-tint) border border-(--secondary)/30 rounded-lg px-2.5 py-1 hover:bg-(--secondary-light)/30 transition-colors"
                         >
                           Credit
                         </button>
                         <button
                           type="button"
                           onClick={() => setHistoryCustomer(c)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-orange-600 hover:bg-orange-50 transition-colors"
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--secondary) hover:bg-(--secondary-tint) transition-colors"
                           title="Credit history"
                         >
                           <ClockIcon className="h-4 w-4" />
@@ -427,7 +427,7 @@ export default function InventoryCustomersPage() {
                         <button
                           type="button"
                           onClick={() => setEditCustomer(c)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-orange-600 hover:bg-orange-50 transition-colors"
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--secondary) hover:bg-(--secondary-tint) transition-colors"
                           title="Edit"
                         >
                           <PencilIcon className="h-4 w-4" />
@@ -448,7 +448,7 @@ export default function InventoryCustomersPage() {
               ) : (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    {debouncedSearch ? `No customers match "${debouncedSearch}".` : <>No customers yet.{' '}<button type="button" onClick={() => setShowAdd(true)} className="text-orange-600 font-semibold hover:underline">Add the first customer.</button></>}
+                    {debouncedSearch ? `No customers match "${debouncedSearch}".` : <>No customers yet.{' '}<button type="button" onClick={() => setShowAdd(true)} className="text-(--secondary) font-semibold hover:underline">Add the first customer.</button></>}
                   </td>
                 </tr>
               )}

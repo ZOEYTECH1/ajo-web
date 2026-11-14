@@ -48,7 +48,7 @@ export default defineConfig({
         name: 'Scribe',
         short_name: 'Scribe',
         description: 'Ajo group savings, thrift, and inventory management.',
-        theme_color: '#0035F0',
+        theme_color: '#14325C',
         background_color: '#F8FAFC',
         display: 'standalone',
         start_url: '/',

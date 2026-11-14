@@ -258,11 +258,11 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
             </>
           ) : (
             <>
-              <div className="rounded-xl bg-orange-50 border border-orange-100 p-4 text-center">
+              <div className="rounded-xl bg-(--secondary-tint) border border-(--secondary-light)/30 p-4 text-center">
                 {/* Fixed light box regardless of theme — text here must stay
                     fixed dark too, not the theme-aware --text-* variables
                     (those turn near-white in dark mode and disappear here). */}
-                <p className="text-xs text-orange-500 uppercase tracking-wider font-semibold mb-1">Group found</p>
+                <p className="text-xs text-(--secondary) uppercase tracking-wider font-semibold mb-1">Group found</p>
                 <p className="text-lg font-bold text-gray-900">{found?.group_name}</p>
                 <p className="text-sm text-gray-600 mt-1">{found?.message}</p>
               </div>
@@ -293,9 +293,9 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
 const submitBtn =
-  'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+  'flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn =
   'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
@@ -338,7 +338,7 @@ export default function AjoGroupsPage() {
           </div>
           <Link
             to="/ajo/history"
-            className="text-sm text-(--text-muted) hover:text-orange-600 transition-colors whitespace-nowrap"
+            className="text-sm text-(--text-muted) hover:text-(--secondary) transition-colors whitespace-nowrap"
           >
             My Payment History →
           </Link>
@@ -355,7 +355,7 @@ export default function AjoGroupsPage() {
           <button
             type="button"
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             Create Group
@@ -423,7 +423,7 @@ export default function AjoGroupsPage() {
                     <button
                       type="button"
                       onClick={() => setShowJoin(true)}
-                      className="mt-3 text-orange-600 font-semibold hover:underline"
+                      className="mt-3 text-(--secondary) font-semibold hover:underline"
                     >
                       Join with an invite code
                     </button>
@@ -431,7 +431,7 @@ export default function AjoGroupsPage() {
                     <button
                       type="button"
                       onClick={() => setShowCreate(true)}
-                      className="text-orange-600 font-semibold hover:underline"
+                      className="text-(--secondary) font-semibold hover:underline"
                     >
                       create a new group
                     </button>

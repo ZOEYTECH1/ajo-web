@@ -72,7 +72,7 @@ export default function OTPPage() {
     <div className="min-h-screen bg-(--bg) flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold text-orange-600">Scribe</h1>
+          <h1 className="text-4xl font-extrabold text-(--secondary)">Scribe</h1>
           <p className="mt-2 text-sm text-(--text-secondary)">Verify your email</p>
         </div>
 
@@ -118,7 +118,7 @@ export default function OTPPage() {
                       onChange={(e) => handleChange(index, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(index, e)}
                       aria-label={`OTP digit ${index + 1}`}
-                      className="w-11 h-12 text-center text-lg font-semibold border border-(--border) rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-(--text-primary) bg-(--surface)"
+                      className="w-11 h-12 text-center text-lg font-semibold border border-(--border) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary) text-(--text-primary) bg-(--surface)"
                     />
                   ))}
                 </div>
@@ -136,7 +136,7 @@ export default function OTPPage() {
 
               <p className="mt-4 text-center text-sm text-(--text-secondary)">
                 Wrong email?{' '}
-                <Link to="/register" className="font-medium text-orange-600 hover:text-orange-700">
+                <Link to="/register" className="font-medium text-(--secondary) hover:text-(--secondary-dark)">
                   Go back
                 </Link>
               </p>

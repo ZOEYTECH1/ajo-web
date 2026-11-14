@@ -9,8 +9,8 @@ import api from '../../services/api';
 
 // ── Shared styles ────────────────────────────────────────────────────────────
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
-const submitBtn = 'flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+const submitBtn = 'flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -133,7 +133,7 @@ function OrgTypeBadge({ type }: { type: string }) {
     other: 'Other',
   };
   return (
-    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200 capitalize">
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-(--secondary-tint) text-(--secondary-dark) border border-(--secondary)/30 capitalize">
       {labels[type] ?? type}
     </span>
   );
@@ -359,7 +359,7 @@ function ApproveRemovalModal({
               type="button"
               disabled={!settlementNotes.trim() || mutation.isPending}
               onClick={() => mutation.mutate()}
-              className="flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {mutation.isPending ? 'Approving…' : 'Confirm & Remove Member'}
             </button>
@@ -526,7 +526,7 @@ function InviteModal({ open, onInvite, onClose, isPending }: {
             value={email}
             onChange={e => { setEmail(e.target.value); setErr(''); }}
             placeholder="collector@example.com"
-            className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)"
           />
         </div>
         {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
@@ -545,7 +545,7 @@ function InviteModal({ open, onInvite, onClose, isPending }: {
               if (!email.includes('@')) { setErr('Enter a valid email address.'); return; }
               onInvite(email.trim());
             }}
-            className="flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+            className="flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
           >
             {isPending ? 'Inviting…' : 'Send Invite'}
           </button>
@@ -666,14 +666,14 @@ export default function ThriftOrgPage() {
             </button>
             <Link
               to={`/org/${orgUuid}/billing`}
-              className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-100 transition-colors"
+              className="text-xs font-semibold text-(--secondary-dark) bg-(--secondary-tint) border border-(--secondary)/30 rounded-lg px-3 py-1.5 hover:bg-(--secondary-light)/30 transition-colors"
             >
               Billing
             </Link>
             <button
               type="button"
               onClick={() => setShowInvite(true)}
-              className="text-xs font-semibold text-white bg-teal-600 rounded-lg px-3 py-1.5 hover:bg-teal-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+              className="text-xs font-semibold text-white bg-(--secondary) rounded-lg px-3 py-1.5 hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
             >
               Invite Collector
             </button>
@@ -845,7 +845,7 @@ export default function ThriftOrgPage() {
           <button
             type="button"
             onClick={() => setShowCreateGroup(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             + Create Group
           </button>
@@ -873,7 +873,7 @@ export default function ThriftOrgPage() {
                   groups.map(g => (
                     <tr key={g.id} className="hover:bg-(--primary-tint)/30">
                       <td className="px-6 py-4 text-sm font-medium">
-                        <Link to={`/org/${orgUuid}/groups/${g.uuid}`} className="text-teal-600 hover:underline cursor-pointer">
+                        <Link to={`/org/${orgUuid}/groups/${g.uuid}`} className="text-(--secondary) hover:underline cursor-pointer">
                           {g.name}
                         </Link>
                       </td>
@@ -913,7 +913,7 @@ export default function ThriftOrgPage() {
           </div>
           {payment_stats.savings_mobilization != null && (
             <div>
-              <p className="text-xs text-teal-600 uppercase tracking-wider font-semibold">Mobilization</p>
+              <p className="text-xs text-(--secondary) uppercase tracking-wider font-semibold">Mobilization</p>
               <p className="text-xl font-bold text-(--text-primary) mt-0.5">
                 {payment_stats.savings_mobilization.toFixed(0)}%
               </p>
@@ -943,8 +943,8 @@ export default function ThriftOrgPage() {
                 className={clsx(
                   'text-xs font-semibold px-3 py-1 rounded-full transition-colors capitalize',
                   reportFilter === f
-                    ? 'bg-teal-600 text-white'
-                    : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:border-teal-300 hover:text-teal-600',
+                    ? 'bg-(--secondary) text-white'
+                    : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:border-(--secondary)/40 hover:text-(--secondary)',
                 )}
               >
                 {f}
@@ -1044,8 +1044,8 @@ export default function ThriftOrgPage() {
                 className={clsx(
                   'text-xs font-semibold px-3 py-1 rounded-full transition-colors capitalize',
                   removalFilter === f
-                    ? 'bg-teal-600 text-white'
-                    : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:border-teal-300 hover:text-teal-600',
+                    ? 'bg-(--secondary) text-white'
+                    : 'bg-(--bg) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:border-(--secondary)/40 hover:text-(--secondary)',
                 )}
               >
                 {f}
@@ -1126,7 +1126,7 @@ export default function ThriftOrgPage() {
                     <button
                       type="button"
                       onClick={() => setApproveRemovalRequest(req)}
-                      className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-100 transition-colors"
+                      className="text-xs font-semibold text-(--secondary-dark) bg-(--secondary-tint) border border-(--secondary)/30 rounded-lg px-3 py-1.5 hover:bg-(--secondary-light)/30 transition-colors"
                     >
                       Review & Approve
                     </button>

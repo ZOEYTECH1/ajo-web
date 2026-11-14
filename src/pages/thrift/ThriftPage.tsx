@@ -26,7 +26,7 @@ interface ThriftGroup {
 function SubscriptionBadge({ group }: { group: ThriftGroup }) {
   if (group.organization) {
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-teal-50 text-teal-700">
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-(--secondary-tint) text-(--secondary-dark)">
         Bank managed
       </span>
     );
@@ -46,8 +46,8 @@ function SubscriptionBadge({ group }: { group: ThriftGroup }) {
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500';
-const submitBtn = 'flex-1 rounded-lg bg-teal-600 text-white py-2.5 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+const submitBtn = 'flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -243,8 +243,8 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 
           {stage === 'confirm' && (
             <>
-              <div className="rounded-xl bg-teal-50 border border-teal-100 p-4 text-center">
-                <p className="text-xs text-teal-600 uppercase tracking-wider font-semibold mb-1">Request sent!</p>
+              <div className="rounded-xl bg-(--secondary-tint) border border-(--secondary-light)/30 p-4 text-center">
+                <p className="text-xs text-(--secondary) uppercase tracking-wider font-semibold mb-1">Request sent!</p>
                 <p className="text-lg font-bold text-(--text-primary)">{groupName}</p>
                 <p className="text-sm text-(--text-secondary) mt-1">Waiting for collector approval.</p>
               </div>
@@ -302,25 +302,25 @@ export default function ThriftPage() {
           <div className="flex items-center gap-3 flex-wrap">
             {/* Payers only: collectors don't make payments */}
             {isAnyPayer && (
-              <Link to="/thrift/history" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
+              <Link to="/thrift/history" className="text-sm text-(--text-muted) hover:text-(--secondary) transition-colors whitespace-nowrap">
                 My Payment History →
               </Link>
             )}
             {/* Collectors only: rotation queue */}
             {isAnyCollector && (
-              <Link to="/thrift/queue" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
+              <Link to="/thrift/queue" className="text-sm text-(--text-muted) hover:text-(--secondary) transition-colors whitespace-nowrap">
                 Collector Queue →
               </Link>
             )}
             {/* Solo collectors only: platform billing (org-linked groups are billed via the org) */}
             {hasSoloGroup && (
-              <Link to="/thrift/billing" className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
+              <Link to="/thrift/billing" className="text-sm text-(--text-muted) hover:text-(--secondary) transition-colors whitespace-nowrap">
                 Billing →
               </Link>
             )}
             {/* Org admins see their dashboard; solo collectors see create form */}
             {(isOrgAdmin || isAnyCollector) && (
-              <Link to={orgLink} className="text-sm text-(--text-muted) hover:text-teal-600 transition-colors whitespace-nowrap">
+              <Link to={orgLink} className="text-sm text-(--text-muted) hover:text-(--secondary) transition-colors whitespace-nowrap">
                 Organisation →
               </Link>
             )}
@@ -338,7 +338,7 @@ export default function ThriftPage() {
           <button
             type="button"
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             Create Group
@@ -369,7 +369,7 @@ export default function ThriftPage() {
                 data.map(group => (
                   <tr key={group.uuid} className="hover:bg-(--primary-tint)/30">
                     <td className="px-6 py-4 text-sm font-medium">
-                      <Link to={`/thrift/${group.uuid}`} className="text-teal-600 hover:underline">{group.name}</Link>
+                      <Link to={`/thrift/${group.uuid}`} className="text-(--secondary) hover:underline">{group.name}</Link>
                     </td>
                     <td className="px-6 py-4 text-sm text-(--text-secondary) capitalize">{group.frequency}</td>
                     <td className="px-6 py-4 text-sm text-(--text-secondary) capitalize">{group.cycle_type}</td>
@@ -384,11 +384,11 @@ export default function ThriftPage() {
                   <td colSpan={7} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                     You are not a member of any thrift group yet.
                     <br />
-                    <button type="button" onClick={() => setShowJoin(true)} className="mt-3 text-teal-600 font-semibold hover:underline">
+                    <button type="button" onClick={() => setShowJoin(true)} className="mt-3 text-(--secondary) font-semibold hover:underline">
                       Join with an invite code
                     </button>
                     {' or '}
-                    <button type="button" onClick={() => setShowCreate(true)} className="text-teal-600 font-semibold hover:underline">
+                    <button type="button" onClick={() => setShowCreate(true)} className="text-(--secondary) font-semibold hover:underline">
                       create a new group
                     </button>
                   </td>

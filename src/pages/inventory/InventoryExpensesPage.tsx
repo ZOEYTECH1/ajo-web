@@ -94,13 +94,13 @@ function ManageCategoriesModal({ onClose }: { onClose: () => void }) {
               onChange={e => setNewName(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); if (newName.trim()) addMutation.mutate(); } }}
               placeholder="New category name"
-              className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)"
             />
             <button
               type="button"
               disabled={!newName.trim() || addMutation.isPending}
               onClick={() => addMutation.mutate()}
-              className="rounded-lg bg-orange-600 text-white px-4 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="rounded-lg bg-(--secondary) text-white px-4 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {addMutation.isPending ? '…' : 'Add'}
             </button>
@@ -173,8 +173,8 @@ function formatCurrency(v: string | number) {
   return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Number(v));
 }
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
-const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+const submitBtn = 'flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -268,11 +268,11 @@ function ExpenseModal({
             <div className="space-y-1.5">
               <div className="flex gap-2">
                 <button type="button" onClick={() => setForm(f => ({ ...f, spent_at: format(new Date(), 'yyyy-MM-dd') }))}
-                  className="px-3 py-1 rounded-full text-xs font-semibold surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-orange-50 hover:border-orange-400 hover:text-orange-700 transition-colors">
+                  className="px-3 py-1 rounded-full text-xs font-semibold surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--secondary-tint) hover:border-(--secondary-light) hover:text-(--secondary-dark) transition-colors">
                   Today
                 </button>
                 <button type="button" onClick={() => { const d = new Date(); d.setDate(d.getDate() - 1); setForm(f => ({ ...f, spent_at: format(d, 'yyyy-MM-dd') })); }}
-                  className="px-3 py-1 rounded-full text-xs font-semibold surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-orange-50 hover:border-orange-400 hover:text-orange-700 transition-colors">
+                  className="px-3 py-1 rounded-full text-xs font-semibold surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--secondary-tint) hover:border-(--secondary-light) hover:text-(--secondary-dark) transition-colors">
                   Yesterday
                 </button>
               </div>
@@ -386,7 +386,7 @@ export default function InventoryExpensesPage() {
           <button
             type="button"
             onClick={() => setShowAdd(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
             Add Expense
@@ -404,7 +404,7 @@ export default function InventoryExpensesPage() {
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-medium transition-colors',
               period === key
-                ? 'bg-orange-600 text-white'
+                ? 'bg-(--secondary) text-white'
                 : 'bg-(--surface) surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
@@ -443,7 +443,7 @@ export default function InventoryExpensesPage() {
                   <span className="font-semibold text-(--text-primary)">{formatCurrency(amount)} <span className="text-(--text-muted) font-normal">{pct}%</span></span>
                 </div>
                 <div className="h-1.5 bg-(--border) rounded-full overflow-hidden">
-                  <div className="h-1.5 bg-orange-500 rounded-full" style={{ width: `${pct}%` }} />
+                  <div className="h-1.5 bg-(--secondary) rounded-full" style={{ width: `${pct}%` }} />
                 </div>
               </div>
             );
@@ -490,7 +490,7 @@ export default function InventoryExpensesPage() {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-1">
                             <button type="button" onClick={() => setEditExpense(e)}
-                              className="p-1.5 rounded-lg text-(--text-muted) hover:text-orange-600 hover:bg-orange-50 transition-colors" title="Edit">
+                              className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--secondary) hover:bg-(--secondary-tint) transition-colors" title="Edit">
                               <PencilIcon className="h-4 w-4" />
                             </button>
                             <button type="button" onClick={() => { if (confirm('Delete this expense?')) deleteMutation.mutate(e.id); }}
@@ -508,7 +508,7 @@ export default function InventoryExpensesPage() {
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                     No expenses recorded yet.{' '}
-                    <button type="button" onClick={() => setShowAdd(true)} className="text-orange-600 font-semibold hover:underline">Add the first one.</button>
+                    <button type="button" onClick={() => setShowAdd(true)} className="text-(--secondary) font-semibold hover:underline">Add the first one.</button>
                   </td>
                 </tr>
               )}

@@ -80,7 +80,7 @@ function PaymentTable({ payments, loading, showMember }: { payments: ThriftPayme
               payments.map(p => (
                 <tr key={p.id} className="hover:bg-(--primary-tint)/30 transition-colors">
                   <td className="px-6 py-4 text-sm font-medium">
-                    <Link to={`/thrift/${p.group_uuid}`} className="text-teal-600 hover:underline">{p.group_name}</Link>
+                    <Link to={`/thrift/${p.group_uuid}`} className="text-(--secondary) hover:underline">{p.group_name}</Link>
                   </td>
                   {showMember && <td className="px-6 py-4 text-sm text-(--text-secondary)">{p.member_name}</td>}
                   <td className="px-6 py-4 text-sm text-(--text-secondary)">{fmt(p.period_date)}</td>
@@ -128,7 +128,7 @@ export default function ThriftPaymentHistoryPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4 flex-wrap">
         <div>
-          <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-teal-600">← Thrift Groups</Link>
+          <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-(--secondary)">← Thrift Groups</Link>
           <h1 className="text-2xl font-bold text-(--text-primary) mt-1">My Payment History</h1>
           <p className="text-sm text-(--text-secondary)">Your thrift payment records across all groups</p>
         </div>
@@ -141,7 +141,7 @@ export default function ThriftPaymentHistoryPage() {
           onClick={() => setActiveTab('payer')}
           className={clsx(
             'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
-            activeTab === 'payer' ? 'bg-teal-600 text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
+            activeTab === 'payer' ? 'bg-(--secondary) text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
           )}
         >
           My Payments ({payerCount})
@@ -151,7 +151,7 @@ export default function ThriftPaymentHistoryPage() {
           onClick={() => setActiveTab('collector')}
           className={clsx(
             'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
-            activeTab === 'collector' ? 'bg-teal-600 text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
+            activeTab === 'collector' ? 'bg-(--secondary) text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
           )}
         >
           Marked by Me ({collectorCount})

@@ -78,9 +78,9 @@ export function InventoryNav() {
           <button
             type="button"
             onClick={() => setOpen(v => !v)}
-            className="flex items-center gap-2 rounded-lg surface-soft-sm surface-soft-interactive px-3 py-2 text-sm font-semibold text-(--text-primary) hover:border-orange-400"
+            className="flex items-center gap-2 rounded-lg surface-soft-sm surface-soft-interactive px-3 py-2 text-sm font-semibold text-(--text-primary) hover:border-(--secondary-light)"
           >
-            <Icon className="h-4 w-4 text-orange-600 shrink-0" />
+            <Icon className="h-4 w-4 text-(--secondary) shrink-0" />
             <span className="max-w-[180px] truncate">{selectedBiz?.name ?? 'Select location'}</span>
             <span className="text-xs font-normal text-(--text-muted) capitalize ml-0.5">
               ({selectedBiz?.mode ?? ''})
@@ -104,11 +104,11 @@ export function InventoryNav() {
                         'flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition-colors',
                         biz.parent_business && 'pl-8',
                         isSelected
-                          ? 'bg-orange-50 text-orange-700 font-semibold'
+                          ? 'bg-(--secondary-tint) text-(--secondary-dark) font-semibold'
                           : 'text-(--text-primary) hover:bg-(--primary-tint)/30',
                       )}
                     >
-                      <BizIcon className={clsx('h-4 w-4 shrink-0', isSelected ? 'text-orange-600' : 'text-(--text-muted)')} />
+                      <BizIcon className={clsx('h-4 w-4 shrink-0', isSelected ? 'text-(--secondary)' : 'text-(--text-muted)')} />
                       <span className="flex-1 truncate">{biz.name}</span>
                       <span className="text-xs text-(--text-muted) capitalize">{biz.mode}</span>
                     </button>
@@ -139,7 +139,7 @@ export function InventoryNav() {
               clsx(
                 'shrink-0 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200',
                 isActive
-                  ? 'bg-orange-50 text-orange-600 shadow-(--shadow-soft-sm) dark:bg-orange-950/40'
+                  ? 'bg-(--secondary-tint) text-(--secondary) shadow-(--shadow-soft-sm) dark:bg-(--secondary-tint)/40'
                   : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--primary-tint)/30',
               )
             }
@@ -172,7 +172,7 @@ export function InventoryNav() {
             className={clsx(
               'group flex items-center gap-1.5 shrink-0 pl-2.5 pr-2 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 active:scale-[0.97]',
               isMoreActive
-                ? 'bg-orange-50 text-orange-600 shadow-(--shadow-soft-sm) dark:bg-orange-950/40'
+                ? 'bg-(--secondary-tint) text-(--secondary) shadow-(--shadow-soft-sm) dark:bg-(--secondary-tint)/40'
                 : 'surface-soft-sm hover:shadow-(--shadow-soft-lg) hover:border-(--primary) text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
@@ -196,11 +196,11 @@ export function InventoryNav() {
                     className={clsx(
                       'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors',
                       isActive
-                        ? 'bg-orange-50 text-orange-600 dark:bg-orange-950/40'
+                        ? 'bg-(--secondary-tint) text-(--secondary) dark:bg-(--secondary-tint)/40'
                         : 'text-(--text-primary) data-focus:bg-(--primary-tint)/30',
                     )}
                   >
-                    <ItemIcon className={clsx('h-4 w-4 shrink-0', isActive ? 'text-orange-600' : 'text-(--text-muted)')} aria-hidden="true" />
+                    <ItemIcon className={clsx('h-4 w-4 shrink-0', isActive ? 'text-(--secondary)' : 'text-(--text-muted)')} aria-hidden="true" />
                     {label}
                   </button>
                 </MenuItem>

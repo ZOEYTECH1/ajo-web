@@ -78,7 +78,7 @@ const cols: Column<Record<string, unknown>>[] = [
     render: (v, row) => (
       <Link
         to={`/ajo/${row.group_id as number}`}
-        className="text-orange-600 hover:underline font-medium"
+        className="text-(--secondary) hover:underline font-medium"
       >
         {v as string}
       </Link>
@@ -152,7 +152,7 @@ export default function AjoPaymentHistoryPage() {
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
               filter === key
-                ? 'bg-orange-600 text-white'
+                ? 'bg-(--secondary) text-white'
                 : 'bg-(--bg) text-(--text-secondary) hover:bg-(--primary-tint)/50',
             )}
           >

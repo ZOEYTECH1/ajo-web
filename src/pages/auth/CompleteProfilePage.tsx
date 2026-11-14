@@ -152,7 +152,7 @@ export default function CompleteProfilePage() {
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
                     aria-label={`OTP digit ${index + 1}`}
-                    className="w-11 h-12 text-center text-lg font-semibold border border-(--border) rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-(--text-primary) bg-(--surface)"
+                    className="w-11 h-12 text-center text-lg font-semibold border border-(--border) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary) text-(--text-primary) bg-(--surface)"
                   />
                 ))}
               </div>

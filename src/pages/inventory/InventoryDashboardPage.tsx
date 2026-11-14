@@ -236,7 +236,7 @@ export default function InventoryDashboardPage() {
       {/* Quick Actions */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { to: '/inventory/sales',            icon: <ShoppingCartIcon className="h-6 w-6 text-orange-600" />,  label: 'New Sale',      bg: 'bg-orange-50 dark:bg-orange-950/40' },
+          { to: '/inventory/sales',            icon: <ShoppingCartIcon className="h-6 w-6 text-(--secondary)" />,  label: 'New Sale',      bg: 'bg-(--secondary-tint) dark:bg-(--secondary-tint)/40' },
           { to: '/inventory/expenses',          icon: <BanknotesIcon    className="h-6 w-6 text-red-500" />,    label: 'Add Expense',   bg: 'bg-red-50 dark:bg-red-950/40' },
           { to: '/inventory/warehouse/receive', icon: <ArrowDownTrayIcon className="h-6 w-6 text-blue-600" />,  label: 'Receive Stock', bg: 'bg-blue-50 dark:bg-blue-950/40' },
           { to: '/inventory/transfers',         icon: <ArrowsRightLeftIcon className="h-6 w-6 text-purple-600" />, label: 'Transfer Stock', bg: 'bg-purple-50 dark:bg-purple-950/40' },
@@ -244,7 +244,7 @@ export default function InventoryDashboardPage() {
           <Link
             key={to}
             to={to}
-            className="surface-soft-sm surface-soft-interactive animate-rise-in flex flex-col items-center gap-2 p-4 text-center hover:border-orange-300"
+            className="surface-soft-sm surface-soft-interactive animate-rise-in flex flex-col items-center gap-2 p-4 text-center hover:border-(--secondary)/40"
             style={{ '--delay': `${240 + i * 40}ms` } as React.CSSProperties}
           >
             <div className={`h-12 w-12 rounded-xl flex items-center justify-center ${bg}`}>{icon}</div>
@@ -310,7 +310,7 @@ export default function InventoryDashboardPage() {
       <div className="surface-soft overflow-hidden">
         <div className="px-6 py-4 border-b border-(--border)">
           <h2 className="text-base font-semibold text-(--text-primary) flex items-center gap-2">
-            <ClockIcon className="h-5 w-5 text-orange-500" />
+            <ClockIcon className="h-5 w-5 text-(--secondary)" />
             Expiring Soon
           </h2>
         </div>
@@ -346,7 +346,7 @@ export default function InventoryDashboardPage() {
                           Urgent
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-400">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-(--secondary-light)/30 text-(--secondary-dark) dark:bg-(--secondary-tint)/60 dark:text-(--secondary-light)">
                           Soon
                         </span>
                       )}

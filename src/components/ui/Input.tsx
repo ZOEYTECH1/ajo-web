@@ -57,7 +57,7 @@ export function Input({
         aria-invalid={!!error}
         className={clsx(
           'w-full rounded-lg border px-3 py-2 text-sm text-(--text-primary) placeholder:text-(--text-muted)',
-          'focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500',
+          'focus:outline-none focus:ring-2 focus:ring-(--secondary) focus:border-(--secondary)',
           'disabled:bg-(--bg) disabled:text-(--text-muted) disabled:cursor-not-allowed',
           error
             ? 'border-red-400 bg-red-50'

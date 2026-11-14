@@ -73,7 +73,7 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
             <p className="text-base font-semibold text-(--text-primary)">{invoice.month_label}</p>
             <StatusBadge status={invoice.status} />
             {invoice.is_bank && (
-              <span className="text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-full px-2.5 py-0.5">
+              <span className="text-xs font-semibold text-(--secondary-dark) bg-(--secondary-tint) border border-(--secondary)/30 rounded-full px-2.5 py-0.5">
                 Bank rate
               </span>
             )}
@@ -92,7 +92,7 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
               type="button"
               disabled={payMutation.isPending}
               onClick={() => { setPayError(''); payMutation.mutate(); }}
-              className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="inline-flex items-center rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {payMutation.isPending ? 'Loading…' : 'Pay Now'}
             </button>
@@ -125,13 +125,13 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
               onChange={(e) => { setVerifyTxId(e.target.value); setVerifyError(''); }}
               placeholder="Transaction ID"
               aria-label="Transaction ID for verification"
-              className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)"
             />
             <button
               type="button"
               disabled={!verifyTxId.trim() || verifyMutation.isPending}
               onClick={() => verifyMutation.mutate()}
-              className="rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {verifyMutation.isPending ? 'Verifying…' : 'Verify'}
             </button>
@@ -230,7 +230,7 @@ export default function ThriftOrgBillingPage() {
   return (
     <div className="space-y-6">
       {/* Back link */}
-      <Link to={`/org/${orgUuid}`} className="text-sm text-(--text-secondary) hover:text-teal-600">
+      <Link to={`/org/${orgUuid}`} className="text-sm text-(--text-secondary) hover:text-(--secondary)">
         ← Organisation
       </Link>
 
@@ -245,14 +245,14 @@ export default function ThriftOrgBillingPage() {
           disabled={generateMutation.isPending || !canGenerate}
           onClick={() => generateMutation.mutate()}
           title={canGenerate ? undefined : 'No completed circles are ready to bill yet.'}
-          className="inline-flex items-center rounded-lg bg-teal-600 text-white px-4 py-2 text-sm font-semibold hover:bg-teal-700 hover:shadow-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+          className="inline-flex items-center rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
         >
           {generateMutation.isPending ? 'Generating…' : 'Generate Invoice'}
         </button>
       </div>
 
       {/* Info banner */}
-      <div className="rounded-lg bg-teal-50 border border-teal-200 px-4 py-3 text-sm text-teal-700">
+      <div className="rounded-lg bg-(--secondary-tint) border border-(--secondary)/30 px-4 py-3 text-sm text-(--secondary-dark)">
         Organisation members receive a 0.25% discount on the standard rate. All groups across your collectors are consolidated whenever a circle completes.
       </div>
       {!canGenerate && !generateMutation.isPending && (

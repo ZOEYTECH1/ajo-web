@@ -25,7 +25,7 @@ interface Category {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -220,7 +220,7 @@ export default function InventoryWarehouseReceivePage() {
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="w-full sm:w-auto rounded-lg bg-orange-600 text-white px-6 py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+            className="w-full sm:w-auto rounded-lg bg-(--secondary) text-white px-6 py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
           >
             {mutation.isPending ? 'Recording…' : 'Record Receipt'}
           </button>

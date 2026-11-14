@@ -38,8 +38,8 @@ const TEMPLATES = [
   { emoji: '📦', label: 'Other Goods' },
 ];
 
-const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
-const submitBtn = 'flex-1 rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
+const inputCls = 'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
+const submitBtn = 'flex-1 rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100';
 const cancelBtn = 'flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30';
 
 function AddCategoryModal({
@@ -112,7 +112,7 @@ function AddCategoryModal({
                       if (label === 'Other Goods') { setCustomMode(true); return; }
                       onSave(label);
                     }}
-                    className="flex flex-col items-center gap-2 rounded-xl border border-(--border) bg-(--bg) hover:border-orange-400 hover:bg-orange-50/50 active:scale-95 p-4 text-center transition-all disabled:opacity-50 cursor-pointer"
+                    className="flex flex-col items-center gap-2 rounded-xl border border-(--border) bg-(--bg) hover:border-(--secondary-light) hover:bg-(--secondary-tint)/50 active:scale-95 p-4 text-center transition-all disabled:opacity-50 cursor-pointer"
                   >
                     <span className="text-3xl">{emoji}</span>
                     <span className="text-xs font-semibold text-(--text-primary) leading-tight">{label}</span>
@@ -238,10 +238,10 @@ function CustomFieldsModal({ category, onClose }: { category: Category; onClose:
             <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide">Add a field</p>
             <input type="text" value={newName} onChange={e => setNewName(e.target.value)}
               placeholder="Field name (e.g. Size, Colour, Brand)"
-              className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+              className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)" />
             <div className="flex gap-3 items-center">
               <select value={newType} onChange={e => setNewType(e.target.value as 'text' | 'number')}
-                className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)">
                 <option value="text">Text</option>
                 <option value="number">Number</option>
               </select>
@@ -250,7 +250,7 @@ function CustomFieldsModal({ category, onClose }: { category: Category; onClose:
                 Required
               </label>
               <button type="button" onClick={addField} disabled={saveMutation.isPending}
-                className="rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100">
+                className="rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100">
                 Add
               </button>
             </div>
@@ -318,7 +318,7 @@ export default function InventoryCategoriesPage() {
         <button
           type="button"
           onClick={() => { setMutErr(''); setShowAdd(true); }}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 text-white px-4 py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-(--secondary) text-white px-4 py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
         >
           <PlusIcon className="h-4 w-4" />
           Add Category
@@ -363,7 +363,7 @@ export default function InventoryCategoriesPage() {
                         <button
                           type="button"
                           onClick={() => { setMutErr(''); setEditCat(cat); }}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-orange-600 hover:bg-orange-50 transition-colors"
+                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--secondary) hover:bg-(--secondary-tint) transition-colors"
                           title="Edit"
                         >
                           <PencilIcon className="h-4 w-4" />
@@ -385,7 +385,7 @@ export default function InventoryCategoriesPage() {
                 <tr>
                   <td colSpan={3} className="px-6 py-12 text-center text-sm text-(--text-muted)">
                     No categories yet.{' '}
-                    <button type="button" onClick={() => setShowAdd(true)} className="text-orange-600 font-semibold hover:underline">
+                    <button type="button" onClick={() => setShowAdd(true)} className="text-(--secondary) font-semibold hover:underline">
                       Add your first category.
                     </button>
                   </td>

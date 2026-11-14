@@ -25,7 +25,7 @@ interface Business {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const inputCls =
-  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500';
+  'w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--secondary)';
 
 const PRICE_PER_MONTH = 2000;
 
@@ -125,7 +125,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <CreditCardIcon className="h-6 w-6 text-orange-600" />
+          <CreditCardIcon className="h-6 w-6 text-(--secondary)" />
           <h2 className="text-lg font-bold text-(--text-primary)">{biz.name}</h2>
         </div>
         <StatusBadge biz={biz} />
@@ -178,8 +178,8 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
               className={clsx(
                 'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 active:scale-[0.96]',
                 months === value
-                  ? 'bg-orange-600 text-white shadow-sm'
-                  : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-orange-600',
+                  ? 'bg-(--secondary) text-white shadow-sm'
+                  : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--secondary)',
               )}
             >
               {label}
@@ -200,7 +200,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
         <ul className="space-y-2">
           {FEATURES.map(f => (
             <li key={f} className="flex items-center gap-2 text-sm text-(--text-secondary)">
-              <CheckIcon className="h-4 w-4 text-orange-500 shrink-0" />
+              <CheckIcon className="h-4 w-4 text-(--secondary) shrink-0" />
               {f}
             </li>
           ))}
@@ -213,7 +213,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
           type="button"
           disabled={initiateMutation.isPending}
           onClick={() => initiateMutation.mutate()}
-          className="w-full rounded-lg bg-orange-600 text-white py-2.5 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+          className="w-full rounded-lg bg-(--secondary) text-white py-2.5 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
         >
           {initiateMutation.isPending ? 'Redirecting to payment…' : `Subscribe · ${fmt(total)}`}
         </button>
@@ -254,7 +254,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
               type="button"
               disabled={!txRef.trim() || verifyMutation.isPending}
               onClick={() => verifyMutation.mutate()}
-              className="flex-1 rounded-lg bg-orange-600 text-white py-2 text-sm font-semibold hover:bg-orange-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
+              className="flex-1 rounded-lg bg-(--secondary) text-white py-2 text-sm font-semibold hover:bg-(--secondary-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {verifyMutation.isPending ? 'Verifying…' : 'Confirm Payment'}
             </button>

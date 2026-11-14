@@ -5,11 +5,23 @@
 
 /* ── Design tokens ─────────────────────────────────────────────────────── */
 :root {
-  /* Primary brand: Ajo blue */
-  --primary:        #0035F0;
-  --primary-dark:   #0028C2;
-  --primary-light:  #4D7EFF;
-  --primary-tint:   #E4ECFF;
+  /* Primary brand: bank-admin navy -- deeper and less saturated than the
+     old vivid #0035F0, which read as "tech startup" more than "bank". */
+  --primary:        #14325C;
+  --primary-dark:   #0D213D;
+  --primary-light:  #2E5590;
+  --primary-tint:   #E4EAF2;
+
+  /* Secondary brand: one unified accent across every module (Ajo, Thrift,
+     Inventory previously had their own orange/teal) -- a restrained gold,
+     the traditional "premium/trust" accent paired with navy in bank
+     branding. Deliberately not Tailwind's amber scale: amber/yellow is
+     already this app's --warning colour, and a brand accent that doubles
+     as a warning colour would make a plain CTA read as an alert. */
+  --secondary:       #B8862E;
+  --secondary-dark:  #93691F;
+  --secondary-light: #D6A855;
+  --secondary-tint:  #FBF2E2;
 
   /* Surface / background — slate-toned, not pure white */
   --bg:             #E2E8F0;  /* slate-200: cool gray page */
@@ -38,10 +50,15 @@
 
 /* ── Dark mode overrides ────────────────────────────────────────────────── */
 .dark {
-  --primary:        #4D7EFF;
-  --primary-dark:   #0035F0;
-  --primary-light:  #6B96FF;
-  --primary-tint:   #1E2A4A;
+  --primary:        #5B82B8;
+  --primary-dark:   #3C5E8F;
+  --primary-light:  #7FA0CC;
+  --primary-tint:   #1B2838;
+
+  --secondary:       #D6A855;
+  --secondary-dark:  #B8862E;
+  --secondary-light: #E6C47D;
+  --secondary-tint:  #332812;
 
   --bg:             #0D1117;
   --surface:        #1A2029;

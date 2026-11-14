@@ -120,7 +120,7 @@ export function Sidebar({ onClose }: SidebarProps) {
               clsx(
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200',
                 isActive
-                  ? 'text-white bg-(--primary) shadow-(--shadow-soft-sm)'
+                  ? 'text-white bg-(--accent) shadow-(--shadow-soft-sm)'
                   : 'text-(--text-secondary) hover:bg-(--primary-tint)/50 hover:text-(--text-primary) hover:translate-x-0.5',
               )
             }

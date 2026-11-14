@@ -104,7 +104,7 @@ export function InventoryNav() {
                         'flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition-colors',
                         biz.parent_business && 'pl-8',
                         isSelected
-                          ? 'bg-(--primary) text-white font-semibold'
+                          ? 'bg-(--accent) text-white font-semibold'
                           : 'text-(--text-primary) hover:bg-(--primary-tint)/30',
                       )}
                     >
@@ -139,7 +139,7 @@ export function InventoryNav() {
               clsx(
                 'shrink-0 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200',
                 isActive
-                  ? 'bg-(--primary) text-white shadow-(--shadow-soft-sm)'
+                  ? 'bg-(--accent) text-white shadow-(--shadow-soft-sm)'
                   : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--primary-tint)/30',
               )
             }
@@ -172,7 +172,7 @@ export function InventoryNav() {
             className={clsx(
               'group flex items-center gap-1.5 shrink-0 pl-2.5 pr-2 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 active:scale-[0.97]',
               isMoreActive
-                ? 'bg-(--primary) text-white shadow-(--shadow-soft-sm)'
+                ? 'bg-(--accent) text-white shadow-(--shadow-soft-sm)'
                 : 'surface-soft-sm hover:shadow-(--shadow-soft-lg) hover:border-(--primary) text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
@@ -202,7 +202,7 @@ export function InventoryNav() {
                     className={clsx(
                       'flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium transition-colors',
                       isActive
-                        ? 'bg-(--primary) text-white'
+                        ? 'bg-(--accent) text-white'
                         : 'text-(--text-primary) data-focus:bg-(--primary-tint)/30',
                     )}
                   >

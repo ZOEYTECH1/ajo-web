@@ -88,11 +88,15 @@ export function Layout({ children }: LayoutProps) {
           <nav aria-label="Breadcrumb" className="hidden lg:flex items-center gap-1.5 text-sm min-w-0">
             {crumbs.map((label, i) => (
               <span key={i} className="flex items-center gap-1.5 min-w-0">
+                {/* The first crumb is the main section (Inventory/Ajo
+                    Groups/Thrift) -- bigger and bold. Everything after it
+                    is a sub-section one level down, so it reads thinner
+                    and smaller, same colour throughout. */}
                 {i > 0 && <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-(--primary)/50" aria-hidden="true" />}
                 <span
                   className={
-                    i === crumbs.length - 1
-                      ? 'font-bold text-(--primary) truncate'
+                    i === 0
+                      ? 'text-base font-bold text-(--primary) truncate'
                       : 'text-xs font-normal text-(--primary) truncate'
                   }
                 >

@@ -50,8 +50,19 @@ function humanize(segment: string): string {
     .join(' ');
 }
 
-export function getBreadcrumb(pathname: string): string[] {
+export interface Crumb {
+  label: string;
+  /** Cumulative path up to and including this segment -- clicking any
+   * crumb navigates straight there, not just the last one. */
+  path: string;
+}
+
+export function getBreadcrumb(pathname: string): Crumb[] {
   const segments = pathname.split('/').filter(Boolean);
-  if (segments.length === 0) return ['Dashboard'];
-  return segments.map(humanize);
+  if (segments.length === 0) return [{ label: 'Dashboard', path: '/dashboard' }];
+  let path = '';
+  return segments.map((segment) => {
+    path += `/${segment}`;
+    return { label: humanize(segment), path };
+  });
 }

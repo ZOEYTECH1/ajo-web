@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { Sidebar } from './Sidebar';
 import { InstallPrompt } from './InstallPrompt';
@@ -88,22 +88,26 @@ export function Layout({ children }: LayoutProps) {
           {/* Desktop breadcrumb -- replaces what used to be an empty spacer
               div here purely to push the theme toggle to the right. */}
           <nav aria-label="Breadcrumb" className="hidden lg:flex items-center gap-1.5 text-sm min-w-0">
-            {crumbs.map((label, i) => (
-              <span key={i} className="flex items-center gap-1.5 min-w-0">
+            {crumbs.map((crumb, i) => (
+              <span key={crumb.path} className="flex items-center gap-1.5 min-w-0">
                 {/* The first crumb is the main section (Inventory/Ajo
                     Groups/Thrift) -- bigger and bold. Everything after it
                     is a sub-section one level down, so it reads thinner
-                    and smaller, same colour throughout. */}
+                    and smaller, same colour throughout. Every crumb,
+                    including the current page, is a real link to its own
+                    cumulative path -- clicking any of them navigates
+                    straight there. */}
                 {i > 0 && <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-(--primary)/50" aria-hidden="true" />}
-                <span
+                <Link
+                  to={crumb.path}
                   className={
                     i === 0
-                      ? 'text-base font-bold text-(--primary) truncate'
-                      : 'text-xs font-normal text-(--primary) truncate'
+                      ? 'text-base font-bold text-(--primary) truncate hover:underline'
+                      : 'text-xs font-normal text-(--primary) truncate hover:underline'
                   }
                 >
-                  {label}
-                </span>
+                  {crumb.label}
+                </Link>
               </span>
             ))}
           </nav>

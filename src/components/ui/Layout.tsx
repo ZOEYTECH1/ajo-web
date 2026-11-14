@@ -88,12 +88,12 @@ export function Layout({ children }: LayoutProps) {
           <nav aria-label="Breadcrumb" className="hidden lg:flex items-center gap-1.5 text-sm min-w-0">
             {crumbs.map((label, i) => (
               <span key={i} className="flex items-center gap-1.5 min-w-0">
-                {i > 0 && <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-(--text-muted)" aria-hidden="true" />}
+                {i > 0 && <ChevronRightIcon className="h-3.5 w-3.5 shrink-0 text-(--primary)/50" aria-hidden="true" />}
                 <span
                   className={
                     i === crumbs.length - 1
-                      ? 'font-semibold text-(--text-primary) truncate'
-                      : 'text-(--text-muted) truncate'
+                      ? 'font-bold text-(--primary) truncate'
+                      : 'text-xs font-normal text-(--primary) truncate'
                   }
                 >
                   {label}

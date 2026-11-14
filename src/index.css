@@ -62,9 +62,12 @@
   --secondary-light: #E6C47D;
   --secondary-tint:  #332812;
 
-  --bg:             #0D1117;
-  --surface:        #1A2029;
-  --border:         #3C4654;
+  /* Navy-tinted near-black rather than a neutral charcoal -- ties dark
+     mode back to the brand blue (public/ajo-logo.svg) instead of reading
+     as a generic dark theme. */
+  --bg:             #0A0F1C;
+  --surface:        #131B2E;
+  --border:         #2A3754;
 
   --text-primary:   #F0F2F5;
   --text-secondary: #8B949E;

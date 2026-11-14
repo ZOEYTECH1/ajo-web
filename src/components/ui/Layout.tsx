@@ -61,12 +61,14 @@ export function Layout({ children }: LayoutProps) {
 
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden min-w-0">
-        {/* Top bar -- a fixed h-19 (not py-5) deliberately matches Sidebar's
-            own fixed h-19 logo block, so the two headers' bottom borders
+        {/* Top bar -- a fixed h-24 (not py-*) deliberately matches Sidebar's
+            own fixed h-24 logo block, so the two headers' bottom borders
             land on exactly the same pixel row across the sidebar/content
             seam. Padding-based heights on two independent elements can
-            round to different pixel heights even with matching classes. */}
-        <header className="flex items-center justify-between px-4 h-19 lg:px-6 border-b border-(--border) bg-(--surface)">
+            round to different pixel heights even with matching classes.
+            (Bumped from h-19 to h-24 to give the bigger logo room without
+            overflowing the row.) */}
+        <header className="flex items-center justify-between px-4 h-24 lg:px-6 border-b border-(--border) bg-(--surface)">
           {/* Mobile: hamburger + logo */}
           <div className="flex items-center gap-3 lg:hidden">
             <button
@@ -78,7 +80,7 @@ export function Layout({ children }: LayoutProps) {
               <Bars3Icon className="h-6 w-6" aria-hidden="true" />
             </button>
             <div className="flex items-center gap-2">
-              <img src="/ajo-logo.svg" alt="Ajo" className="h-12 w-12" />
+              <img src="/ajo-logo.svg" alt="Ajo" className="h-14 w-14" />
               <span className="text-lg font-extrabold text-(--primary)">Ajo</span>
             </div>
           </div>

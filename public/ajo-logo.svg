@@ -14,6 +14,25 @@
   #shield        { animation-name: fadeScale; animation-delay: 0.8s; transform-origin: 340px 405px; }
   #naira-badge   { animation-name: popIn; animation-delay: 1.1s; animation-duration: 0.4s; transform-origin: 500px 470px; }
 
+  /* Once the one-time build-up above finishes, the ring and the naira
+     badge keep a slow, continuous breathing pulse -- so the mark reads
+     as alive/animating at rest, not just on first load, without
+     disturbing the staged reveal of the other parts. */
+  #ring {
+    animation-name: fadeScale, ringPulse;
+    animation-duration: 0.5s, 2.6s;
+    animation-delay: 0s, 1.4s;
+    animation-iteration-count: 1, infinite;
+    animation-timing-function: ease-out, ease-in-out;
+  }
+  #naira-badge {
+    animation-name: popIn, badgePulse;
+    animation-duration: 0.4s, 2.2s;
+    animation-delay: 1.1s, 2.3s;
+    animation-iteration-count: 1, infinite;
+    animation-timing-function: ease-out, ease-in-out;
+  }
+
   @keyframes fadeScale {
     0%   { opacity: 0; transform: scale(0.85); }
     100% { opacity: 1; transform: scale(1); }
@@ -26,6 +45,21 @@
     0%   { opacity: 0; transform: scale(0.5); }
     70%  { opacity: 1; transform: scale(1.15); }
     100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes ringPulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.04); }
+  }
+  @keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.08); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Keep the short one-time reveal (it's an opacity fade, not motion),
+       drop only the continuous pulse. */
+    #ring        { animation: fadeScale 0.5s ease-out 0s 1 forwards; }
+    #naira-badge { animation: popIn 0.4s ease-out 1.1s 1 forwards; }
   }
 </style>
 <title>Ajo logo</title>

@@ -204,8 +204,30 @@ button:disabled { cursor: not-allowed; }
   animation-delay: var(--delay, 0ms);
 }
 
+/* ── Welcome splash ─────────────────────────────────────────────────────────
+   Mirrors the mobile app's cold-start splash screen (screen/AjoSplashScreen.tsx):
+   logo scales+fades in with a spring-like overshoot, then the accent bar
+   fades/slides up after a short delay. */
+@keyframes splash-logo-in {
+  0%   { opacity: 0; transform: scale(0.88); }
+  60%  { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes splash-bar-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-splash-logo-in {
+  animation: splash-logo-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-splash-bar-in {
+  animation: splash-bar-in 0.6s ease-out both;
+  animation-delay: 600ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-rise-in, .ajo-ring, .ajo-shield, .skeleton {
+  .animate-rise-in, .ajo-ring, .ajo-shield, .skeleton,
+  .animate-splash-logo-in, .animate-splash-bar-in {
     animation: none !important;
   }
   .surface-soft-interactive:hover,

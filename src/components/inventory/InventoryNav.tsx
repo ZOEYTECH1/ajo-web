@@ -73,12 +73,18 @@ export function InventoryNav() {
   return (
     // Sticky so the business switcher and tabs stay reachable on long
     // pages (Analytics, Products) without scrolling all the way back up.
-    // top-0 is relative to <main>'s own scroll container, not the
-    // viewport. bg-(--bg) matches that container's background (same
-    // token) so content scrolling underneath doesn't show through once
-    // this is stuck in place -- no edge-bleed/negative-margin trick
-    // needed since the colours already line up exactly.
-    <div className="sticky top-0 z-10 bg-(--bg) pb-2 space-y-2">
+    // top-0 is relative to <main>'s own scroll container (Layout.tsx's
+    // "p-4 sm:p-6"), not the viewport. Sticky offsets are measured from
+    // that container's *padding* edge, not its border edge, so a plain
+    // "top-0 bg-(--bg)" still leaves main's own top/side padding as a gap
+    // outside this element's box once stuck -- content scrolling past
+    // underneath shows straight through that gap since nothing of this
+    // component's own background covers it. The negative-margin/matching-
+    // padding pair below extends this element's box to actually fill that
+    // padding region with its own background, so it's truly flush and
+    // opaque against main's edges instead of floating with a transparent
+    // strip around it.
+    <div className="sticky top-0 z-10 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 px-4 sm:px-6 pt-4 sm:pt-6 bg-(--bg) pb-2 space-y-2">
       {/* Business switcher — only shown when multiple locations exist */}
       {businesses.length > 1 && (
         <div className="relative" ref={dropRef}>

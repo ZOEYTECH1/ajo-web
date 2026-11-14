@@ -73,18 +73,20 @@ export function InventoryNav() {
   return (
     // Sticky so the business switcher and tabs stay reachable on long
     // pages (Analytics, Products) without scrolling all the way back up.
-    // top-0 is relative to <main>'s own scroll container (Layout.tsx's
-    // "p-4 sm:p-6"), not the viewport. Sticky offsets are measured from
-    // that container's *padding* edge, not its border edge, so a plain
-    // "top-0 bg-(--bg)" still leaves main's own top/side padding as a gap
-    // outside this element's box once stuck -- content scrolling past
-    // underneath shows straight through that gap since nothing of this
-    // component's own background covers it. The negative-margin/matching-
-    // padding pair below extends this element's box to actually fill that
-    // padding region with its own background, so it's truly flush and
-    // opaque against main's edges instead of floating with a transparent
-    // strip around it.
-    <div className="sticky top-0 z-10 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 px-4 sm:px-6 pt-4 sm:pt-6 bg-(--bg) pb-2 space-y-2">
+    // <main> (Layout.tsx) has its own "p-4 sm:p-6" padding, and sticky
+    // offsets are measured from the *padding* edge of the scroll
+    // container, not its border edge -- so covering that padding strip
+    // takes three matched pieces, not just one:
+    //   - margin: pulls this element's own box up/out into that padding
+    //     strip so its background actually paints over it;
+    //   - padding: pushes the inner content back down/in by the same
+    //     amount, so it still lines up visually where it did before;
+    //   - top (negative, same amount): without this the sticky threshold
+    //     is still computed against the *un-bled* box, so the pulled-up
+    //     margin and the "stuck" position disagree and the element can
+    //     end up stuck in the wrong place entirely instead of just
+    //     leaving a gap. All three have to match main's own padding.
+    <div className="sticky -top-4 sm:-top-6 z-10 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 px-4 sm:px-6 pt-4 sm:pt-6 bg-(--bg) pb-2 space-y-2">
       {/* Business switcher — only shown when multiple locations exist */}
       {businesses.length > 1 && (
         <div className="relative" ref={dropRef}>

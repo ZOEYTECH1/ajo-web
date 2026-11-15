@@ -56,7 +56,7 @@ export default function OrgAdminLayout() {
         style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
       >
         <div className="flex items-center gap-3">
-          <span className="text-base font-extrabold text-(--primary) tracking-tight">Ajo</span>
+          <span className="text-base font-extrabold text-(--primary) tracking-tight">Scribe</span>
           <span style={{ color: 'var(--border)' }}>|</span>
           <span className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
             Organisation Admin

@@ -19,7 +19,9 @@
      both the active tab/nav indicator and every solid-fill action button
      -- so the one coloured detail in the mark itself is echoed everywhere
      else something is "active" or actionable, the same logic already
-     applied to --primary matching the logo's blue. */
+     applied to --primary matching the logo's blue. Per explicit request,
+     #22C55E is the fixed default in BOTH themes (see .dark below) --
+     unlike --primary, this one doesn't get a brighter dark-mode swap. */
   --accent:      #22C55E;
   --accent-dark: #16A34A;
 
@@ -55,8 +57,11 @@
   --primary-light:  #6B96FF;
   --primary-tint:   #1E2A4A;
 
-  --accent:      #4ADE80;
-  --accent-dark: #22C55E;
+  /* Deliberately the exact same hex as light mode's --accent, not a
+     lighter dark-mode variant like --primary gets -- user asked for
+     #22C55E to be the literal default everywhere, not swapped per theme. */
+  --accent:      #22C55E;
+  --accent-dark: #16A34A;
 
   /* Navy-tinted near-black rather than a neutral charcoal -- ties dark
      mode back to the brand blue (public/ajo-logo.svg) instead of reading

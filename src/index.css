@@ -14,14 +14,14 @@
   --primary-light:  #4D7EFF;
   --primary-tint:   #E4ECFF;
 
-  /* Accent: a rich metallic gold, used for both the active tab/nav
-     indicator and every solid-fill action button -- per explicit user
-     request this replaced the naira-badge green that was here before
-     (see git history for that version). Stands out from the primary blue
-     that already dominates everything else (plain text links, borders,
-     the logo wordmark) instead of blending into it. */
-  --accent:      #D4AF37;
-  --accent-dark: #B8962A;
+  /* Accent: matches the app logo's own naira-badge green exactly
+     (public/ajo-logo.svg #naira-circle/#naira-handle, #22C55E), used for
+     both the active tab/nav indicator and every solid-fill action button
+     -- so the one coloured detail in the mark itself is echoed everywhere
+     else something is "active" or actionable, the same logic already
+     applied to --primary matching the logo's blue. */
+  --accent:      #22C55E;
+  --accent-dark: #16A34A;
 
   /* Surface / background — slate-toned, not pure white */
   --bg:             #E2E8F0;  /* slate-200: cool gray page */
@@ -55,8 +55,8 @@
   --primary-light:  #6B96FF;
   --primary-tint:   #1E2A4A;
 
-  --accent:      #E8C25E;
-  --accent-dark: #D4AF37;
+  --accent:      #4ADE80;
+  --accent-dark: #22C55E;
 
   /* Navy-tinted near-black rather than a neutral charcoal -- ties dark
      mode back to the brand blue (public/ajo-logo.svg) instead of reading

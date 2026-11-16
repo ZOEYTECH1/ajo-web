@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { PhoneNumberInput } from '../../components/ui/PhoneNumberInput';
 import { AjoLoader, AjoLoaderOverlay } from '../../components/ui/AjoLoader';
 import { register } from '../../services/authService';
 import { useGoogleAuth } from '../../hooks/useGoogleAuth';
@@ -39,6 +40,11 @@ export default function RegisterPage() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: undefined }));
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setForm((prev) => ({ ...prev, phone_number: value }));
+    setErrors((prev) => ({ ...prev, phone_number: undefined }));
   };
 
   const validate = (): boolean => {
@@ -104,7 +110,7 @@ export default function RegisterPage() {
               <Input label="Last name"   name="last_name"   value={form.last_name}   onChange={handleChange} error={errors.last_name}   placeholder="Doe"   required />
             </div>
             <Input label="Email address" name="email"       type="email" value={form.email}       onChange={handleChange} error={errors.email}       placeholder="you@example.com"    required />
-            <Input label="Phone number"  name="phone_number" type="tel" value={form.phone_number} onChange={handleChange} error={errors.phone_number} placeholder="+234 800 000 0000" required />
+            <PhoneNumberInput label="Phone number" name="phone_number" value={form.phone_number} onChange={handlePhoneChange} error={errors.phone_number} required />
             <Input label="Password"      name="password"    type="password" value={form.password}    onChange={handleChange} error={errors.password}    placeholder="At least 8 characters" required />
 
             <Button type="submit" variant="primary" fullWidth loading={isLoading}>

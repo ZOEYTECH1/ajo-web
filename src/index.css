@@ -230,6 +230,40 @@ button:disabled { cursor: not-allowed; }
   animation-delay: 600ms;
 }
 
+/* ── Phone number input (react-phone-number-input) ──────────────────────────
+   The library ships its own style.css (imported alongside this component)
+   with light-mode-only colors and its own border/padding — scoped overrides
+   here strip that so the country-select + number field read as one themed
+   input matching every other form field, in both light and dark mode. */
+.ajo-phone-input.PhoneInput {
+  --PhoneInputCountryFlag-borderColor: transparent;
+}
+.ajo-phone-input .PhoneInputInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  outline: none;
+  font: inherit;
+}
+.ajo-phone-input .PhoneInputInput::placeholder {
+  color: var(--text-muted);
+}
+.ajo-phone-input .PhoneInputCountry {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-right: 0.5rem;
+}
+.ajo-phone-input .PhoneInputCountrySelectArrow {
+  color: var(--text-muted);
+  opacity: 1;
+}
+.ajo-phone-input .PhoneInputCountryIcon {
+  box-shadow: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-rise-in, .ajo-ring, .ajo-shield, .skeleton,
   .animate-splash-logo-in, .animate-splash-bar-in {

@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+import { PhoneNumberInput } from '../../components/ui/PhoneNumberInput';
 import { setPhone, verifyPhone, resendOtp } from '../../services/authService';
 import useAuthStore from '../../store/useAuthStore';
 
@@ -125,13 +125,11 @@ export default function CompleteProfilePage() {
 
           {step === 'phone' ? (
             <form onSubmit={handleSendCode} noValidate className="space-y-4">
-              <Input
+              <PhoneNumberInput
                 label="Phone number"
                 name="phone_number"
-                type="tel"
                 value={phone}
-                onChange={(e) => { setPhoneValue(e.target.value); setError(''); }}
-                placeholder="+234 800 000 0000"
+                onChange={(value) => { setPhoneValue(value); setError(''); }}
                 required
               />
               <Button type="submit" variant="primary" fullWidth loading={isLoading}>

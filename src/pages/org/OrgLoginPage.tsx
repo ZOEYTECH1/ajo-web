@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { CredentialResponse } from '@react-oauth/google';
 import { AjoLoaderOverlay } from '../../components/ui/AjoLoader';
-import { login } from '../../services/authService';
+import { GoogleAuthButton } from '../../components/ui/GoogleAuthButton';
+import { login, googleSignIn } from '../../services/authService';
 import useAuthStore from '../../store/useAuthStore';
 import api from '../../services/api';
 
@@ -20,6 +22,27 @@ export default function OrgLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [orgs, setOrgs]         = useState<OrgInfo[]>([]);
 
+  // Shared by both the email/password form and Google sign-in below — the
+  // part that's specific to this org portal (as opposed to the main app's
+  // post-auth routing) is picking which org to land in, not how the user
+  // authenticated.
+  const routeToOrg = async () => {
+    const res = await api.get<OrgInfo[]>('/thrift/orgs/');
+    const userOrgs = res.data;
+
+    if (userOrgs.length === 0) {
+      setError('This account is not linked to any organisation.');
+      return;
+    }
+
+    if (userOrgs.length === 1) {
+      navigate(`/org/${userOrgs[0].uuid}`, { replace: true });
+    } else {
+      // Multiple orgs — let them pick
+      setOrgs(userOrgs);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -30,21 +53,7 @@ export default function OrgLoginPage() {
       localStorage.setItem('access', tokens.access);
       localStorage.setItem('refresh', tokens.refresh);
       setAuth(user, tokens);
-
-      const res = await api.get<OrgInfo[]>('/thrift/orgs/');
-      const userOrgs = res.data;
-
-      if (userOrgs.length === 0) {
-        setError('This account is not linked to any organisation.');
-        return;
-      }
-
-      if (userOrgs.length === 1) {
-        navigate(`/org/${userOrgs[0].uuid}`, { replace: true });
-      } else {
-        // Multiple orgs — let them pick
-        setOrgs(userOrgs);
-      }
+      await routeToOrg();
     } catch (err: unknown) {
       const axiosError = err as { response?: { data?: Record<string, unknown> } };
       const data = axiosError.response?.data;
@@ -59,6 +68,29 @@ export default function OrgLoginPage() {
       setIsLoading(false);
     }
   };
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) {
+      setError('Google sign-in failed. Please try again.');
+      return;
+    }
+    setError('');
+    setIsLoading(true);
+    try {
+      const { user, ...tokens } = await googleSignIn(credentialResponse.credential);
+      localStorage.setItem('access', tokens.access);
+      localStorage.setItem('refresh', tokens.refresh);
+      setAuth(user, tokens);
+      await routeToOrg();
+    } catch (err: unknown) {
+      const axiosError = err as { response?: { data?: { detail?: string } } };
+      setError(axiosError.response?.data?.detail || 'Google sign-in failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => setError('Google sign-in failed. Please try again.');
 
   // Org picker — shown after login when user admins multiple orgs
   if (orgs.length > 1) {
@@ -144,6 +176,14 @@ export default function OrgLoginPage() {
               {isLoading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
+
+          <div className="flex items-center gap-3">
+            <div className="flex-1 border-t border-(--border)" />
+            <span className="text-xs text-(--text-muted)">or continue with</span>
+            <div className="flex-1 border-t border-(--border)" />
+          </div>
+
+          <GoogleAuthButton onSuccess={handleGoogleSuccess} onError={handleGoogleError} text="continue_with" />
 
           <p className="text-center text-xs text-(--text-muted)">
             Not an organisation admin?{' '}

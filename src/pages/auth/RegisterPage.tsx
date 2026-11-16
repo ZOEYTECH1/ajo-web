@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google';
 import { Button } from '../../components/ui/Button';
+import { GoogleAuthButton } from '../../components/ui/GoogleAuthButton';
 import { Input } from '../../components/ui/Input';
 import { PhoneNumberInput } from '../../components/ui/PhoneNumberInput';
 import { AjoLoader, AjoLoaderOverlay } from '../../components/ui/AjoLoader';
@@ -124,15 +124,7 @@ export default function RegisterPage() {
             <div className="flex-1 border-t border-(--border)" />
           </div>
 
-          <div className="flex justify-center">
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              width="336"
-              text="signup_with"
-              shape="pill"
-            />
-          </div>
+          <GoogleAuthButton onSuccess={handleGoogleSuccess} onError={handleGoogleError} text="signup_with" />
 
           <p className="mt-6 text-center text-sm text-(--text-secondary)">
             Already have an account?{' '}

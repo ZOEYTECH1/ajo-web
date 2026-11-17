@@ -7,6 +7,7 @@ import {
   BuildingStorefrontIcon, CubeIcon, BuildingOfficeIcon, ChevronDownIcon, EllipsisHorizontalIcon,
   ArrowDownTrayIcon, ArrowUpTrayIcon, InboxStackIcon,
   Cog6ToothIcon, ClockIcon, CreditCardIcon, TrophyIcon,
+  UserGroupIcon, ArrowsRightLeftIcon,
 } from '@heroicons/react/24/outline';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
 
@@ -31,6 +32,8 @@ const moreLinks = [
   { to: '/inventory/warehouse/receive',   label: 'Receive Stock',   icon: ArrowDownTrayIcon },
   { to: '/inventory/warehouse/dispatch',  label: 'Dispatch Stock',  icon: ArrowUpTrayIcon },
   { to: '/inventory/product-requests',    label: 'Product Requests', icon: InboxStackIcon },
+  { to: '/inventory/transfer-requests',   label: 'Stock Requests',  icon: ArrowsRightLeftIcon },
+  { to: '/inventory/partners',            label: 'Business Partners', icon: UserGroupIcon },
   { to: '/inventory/business',            label: 'Business Setup',  icon: Cog6ToothIcon },
   { to: '/inventory/history',             label: 'Business History', icon: ClockIcon },
   { to: '/inventory/subscription',        label: 'Subscription',    icon: CreditCardIcon },
@@ -62,6 +65,8 @@ export function InventoryNav() {
     qc.invalidateQueries({ queryKey: ['inventory-customers'] });
     qc.invalidateQueries({ queryKey: ['inventory-analytics'] });
     qc.invalidateQueries({ queryKey: ['inventory-transfers'] });
+    qc.invalidateQueries({ queryKey: ['inventory-partners'] });
+    qc.invalidateQueries({ queryKey: ['inventory-transfer-requests'] });
     qc.invalidateQueries({ queryKey: ['inventory-best-sellers'] });
     qc.invalidateQueries({ queryKey: ['inventory-past-periods'] });
     qc.invalidateQueries({ queryKey: ['inventory-lifetime-totals'] });

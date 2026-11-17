@@ -9,6 +9,7 @@ export interface InventoryBusiness {
   mode: string;
   my_role: string;
   parent_business: number | null;
+  partner_code: string;
   is_on_trial: boolean;
   is_subscription_active: boolean;
   branch_count: number;

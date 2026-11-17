@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import {
@@ -10,6 +10,14 @@ import {
 import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
+import { useFlutterwaveRedirect, currentPageRedirectUrl } from '../../hooks/useFlutterwaveRedirect';
+
+// This page lists every business at once, so unlike the single-group/single-
+// invoice payment pages, there's no business id already in the URL to know
+// which card a Flutterwave redirect is returning for. Stashed here right
+// before opening the payment link and read back once the browser returns --
+// safe because only one payment can realistically be in flight per tab.
+const PENDING_BIZ_KEY = 'flw_pending_inventory_biz_id';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -80,31 +88,39 @@ function StatusBadge({ biz }: { biz: Business }) {
 
 // ── Business Subscription Card ─────────────────────────────────────────────────
 
-function BusinessSubscriptionCard({ biz }: { biz: Business }) {
+function BusinessSubscriptionCard({
+  biz, incomingTransactionId,
+}: {
+  biz: Business;
+  incomingTransactionId?: string | null;
+}) {
   const qc = useQueryClient();
   const [months, setMonths] = useState(3);
   const [txRef, setTxRef] = useState('');
   const [showVerify, setShowVerify] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [verifyErr, setVerifyErr] = useState('');
+  const autoVerified = useRef(false);
 
   const initiateMutation = useMutation({
     mutationFn: () =>
       api
         .post(`/inventory/businesses/${biz.id}/subscription/initiate/`, {
           months,
+          redirect_url: currentPageRedirectUrl(),
         })
         .then((r) => r.data as { link: string }),
     onSuccess: (data) => {
+      sessionStorage.setItem(PENDING_BIZ_KEY, String(biz.id));
       window.open(data.link, '_blank');
       setShowVerify(true);
     },
   });
 
   const verifyMutation = useMutation({
-    mutationFn: () =>
+    mutationFn: (txId: string) =>
       api.get(`/inventory/businesses/${biz.id}/subscription/verify/`, {
-        params: { transaction_id: txRef.trim() },
+        params: { transaction_id: txId.trim() },
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['inventory-businesses'] });
@@ -117,6 +133,16 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
       setVerifyErr(e.response?.data?.detail ?? 'Something went wrong.');
     },
   });
+
+  // Fires once when the page identifies this specific card as the one
+  // Flutterwave just redirected back for (see PENDING_BIZ_KEY above) --
+  // same auto-verify the manual "Confirm Payment" button below triggers.
+  useEffect(() => {
+    if (!incomingTransactionId || autoVerified.current) return;
+    autoVerified.current = true;
+    setShowVerify(true);
+    verifyMutation.mutate(incomingTransactionId);
+  }, [incomingTransactionId, verifyMutation]);
 
   const total = PRICE_PER_MONTH * months;
 
@@ -253,7 +279,7 @@ function BusinessSubscriptionCard({ biz }: { biz: Business }) {
             <button
               type="button"
               disabled={!txRef.trim() || verifyMutation.isPending}
-              onClick={() => verifyMutation.mutate()}
+              onClick={() => verifyMutation.mutate(txRef)}
               className="flex-1 rounded-lg bg-(--accent) text-white py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {verifyMutation.isPending ? 'Verifying…' : 'Confirm Payment'}
@@ -271,6 +297,13 @@ export default function InventorySubscriptionPage() {
   const { data: businesses = [], isLoading } = useQuery<Business[]>({
     queryKey: ['inventory-businesses'],
     queryFn: () => api.get('/inventory/businesses/').then((r) => r.data),
+  });
+
+  const [incoming, setIncoming] = useState<{ bizId: number; txId: string } | null>(null);
+  useFlutterwaveRedirect((transactionId) => {
+    const bizId = Number(sessionStorage.getItem(PENDING_BIZ_KEY));
+    sessionStorage.removeItem(PENDING_BIZ_KEY);
+    if (bizId) setIncoming({ bizId, txId: transactionId });
   });
 
   return (
@@ -301,7 +334,10 @@ export default function InventorySubscriptionPage() {
         <div className="space-y-6">
           {businesses.map((biz, i) => (
             <div key={biz.id} className="animate-rise-in" style={{ '--delay': `${i * 60}ms` } as React.CSSProperties}>
-              <BusinessSubscriptionCard biz={biz} />
+              <BusinessSubscriptionCard
+                biz={biz}
+                incomingTransactionId={incoming?.bizId === biz.id ? incoming.txId : null}
+              />
             </div>
           ))}
         </div>

@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { getOrgInvoices, getOrgBillingStatus, generateOrgInvoice, payOrgInvoice, verifyOrgInvoice, type ThriftInvoice } from '../../services/billingService';
+import { useFlutterwaveRedirect, currentPageRedirectUrl } from '../../hooks/useFlutterwaveRedirect';
+
+// Multiple invoices share this one page, so there's no single invoice id
+// already in the URL to know which card a Flutterwave redirect is
+// returning for -- stashed here right before opening the payment link,
+// read back once the browser returns.
+const PENDING_INVOICE_KEY = 'flw_pending_thrift_org_invoice_id';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -28,19 +35,30 @@ function StatusBadge({ status }: { status: ThriftInvoice['status'] }) {
 
 // ── Invoice Card ──────────────────────────────────────────────────────────────
 
-function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: string }) {
+function InvoiceCard({
+  invoice, orgUuid, incomingTransactionId,
+}: {
+  invoice: ThriftInvoice;
+  orgUuid: string;
+  incomingTransactionId?: string | null;
+}) {
   const qc = useQueryClient();
-  const [verifyTxId, setVerifyTxId] = useState(invoice.tx_ref ?? '');
+  // Was previously pre-filled with invoice.tx_ref -- that's our own
+  // internal reference, not Flutterwave's real transaction id the verify
+  // endpoint actually needs.
+  const [verifyTxId, setVerifyTxId] = useState('');
   const [showVerify, setShowVerify] = useState(false);
   const [payError, setPayError] = useState('');
   const [verifyError, setVerifyError] = useState('');
   const [verifySuccess, setVerifySuccess] = useState(false);
+  const autoVerified = useRef(false);
 
   const payMutation = useMutation({
-    mutationFn: () => payOrgInvoice(orgUuid, invoice.id),
+    mutationFn: () => payOrgInvoice(orgUuid, invoice.id, currentPageRedirectUrl()),
     onSuccess: (r) => {
       const link = r.payment_link;
       if (link) {
+        sessionStorage.setItem(PENDING_INVOICE_KEY, String(invoice.id));
         window.open(link, '_blank');
         setShowVerify(true);
       }
@@ -51,7 +69,7 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
   });
 
   const verifyMutation = useMutation({
-    mutationFn: () => verifyOrgInvoice(orgUuid, invoice.id, verifyTxId.trim()),
+    mutationFn: (txId: string) => verifyOrgInvoice(orgUuid, invoice.id, txId.trim()),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['thrift-org-billing-invoices', orgUuid] });
       setVerifySuccess(true);
@@ -61,6 +79,13 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
       setVerifyError(e.response?.data?.detail ?? 'Verification failed. Check the transaction ID and try again.');
     },
   });
+
+  useEffect(() => {
+    if (!incomingTransactionId || autoVerified.current) return;
+    autoVerified.current = true;
+    setShowVerify(true);
+    verifyMutation.mutate(incomingTransactionId);
+  }, [incomingTransactionId, verifyMutation]);
 
   const canPay = invoice.status === 'pending' || invoice.status === 'overdue';
 
@@ -130,7 +155,7 @@ function InvoiceCard({ invoice, orgUuid }: { invoice: ThriftInvoice; orgUuid: st
             <button
               type="button"
               disabled={!verifyTxId.trim() || verifyMutation.isPending}
-              onClick={() => verifyMutation.mutate()}
+              onClick={() => verifyMutation.mutate(verifyTxId)}
               className="rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
               {verifyMutation.isPending ? 'Verifying…' : 'Verify'}
@@ -201,6 +226,13 @@ export default function ThriftOrgBillingPage() {
 
   const qc = useQueryClient();
   const [generateError, setGenerateError] = useState('');
+
+  const [incoming, setIncoming] = useState<{ invoiceId: number; txId: string } | null>(null);
+  useFlutterwaveRedirect((transactionId) => {
+    const invoiceId = Number(sessionStorage.getItem(PENDING_INVOICE_KEY));
+    sessionStorage.removeItem(PENDING_INVOICE_KEY);
+    if (invoiceId) setIncoming({ invoiceId, txId: transactionId });
+  });
 
   const { data: invoices, isLoading, error } = useQuery<ThriftInvoice[]>({
     queryKey: ['thrift-org-billing-invoices', orgUuid],
@@ -285,7 +317,12 @@ export default function ThriftOrgBillingPage() {
       ) : (
         <div className="space-y-4">
           {invoices.map(invoice => (
-            <InvoiceCard key={invoice.id} invoice={invoice} orgUuid={orgUuid} />
+            <InvoiceCard
+              key={invoice.id}
+              invoice={invoice}
+              orgUuid={orgUuid}
+              incomingTransactionId={incoming?.invoiceId === invoice.id ? incoming.txId : null}
+            />
           ))}
         </div>
       )}

@@ -11,6 +11,7 @@ import {
 import clsx from 'clsx';
 import api from '../../services/api';
 import useAuthStore from '../../store/useAuthStore';
+import { useFlutterwaveRedirect, currentPageRedirectUrl } from '../../hooks/useFlutterwaveRedirect';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -139,6 +140,7 @@ export default function AjoSubscriptionPage() {
       api
         .post<InitiateResponse>(`/groups/${id}/subscription/initiate/`, {
           cycles: selectedCycles,
+          redirect_url: currentPageRedirectUrl(),
         })
         .then((r) => r.data),
     onSuccess: (data) => {
@@ -148,12 +150,16 @@ export default function AjoSubscriptionPage() {
   });
 
   // ── Verify subscription payment ──────────────────────────────────────────────
+  // Accepts the transaction id as a parameter rather than reading it from
+  // `transactionId` state, so the same mutation serves both the manual
+  // "paste it yourself" input below AND the automatic path below that fires
+  // when Flutterwave redirects straight back to this page.
 
   const verifyMutation = useMutation({
-    mutationFn: () =>
+    mutationFn: (txId: string) =>
       api
         .post<VerifyResponse>(`/groups/${id}/subscription/verify/`, {
-          transaction_id: transactionId.trim(),
+          transaction_id: txId.trim(),
         })
         .then((r) => r.data),
     onSuccess: (data) => {
@@ -171,6 +177,11 @@ export default function AjoSubscriptionPage() {
         d?.detail ?? d?.transaction_id?.[0] ?? d?.non_field_errors?.[0] ?? 'Verification failed. Please try again.',
       );
     },
+  });
+
+  useFlutterwaveRedirect((transactionId) => {
+    setPaymentInitiated(true);
+    verifyMutation.mutate(transactionId);
   });
 
   // ── Loading / error states ───────────────────────────────────────────────────
@@ -367,7 +378,7 @@ export default function AjoSubscriptionPage() {
 
               <button
                 type="button"
-                onClick={() => verifyMutation.mutate()}
+                onClick={() => verifyMutation.mutate(transactionId)}
                 disabled={verifyMutation.isPending || !transactionId.trim()}
                 className={clsx(orangeBtn, 'w-full sm:w-auto')}
               >

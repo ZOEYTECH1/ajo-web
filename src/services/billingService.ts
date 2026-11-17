@@ -25,8 +25,13 @@ export const getOrgBillingStatus = (orgUuid: string): Promise<{ can_generate_inv
 export const generateOrgInvoice = (orgUuid: string) =>
   api.post(`/thrift/orgs/${orgUuid}/billing/invoices/generate/`).then((r) => r.data);
 
-export const payOrgInvoice = (orgUuid: string, invoiceId: number): Promise<{ payment_link?: string }> =>
-  api.post(`/thrift/orgs/${orgUuid}/billing/invoices/${invoiceId}/pay/`).then((r) => r.data);
+export const payOrgInvoice = (orgUuid: string, invoiceId: number, redirectUrl?: string): Promise<{ payment_link?: string }> =>
+  api.post(`/thrift/orgs/${orgUuid}/billing/invoices/${invoiceId}/pay/`, {
+    ...(redirectUrl ? { redirect_url: redirectUrl } : {}),
+  }).then((r) => r.data);
 
-export const verifyOrgInvoice = (orgUuid: string, invoiceId: number, txRef: string) =>
-  api.post(`/thrift/orgs/${orgUuid}/billing/invoices/${invoiceId}/verify/`, { tx_ref: txRef }).then((r) => r.data);
+// Was sending `tx_ref` -- the backend (ThriftOrgInvoiceVerifyView, core/views.py)
+// only ever reads `transaction_id`, so this request always failed with
+// "transaction_id required." no matter what the user typed in.
+export const verifyOrgInvoice = (orgUuid: string, invoiceId: number, transactionId: string) =>
+  api.post(`/thrift/orgs/${orgUuid}/billing/invoices/${invoiceId}/verify/`, { transaction_id: transactionId }).then((r) => r.data);

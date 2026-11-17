@@ -2,7 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Renamed from favicon.svg to favicon-v2.svg deliberately -- some
+         browsers (Chrome in particular) keep a favicon cache keyed by URL
+         that's separate from normal page/HTTP caching and can stay stale
+         for a long time even across incognito windows or deploys. A new
+         filename is the only fix that reliably bypasses every layer of
+         that at once; editing the old file's content again would not. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon-v2.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scribe</title>
 

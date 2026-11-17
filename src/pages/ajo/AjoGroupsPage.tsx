@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { PlusIcon, KeyIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Skeleton, SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 
 interface AjoGroup {
@@ -36,6 +36,62 @@ function StatusBadge({ group }: { group: AjoGroup }) {
     )}>
       {label}
     </span>
+  );
+}
+
+// ── Mobile card list (table is unreadable below tablet width) ─────────────────
+
+function GroupCard({ group }: { group: AjoGroup }) {
+  return (
+    <Link
+      to={`/ajo/${group.id}`}
+      className="block surface-soft rounded-xl p-4 hover:bg-(--primary-tint)/30 transition-colors"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="font-semibold text-(--primary) truncate">{group.name}</p>
+          {group.description && (
+            <p className="text-xs text-(--text-muted) mt-0.5 truncate">{group.description}</p>
+          )}
+        </div>
+        <StatusBadge group={group} />
+      </div>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-sm text-(--text-secondary)">
+        <span className="capitalize">{group.contribution_frequency}</span>
+        <span className="text-(--text-muted)">·</span>
+        <span className="font-medium text-(--text-primary)">{formatCurrency(group.contribution_amount)}</span>
+        <span className="text-(--text-muted)">·</span>
+        <span>{group.member_count} member{group.member_count === 1 ? '' : 's'}</span>
+      </div>
+    </Link>
+  );
+}
+
+function GroupCardSkeleton() {
+  return (
+    <div className="surface-soft rounded-xl p-4">
+      <div className="flex items-start justify-between gap-3">
+        <Skeleton className="h-4 w-2/5" />
+        <Skeleton className="h-5 w-14" rounded />
+      </div>
+      <Skeleton className="h-3 w-3/5 mt-3" />
+    </div>
+  );
+}
+
+function EmptyGroupsMessage({ onJoin, onCreate }: { onJoin: () => void; onCreate: () => void }) {
+  return (
+    <p className="text-sm text-(--text-muted) text-center py-8">
+      You are not a member of any Ajo group yet.
+      <br />
+      <button type="button" onClick={onJoin} className="mt-3 inline-block text-(--primary) font-semibold hover:underline">
+        Join with an invite code
+      </button>
+      {' or '}
+      <button type="button" onClick={onCreate} className="text-(--primary) font-semibold hover:underline">
+        create a new group
+      </button>
+    </p>
   );
 }
 
@@ -375,7 +431,22 @@ export default function AjoGroupsPage() {
         </div>
       )}
 
-      <div className="surface-soft overflow-hidden">
+      {/* Mobile/tablet: card list — the table's 5 columns don't fit a narrow
+          screen and were overflowing off-screen with no scroll affordance. */}
+      <div className="md:hidden space-y-3">
+        {isLoading ? (
+          Array.from({ length: 3 }).map((_, i) => <GroupCardSkeleton key={i} />)
+        ) : data && data.length > 0 ? (
+          data.map((group) => <GroupCard key={group.id} group={group} />)
+        ) : (
+          <div className="surface-soft rounded-xl">
+            <EmptyGroupsMessage onJoin={() => setShowJoin(true)} onCreate={() => setShowCreate(true)} />
+          </div>
+        )}
+      </div>
+
+      {/* Desktop: full table */}
+      <div className="hidden md:block surface-soft overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
@@ -417,24 +488,8 @@ export default function AjoGroupsPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    You are not a member of any Ajo group yet.
-                    <br />
-                    <button
-                      type="button"
-                      onClick={() => setShowJoin(true)}
-                      className="mt-3 text-(--primary) font-semibold hover:underline"
-                    >
-                      Join with an invite code
-                    </button>
-                    {' or '}
-                    <button
-                      type="button"
-                      onClick={() => setShowCreate(true)}
-                      className="text-(--primary) font-semibold hover:underline"
-                    >
-                      create a new group
-                    </button>
+                  <td colSpan={5} className="px-6 py-12">
+                    <EmptyGroupsMessage onJoin={() => setShowJoin(true)} onCreate={() => setShowCreate(true)} />
                   </td>
                 </tr>
               )}

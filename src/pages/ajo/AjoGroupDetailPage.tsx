@@ -39,6 +39,7 @@ interface Group {
   is_on_trial: boolean;
   is_subscription_active: boolean;
   admin: UserSnap;
+  sub_admin: UserSnap | null;
   created_at: string;
   grace_period_days?: number;
 }
@@ -750,11 +751,16 @@ function StartCycleModal({
 function PaymentsTab({
   groupId,
   isAdmin,
+  adminUserId,
+  subAdminUserId,
 }: {
   groupId: number;
   isAdmin: boolean;
+  adminUserId: number;
+  subAdminUserId: number | null;
 }) {
   const qc = useQueryClient();
+  const currentUser = useAuthStore((s) => s.user);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
   const [page, setPage] = useState(1);
   const [rejectTarget, setRejectTarget] = useState<number | null>(null);
@@ -861,12 +867,23 @@ function PaymentsTab({
         );
       },
     },
-    ...(isAdmin
+    // Shown to the admin for everyone else's payments, and separately to
+    // this round's sub-admin for the admin's own payment (self-review is
+    // never allowed — see PaymentReviewView, core/views.py). Eligibility is
+    // decided per row below, not just once for the whole column, since
+    // which role can act depends on whose payment each specific row is.
+    ...(isAdmin || (subAdminUserId !== null && currentUser?.id === subAdminUserId)
       ? [{
           key: 'id',
           header: 'Actions',
           render: (id: unknown, row: Record<string, unknown>) => {
             if ((row.status as string) !== 'pending') return <span className="text-xs text-(--text-muted)">—</span>;
+            const submittedById = (row.submitted_by as { id: number } | undefined)?.id;
+            const isAdminsOwnPayment = submittedById === adminUserId;
+            const viewerCanReview = isAdminsOwnPayment
+              ? currentUser?.id === subAdminUserId
+              : isAdmin;
+            if (!viewerCanReview) return <span className="text-xs text-(--text-muted)">—</span>;
             const payId = id as number;
             const approving = isReviewing(payId, 'approve');
             return (
@@ -2092,9 +2109,26 @@ export default function AjoGroupDetailPage() {
   // mobile's equivalent screen never gated on role at all.
   const canSubmit = !!activeCycle && !myActivePay;
 
+  // The admin can no longer review their own payment (PaymentReviewView,
+  // core/views.py) -- counting it in "awaiting your review" told the admin
+  // to go act on something they're not allowed to touch. Excluded here;
+  // it's surfaced to the sub-admin instead, below.
   const pendingPaymentsCount = activeCycle
-    ? payments.filter((p) => p.cycle_number === activeCycle.cycle_number && p.status === 'pending').length
+    ? payments.filter((p) =>
+        p.cycle_number === activeCycle.cycle_number
+        && p.status === 'pending'
+        && p.submitted_by.id !== group?.admin.id,
+      ).length
     : 0;
+
+  const isSubAdmin = !!group?.sub_admin && currentUser?.id === group.sub_admin.id;
+  const adminOwnPendingPayment = activeCycle
+    ? payments.find((p) =>
+        p.cycle_number === activeCycle.cycle_number
+        && p.status === 'pending'
+        && p.submitted_by.id === group?.admin.id,
+      )
+    : undefined;
 
   const tabs: { key: TabKey; label: string; count?: number }[] = [
     { key: 'payments', label: 'Payments', count: payments.length },
@@ -2300,6 +2334,24 @@ export default function AjoGroupDetailPage() {
         </div>
       )}
 
+      {/* Admin's own pending payment — sub-admin only, since the admin can't review it themselves */}
+      {isSubAdmin && adminOwnPendingPayment && (
+        <div className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
+          <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600 shrink-0" />
+          <p className="text-sm text-yellow-800">
+            <span className="font-semibold">{group.admin.first_name}'s payment</span>{' '}
+            is awaiting your review — you were randomly picked this round since the admin can't approve their own.{' '}
+            <button
+              type="button"
+              onClick={() => setActiveTab('payments')}
+              className="underline font-semibold hover:text-yellow-900"
+            >
+              Review now
+            </button>
+          </p>
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) overflow-hidden">
         <div className="border-b border-(--border) flex overflow-x-auto">
@@ -2325,7 +2377,12 @@ export default function AjoGroupDetailPage() {
 
         <div className="p-6">
           {activeTab === 'payments' && (
-            <PaymentsTab groupId={Number(id)} isAdmin={isAdmin} />
+            <PaymentsTab
+              groupId={Number(id)}
+              isAdmin={isAdmin}
+              adminUserId={group.admin.id}
+              subAdminUserId={group.sub_admin?.id ?? null}
+            />
           )}
           {activeTab === 'members' && (
             <MembersTab

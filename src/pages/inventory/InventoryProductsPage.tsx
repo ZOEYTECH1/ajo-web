@@ -5,12 +5,13 @@ import clsx from 'clsx';
 import {
   PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowUpIcon,
   ChartBarIcon, ChevronLeftIcon, ChevronRightIcon,
-  ClockIcon, MagnifyingGlassIcon,
+  ClockIcon, MagnifyingGlassIcon, PhotoIcon,
 } from '@heroicons/react/24/outline';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
 import { SkeletonTable } from '../../components/ui/Skeleton';
 import api from '../../services/api';
 import { useDebounce } from '../../hooks/useDebounce';
+import { cloudinaryUrl } from '../../lib/cloudinary';
 
 interface InventoryMovement {
   id: number;
@@ -88,7 +89,7 @@ type ProductForm = {
 function ProductModal({
   initial, catId, prodId, onClose,
 }: {
-  initial?: Partial<ProductForm>;
+  initial?: Partial<ProductForm> & { image_url?: string | null };
   catId: string;
   prodId?: number;
   onClose: () => void;
@@ -107,8 +108,32 @@ function ProductModal({
   });
   const [err, setErr] = useState('');
 
+  // Image is uploaded as a separate multipart request after the product
+  // itself is created/updated via JSON -- same two-step pattern mobile
+  // already uses (text fields first, then PATCH just the file), since the
+  // rest of this form's fields are plain JSON, not multipart.
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    initial?.image_url ? cloudinaryUrl(initial.image_url, 128, 128) : null,
+  );
+  const [removeImage, setRemoveImage] = useState(false);
+
+  function handleImagePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImageFile(file);
+    setRemoveImage(false);
+    setImagePreview(URL.createObjectURL(file));
+  }
+
+  function handleImageClear() {
+    setImageFile(null);
+    setImagePreview(null);
+    setRemoveImage(true);
+  }
+
   const mutation = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       const body = {
         name: form.name.trim(),
         price: form.price,
@@ -119,9 +144,21 @@ function ProductModal({
         expiry_date: form.expiry_date || null,
         discount_percent: Number(form.discount_percent || 0),
       };
-      return isEdit
-        ? api.patch(`/inventory/products/${prodId}/`, body)
-        : api.post(`/inventory/categories/${catId}/products/`, body);
+      const res = isEdit
+        ? await api.patch(`/inventory/products/${prodId}/`, body)
+        : await api.post(`/inventory/categories/${catId}/products/`, body);
+
+      const productId = isEdit ? prodId : res.data.id;
+      if (imageFile) {
+        const fd = new FormData();
+        fd.append('image', imageFile);
+        await api.patch(`/inventory/products/${productId}/`, fd, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      } else if (removeImage && isEdit) {
+        await api.patch(`/inventory/products/${productId}/`, { image: null });
+      }
+      return res;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['inventory-products', catId] });
@@ -151,6 +188,24 @@ function ProductModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <Field label="Product Name *">
             <input type="text" value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} placeholder="e.g. Coca-Cola 50cl" className={inputCls} />
+          </Field>
+          <Field label="Product Photo (optional)">
+            <div className="flex items-center gap-3">
+              {imagePreview ? (
+                <img src={imagePreview} alt="" className="h-16 w-16 rounded-lg object-cover border border-(--border)" />
+              ) : (
+                <div className="h-16 w-16 rounded-lg border border-dashed border-(--border) flex items-center justify-center text-(--text-muted)">
+                  <PhotoIcon className="h-6 w-6" aria-hidden="true" />
+                </div>
+              )}
+              <label className="cursor-pointer rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:text-(--text-primary) px-3 py-2 text-sm font-semibold">
+                {imagePreview ? 'Change photo' : 'Add photo'}
+                <input type="file" accept="image/*" onChange={handleImagePick} className="hidden" />
+              </label>
+              {imagePreview && (
+                <button type="button" onClick={handleImageClear} className="text-sm text-red-600 hover:underline">Remove</button>
+              )}
+            </div>
           </Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Selling Price (NGN) *">
@@ -596,6 +651,15 @@ export default function InventoryProductsPage() {
               ) : filteredData.length > 0 ? (
                 filteredData.map(p => (
                   <tr key={p.id} className={clsx('hover:bg-(--primary-tint)/30', p.quantity === 0 && 'bg-red-50/30')}>
+                    <td className="px-4 py-3">
+                      {p.image_url ? (
+                        <img src={cloudinaryUrl(p.image_url, 64, 64)} alt="" className="h-10 w-10 rounded-lg object-cover border border-(--border)" />
+                      ) : (
+                        <div className="h-10 w-10 rounded-lg border border-dashed border-(--border) flex items-center justify-center text-(--text-muted)">
+                          <PhotoIcon className="h-4 w-4" aria-hidden="true" />
+                        </div>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-sm font-semibold text-(--text-primary)">
                       {p.name}
                       {p.barcode && <span className="block text-xs text-(--text-muted)">{p.barcode}</span>}
@@ -688,6 +752,7 @@ export default function InventoryProductsPage() {
             low_stock_threshold: String(editProduct.low_stock_threshold),
             expiry_date: editProduct.expiry_date ?? '',
             discount_percent: String(editProduct.discount_percent),
+            image_url: editProduct.image_url,
           }}
           catId={catId}
           prodId={editProduct.id}

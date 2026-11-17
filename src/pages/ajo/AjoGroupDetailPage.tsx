@@ -2044,7 +2044,13 @@ export default function AjoGroupDetailPage() {
         (p) => p.submitted_by.id === currentUser?.id && p.cycle_number === activeCycle.cycle_number,
       )
     : undefined;
-  const canSubmit = !!activeCycle && !isAdmin && !myActivePay;
+  // The admin is auto-enrolled as an approved member on group creation and
+  // contributes like everyone else (the subscription screen's own copy says
+  // "collect from each of your members, including yourself") -- the backend
+  // (PaymentView.post, core/views.py) never excludes the admin, it only
+  // checks for approved membership. Excluding !isAdmin here was web-only;
+  // mobile's equivalent screen never gated on role at all.
+  const canSubmit = !!activeCycle && !myActivePay;
 
   const pendingPaymentsCount = activeCycle
     ? payments.filter((p) => p.cycle_number === activeCycle.cycle_number && p.status === 'pending').length

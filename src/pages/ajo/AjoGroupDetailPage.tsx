@@ -464,10 +464,12 @@ function RejectModal({
   open,
   onConfirm,
   onCancel,
+  loading = false,
 }: {
   open: boolean;
   onConfirm: (reason: string) => void;
   onCancel: () => void;
+  loading?: boolean;
 }) {
   const [reason, setReason] = useState('');
   // The modal now stays mounted (Modal's Transition handles show/hide), so
@@ -491,13 +493,15 @@ function RejectModal({
           className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
         />
         <div className="flex gap-3">
-          <button type="button" onClick={onCancel} className={cancelBtn}>Cancel</button>
+          <button type="button" onClick={onCancel} disabled={loading} className={`${cancelBtn} disabled:opacity-50`}>Cancel</button>
           <button
             type="button"
             onClick={() => onConfirm(reason.trim())}
-            className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700"
+            disabled={loading}
+            className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 inline-flex items-center justify-center gap-2"
           >
-            Reject
+            {loading && <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>}
+            {loading ? 'Rejecting…' : 'Reject'}
           </button>
         </div>
       </div>
@@ -755,6 +759,7 @@ function PaymentsTab({
   const [page, setPage] = useState(1);
   const [rejectTarget, setRejectTarget] = useState<number | null>(null);
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+  const [reviewError, setReviewError] = useState('');
 
   const { data, isLoading } = useQuery<PaginatedPayments>({
     queryKey: ['ajo-group-payments-paged', String(groupId), filter, page],
@@ -768,12 +773,36 @@ function PaymentsTab({
   const reviewMutation = useMutation({
     mutationFn: ({ paymentId, action, reason }: { paymentId: number; action: string; reason?: string }) =>
       api.patch(`/groups/${groupId}/payments/${paymentId}/`, { action, reason }),
+    onMutate: () => setReviewError(''),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ajo-group-payments-paged', String(groupId)] });
       qc.invalidateQueries({ queryKey: ['ajo-group-payments', String(groupId)] });
       setRejectTarget(null);
     },
+    // Previously had no onError at all -- a failed approve/reject (expired
+    // session, payment already reviewed by a race, network error, etc.)
+    // just did nothing visible: no message, no retry prompt, the button
+    // simply stopped looking busy. Looked indistinguishable from "the
+    // button doesn't work."
+    onError: (e: any) => {
+      setReviewError(e?.response?.data?.detail ?? 'Could not update this payment. Please try again.');
+    },
   });
+
+  // reviewMutation is one shared mutation for the whole table (so two
+  // reviews can never race against each other updating the same payment
+  // list), which previously meant disabled={reviewMutation.isPending} was
+  // applied identically to every row's buttons -- clicking Approve on one
+  // payment visually disabled every other row's buttons too, with nothing
+  // to show *which* action was actually in flight. Looked like clicking one
+  // row's button was acting on all of them. `variables` (the last mutate()
+  // call's arguments) says exactly which payment+action is the real one in
+  // flight, so only that specific button gets the spinner -- others just
+  // go inert, not identically "busy."
+  const isReviewing = (paymentId: number, action: 'approve' | 'reject') =>
+    reviewMutation.isPending
+    && reviewMutation.variables?.paymentId === paymentId
+    && reviewMutation.variables?.action === action;
 
   const pagePayments = data?.results ?? [];
   const totalCount = data?.count ?? 0;
@@ -839,6 +868,7 @@ function PaymentsTab({
           render: (id: unknown, row: Record<string, unknown>) => {
             if ((row.status as string) !== 'pending') return <span className="text-xs text-(--text-muted)">—</span>;
             const payId = id as number;
+            const approving = isReviewing(payId, 'approve');
             return (
               <div className="flex gap-2">
                 <button
@@ -847,7 +877,10 @@ function PaymentsTab({
                   disabled={reviewMutation.isPending}
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 disabled:opacity-50 transition-colors"
                 >
-                  <CheckCircleIcon className="h-3.5 w-3.5" /> Approve
+                  {approving
+                    ? <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                    : <CheckCircleIcon className="h-3.5 w-3.5" />}
+                  {approving ? 'Approving…' : 'Approve'}
                 </button>
                 <button
                   type="button"
@@ -866,6 +899,12 @@ function PaymentsTab({
 
   return (
     <>
+      {reviewError && (
+        <div role="alert" className="mb-4 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
+          {reviewError}
+        </div>
+      )}
+
       {/* Filter pills */}
       <div className="flex gap-2 mb-4 flex-wrap">
         {filterPills.map(({ key, label, count }) => (
@@ -955,6 +994,7 @@ function PaymentsTab({
         open={rejectTarget !== null}
         onConfirm={(reason) => reviewMutation.mutate({ paymentId: rejectTarget!, action: 'reject', reason })}
         onCancel={() => setRejectTarget(null)}
+        loading={rejectTarget !== null && isReviewing(rejectTarget, 'reject')}
       />
 
       {receiptUrl && (

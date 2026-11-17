@@ -1876,7 +1876,7 @@ function HistoryTab({
                 </div>
               </div>
 
-              <div className="flex items-center gap-6">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                 {recipientName && (
                   <div>
                     <p className="text-xs text-(--text-secondary)">Recipient</p>

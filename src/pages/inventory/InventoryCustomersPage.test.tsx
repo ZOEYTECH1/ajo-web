@@ -74,10 +74,14 @@ describe('Customer credit history modal', () => {
     await user.click(screen.getByTitle('Credit history'));
 
     await waitFor(() => expect(screen.getByText(/Credit History/)).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByText('Bread x2')).toBeInTheDocument());
+    // The shared Table component renders both a mobile card view and the
+    // desktop table at once (CSS media queries pick one — jsdom has no
+    // viewport, so both are present in the DOM), so entries legitimately
+    // appear twice here.
+    await waitFor(() => expect(screen.getAllByText('Bread x2').length).toBeGreaterThan(0));
 
     const dialog = screen.getByRole('dialog');
-    expect(within(dialog).getByText('Charge')).toBeInTheDocument();
+    expect(within(dialog).getAllByText('Charge').length).toBeGreaterThan(0);
   });
 
   it('shows an empty state when the customer has no credit activity', async () => {
@@ -94,7 +98,10 @@ describe('Customer credit history modal', () => {
     await waitFor(() => expect(screen.getByText('Amaka')).toBeInTheDocument());
     await user.click(screen.getByTitle('Credit history'));
 
-    await waitFor(() => expect(screen.getByText('No credit activity yet.')).toBeInTheDocument());
+    // Appears once in the mobile card view and once in the desktop table
+    // (both render in jsdom, which has no viewport to resolve the
+    // responsive CSS that normally shows only one).
+    await waitFor(() => expect(screen.getAllByText('No credit activity yet.').length).toBeGreaterThan(0));
   });
 
   it('shows an error banner if the history request fails', async () => {

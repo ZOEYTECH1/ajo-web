@@ -2193,32 +2193,42 @@ export default function AjoGroupDetailPage() {
               )}
             </div>
 
-            {/* Invite code section — admin only */}
+            {/* Invite code section — admin only. The code field is the
+                dominant element (label above, like the stats grid below);
+                Copy/Regenerate are icon-only buttons beside it rather than
+                full text pills, so three same-weight chips don't compete
+                for the same line -- the code doesn't need "Copy" spelled
+                out in words when the icon is sitting right next to it. */}
             {isAdmin && (
-              <div className="mt-3 flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 font-mono tracking-widest text-(--text-secondary) text-sm bg-(--bg) border border-(--border) rounded-lg px-3 py-1.5">
-                  <KeyIcon className="h-4 w-4 text-(--text-muted)" />
-                  {group.invite_code}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => copyInviteCode(group.invite_code)}
-                  title="Copy invite code"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30"
-                >
-                  <ClipboardDocumentIcon className="h-3.5 w-3.5" />
-                  {copied ? 'Copied!' : 'Copy'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => regenerateMutation.mutate()}
-                  disabled={regenerateMutation.isPending}
-                  title="Regenerate invite code"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30 disabled:opacity-50 transition-colors"
-                >
-                  <ArrowPathIcon className={clsx('h-3.5 w-3.5', regenerateMutation.isPending && 'animate-spin')} />
-                  Regenerate
-                </button>
+              <div className="mt-3">
+                <p className="text-xs text-(--text-secondary) mb-1">Invite Code</p>
+                <div className="flex items-center gap-2">
+                  <span className="flex-1 min-w-0 inline-flex items-center gap-1.5 font-mono tracking-widest text-(--text-secondary) text-sm bg-(--bg) border border-(--border) rounded-lg px-3 py-1.5">
+                    <KeyIcon className="h-4 w-4 text-(--text-muted) shrink-0" />
+                    <span className="truncate">{group.invite_code}</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => copyInviteCode(group.invite_code)}
+                    title={copied ? 'Copied!' : 'Copy invite code'}
+                    aria-label="Copy invite code"
+                    className="shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30"
+                  >
+                    {copied
+                      ? <CheckCircleIcon className="h-4 w-4 text-green-600" />
+                      : <ClipboardDocumentIcon className="h-4 w-4" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => regenerateMutation.mutate()}
+                    disabled={regenerateMutation.isPending}
+                    title="Regenerate invite code"
+                    aria-label="Regenerate invite code"
+                    className="shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-50 transition-colors"
+                  >
+                    <ArrowPathIcon className={clsx('h-4 w-4', regenerateMutation.isPending && 'animate-spin')} />
+                  </button>
+                </div>
               </div>
             )}
           </div>

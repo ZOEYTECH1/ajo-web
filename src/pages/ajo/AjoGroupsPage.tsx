@@ -163,8 +163,11 @@ function CollectionDayPicker({
       </legend>
       <p className="text-xs text-(--text-muted) mb-2">
         {frequency === 'weekly'
-          ? 'Which day of the week should members pay by?'
-          : 'Which day of the month should members pay by?'}
+          ? 'Which day of the week should members pay by? '
+          : 'Which day of the month should members pay by? '}
+        <span className="italic">
+          Leave blank to default to {frequency === 'weekly' ? 'Monday' : 'the 1st of the month'}.
+        </span>
       </p>
       {frequency === 'weekly' ? (
         <div className="grid grid-cols-7 gap-1.5">

@@ -97,6 +97,96 @@ function EmptyGroupsMessage({ onJoin, onCreate }: { onJoin: () => void; onCreate
 
 // ── Create Group Modal ────────────────────────────────────────────────────────
 
+// Mon=0 … Sun=6 — matches the backend's own weekday encoding exactly
+// (Group.compute_cycle_end_date / CreateGroupSerializer.validate_collection_day),
+// not an arbitrary frontend choice.
+const WEEKDAYS = [
+  { value: 0, label: 'Mon' },
+  { value: 1, label: 'Tue' },
+  { value: 2, label: 'Wed' },
+  { value: 3, label: 'Thu' },
+  { value: 4, label: 'Fri' },
+  { value: 5, label: 'Sat' },
+  { value: 6, label: 'Sun' },
+];
+const MONTH_DAYS = Array.from({ length: 28 }, (_, i) => i + 1);
+
+function DayPickerButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={clsx(
+        'rounded-lg py-2 text-xs font-semibold transition-colors',
+        active
+          ? 'bg-(--accent) text-white'
+          : 'bg-(--bg) text-(--text-secondary) border border-(--border) hover:bg-(--primary-tint)/30',
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+// Which day contributions are due -- a free-text number whose valid range
+// AND meaning (weekday vs. day-of-month) silently changes with frequency is
+// error-prone to type correctly. A tap-to-select grid removes the need to
+// know the encoding at all; not shown for daily, where no single day applies.
+function CollectionDayPicker({
+  frequency,
+  value,
+  onChange,
+}: {
+  frequency: string;
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  if (frequency === 'daily') return null;
+
+  function toggle(day: number) {
+    onChange(value === String(day) ? '' : String(day));
+  }
+
+  return (
+    <fieldset>
+      <legend className="block text-sm font-semibold text-(--text-secondary) mb-1">
+        Collection Day (optional)
+      </legend>
+      <p className="text-xs text-(--text-muted) mb-2">
+        {frequency === 'weekly'
+          ? 'Which day of the week should members pay by?'
+          : 'Which day of the month should members pay by?'}
+      </p>
+      {frequency === 'weekly' ? (
+        <div className="grid grid-cols-7 gap-1.5">
+          {WEEKDAYS.map((d) => (
+            <DayPickerButton key={d.value} active={value === String(d.value)} onClick={() => toggle(d.value)}>
+              {d.label}
+            </DayPickerButton>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-7 gap-1.5">
+          {MONTH_DAYS.map((d) => (
+            <DayPickerButton key={d} active={value === String(d)} onClick={() => toggle(d)}>
+              {d}
+            </DayPickerButton>
+          ))}
+        </div>
+      )}
+    </fieldset>
+  );
+}
+
 function CreateGroupModal({ onClose }: { onClose: () => void }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({
@@ -174,7 +264,14 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             <select
               id="cg-frequency"
               value={form.contribution_frequency}
-              onChange={(e) => set('contribution_frequency', e.target.value)}
+              onChange={(e) => {
+                // collection_day means something different per frequency
+                // (weekday vs. day-of-month) -- clear it rather than let a
+                // value picked under one frequency silently carry into
+                // another, where the same number means a different day.
+                set('contribution_frequency', e.target.value);
+                set('collection_day', '');
+              }}
               className={inputCls}
             >
               <option value="daily">Daily</option>
@@ -195,18 +292,11 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             />
           </Field>
 
-          <Field label="Collection Day (optional)" id="cg-collection-day">
-            <input
-              id="cg-collection-day"
-              type="number"
-              min="0"
-              max="31"
-              value={form.collection_day}
-              onChange={(e) => set('collection_day', e.target.value)}
-              placeholder="1–28 for monthly, 0–6 (Mon=0) for weekly"
-              className={inputCls}
-            />
-          </Field>
+          <CollectionDayPicker
+            frequency={form.contribution_frequency}
+            value={form.collection_day}
+            onChange={(val) => set('collection_day', val)}
+          />
 
           <Field label="Grace Period (days, 0–30)" id="cg-grace">
             <input
@@ -222,7 +312,14 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
           </Field>
 
           <Field label="First Cycle Start (optional)" id="cg-start">
-            <input id="cg-start" type="date" value={form.start_date} onChange={(e) => set('start_date', e.target.value)} className={inputCls} />
+            <input
+              id="cg-start"
+              type="date"
+              value={form.start_date}
+              min={new Date().toISOString().slice(0, 10)}
+              onChange={(e) => set('start_date', e.target.value)}
+              className={inputCls}
+            />
             <p className="text-xs text-(--text-muted) mt-1">
               The cycle's end date is set automatically based on the contribution frequency and collection day.
             </p>

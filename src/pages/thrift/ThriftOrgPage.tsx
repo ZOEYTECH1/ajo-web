@@ -298,7 +298,7 @@ function ApproveRemovalModal({
       {request && (
         <div className="space-y-4">
           {/* Member summary */}
-          <div className="rounded-xl bg-(--bg) border border-(--border) p-4 grid grid-cols-2 gap-3 text-sm">
+          <div className="rounded-xl bg-(--bg) border border-(--border) p-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div><p className="text-(--text-muted) text-xs font-medium">Member</p><p className="font-semibold text-(--text-primary) mt-0.5">{request.member_name}</p></div>
             <div><p className="text-(--text-muted) text-xs font-medium">Group</p><p className="font-semibold text-(--text-primary) mt-0.5">{request.group_name}</p></div>
             <div><p className="text-(--text-muted) text-xs font-medium">Contribution / period</p><p className="font-semibold text-(--text-primary) mt-0.5">{formatCurrency(request.personal_amount)}</p></div>
@@ -308,7 +308,7 @@ function ApproveRemovalModal({
           {/* Payment summary */}
           <div>
             <p className="text-xs font-semibold text-(--text-secondary) uppercase tracking-wide mb-2">Payment history</p>
-            <div className="grid grid-cols-4 gap-2 text-center text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
               <div className="rounded-lg bg-(--bg) border border-(--border) p-2">
                 <p className="font-bold text-(--text-primary) text-base">{request.payment_summary.total}</p>
                 <p className="text-(--text-muted) mt-0.5">Total</p>
@@ -450,7 +450,7 @@ function CreateGroupModal({
             <input type="text" value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Apapa Market Monthly Thrift" className={inputCls} />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Payout Cycle *</label>
               <select value={form.frequency} onChange={e => set('frequency', e.target.value)} className={inputCls}>
@@ -469,7 +469,7 @@ function CreateGroupModal({
           </div>
 
           {form.cycle_type === 'fixed' && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Start Date *</label>
                 <input type="date" value={form.start_date} onChange={e => set('start_date', e.target.value)} className={inputCls} />
@@ -1001,7 +1001,7 @@ export default function ThriftOrgPage() {
               </span>
             )}
           </h2>
-          <div className="flex gap-1">
+          <div className="flex gap-1 flex-wrap">
             {(['pending', 'approved', 'rejected'] as const).map(f => (
               <button
                 key={f}
@@ -1048,7 +1048,7 @@ export default function ThriftOrgPage() {
                 </div>
 
                 {/* Payment mini-stats */}
-                <div className="grid grid-cols-4 gap-2 text-center text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
                   <div className="rounded-lg bg-(--bg) border border-(--border) p-2">
                     <p className="font-bold text-(--text-primary)">{req.payment_summary.total}</p>
                     <p className="text-(--text-muted)">Total</p>

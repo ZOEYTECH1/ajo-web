@@ -155,7 +155,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
           </Field>
 
           {form.cycle_type === 'fixed' && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Field label="Start Date *">
                 <input type="date" value={form.start_date} onChange={(e) => set('start_date', e.target.value)} className={inputCls} />
               </Field>

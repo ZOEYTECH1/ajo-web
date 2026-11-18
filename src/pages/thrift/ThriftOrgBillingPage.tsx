@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { Table, type Column } from '../../components/ui/Table';
 import { getOrgInvoices, getOrgBillingStatus, generateOrgInvoice, payOrgInvoice, verifyOrgInvoice, type ThriftInvoice } from '../../services/billingService';
 import { useFlutterwaveRedirect, currentPageRedirectUrl } from '../../hooks/useFlutterwaveRedirect';
 
@@ -32,6 +33,13 @@ function StatusBadge({ status }: { status: ThriftInvoice['status'] }) {
     </span>
   );
 }
+
+const LINE_ITEM_COLS: Column<Record<string, unknown>>[] = [
+  { key: 'group_name', header: 'Group' },
+  { key: 'member_count', header: 'Members' },
+  { key: 'rate_percent', header: 'Rate' },
+  { key: 'fee', header: 'Fee', render: (v) => formatCurrency(v as string) },
+];
 
 // ── Invoice Card ──────────────────────────────────────────────────────────────
 
@@ -169,28 +177,11 @@ function InvoiceCard({
 
       {/* Line items */}
       {invoice.line_items.length > 0 && (
-        <div className="border-t border-(--border)">
-          <table className="min-w-full divide-y divide-(--border)">
-            <thead className="bg-(--bg)">
-              <tr>
-                {['Group', 'Members', 'Rate', 'Fee'].map(h => (
-                  <th key={h} className="px-5 py-2.5 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-(--border)">
-              {invoice.line_items.map((item, idx) => (
-                <tr key={idx} className="hover:bg-(--primary-tint)/20 transition-colors">
-                  <td className="px-5 py-3 text-sm text-(--text-primary) font-medium">{item.group_name}</td>
-                  <td className="px-5 py-3 text-sm text-(--text-secondary)">{item.member_count}</td>
-                  <td className="px-5 py-3 text-sm text-(--text-secondary)">{item.rate_percent}</td>
-                  <td className="px-5 py-3 text-sm font-semibold text-(--text-primary)">{formatCurrency(item.fee)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="border-t border-(--border) p-5 pt-4">
+          <Table
+            columns={LINE_ITEM_COLS}
+            data={invoice.line_items as unknown as Record<string, unknown>[]}
+          />
         </div>
       )}
     </div>

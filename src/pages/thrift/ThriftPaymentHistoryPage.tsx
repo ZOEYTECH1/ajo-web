@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Table, type Column } from '../../components/ui/Table';
 import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 
@@ -54,47 +54,25 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function PaymentTable({ payments, loading, showMember }: { payments: ThriftPaymentHistoryItem[]; loading: boolean; showMember: boolean }) {
-  const headers = ['Group', ...(showMember ? ['Member'] : []), 'Period Date', 'Amount', 'Marked At', 'Status'];
-  return (
-    <div className="surface-soft overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-(--border)">
-          <thead className="bg-(--bg)">
-            <tr>
-              {headers.map(h => (
-                <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-(--border)">
-            {loading ? (
-              <SkeletonTable rows={4} cols={headers.length} />
-            ) : payments.length === 0 ? (
-              <tr>
-                <td colSpan={headers.length} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                  No payments found.
-                </td>
-              </tr>
-            ) : (
-              payments.map(p => (
-                <tr key={p.id} className="hover:bg-(--primary-tint)/30 transition-colors">
-                  <td className="px-6 py-4 text-sm font-medium">
-                    <Link to={`/thrift/${p.group_uuid}`} className="text-(--primary) hover:underline">{p.group_name}</Link>
-                  </td>
-                  {showMember && <td className="px-6 py-4 text-sm text-(--text-secondary)">{p.member_name}</td>}
-                  <td className="px-6 py-4 text-sm text-(--text-secondary)">{fmt(p.period_date)}</td>
-                  <td className="px-6 py-4 text-sm text-(--text-secondary)">{formatCurrency(p.amount)}</td>
-                  <td className="px-6 py-4 text-sm text-(--text-secondary)">{fmt(p.marked_at)}</td>
-                  <td className="px-6 py-4"><StatusBadge status={p.status} /></td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+function buildColumns(showMember: boolean): Column<Record<string, unknown>>[] {
+  return [
+    {
+      key: 'group_name',
+      header: 'Group',
+      render: (v, row) => (
+        <Link to={`/thrift/${row.group_uuid as string}`} className="text-(--primary) hover:underline font-medium">
+          {v as string}
+        </Link>
+      ),
+    },
+    ...(showMember
+      ? [{ key: 'member_name', header: 'Member' } as Column<Record<string, unknown>>]
+      : []),
+    { key: 'period_date', header: 'Period Date', render: (v) => fmt(v as string) },
+    { key: 'amount', header: 'Amount', render: (v) => formatCurrency(v as string) },
+    { key: 'marked_at', header: 'Marked At', render: (v) => fmt(v as string) },
+    { key: 'status', header: 'Status', render: (v) => <StatusBadge status={v as string} /> },
+  ];
 }
 
 type ViewTab = 'payer' | 'collector';
@@ -158,10 +136,11 @@ export default function ThriftPaymentHistoryPage() {
         </button>
       </div>
 
-      <PaymentTable
-        payments={activePayments}
+      <Table
+        columns={buildColumns(activeTab === 'collector')}
+        data={activePayments as unknown as Record<string, unknown>[]}
         loading={activeLoading}
-        showMember={activeTab === 'collector'}
+        emptyMessage="No payments found."
       />
 
       <Pagination

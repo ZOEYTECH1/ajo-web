@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import { PlusIcon, KeyIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Table, type Column } from '../../components/ui/Table';
 import api from '../../services/api';
 import useAuthStore from '../../store/useAuthStore';
 
@@ -43,6 +43,32 @@ function SubscriptionBadge({ group }: { group: ThriftGroup }) {
     </span>
   );
 }
+
+const GROUP_COLS: Column<Record<string, unknown>>[] = [
+  {
+    key: 'name',
+    header: 'Group Name',
+    render: (v, row) => (
+      <Link to={`/thrift/${row.uuid as string}`} className="text-(--primary) hover:underline font-semibold">
+        {v as string}
+      </Link>
+    ),
+  },
+  { key: 'frequency', header: 'Payout Cycle', render: (v) => <span className="capitalize">{v as string}</span> },
+  { key: 'cycle_type', header: 'Cycle Type', render: (v) => <span className="capitalize">{v as string}</span> },
+  { key: 'member_count', header: 'Members' },
+  {
+    key: 'collector',
+    header: 'Collector',
+    render: (v) => (v as ThriftGroup['collector'])?.full_name ?? '—',
+  },
+  {
+    key: 'organization',
+    header: 'Organisation',
+    render: (v) => (v as ThriftGroup['organization'])?.name ?? '—',
+  },
+  { key: 'id', header: 'Status', render: (_, row) => <SubscriptionBadge group={row as unknown as ThriftGroup} /> },
+];
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
@@ -352,52 +378,24 @@ export default function ThriftPage() {
         </div>
       )}
 
-      <div className="surface-soft overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-(--border)">
-            <thead className="bg-(--bg)">
-              <tr>
-                {['Group Name', 'Payout Cycle', 'Cycle Type', 'Members', 'Collector', 'Organisation', 'Status'].map(h => (
-                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-(--border)">
-              {isLoading ? (
-                <SkeletonTable rows={5} cols={7} />
-              ) : data && data.length > 0 ? (
-                data.map(group => (
-                  <tr key={group.uuid} className="hover:bg-(--primary-tint)/30">
-                    <td className="px-6 py-4 text-sm font-medium">
-                      <Link to={`/thrift/${group.uuid}`} className="text-(--primary) hover:underline">{group.name}</Link>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary) capitalize">{group.frequency}</td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary) capitalize">{group.cycle_type}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{group.member_count}</td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{group.collector?.full_name ?? '—'}</td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{group.organization?.name ?? '—'}</td>
-                    <td className="px-6 py-4"><SubscriptionBadge group={group} /></td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    You are not a member of any thrift group yet.
-                    <br />
-                    <button type="button" onClick={() => setShowJoin(true)} className="mt-3 text-(--primary) font-semibold hover:underline">
-                      Join with an invite code
-                    </button>
-                    {' or '}
-                    <button type="button" onClick={() => setShowCreate(true)} className="text-(--primary) font-semibold hover:underline">
-                      create a new group
-                    </button>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Table
+        columns={GROUP_COLS}
+        data={groups as unknown as Record<string, unknown>[]}
+        loading={isLoading}
+        emptyMessage={
+          <>
+            You are not a member of any thrift group yet.
+            <br />
+            <button type="button" onClick={() => setShowJoin(true)} className="mt-3 text-(--primary) font-semibold hover:underline">
+              Join with an invite code
+            </button>
+            {' or '}
+            <button type="button" onClick={() => setShowCreate(true)} className="text-(--primary) font-semibold hover:underline">
+              create a new group
+            </button>
+          </>
+        }
+      />
 
       {showCreate && <CreateGroupModal onClose={() => setShowCreate(false)} />}
       {showJoin && <JoinGroupModal onClose={() => setShowJoin(false)} />}

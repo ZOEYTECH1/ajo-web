@@ -10,7 +10,7 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Table, type Column } from '../../components/ui/Table';
 import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 import useAuthStore from '../../store/useAuthStore';
@@ -834,32 +834,48 @@ export default function ThriftGroupDetailPage() {
           </div>
         )}
 
-        {/* Invite code (collector only) */}
+        {/* Invite code (collector only) -- code field is the dominant
+            element (labeled above, matching the Ajo group page's same
+            fix), Copy/Regenerate are icon-only buttons beside it rather
+            than text pills competing for the same line. */}
         {isCollector && (
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 bg-(--bg) border border-(--border) rounded-lg px-3 py-2">
-              <span className="text-xs text-(--text-secondary) font-medium uppercase tracking-wide">Invite Code</span>
-              <span className="font-mono font-bold text-(--text-primary) tracking-widest">{group.invite_code}</span>
-              <button type="button" onClick={copyInviteCode} className="ml-1 text-(--primary) hover:text-(--primary-dark)" title="Copy">
-                {copyState === 'copied' ? <span className="text-xs font-semibold">Copied!</span> : <ClipboardDocumentIcon className="h-4 w-4" />}
+          <div>
+            <p className="text-xs text-(--text-secondary) mb-1">Invite Code</p>
+            <div className="flex items-center gap-2">
+              <span className="flex-1 min-w-0 inline-flex items-center gap-1.5 font-mono tracking-widest text-sm text-(--text-primary) bg-(--bg) border border-(--border) rounded-lg px-3 py-1.5">
+                <span className="truncate">{group.invite_code}</span>
+              </span>
+              <button
+                type="button"
+                onClick={copyInviteCode}
+                title={copyState === 'copied' ? 'Copied!' : 'Copy invite code'}
+                aria-label="Copy invite code"
+                className="shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30"
+              >
+                {copyState === 'copied'
+                  ? <CheckCircleIcon className="h-4 w-4 text-green-600" />
+                  : <ClipboardDocumentIcon className="h-4 w-4" />}
+              </button>
+              <button
+                type="button"
+                onClick={() => regenMutation.mutate()}
+                disabled={regenMutation.isPending}
+                title="Regenerate invite code"
+                aria-label="Regenerate invite code"
+                className="shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-50 transition-colors"
+              >
+                <ArrowPathIcon className={clsx('h-4 w-4', regenMutation.isPending && 'animate-spin')} />
               </button>
             </div>
-            <button
-              type="button"
-              onClick={() => regenMutation.mutate()}
-              disabled={regenMutation.isPending}
-              className="flex items-center gap-1 text-xs text-(--text-secondary) hover:text-(--primary) transition-colors"
-            >
-              <ArrowPathIcon className={clsx('h-4 w-4', regenMutation.isPending && 'animate-spin')} />
-              Regenerate
-            </button>
           </div>
         )}
       </div>
 
-      {/* Tabs */}
+      {/* Tabs -- overflow-x-auto so long labels (e.g. "Members (5 + 2
+          pending)") scroll within the tab strip on a narrow screen instead
+          of overflowing the whole page horizontally. */}
       <div className="border-b border-(--border)">
-        <nav className="flex gap-1">
+        <nav className="flex gap-1 overflow-x-auto">
           {tabs.map(t => (
             <button
               key={t.key}
@@ -889,166 +905,142 @@ export default function ThriftGroupDetailPage() {
                 <h3 className="text-sm font-semibold text-(--text-primary)">Approve Payments</h3>
                 <p className="text-xs text-(--text-muted) mt-0.5">Click Approve on a member to record their payment for today.</p>
               </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-(--border)">
-                  <thead className="bg-(--bg)">
-                    <tr>
-                      {['Member', 'Usual Amount', 'Total Saved', 'Action'].map(h => (
-                        <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-(--border)">
-                    {membersQ.isLoading ? (
-                      <SkeletonTable rows={3} cols={4} />
-                    ) : (
-                      approvedMembers.map(m => (
-                        <tr key={m.id} className="hover:bg-(--primary-tint)/30">
-                          <td className="px-6 py-3 text-sm font-medium text-(--text-primary)">{m.user.full_name}</td>
-                          <td className="px-6 py-3 text-sm text-(--text-secondary)">{formatCurrency(m.personal_amount)}</td>
-                          <td className="px-6 py-3 text-sm text-(--text-secondary)">{formatCurrency(m.total_saved)}</td>
-                          <td className="px-6 py-3">
-                            {approvingMemberId === m.id ? (
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-xs text-(--text-secondary)">₦</span>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  value={approveAmount}
-                                  onChange={e => setApproveAmount(e.target.value)}
-                                  className="w-24 text-xs rounded border border-(--border) bg-(--bg) px-2 py-1 focus:outline-none focus:ring-1 focus:ring-(--primary)"
-                                  autoFocus
-                                  onKeyDown={e => {
-                                    if (e.key === 'Enter' && approveAmount && Number(approveAmount) > 0) {
-                                      quickApproveMutation.mutate(
-                                        { memberId: m.id, amount: approveAmount },
-                                        { onSettled: () => { setApprovingMemberId(null); setApproveAmount(''); } },
-                                      );
-                                    }
-                                    if (e.key === 'Escape') { setApprovingMemberId(null); setApproveAmount(''); }
-                                  }}
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    if (!approveAmount || Number(approveAmount) <= 0) return;
-                                    quickApproveMutation.mutate(
-                                      { memberId: m.id, amount: approveAmount },
-                                      { onSettled: () => { setApprovingMemberId(null); setApproveAmount(''); } },
-                                    );
-                                  }}
-                                  disabled={quickApproveMutation.isPending}
-                                  className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-lg px-2.5 py-1 hover:bg-(--primary-light)/30 transition-colors disabled:opacity-50"
-                                >
-                                  {quickApproveMutation.isPending ? '…' : 'Confirm'}
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => { setApprovingMemberId(null); setApproveAmount(''); }}
-                                  className="text-xs text-(--text-muted) hover:text-(--text-primary)"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={() => { setApprovingMemberId(m.id); setApproveAmount(String(m.personal_amount)); }}
-                                className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-lg px-2.5 py-1 hover:bg-(--primary-light)/30 transition-colors"
-                              >
-                                Approve
-                              </button>
-                            )}
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              <Table
+                columns={[
+                  { key: 'user', header: 'Member', render: (v) => (v as UserSnap).full_name },
+                  { key: 'personal_amount', header: 'Usual Amount', render: (v) => formatCurrency(v as string) },
+                  { key: 'total_saved', header: 'Total Saved', render: (v) => formatCurrency(v as string) },
+                  {
+                    key: 'id',
+                    header: 'Action',
+                    render: (id, row) => {
+                      const memberId = id as number;
+                      return approvingMemberId === memberId ? (
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-(--text-secondary)">₦</span>
+                          <input
+                            type="number"
+                            min="1"
+                            value={approveAmount}
+                            onChange={e => setApproveAmount(e.target.value)}
+                            className="w-24 text-xs rounded border border-(--border) bg-(--bg) px-2 py-1 focus:outline-none focus:ring-1 focus:ring-(--primary)"
+                            autoFocus
+                            onKeyDown={e => {
+                              if (e.key === 'Enter' && approveAmount && Number(approveAmount) > 0) {
+                                quickApproveMutation.mutate(
+                                  { memberId, amount: approveAmount },
+                                  { onSettled: () => { setApprovingMemberId(null); setApproveAmount(''); } },
+                                );
+                              }
+                              if (e.key === 'Escape') { setApprovingMemberId(null); setApproveAmount(''); }
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (!approveAmount || Number(approveAmount) <= 0) return;
+                              quickApproveMutation.mutate(
+                                { memberId, amount: approveAmount },
+                                { onSettled: () => { setApprovingMemberId(null); setApproveAmount(''); } },
+                              );
+                            }}
+                            disabled={quickApproveMutation.isPending}
+                            className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-lg px-2.5 py-1 hover:bg-(--primary-light)/30 transition-colors disabled:opacity-50"
+                          >
+                            {quickApproveMutation.isPending ? '…' : 'Confirm'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setApprovingMemberId(null); setApproveAmount(''); }}
+                            className="text-xs text-(--text-muted) hover:text-(--text-primary)"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => { setApprovingMemberId(memberId); setApproveAmount(String(row.personal_amount)); }}
+                          className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-lg px-2.5 py-1 hover:bg-(--primary-light)/30 transition-colors"
+                        >
+                          Approve
+                        </button>
+                      );
+                    },
+                  },
+                ]}
+                data={approvedMembers as unknown as Record<string, unknown>[]}
+                loading={membersQ.isLoading}
+              />
             </div>
           )}
 
           {/* Payment history */}
           <div className="surface-soft overflow-hidden">
             {isCollector && <div className="px-6 py-3 border-b border-(--border) bg-(--bg)"><h3 className="text-sm font-semibold text-(--text-primary)">Payment History</h3></div>}
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-(--border)">
-                <thead className="bg-(--bg)">
-                  <tr>
-                    {['Member', 'Period Date', 'Amount', 'Status', 'Actions'].map(h => (
-                      <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-(--border)">
-                  {paymentsQ.isLoading ? (
-                    <SkeletonTable rows={4} cols={5} />
-                  ) : payments.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                        No payments recorded yet.
-                      </td>
-                    </tr>
-                  ) : (
-                    payments.map(p => {
-                      const isMyPayment = myMembership && p.member === myMembership.id;
-                      return (
-                        <tr key={p.id} className="hover:bg-(--primary-tint)/30">
-                          <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{p.member_name}</td>
-                          <td className="px-6 py-4 text-sm text-(--text-secondary)">{fmt(p.period_date)}</td>
-                          <td className="px-6 py-4 text-sm text-(--text-secondary)">{formatCurrency(p.amount)}</td>
-                          <td className="px-6 py-4"><PaymentStatusBadge status={p.status} /></td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-2">
-                              {isMyPayment && p.status === 'pending' && (
-                                <>
-                                  <button
-                                    type="button"
-                                    onClick={() => confirmPaymentMutation.mutate(p.id)}
-                                    disabled={confirmPaymentMutation.isPending}
-                                    className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors"
-                                  >
-                                    <CheckCircleIcon className="h-3.5 w-3.5" /> Confirm
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => setDisputePaymentId(p.id)}
-                                    className="inline-flex items-center gap-1 text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
-                                  >
-                                    <ExclamationCircleIcon className="h-3.5 w-3.5" /> Dispute
-                                  </button>
-                                </>
-                              )}
-                              {p.status === 'disputed' && (
-                                <button
-                                  type="button"
-                                  onClick={() => setViewDisputePayment(p)}
-                                  className="text-xs text-red-600 italic hover:underline text-left truncate max-w-[12rem]"
-                                  title="Click to view dispute details"
-                                >
-                                  {p.dispute_reason || 'Disputed'} — View details
-                                </button>
-                              )}
-                              {isCollector && p.status === 'pending' && (
-                                <button
-                                  type="button"
-                                  onClick={() => { if (confirm('Delete this payment record?')) deletePaymentMutation.mutate(p.id); }}
-                                  disabled={deletePaymentMutation.isPending}
-                                  className="text-xs text-(--text-muted) hover:text-red-600 transition-colors"
-                                >
-                                  Delete
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <Table
+              columns={[
+                { key: 'member_name', header: 'Member' },
+                { key: 'period_date', header: 'Period Date', render: (v) => fmt(v as string) },
+                { key: 'amount', header: 'Amount', render: (v) => formatCurrency(v as string) },
+                { key: 'status', header: 'Status', render: (v) => <PaymentStatusBadge status={v as string} /> },
+                {
+                  key: 'id',
+                  header: 'Actions',
+                  render: (id, row) => {
+                    const paymentId = id as number;
+                    const status = row.status as string;
+                    const isMyPayment = myMembership && row.member === myMembership.id;
+                    return (
+                      <div className="flex items-center gap-2">
+                        {isMyPayment && status === 'pending' && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => confirmPaymentMutation.mutate(paymentId)}
+                              disabled={confirmPaymentMutation.isPending}
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors"
+                            >
+                              <CheckCircleIcon className="h-3.5 w-3.5" /> Confirm
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setDisputePaymentId(paymentId)}
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
+                            >
+                              <ExclamationCircleIcon className="h-3.5 w-3.5" /> Dispute
+                            </button>
+                          </>
+                        )}
+                        {status === 'disputed' && (
+                          <button
+                            type="button"
+                            onClick={() => setViewDisputePayment(row as unknown as ThriftPayment)}
+                            className="text-xs text-red-600 italic hover:underline text-left truncate max-w-[12rem]"
+                            title="Click to view dispute details"
+                          >
+                            {(row.dispute_reason as string) || 'Disputed'} — View details
+                          </button>
+                        )}
+                        {isCollector && status === 'pending' && (
+                          <button
+                            type="button"
+                            onClick={() => { if (confirm('Delete this payment record?')) deletePaymentMutation.mutate(paymentId); }}
+                            disabled={deletePaymentMutation.isPending}
+                            className="text-xs text-(--text-muted) hover:text-red-600 transition-colors"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                    );
+                  },
+                },
+              ]}
+              data={payments as unknown as Record<string, unknown>[]}
+              loading={paymentsQ.isLoading}
+              emptyMessage="No payments recorded yet."
+            />
           </div>
         </div>
       )}
@@ -1075,91 +1067,83 @@ export default function ThriftGroupDetailPage() {
           )}
 
           <div className="surface-soft overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-(--border)">
-                <thead className="bg-(--bg)">
-                  <tr>
-                    {['Name', 'Amount / Period', 'Total Saved', 'Joined', 'Status',
-                      ...(isCollector && memberSubTab === 'pending' ? ['Actions'] : []),
-                      ...(isOrgAdmin ? ['KYC'] : []),
-                    ].map(h => (
-                      <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-(--border)">
-                  {membersQ.isLoading ? (
-                    <SkeletonTable rows={3} cols={(isCollector && memberSubTab === 'pending' ? 6 : 5) + (isOrgAdmin ? 1 : 0)} />
-                  ) : (
-                    (() => {
-                      const list = isCollector
-                        ? (memberSubTab === 'approved' ? approvedMembers : pendingMembers)
-                        : members;
-                      if (list.length === 0) {
+            <Table
+              columns={[
+                {
+                  key: 'user',
+                  header: 'Name',
+                  render: (v, row) => (
+                    <>
+                      {(v as UserSnap).full_name}
+                      {row.flag_reason && <p className="text-xs text-amber-600 mt-0.5">{row.flag_reason as string}</p>}
+                    </>
+                  ),
+                },
+                { key: 'personal_amount', header: 'Amount / Period', render: (v) => formatCurrency(v as string) },
+                { key: 'total_saved', header: 'Total Saved', render: (v) => formatCurrency(v as string) },
+                { key: 'joined_at', header: 'Joined', render: (v) => fmt(v as string) },
+                { key: 'status', header: 'Status', render: (v) => <MemberStatusBadge status={v as string} /> },
+                ...(isCollector && memberSubTab === 'pending'
+                  ? [{
+                      key: 'member_actions',
+                      header: 'Actions',
+                      render: (_: unknown, row: Record<string, unknown>) => {
+                        const id = row.id as number;
                         return (
-                          <tr>
-                            <td colSpan={(isCollector && memberSubTab === 'pending' ? 6 : 5) + (isOrgAdmin ? 1 : 0)} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                              {memberSubTab === 'pending' ? 'No pending member requests.' : 'No members yet.'}
-                            </td>
-                          </tr>
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => memberActionMutation.mutate({ memberId: id, action: 'approve' })}
+                            disabled={memberActionMutation.isPending}
+                            className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => memberActionMutation.mutate({ memberId: id, action: 'reject' })}
+                            disabled={memberActionMutation.isPending}
+                            className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
+                          >
+                            Reject
+                          </button>
+                        </div>
                         );
-                      }
-                      return list.map(m => (
-                        <tr key={m.id} className="hover:bg-(--primary-tint)/30">
-                          <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">
-                            {m.user.full_name}
-                            {m.flag_reason && <p className="text-xs text-amber-600 mt-0.5">{m.flag_reason}</p>}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-(--text-secondary)">{formatCurrency(m.personal_amount)}</td>
-                          <td className="px-6 py-4 text-sm text-(--text-secondary)">{formatCurrency(m.total_saved)}</td>
-                          <td className="px-6 py-4 text-sm text-(--text-secondary)">{fmt(m.joined_at)}</td>
-                          <td className="px-6 py-4"><MemberStatusBadge status={m.status} /></td>
-                          {isCollector && memberSubTab === 'pending' && (
-                            <td className="px-6 py-4">
-                              <div className="flex gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => memberActionMutation.mutate({ memberId: m.id, action: 'approve' })}
-                                  disabled={memberActionMutation.isPending}
-                                  className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors"
-                                >
-                                  Approve
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => memberActionMutation.mutate({ memberId: m.id, action: 'reject' })}
-                                  disabled={memberActionMutation.isPending}
-                                  className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors"
-                                >
-                                  Reject
-                                </button>
-                              </div>
-                            </td>
-                          )}
-                          {isOrgAdmin && (
-                            <td className="px-6 py-4">
-                              <button
-                                type="button"
-                                disabled={kycToggleMutation.isPending}
-                                onClick={() => kycToggleMutation.mutate(m.id)}
-                                className={clsx(
-                                  'text-xs font-semibold rounded-lg px-2.5 py-1 transition-colors disabled:opacity-50',
-                                  m.user.is_kyc_verified
-                                    ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 hover:bg-green-100'
-                                    : 'text-(--text-secondary) bg-(--bg) border border-(--border) hover:bg-(--primary-tint)/30',
-                                )}
-                              >
-                                {m.user.is_kyc_verified ? 'KYC ✓' : 'Set KYC'}
-                              </button>
-                            </td>
-                          )}
-                        </tr>
-                      ));
-                    })()
-                  )}
-                </tbody>
-              </table>
-            </div>
+                      },
+                    } as Column<Record<string, unknown>>]
+                  : []),
+                ...(isOrgAdmin
+                  ? [{
+                      key: 'member_kyc',
+                      header: 'KYC',
+                      render: (_: unknown, row: Record<string, unknown>) => {
+                        const id = row.id as number;
+                        const verified = (row.user as UserSnap & { is_kyc_verified?: boolean }).is_kyc_verified;
+                        return (
+                          <button
+                            type="button"
+                            disabled={kycToggleMutation.isPending}
+                            onClick={() => kycToggleMutation.mutate(id as number)}
+                            className={clsx(
+                              'text-xs font-semibold rounded-lg px-2.5 py-1 transition-colors disabled:opacity-50',
+                              verified
+                                ? 'text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 hover:bg-green-100'
+                                : 'text-(--text-secondary) bg-(--bg) border border-(--border) hover:bg-(--primary-tint)/30',
+                            )}
+                          >
+                            {verified ? 'KYC ✓' : 'Set KYC'}
+                          </button>
+                        );
+                      },
+                    } as Column<Record<string, unknown>>]
+                  : []),
+              ]}
+              data={(isCollector
+                ? (memberSubTab === 'approved' ? approvedMembers : pendingMembers)
+                : members) as unknown as Record<string, unknown>[]}
+              loading={membersQ.isLoading}
+              emptyMessage={memberSubTab === 'pending' ? 'No pending member requests.' : 'No members yet.'}
+            />
           </div>
         </div>
       )}

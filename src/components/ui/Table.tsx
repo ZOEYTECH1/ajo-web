@@ -10,7 +10,7 @@ interface TableProps<T extends Record<string, unknown>> {
   columns: Column<T>[];
   data: T[];
   loading?: boolean;
-  emptyMessage?: string;
+  emptyMessage?: React.ReactNode;
 }
 
 function SkeletonRow({ cols }: { cols: number }) {

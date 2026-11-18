@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { Table } from '../../components/ui/Table';
 import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 
@@ -698,144 +699,126 @@ export default function ThriftOrgPage() {
               {pending_collectors.length}
             </span>
           </h2>
-          <div className="surface-soft overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-(--border)">
-                <thead className="bg-(--bg)">
-                  <tr>
-                    {['Name', 'Email', 'Actions'].map(h => (
-                      <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-(--border)">
-                  {pending_collectors.map(c => (
-                    <tr key={c.id} className="hover:bg-(--primary-tint)/30">
-                      <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{fullName(c.user)}</td>
-                      <td className="px-6 py-4 text-sm text-(--text-secondary)">{c.user.email}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex gap-2 flex-wrap">
-                          <button
-                            type="button"
-                            disabled={collectorActionMutation.isPending}
-                            onClick={() => collectorActionMutation.mutate({ memberId: c.id, action: 'approve' })}
-                            className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
-                          >
-                            Approve
-                          </button>
-                          <button
-                            type="button"
-                            disabled={collectorActionMutation.isPending}
-                            onClick={() => collectorActionMutation.mutate({ memberId: c.id, action: 'reject' })}
-                            className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
-                          >
-                            Reject
-                          </button>
-                          {actionError[c.id] && (
-                            <p className="text-xs text-red-600">{actionError[c.id]}</p>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <Table
+            columns={[
+              { key: 'user_name', header: 'Name', render: (_, row) => fullName(row.user as OrgUser) },
+              { key: 'user_email', header: 'Email', render: (_, row) => (row.user as OrgUser).email },
+              {
+                key: 'id',
+                header: 'Actions',
+                render: (id) => {
+                  const memberId = id as number;
+                  return (
+                    <div className="flex gap-2 flex-wrap">
+                      <button
+                        type="button"
+                        disabled={collectorActionMutation.isPending}
+                        onClick={() => collectorActionMutation.mutate({ memberId, action: 'approve' })}
+                        className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        disabled={collectorActionMutation.isPending}
+                        onClick={() => collectorActionMutation.mutate({ memberId, action: 'reject' })}
+                        className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
+                      >
+                        Reject
+                      </button>
+                      {actionError[memberId] && (
+                        <p className="text-xs text-red-600">{actionError[memberId]}</p>
+                      )}
+                    </div>
+                  );
+                },
+              },
+            ]}
+            data={pending_collectors as unknown as Record<string, unknown>[]}
+          />
         </div>
       )}
 
       {/* ── Collectors ── */}
       <div className="space-y-3">
         <h2 className="text-base font-bold text-(--text-primary)">Collectors</h2>
-        <div className="surface-soft overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-(--border)">
-              <thead className="bg-(--bg)">
-                <tr>
-                  {['Name', 'Status', 'Mobilization', 'Dispute Rate', 'Actions'].map(h => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-(--border)">
-                {collectors.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                      No active collectors yet.
-                    </td>
-                  </tr>
-                ) : (
-                  collectors.map(c => {
-                    const stats = collector_stats[String(c.id)];
-                    return (
-                      <tr key={c.id} className="hover:bg-(--primary-tint)/30">
-                        <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{fullName(c.user)}</td>
-                        <td className="px-6 py-4"><CollectorStatusBadge status={c.status} /></td>
-                        <td className="px-6 py-4 text-sm text-(--text-secondary)">
-                          {stats?.mobilization_rate != null ? `${stats.mobilization_rate.toFixed(0)}%` : '—'}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-(--text-secondary)">
-                          {stats?.dispute_rate != null ? `${stats.dispute_rate.toFixed(1)}%` : '—'}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex gap-2 flex-wrap">
-                            {c.status === 'active' ? (
-                              <>
-                                <button
-                                  type="button"
-                                  disabled={collectorActionMutation.isPending}
-                                  onClick={() => collectorActionMutation.mutate({ memberId: c.id, action: 'suspend' })}
-                                  className="text-xs font-semibold text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-2.5 py-1 hover:bg-yellow-100 transition-colors disabled:opacity-50"
-                                >
-                                  Suspend
-                                </button>
-                                <button
-                                  type="button"
-                                  disabled={collectorActionMutation.isPending}
-                                  onClick={() => { if (confirm(`Remove ${fullName(c.user)} from this organisation?`)) collectorActionMutation.mutate({ memberId: c.id, action: 'remove' }); }}
-                                  className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
-                                >
-                                  Remove
-                                </button>
-                              </>
-                            ) : c.status === 'suspended' ? (
-                              <>
-                                <button
-                                  type="button"
-                                  disabled={collectorActionMutation.isPending}
-                                  onClick={() => collectorActionMutation.mutate({ memberId: c.id, action: 'activate' })}
-                                  className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
-                                >
-                                  Activate
-                                </button>
-                                <button
-                                  type="button"
-                                  disabled={collectorActionMutation.isPending}
-                                  onClick={() => { if (confirm(`Remove ${fullName(c.user)} from this organisation?`)) collectorActionMutation.mutate({ memberId: c.id, action: 'remove' }); }}
-                                  className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
-                                >
-                                  Remove
-                                </button>
-                              </>
-                            ) : null}
-                            {actionError[c.id] && (
-                              <p role="alert" className="text-xs text-red-600">{actionError[c.id]}</p>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <Table
+          columns={[
+            { key: 'user', header: 'Name', render: (v) => fullName(v as OrgUser) },
+            { key: 'status', header: 'Status', render: (v) => <CollectorStatusBadge status={v as string} /> },
+            {
+              key: 'mobilization',
+              header: 'Mobilization',
+              render: (_, row) => {
+                const stats = collector_stats[String(row.id)];
+                return stats?.mobilization_rate != null ? `${stats.mobilization_rate.toFixed(0)}%` : '—';
+              },
+            },
+            {
+              key: 'dispute_rate',
+              header: 'Dispute Rate',
+              render: (_, row) => {
+                const stats = collector_stats[String(row.id)];
+                return stats?.dispute_rate != null ? `${stats.dispute_rate.toFixed(1)}%` : '—';
+              },
+            },
+            {
+              key: 'collector_actions',
+              header: 'Actions',
+              render: (_, row) => {
+                const c = row as unknown as CollectorRecord;
+                return (
+                  <div className="flex gap-2 flex-wrap">
+                    {c.status === 'active' ? (
+                      <>
+                        <button
+                          type="button"
+                          disabled={collectorActionMutation.isPending}
+                          onClick={() => collectorActionMutation.mutate({ memberId: c.id, action: 'suspend' })}
+                          className="text-xs font-semibold text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-2.5 py-1 hover:bg-yellow-100 transition-colors disabled:opacity-50"
+                        >
+                          Suspend
+                        </button>
+                        <button
+                          type="button"
+                          disabled={collectorActionMutation.isPending}
+                          onClick={() => { if (confirm(`Remove ${fullName(c.user)} from this organisation?`)) collectorActionMutation.mutate({ memberId: c.id, action: 'remove' }); }}
+                          className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
+                        >
+                          Remove
+                        </button>
+                      </>
+                    ) : c.status === 'suspended' ? (
+                      <>
+                        <button
+                          type="button"
+                          disabled={collectorActionMutation.isPending}
+                          onClick={() => collectorActionMutation.mutate({ memberId: c.id, action: 'activate' })}
+                          className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-2.5 py-1 hover:bg-green-100 transition-colors disabled:opacity-50"
+                        >
+                          Activate
+                        </button>
+                        <button
+                          type="button"
+                          disabled={collectorActionMutation.isPending}
+                          onClick={() => { if (confirm(`Remove ${fullName(c.user)} from this organisation?`)) collectorActionMutation.mutate({ memberId: c.id, action: 'remove' }); }}
+                          className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-2.5 py-1 hover:bg-red-100 transition-colors disabled:opacity-50"
+                        >
+                          Remove
+                        </button>
+                      </>
+                    ) : null}
+                    {actionError[c.id] && (
+                      <p role="alert" className="text-xs text-red-600">{actionError[c.id]}</p>
+                    )}
+                  </div>
+                );
+              },
+            },
+          ]}
+          data={collectors as unknown as Record<string, unknown>[]}
+          emptyMessage="No active collectors yet."
+        />
       </div>
 
       {/* ── Groups ── */}
@@ -850,45 +833,28 @@ export default function ThriftOrgPage() {
             + Create Group
           </button>
         </div>
-        <div className="surface-soft overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-(--border)">
-              <thead className="bg-(--bg)">
-                <tr>
-                  {['Name', 'Payout Cycle', 'Members', 'Collector'].map(h => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-(--border)">
-                {groups.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                      No groups yet.
-                    </td>
-                  </tr>
-                ) : (
-                  groups.map(g => (
-                    <tr key={g.id} className="hover:bg-(--primary-tint)/30">
-                      <td className="px-6 py-4 text-sm font-medium">
-                        <Link to={`/org/${orgUuid}/groups/${g.uuid}`} className="text-(--primary) hover:underline cursor-pointer">
-                          {g.name}
-                        </Link>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-(--text-secondary) capitalize">{g.frequency}</td>
-                      <td className="px-6 py-4 text-sm text-(--text-primary) font-medium">{g.member_count}</td>
-                      <td className="px-6 py-4 text-sm text-(--text-secondary)">
-                        {g.collector ? fullName(g.collector) : '—'}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <Table
+          columns={[
+            {
+              key: 'name',
+              header: 'Name',
+              render: (v, row) => (
+                <Link to={`/org/${orgUuid}/groups/${row.uuid as string}`} className="text-(--primary) hover:underline font-medium">
+                  {v as string}
+                </Link>
+              ),
+            },
+            { key: 'frequency', header: 'Payout Cycle', render: (v) => <span className="capitalize">{v as string}</span> },
+            { key: 'member_count', header: 'Members' },
+            {
+              key: 'collector',
+              header: 'Collector',
+              render: (v) => (v ? fullName(v as OrgUser) : '—'),
+            },
+          ]}
+          data={groups as unknown as Record<string, unknown>[]}
+          emptyMessage="No groups yet."
+        />
       </div>
 
       {/* ── Payment Stats ── */}

@@ -2223,8 +2223,13 @@ export default function AjoGroupDetailPage() {
             )}
           </div>
 
-          <div className="flex flex-col items-end gap-2">
-            <div className="bg-(--primary-tint) rounded-lg px-5 py-3 text-center">
+          {/* On mobile this was a small tile floating at the right edge of a
+              full-width flex item, leaving a dead gap beside it -- now it's
+              a full-width stat row instead (standard for a figure this
+              important), reverting to the original right-aligned stack from
+              sm: up where there's room for it to sit beside the title block. */}
+          <div className="flex items-center gap-3 sm:flex-col sm:items-end sm:gap-2">
+            <div className="flex-1 sm:flex-initial bg-(--primary-tint) rounded-lg px-5 py-3 text-center">
               <p className="text-(--primary) font-bold text-xl">{formatCurrency(group.contribution_amount)}</p>
               <p className="text-(--primary) text-xs capitalize">{group.contribution_frequency}</p>
             </div>

@@ -2352,8 +2352,11 @@ export default function AjoGroupDetailPage() {
         </div>
       )}
 
-      {/* Tabs */}
-      <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) overflow-hidden">
+      {/* Tabs -- flat and edge-to-edge on mobile (a "card" nested inside the
+          page's own padding was eating ~100px of width on a phone before any
+          content started); the boxed panel comes back from sm: up, where
+          there's room for it to read as a deliberate layer. */}
+      <div className="sm:bg-(--surface) rounded-xl sm:shadow-sm sm:border sm:border-(--border) overflow-hidden">
         <div className="border-b border-(--border) flex overflow-x-auto">
           {tabs.map(({ key, label, count }) => (
             <button
@@ -2361,7 +2364,7 @@ export default function AjoGroupDetailPage() {
               type="button"
               onClick={() => setActiveTab(key)}
               className={clsx(
-                'px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors',
+                'px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors',
                 activeTab === key
                   ? 'border-b-2 border-(--primary) text-(--primary)'
                   : 'text-(--text-secondary) hover:text-(--text-primary)',
@@ -2375,7 +2378,7 @@ export default function AjoGroupDetailPage() {
           ))}
         </div>
 
-        <div className="p-6">
+        <div className="py-4 sm:p-6">
           {activeTab === 'payments' && (
             <PaymentsTab
               groupId={Number(id)}

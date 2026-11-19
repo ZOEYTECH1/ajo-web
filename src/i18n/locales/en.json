@@ -69,6 +69,14 @@
     "deleteConfirmBtn": "Yes, delete",
     "deleting": "Deleting…"
   },
+  "groupDetail": {
+    "errors": {
+      "failedToLoad": "Failed to load group details.",
+      "membershipPending": "Your request to join this group is still awaiting approval.",
+      "membershipRejected": "Your request to join this group was not approved.",
+      "goBack": "Go back"
+    }
+  },
   "pagination": {
     "showing": "Showing {{start}}–{{end}} of {{total}}"
   },

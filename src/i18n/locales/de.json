@@ -69,6 +69,14 @@
     "deleteConfirmBtn": "Ja, löschen",
     "deleting": "Wird gelöscht…"
   },
+  "groupDetail": {
+    "errors": {
+      "failedToLoad": "Gruppendetails konnten nicht geladen werden.",
+      "membershipPending": "Dein Antrag, dieser Gruppe beizutreten, wartet noch auf Genehmigung.",
+      "membershipRejected": "Dein Antrag, dieser Gruppe beizutreten, wurde nicht genehmigt.",
+      "goBack": "Zurück"
+    }
+  },
   "pagination": {
     "showing": "{{start}}–{{end}} von {{total}} werden angezeigt"
   },

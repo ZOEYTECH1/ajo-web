@@ -1,4 +1,5 @@
 ﻿import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQueries, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
@@ -15,6 +16,7 @@ import { Table, type Column } from '../../components/ui/Table';
 import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 import useAuthStore from '../../store/useAuthStore';
+import { useGroupSocket } from '../../hooks/useGroupSocket';
 import { cloudinaryUrl } from '../../lib/cloudinary';
 
 // ── API shapes ────────────────────────────────────────────────────────────────
@@ -2006,6 +2008,7 @@ type TabKey = 'payments' | 'members' | 'cycles' | 'order' | 'history' | 'audit';
 
 export default function AjoGroupDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const currentUser = useAuthStore((s) => s.user);
   const [activeTab, setActiveTab] = useState<TabKey>('payments');
@@ -2044,6 +2047,19 @@ export default function AjoGroupDetailPage() {
     enabled: !!id && activeTab === 'members',
   });
 
+  // Live updates (join requests, membership decisions, payment activity) so
+  // this page doesn't need a manual reload to show what just happened --
+  // see useGroupSocket.ts. GroupConsumer only admits approved members/the
+  // admin, so this only ever fires for someone who can act on what changed.
+  useGroupSocket(id, (e) => {
+    if (e.event === 'join_request' || e.event === 'membership_approved' || e.event === 'membership_rejected') {
+      qc.invalidateQueries({ queryKey: ['ajo-group-members', id] });
+      qc.invalidateQueries({ queryKey: ['ajo-group', id] });
+    } else {
+      qc.invalidateQueries({ queryKey: ['ajo-group-payments', id] });
+    }
+  });
+
   const regenerateMutation = useMutation({
     mutationFn: () => api.post(`/groups/${id}/invite/regenerate/`),
     onSuccess: () => {
@@ -2069,10 +2085,16 @@ export default function AjoGroupDetailPage() {
   }
 
   if (groupQ.error || !groupQ.data) {
+    const code = (groupQ.error as { response?: { data?: { code?: string } } } | undefined)
+      ?.response?.data?.code;
+    const message =
+      code === 'membership_pending' ? t('groupDetail.errors.membershipPending')
+      : code === 'membership_rejected' ? t('groupDetail.errors.membershipRejected')
+      : t('groupDetail.errors.failedToLoad');
     return (
       <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-6 text-center text-sm text-red-700 dark:text-red-400">
-        Failed to load group details.{' '}
-        <Link to="/ajo" className="underline font-medium">Go back</Link>
+        {message}{' '}
+        <Link to="/ajo" className="underline font-medium">{t('groupDetail.errors.goBack')}</Link>
       </div>
     );
   }

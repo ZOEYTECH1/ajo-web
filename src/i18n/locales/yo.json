@@ -70,6 +70,14 @@
     "deleteConfirmBtn": "Bẹ́ẹ̀ni, pa á rẹ́",
     "deleting": "Ń pa á rẹ́…"
   },
+  "groupDetail": {
+    "errors": {
+      "failedToLoad": "Kíkó àwọn àlàyé ẹgbẹ́ kùnà.",
+      "membershipPending": "Ìbéèrè rẹ láti darapọ̀ mọ́ ẹgbẹ́ yìí ṣì ń dúró de ìfọwọ́sí.",
+      "membershipRejected": "A kò fọwọ́sí ìbéèrè rẹ láti darapọ̀ mọ́ ẹgbẹ́ yìí.",
+      "goBack": "Padà"
+    }
+  },
   "pagination": {
     "showing": "Ń fi {{start}}–{{end}} hàn nínú {{total}}"
   },

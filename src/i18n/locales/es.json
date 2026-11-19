@@ -69,6 +69,14 @@
     "deleteConfirmBtn": "Sí, eliminar",
     "deleting": "Eliminando…"
   },
+  "groupDetail": {
+    "errors": {
+      "failedToLoad": "Error al cargar los detalles del grupo.",
+      "membershipPending": "Tu solicitud para unirte a este grupo sigue pendiente de aprobación.",
+      "membershipRejected": "Tu solicitud para unirte a este grupo no fue aprobada.",
+      "goBack": "Volver"
+    }
+  },
   "pagination": {
     "showing": "Mostrando {{start}}–{{end}} de {{total}}"
   },

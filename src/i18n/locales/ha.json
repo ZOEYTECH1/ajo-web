@@ -70,6 +70,14 @@
     "deleteConfirmBtn": "Eh, share shi",
     "deleting": "Ana sharewa…"
   },
+  "groupDetail": {
+    "errors": {
+      "failedToLoad": "An kasa loda bayanan ƙungiya.",
+      "membershipPending": "Buƙatar ku na shiga wannan ƙungiya tana jiran amincewa.",
+      "membershipRejected": "Ba a amince da buƙatar ku na shiga wannan ƙungiya ba.",
+      "goBack": "Koma baya"
+    }
+  },
   "pagination": {
     "showing": "Ana nuna {{start}}–{{end}} daga cikin {{total}}"
   },

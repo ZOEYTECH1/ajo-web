@@ -70,6 +70,14 @@
     "deleteConfirmBtn": "Ee, hichapụ",
     "deleting": "Na-ehichapụ…"
   },
+  "groupDetail": {
+    "errors": {
+      "failedToLoad": "Ibu nkọwa otu emeghị nke ọma.",
+      "membershipPending": "Arịrịọ gị isonye n'otu a ka na-eche nkwado.",
+      "membershipRejected": "Anabataghị arịrịọ gị isonye n'otu a.",
+      "goBack": "Laghachi azụ"
+    }
+  },
   "pagination": {
     "showing": "Na-egosi {{start}}–{{end}} nke {{total}}"
   },

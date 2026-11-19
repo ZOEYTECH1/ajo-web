@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { PlusIcon, XCircleIcon, TrashIcon, ChevronDownIcon, ChevronUpIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/Skeleton';
 import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
@@ -301,7 +301,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
               <div className="flex-1 h-px bg-(--border)" />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-(--text-secondary) mb-1">Category</label>
                 <select value={selectedCatId} onChange={(e) => { setSelectedCatId(e.target.value); setSelectedProdId(''); setUnitPrice(''); }} className={inputCls}>
@@ -317,7 +317,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
                 </select>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="block text-xs font-medium text-(--text-secondary) mb-1">Qty</label>
                 <input type="number" min="1" value={qty} onChange={(e) => setQty(e.target.value)} className={inputCls} />
@@ -339,33 +339,27 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
             </div>
           </div>
 
-          {/* Cart */}
+          {/* Cart -- a plain list rather than a table, since a 5-column
+              table (one of them just a delete icon) was cramped even
+              inside this modal's own width. */}
           {cart.length > 0 && (
             <div className="border border-(--border) rounded-xl overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-100">
-                <thead className="bg-(--bg)">
-                  <tr>
-                    {['Product', 'Qty', 'Unit Price', 'Subtotal', ''].map(h => (
-                      <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-(--text-secondary) uppercase">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {cart.map(item => (
-                    <tr key={item.product_id}>
-                      <td className="px-4 py-2 text-sm text-(--text-primary)">{item.product_name}</td>
-                      <td className="px-4 py-2 text-sm text-(--text-secondary)">{item.quantity}</td>
-                      <td className="px-4 py-2 text-sm text-(--text-secondary)">{formatCurrency(item.unit_price)}</td>
-                      <td className="px-4 py-2 text-sm font-semibold text-(--text-primary)">{formatCurrency(item.quantity * Number(item.unit_price))}</td>
-                      <td className="px-4 py-2">
-                        <button type="button" onClick={() => setCart(cart.filter(c => c.product_id !== item.product_id))} className="text-(--text-muted) hover:text-red-600">
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="divide-y divide-(--border)">
+                {cart.map(item => (
+                  <div key={item.product_id} className="px-4 py-2.5 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-sm text-(--text-primary)">{item.product_name}</p>
+                      <p className="text-xs text-(--text-secondary) mt-0.5">{item.quantity} × {formatCurrency(item.unit_price)}</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-sm font-semibold text-(--text-primary)">{formatCurrency(item.quantity * Number(item.unit_price))}</span>
+                      <button type="button" onClick={() => setCart(cart.filter(c => c.product_id !== item.product_id))} className="text-(--text-muted) hover:text-red-600">
+                        <TrashIcon className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
               <div className="px-4 py-3 bg-(--bg) flex justify-end">
                 <span className="text-sm font-bold text-(--text-primary)">Total: {formatCurrency(total)}</span>
               </div>
@@ -373,7 +367,7 @@ function NewSaleModal({ onClose, bizId }: { onClose: () => void; bizId: number |
           )}
 
           {/* Customer + Notes */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Customer (optional)</label>
               <select value={customerId} onChange={(e) => setCustomerId(e.target.value)} className={inputCls}>
@@ -495,86 +489,64 @@ export default function InventorySalesPage() {
         </div>
       )}
 
+      {/* A tap-to-expand list rather than the shared Table component --
+          each sale expands in place to show its line items, which is a
+          master-detail interaction a flat table (and its mobile card
+          view) doesn't model. Reads the same at any width since nothing
+          here depends on table columns. */}
       <div className="surface-soft overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-(--border)">
-            <thead className="bg-(--bg)">
-              <tr>
-                {['Date', 'Items', 'Customer', 'Total', ''].map(h => (
-                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-(--border)">
-              {isLoading ? (
-                <SkeletonTable rows={6} cols={5} />
-              ) : sales.length > 0 ? (
-                sales.map(sale => (
-                  <>
-                    <tr
-                      key={sale.id}
-                      className="hover:bg-(--primary-tint)/30 cursor-pointer"
-                      onClick={() => setExpandedId(expandedId === sale.id ? null : sale.id)}
-                    >
-                      <td className="px-6 py-4 text-sm text-(--text-secondary) whitespace-nowrap">
-                        {format(new Date(sale.sold_at), 'dd MMM yyyy, h:mm a')}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-(--text-primary)">
-                        {sale.items.length === 0 ? '—' : (() => {
-                          const summary = sale.items.slice(0, 2).map(i => `${i.product_name} ×${i.quantity}`).join(', ');
-                          return sale.items.length > 2 ? `${summary} +${sale.items.length - 2} more` : summary;
-                        })()}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-(--text-secondary)">{sale.customer_name || '—'}</td>
-                      <td className="px-6 py-4 text-sm font-semibold text-(--text-primary) whitespace-nowrap">{formatCurrency(sale.total)}</td>
-                      <td className="px-6 py-4 text-(--text-muted)">
-                        {sale.items.length > 0 && (
-                          expandedId === sale.id
-                            ? <ChevronUpIcon className="h-4 w-4" />
-                            : <ChevronDownIcon className="h-4 w-4" />
-                        )}
-                      </td>
-                    </tr>
-                    {expandedId === sale.id && sale.items.length > 0 && (
-                      <tr key={`${sale.id}-items`} className="bg-(--bg)">
-                        <td colSpan={5} className="px-8 py-3">
-                          <table className="w-full text-sm">
-                            <thead>
-                              <tr className="text-xs text-(--text-muted) uppercase">
-                                <th className="text-left pb-1 pr-4">Product</th>
-                                <th className="text-right pb-1 pr-4">Qty</th>
-                                <th className="text-right pb-1 pr-4">Unit Price</th>
-                                <th className="text-right pb-1">Subtotal</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-(--border)">
-                              {sale.items.map((item, idx) => (
-                                <tr key={idx}>
-                                  <td className="py-1.5 pr-4 font-medium text-(--text-primary)">{item.product_name}</td>
-                                  <td className="py-1.5 pr-4 text-right text-(--text-secondary)">{item.quantity}</td>
-                                  <td className="py-1.5 pr-4 text-right text-(--text-secondary)">{formatCurrency(item.unit_price)}</td>
-                                  <td className="py-1.5 text-right font-semibold text-(--text-primary)">{formatCurrency(item.subtotal)}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                          {sale.notes && <p className="mt-2 text-xs text-(--text-muted) italic">Note: {sale.notes}</p>}
-                        </td>
-                      </tr>
-                    )}
-                  </>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    No sales recorded yet.{' '}
-                    <button type="button" onClick={() => setShowNewSale(true)} className="text-(--primary) font-semibold hover:underline">Record the first sale.</button>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        {isLoading ? (
+          <div className="p-4 sm:p-6 space-y-3">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-14 w-full" />)}
+          </div>
+        ) : sales.length > 0 ? (
+          <div className="divide-y divide-(--border)">
+            {sales.map(sale => {
+              const expanded = expandedId === sale.id;
+              const summary = sale.items.length === 0 ? '—' : (() => {
+                const s = sale.items.slice(0, 2).map(i => `${i.product_name} ×${i.quantity}`).join(', ');
+                return sale.items.length > 2 ? `${s} +${sale.items.length - 2} more` : s;
+              })();
+              return (
+                <div key={sale.id}>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedId(expanded ? null : sale.id)}
+                    className="w-full text-left px-4 sm:px-6 py-4 flex items-center justify-between gap-3 flex-wrap hover:bg-(--primary-tint)/30 transition-colors"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm text-(--text-secondary)">{format(new Date(sale.sold_at), 'dd MMM yyyy, h:mm a')}</p>
+                      <p className="text-sm text-(--text-primary) mt-0.5">{summary}</p>
+                      {sale.customer_name && <p className="text-xs text-(--text-muted) mt-0.5">{sale.customer_name}</p>}
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-sm font-semibold text-(--text-primary)">{formatCurrency(sale.total)}</span>
+                      {sale.items.length > 0 && (
+                        expanded ? <ChevronUpIcon className="h-4 w-4 text-(--text-muted)" /> : <ChevronDownIcon className="h-4 w-4 text-(--text-muted)" />
+                      )}
+                    </div>
+                  </button>
+                  {expanded && sale.items.length > 0 && (
+                    <div className="px-4 sm:px-6 pb-4 bg-(--bg) space-y-2">
+                      {sale.items.map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between gap-3 text-sm">
+                          <span className="font-medium text-(--text-primary)">{item.product_name} <span className="text-(--text-muted) font-normal">×{item.quantity}</span></span>
+                          <span className="text-(--text-secondary) shrink-0">{formatCurrency(item.unit_price)} each = <span className="font-semibold text-(--text-primary)">{formatCurrency(item.subtotal)}</span></span>
+                        </div>
+                      ))}
+                      {sale.notes && <p className="text-xs text-(--text-muted) italic pt-1">Note: {sale.notes}</p>}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="px-6 py-12 text-center text-sm text-(--text-muted)">
+            No sales recorded yet.{' '}
+            <button type="button" onClick={() => setShowNewSale(true)} className="text-(--primary) font-semibold hover:underline">Record the first sale.</button>
+          </p>
+        )}
       </div>
 
       <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />

@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
+import { Table } from '../../components/ui/Table';
 import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 
@@ -409,7 +410,7 @@ export default function InventoryBusinessPage() {
     <div className="space-y-6">
       <InventoryNav />
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-(--text-primary)">Business</h1>
           <p className="text-sm text-(--text-secondary)">Manage your business details and staff</p>
@@ -459,9 +460,14 @@ export default function InventoryBusinessPage() {
           )}
 
           {selectedBiz && (
-            <div className="surface-soft overflow-hidden">
+            // Flat on mobile (no card chrome, no p-6) -- a bordered/padded
+            // panel wrapping another padded tab's content stacked on top of
+            // the page's own gutter eats width on a phone before the tab
+            // content even starts (same fix as the Ajo/Thrift group detail
+            // pages). Boxed look returns at sm: and up.
+            <div className="sm:bg-(--surface) rounded-xl sm:shadow-sm sm:border sm:border-(--border) overflow-hidden">
               {/* Tabs */}
-              <div className="border-b border-(--border) flex">
+              <div className="border-b border-(--border) flex overflow-x-auto">
                 {([
                   { key: 'details' as TabKey, label: 'Business Details', icon: BuildingStorefrontIcon },
                   { key: 'staff' as TabKey,   label: 'Staff',            icon: UserGroupIcon },
@@ -471,7 +477,7 @@ export default function InventoryBusinessPage() {
                     type="button"
                     onClick={() => setActiveTab(key)}
                     className={clsx(
-                      'flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors',
+                      'flex items-center gap-2 px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors',
                       activeTab === key
                         ? 'border-b-2 border-(--primary) text-(--primary)'
                         : 'text-(--text-secondary) hover:text-(--text-primary)',
@@ -483,7 +489,7 @@ export default function InventoryBusinessPage() {
                 ))}
               </div>
 
-              <div className="p-6">
+              <div className="py-4 sm:p-6">
                 {/* Details tab */}
                 {activeTab === 'details' && (
                   <div className="space-y-4">
@@ -545,45 +551,36 @@ export default function InventoryBusinessPage() {
                     ) : staff.length === 0 ? (
                       <p className="text-center py-8 text-sm text-(--text-muted)">No staff members yet.</p>
                     ) : (
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-(--border)">
-                          <thead className="bg-(--bg)">
-                            <tr>
-                              {['Name', 'Email', 'Role', 'Actions'].map((h) => (
-                                <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
-                                  {h}
-                                </th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-(--border)">
-                            {staff.map((m) => (
-                              <tr key={m.id} className="hover:bg-(--primary-tint)/30">
-                                <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{m.user_name}</td>
-                                <td className="px-6 py-4 text-sm text-(--text-secondary)">{m.user_email}</td>
-                                <td className="px-6 py-4"><RoleBadge role={m.role} /></td>
-                                <td className="px-6 py-4">
-                                  {isOwnerOrManager && m.role !== 'owner' && (
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        if (confirm(`Remove ${m.user_name} from the team?`)) {
-                                          removeStaffMutation.mutate(m.id);
-                                        }
-                                      }}
-                                      disabled={removeStaffMutation.isPending}
-                                      className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
-                                      title="Remove"
-                                    >
-                                      <TrashIcon className="h-4 w-4" />
-                                    </button>
-                                  )}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                      <Table
+                        columns={[
+                          { key: 'user_name', header: 'Name' },
+                          { key: 'user_email', header: 'Email' },
+                          { key: 'role', header: 'Role', render: (v) => <RoleBadge role={v as string} /> },
+                          {
+                            key: 'actions',
+                            header: 'Actions',
+                            render: (_, row) => {
+                              const m = row as unknown as StaffMember;
+                              return isOwnerOrManager && m.role !== 'owner' ? (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (confirm(`Remove ${m.user_name} from the team?`)) {
+                                      removeStaffMutation.mutate(m.id);
+                                    }
+                                  }}
+                                  disabled={removeStaffMutation.isPending}
+                                  className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+                                  title="Remove"
+                                >
+                                  <TrashIcon className="h-4 w-4" />
+                                </button>
+                              ) : null;
+                            },
+                          },
+                        ]}
+                        data={staff as unknown as Record<string, unknown>[]}
+                      />
                     )}
                   </div>
                 )}

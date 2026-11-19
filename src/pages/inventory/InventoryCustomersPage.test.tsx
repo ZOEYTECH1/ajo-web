@@ -69,9 +69,14 @@ describe('Customer credit history modal', () => {
     const user = userEvent.setup();
     render(<Providers><InventoryCustomersPage /></Providers>);
 
-    await waitFor(() => expect(screen.getByText('Amaka')).toBeInTheDocument());
+    // The customer list itself also renders through the shared Table
+    // component now, so it too shows up in both the mobile card view and
+    // the desktop table at once inside jsdom's viewport-less environment.
+    await waitFor(() => expect(screen.getAllByText('Amaka').length).toBeGreaterThan(0));
 
-    await user.click(screen.getByTitle('Credit history'));
+    // Same dual card/table rendering -- the action button exists once per
+    // view, so pick the first match; both fire the identical handler.
+    await user.click(screen.getAllByTitle('Credit history')[0]);
 
     await waitFor(() => expect(screen.getByText(/Credit History/)).toBeInTheDocument());
     // The shared Table component renders both a mobile card view and the
@@ -95,8 +100,13 @@ describe('Customer credit history modal', () => {
     const user = userEvent.setup();
     render(<Providers><InventoryCustomersPage /></Providers>);
 
-    await waitFor(() => expect(screen.getByText('Amaka')).toBeInTheDocument());
-    await user.click(screen.getByTitle('Credit history'));
+    // The customer list itself also renders through the shared Table
+    // component now, so it too shows up in both the mobile card view and
+    // the desktop table at once inside jsdom's viewport-less environment.
+    await waitFor(() => expect(screen.getAllByText('Amaka').length).toBeGreaterThan(0));
+    // Same dual card/table rendering -- the action button exists once per
+    // view, so pick the first match; both fire the identical handler.
+    await user.click(screen.getAllByTitle('Credit history')[0]);
 
     // Appears once in the mobile card view and once in the desktop table
     // (both render in jsdom, which has no viewport to resolve the
@@ -113,8 +123,13 @@ describe('Customer credit history modal', () => {
     const user = userEvent.setup();
     render(<Providers><InventoryCustomersPage /></Providers>);
 
-    await waitFor(() => expect(screen.getByText('Amaka')).toBeInTheDocument());
-    await user.click(screen.getByTitle('Credit history'));
+    // The customer list itself also renders through the shared Table
+    // component now, so it too shows up in both the mobile card view and
+    // the desktop table at once inside jsdom's viewport-less environment.
+    await waitFor(() => expect(screen.getAllByText('Amaka').length).toBeGreaterThan(0));
+    // Same dual card/table rendering -- the action button exists once per
+    // view, so pick the first match; both fire the identical handler.
+    await user.click(screen.getAllByTitle('Credit history')[0]);
 
     await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument());
   });

@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusIcon, PencilIcon, TrashIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
-import { SkeletonTable } from '../../components/ui/Skeleton';
 import { Modal } from '../../components/ui/Modal';
 import { Table, type Column } from '../../components/ui/Table';
 import { Pagination } from '../../components/ui/Pagination';
@@ -344,7 +343,7 @@ export default function InventoryCustomersPage() {
     <div className="space-y-6">
       <InventoryNav />
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-(--text-primary)">Customers</h1>
           <p className="text-sm text-(--text-secondary)">Manage your customer accounts and credit</p>
@@ -383,79 +382,72 @@ export default function InventoryCustomersPage() {
         </div>
       )}
 
-      <div className="surface-soft overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-(--border)">
-            <thead className="bg-(--bg)">
-              <tr>
-                {['Name', 'Phone', 'Credit Balance', 'Notes', 'Actions'].map(h => (
-                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-(--border)">
-              {isLoading ? (
-                <SkeletonTable rows={4} cols={5} />
-              ) : filtered.length > 0 ? (
-                filtered.map(c => (
-                  <tr key={c.id} className="hover:bg-(--primary-tint)/30">
-                    <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{c.name}</td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{c.phone || '—'}</td>
-                    <td className="px-6 py-4 text-sm font-semibold">
-                      <span className={Number(c.credit_balance) > 0 ? 'text-(--primary)' : 'text-(--text-secondary)'}>
-                        {formatCurrency(c.credit_balance)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{c.notes || '—'}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setCreditCustomer(c)}
-                          className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-lg px-2.5 py-1 hover:bg-(--primary-light)/30 transition-colors"
-                        >
-                          Credit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setHistoryCustomer(c)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors"
-                          title="Credit history"
-                        >
-                          <ClockIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setEditCustomer(c)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors"
-                          title="Edit"
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(c)}
-                          disabled={deleteMutation.isPending}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
-                          title="Delete customer"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    {debouncedSearch ? `No customers match "${debouncedSearch}".` : <>No customers yet.{' '}<button type="button" onClick={() => setShowAdd(true)} className="text-(--primary) font-semibold hover:underline">Add the first customer.</button></>}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Table
+        columns={[
+          { key: 'name', header: 'Name' },
+          { key: 'phone', header: 'Phone', render: (v) => (v as string) || '—' },
+          {
+            key: 'credit_balance',
+            header: 'Credit Balance',
+            render: (v) => (
+              <span className={Number(v) > 0 ? 'text-(--primary) font-semibold' : 'text-(--text-secondary) font-semibold'}>
+                {formatCurrency(v as string)}
+              </span>
+            ),
+          },
+          { key: 'notes', header: 'Notes', render: (v) => (v as string) || '—' },
+          {
+            key: 'actions',
+            header: 'Actions',
+            render: (_, row) => {
+              const c = row as unknown as Customer;
+              return (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCreditCustomer(c)}
+                    className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-lg px-2.5 py-1 hover:bg-(--primary-light)/30 transition-colors"
+                  >
+                    Credit
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHistoryCustomer(c)}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors"
+                    title="Credit history"
+                  >
+                    <ClockIcon className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditCustomer(c)}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors"
+                    title="Edit"
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(c)}
+                    disabled={deleteMutation.isPending}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                    title="Delete customer"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              );
+            },
+          },
+        ]}
+        data={filtered as unknown as Record<string, unknown>[]}
+        loading={isLoading}
+        emptyMessage={
+          debouncedSearch
+            ? `No customers match "${debouncedSearch}".`
+            : <>No customers yet.{' '}<button type="button" onClick={() => setShowAdd(true)} className="text-(--primary) font-semibold hover:underline">Add the first customer.</button></>
+        }
+      />
 
       <CustomerModal open={showAdd} onClose={() => setShowAdd(false)} bizId={selectedId} />
       {editCustomerDisplay && (

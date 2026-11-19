@@ -116,7 +116,7 @@ function PastRecordModal({
           <p className="text-sm text-(--text-secondary)">
             Summarise a period from before you started using this app — e.g. from an old spreadsheet. Just the totals, not individual sales.
           </p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="From *">
               <input type="date" value={form.period_start} onChange={(e) => setForm(f => ({ ...f, period_start: e.target.value }))} className={inputCls} />
             </Field>

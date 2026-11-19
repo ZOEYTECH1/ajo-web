@@ -11,6 +11,10 @@ interface TableProps<T extends Record<string, unknown>> {
   data: T[];
   loading?: boolean;
   emptyMessage?: React.ReactNode;
+  // Optional totals/summary row (e.g. a financial breakdown's TOTAL line),
+  // shown bold after the data in both views instead of being dropped when
+  // migrating a table that had its own <tfoot> onto this component.
+  footer?: T;
 }
 
 function SkeletonRow({ cols }: { cols: number }) {
@@ -41,17 +45,23 @@ function RowCard<T extends Record<string, unknown>>({
   columns,
   row,
   tinted,
+  bold,
 }: {
   columns: Column<T>[];
   row: T;
   tinted: boolean;
+  bold?: boolean;
 }) {
   const [titleCol, ...rest] = columns;
   const actionsCol = rest.find((c) => isActionsColumn(c.header));
   const detailCols = rest.filter((c) => c !== actionsCol);
 
   return (
-    <div className={clsx('rounded-xl border border-(--border) p-4', tinted ? 'bg-(--bg)' : 'bg-(--surface)')}>
+    <div className={clsx(
+      'rounded-xl p-4',
+      bold ? 'border-2 border-(--border) bg-(--bg)' : 'border border-(--border)',
+      !bold && (tinted ? 'bg-(--bg)' : 'bg-(--surface)'),
+    )}>
       <div className="font-semibold text-sm text-(--text-primary)">
         {titleCol.render ? titleCol.render(row[titleCol.key], row) : String(row[titleCol.key] ?? '')}
       </div>
@@ -59,8 +69,8 @@ function RowCard<T extends Record<string, unknown>>({
         <dl className="mt-2 space-y-1.5">
           {detailCols.map((col) => (
             <div key={col.key} className="flex items-center justify-between gap-3 text-sm">
-              <dt className="text-xs text-(--text-muted)">{col.header}</dt>
-              <dd className="text-(--text-primary) text-right">
+              <dt className={clsx('text-xs', bold ? 'font-semibold text-(--text-secondary)' : 'text-(--text-muted)')}>{col.header}</dt>
+              <dd className={clsx('text-(--text-primary) text-right', bold && 'font-bold')}>
                 {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? '')}
               </dd>
             </div>
@@ -91,6 +101,7 @@ export function Table<T extends Record<string, unknown>>({
   data,
   loading = false,
   emptyMessage = 'No data available.',
+  footer,
 }: TableProps<T>) {
   return (
     <>
@@ -100,7 +111,10 @@ export function Table<T extends Record<string, unknown>>({
         ) : data.length === 0 ? (
           <p className="text-center text-sm text-(--text-muted) py-8">{emptyMessage}</p>
         ) : (
-          data.map((row, i) => <RowCard key={i} columns={columns} row={row} tinted={i % 2 === 1} />)
+          <>
+            {data.map((row, i) => <RowCard key={i} columns={columns} row={row} tinted={i % 2 === 1} />)}
+            {footer && <RowCard columns={columns} row={footer} tinted={false} bold />}
+          </>
         )}
       </div>
 
@@ -150,6 +164,17 @@ export function Table<T extends Record<string, unknown>>({
             ))
           )}
         </tbody>
+        {footer && !loading && data.length > 0 && (
+          <tfoot className="bg-(--bg) border-t-2 border-(--border)">
+            <tr>
+              {columns.map((col) => (
+                <td key={col.key} className="px-6 py-4 text-sm font-bold text-(--text-primary) whitespace-nowrap">
+                  {col.render ? col.render(footer[col.key], footer) : String(footer[col.key] ?? '')}
+                </td>
+              ))}
+            </tr>
+          </tfoot>
+        )}
       </table>
       </div>
     </>

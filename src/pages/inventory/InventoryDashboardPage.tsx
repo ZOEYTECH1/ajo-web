@@ -16,6 +16,7 @@ import {
   ArrowsRightLeftIcon,
 } from '@heroicons/react/24/outline';
 import { SkeletonCard } from '../../components/ui/Skeleton';
+import { Table } from '../../components/ui/Table';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
@@ -262,44 +263,39 @@ export default function InventoryDashboardPage() {
           </h2>
         </div>
         {isLoading ? (
-          <div className="p-6 space-y-3">
+          <div className="p-4 sm:p-6 space-y-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="h-10 rounded-lg bg-(--bg) skeleton" />
             ))}
           </div>
         ) : data?.low_stock_items.length ? (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-(--border)">
-              <thead className="bg-(--bg)">
-                <tr>
-                  {['Product', 'In Stock', 'Threshold', 'Status'].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-(--border)">
-                {data.low_stock_items.map((item) => (
-                  <tr key={item.id} className="hover:bg-(--primary-tint)/30 transition-colors">
-                    <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{item.name}</td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{item.quantity}</td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{item.low_stock_threshold}</td>
-                    <td className="px-6 py-4">
-                      {item.quantity === 0 ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-400">
-                          Out of stock
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 dark:bg-yellow-950/60 dark:text-yellow-400">
-                          Low stock
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          // No horizontal padding on mobile -- Table's own mobile cards
+          // already have their own padding, so stacking this card's
+          // padding on top of theirs (plus the page's own gutter) would eat
+          // a third of a phone's width before any content starts. Same fix
+          // as the Ajo/Thrift group detail tab panels.
+          <div className="py-4 sm:p-6 sm:pt-4">
+            <Table
+              columns={[
+                { key: 'name', header: 'Product' },
+                { key: 'quantity', header: 'In Stock' },
+                { key: 'low_stock_threshold', header: 'Threshold' },
+                {
+                  key: 'status',
+                  header: 'Status',
+                  render: (_, row) => (row.quantity === 0 ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-400">
+                      Out of stock
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 dark:bg-yellow-950/60 dark:text-yellow-400">
+                      Low stock
+                    </span>
+                  )),
+                },
+              ]}
+              data={data.low_stock_items as unknown as Record<string, unknown>[]}
+            />
           </div>
         ) : (
           <p className="px-6 py-10 text-center text-sm text-(--text-muted)">No low-stock items. Great job!</p>
@@ -315,46 +311,38 @@ export default function InventoryDashboardPage() {
           </h2>
         </div>
         {isLoading ? (
-          <div className="p-6 space-y-3">
+          <div className="p-4 sm:p-6 space-y-3">
             {[1, 2].map((i) => (
               <div key={i} className="h-10 rounded-lg bg-(--bg) skeleton" />
             ))}
           </div>
         ) : data?.expiring_soon_items.length ? (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-(--border)">
-              <thead className="bg-(--bg)">
-                <tr>
-                  {['Product', 'Expiry Date', 'Days Left', 'Urgency'].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-(--border)">
-                {data.expiring_soon_items.map((item) => (
-                  <tr key={item.id} className="hover:bg-(--primary-tint)/30 transition-colors">
-                    <td className="px-6 py-4 text-sm font-medium text-(--text-primary)">{item.name}</td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">
-                      {format(new Date(item.expiry_date), 'dd MMM yyyy')}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{item.days_left}d</td>
-                    <td className="px-6 py-4">
-                      {item.urgent ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-400">
-                          Urgent
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-(--primary-light)/30 text-(--primary-dark) dark:bg-(--primary-tint)/60 dark:text-(--primary-light)">
-                          Soon
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="py-4 sm:p-6 sm:pt-4">
+            <Table
+              columns={[
+                { key: 'name', header: 'Product' },
+                {
+                  key: 'expiry_date',
+                  header: 'Expiry Date',
+                  render: (v) => format(new Date(v as string), 'dd MMM yyyy'),
+                },
+                { key: 'days_left', header: 'Days Left', render: (v) => `${v}d` },
+                {
+                  key: 'urgency',
+                  header: 'Urgency',
+                  render: (_, row) => (row.urgent ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-400">
+                      Urgent
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-(--primary-light)/30 text-(--primary-dark) dark:bg-(--primary-tint)/60 dark:text-(--primary-light)">
+                      Soon
+                    </span>
+                  )),
+                },
+              ]}
+              data={data.expiring_soon_items as unknown as Record<string, unknown>[]}
+            />
           </div>
         ) : (
           <p className="px-6 py-10 text-center text-sm text-(--text-muted)">No items expiring within 30 days.</p>

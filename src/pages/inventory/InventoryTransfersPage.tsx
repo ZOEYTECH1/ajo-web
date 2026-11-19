@@ -281,7 +281,7 @@ export default function InventoryTransfersPage() {
     <div className="space-y-6">
       <InventoryNav />
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-(--text-primary)">Stock Transfers</h1>
           <p className="text-sm text-(--text-secondary)">Move stock between your business locations</p>

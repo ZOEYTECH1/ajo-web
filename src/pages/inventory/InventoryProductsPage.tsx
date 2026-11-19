@@ -8,7 +8,7 @@ import {
   ClockIcon, MagnifyingGlassIcon, PhotoIcon,
 } from '@heroicons/react/24/outline';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Table } from '../../components/ui/Table';
 import api from '../../services/api';
 import { useDebounce } from '../../hooks/useDebounce';
 import { cloudinaryUrl } from '../../lib/cloudinary';
@@ -589,7 +589,7 @@ export default function InventoryProductsPage() {
         </span>
       </div>
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-(--text-primary)">
             {category ? `${getCategoryEmoji(category.name)} ${category.name}` : 'Products'}
@@ -635,111 +635,119 @@ export default function InventoryProductsPage() {
         </div>
       )}
 
-      <div className="surface-soft overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-(--border)">
-            <thead className="bg-(--bg)">
-              <tr>
-                {['', 'Product', 'Price', 'Cost', 'Discount', 'Quantity', 'Status', 'Actions'].map(h => (
-                  <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-(--border)">
-              {isLoading ? (
-                <SkeletonTable rows={5} cols={8} />
-              ) : filteredData.length > 0 ? (
-                filteredData.map(p => (
-                  <tr key={p.id} className={clsx('hover:bg-(--primary-tint)/30', p.quantity === 0 && 'bg-red-50/30')}>
-                    <td className="px-4 py-3">
-                      {p.image_url ? (
-                        <img src={cloudinaryUrl(p.image_url, 64, 64)} alt="" className="h-10 w-10 rounded-lg object-cover border border-(--border)" />
-                      ) : (
-                        <div className="h-10 w-10 rounded-lg border border-dashed border-(--border) flex items-center justify-center text-(--text-muted)">
-                          <PhotoIcon className="h-4 w-4" aria-hidden="true" />
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-(--text-primary)">
-                      {p.name}
-                      {p.barcode && <span className="block text-xs text-(--text-muted)">{p.barcode}</span>}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-(--text-secondary)">
-                      {formatCurrency(p.effective_price ?? p.price)}
-                      {p.discount_percent > 0 && (
-                        <span className="block text-xs text-green-600 font-semibold">{p.discount_percent}% off</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm text-(--text-secondary)">{Number(p.cost_price) > 0 ? formatCurrency(p.cost_price) : '—'}</td>
-                    <td className="px-4 py-3 text-sm text-(--text-secondary)">
-                      {p.discount_percent > 0 ? `${p.discount_percent}%` : '—'}
-                    </td>
-                    <td className="px-4 py-3 text-sm font-semibold text-(--text-primary)">{p.quantity}</td>
-                    <td className="px-4 py-3">
-                      <StockBadge qty={p.quantity} threshold={p.low_stock_threshold} />
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => setSummaryProduct(p)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                          title="Daily summary"
-                        >
-                          <ChartBarIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setHistoryProduct(p)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-purple-600 hover:bg-purple-50 transition-colors"
-                          title="Movement history"
-                        >
-                          <ClockIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setStockProduct(p)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-green-600 hover:bg-green-50 transition-colors"
-                          title="Adjust stock"
-                        >
-                          <ArrowUpIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setEditProduct(p)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors"
-                          title="Edit"
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { if (confirm(`Delete "${p.name}"?`)) deleteMutation.mutate(p.id); }}
-                          disabled={deleteMutation.isPending}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors"
-                          title="Delete"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    {search || stockFilter !== 'all' ? 'No products match your filter.' : (
-                      <>No products in this category.{' '}
-                        <button type="button" onClick={() => setShowAdd(true)} className="text-(--primary) font-semibold hover:underline">Add the first product.</button>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Table
+        columns={[
+          {
+            key: 'product',
+            header: 'Product',
+            render: (_, row) => {
+              const p = row as unknown as Product;
+              return (
+                <div className="flex items-center gap-3">
+                  {p.image_url ? (
+                    <img src={cloudinaryUrl(p.image_url, 64, 64)} alt="" className="h-9 w-9 shrink-0 rounded-lg object-cover border border-(--border)" />
+                  ) : (
+                    <div className="h-9 w-9 shrink-0 rounded-lg border border-dashed border-(--border) flex items-center justify-center text-(--text-muted)">
+                      <PhotoIcon className="h-4 w-4" aria-hidden="true" />
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-semibold text-(--text-primary)">{p.name}</p>
+                    {p.barcode && <p className="text-xs text-(--text-muted) font-normal">{p.barcode}</p>}
+                  </div>
+                </div>
+              );
+            },
+          },
+          {
+            key: 'price',
+            header: 'Price',
+            render: (_, row) => {
+              const p = row as unknown as Product;
+              return (
+                <>
+                  {formatCurrency(p.effective_price ?? p.price)}
+                  {p.discount_percent > 0 && (
+                    <span className="block text-xs text-green-600 font-semibold">{p.discount_percent}% off</span>
+                  )}
+                </>
+              );
+            },
+          },
+          { key: 'cost_price', header: 'Cost', render: (v) => (Number(v) > 0 ? formatCurrency(v as string) : '—') },
+          { key: 'discount_percent', header: 'Discount', render: (v) => (Number(v) > 0 ? `${v}%` : '—') },
+          { key: 'quantity', header: 'Quantity' },
+          {
+            key: 'status',
+            header: 'Status',
+            render: (_, row) => {
+              const p = row as unknown as Product;
+              return <StockBadge qty={p.quantity} threshold={p.low_stock_threshold} />;
+            },
+          },
+          {
+            key: 'actions',
+            header: 'Actions',
+            render: (_, row) => {
+              const p = row as unknown as Product;
+              return (
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setSummaryProduct(p)}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                    title="Daily summary"
+                  >
+                    <ChartBarIcon className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHistoryProduct(p)}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-purple-600 hover:bg-purple-50 transition-colors"
+                    title="Movement history"
+                  >
+                    <ClockIcon className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setStockProduct(p)}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-green-600 hover:bg-green-50 transition-colors"
+                    title="Adjust stock"
+                  >
+                    <ArrowUpIcon className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditProduct(p)}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors"
+                    title="Edit"
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { if (confirm(`Delete "${p.name}"?`)) deleteMutation.mutate(p.id); }}
+                    disabled={deleteMutation.isPending}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors"
+                    title="Delete"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              );
+            },
+          },
+        ]}
+        data={filteredData as unknown as Record<string, unknown>[]}
+        loading={isLoading}
+        emptyMessage={
+          search || stockFilter !== 'all' ? 'No products match your filter.' : (
+            <>No products in this category.{' '}
+              <button type="button" onClick={() => setShowAdd(true)} className="text-(--primary) font-semibold hover:underline">Add the first product.</button>
+            </>
+          )
+        }
+      />
 
       {showAdd && catId && <ProductModal catId={catId} onClose={() => setShowAdd(false)} />}
       {editProduct && catId && (

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import clsx from 'clsx';
 import { format, startOfMonth } from 'date-fns';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -11,6 +12,7 @@ import {
   BanknotesIcon,
 } from '@heroicons/react/24/outline';
 import { SkeletonCard } from '../../components/ui/Skeleton';
+import { Table } from '../../components/ui/Table';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
@@ -498,44 +500,39 @@ export default function InventoryAnalyticsPage() {
             <h2 className="text-base font-semibold text-(--text-primary)">Period Breakdown</h2>
             <p className="text-xs text-(--text-muted) mt-0.5">Net Profit = Revenue − Expenses &nbsp;|&nbsp; Gross Profit = Revenue − Cost of Goods</p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-(--border)">
-              <thead className="bg-(--bg)">
-                <tr>
-                  {(['Period', 'Revenue', hasCogs ? 'Cost of Goods' : null, hasCogs ? 'Gross Profit' : null, 'Expenses', 'Net Profit', 'Units Sold'] as (string | null)[]).filter(Boolean).map((h) => (
-                    <th key={h!} className="px-4 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider whitespace-nowrap">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-(--border)">
-                {[...chart].reverse().map((row, i) => {
-                  const gp = row.revenue - row.cogs;
-                  const np = row.net_profit; // backend: revenue − cogs − expenses
-                  return (
-                    <tr key={i} className="hover:bg-(--primary-tint)/20 transition-colors">
-                      <td className="px-4 py-3 text-sm font-medium text-(--text-primary) whitespace-nowrap">{row.label}</td>
-                      <td className="px-4 py-3 text-sm text-emerald-600 font-semibold whitespace-nowrap">{fmt(row.revenue)}</td>
-                      {hasCogs && <td className="px-4 py-3 text-sm text-violet-600 font-semibold whitespace-nowrap">{row.cogs > 0 ? fmt(row.cogs) : '—'}</td>}
-                      {hasCogs && <td className={`px-4 py-3 text-sm font-semibold whitespace-nowrap ${gp >= 0 ? 'text-(--primary)' : 'text-red-600'}`}>{row.cogs > 0 ? fmt(gp) : '—'}</td>}
-                      <td className="px-4 py-3 text-sm text-(--primary) font-semibold whitespace-nowrap">{fmt(row.expense)}</td>
-                      <td className={`px-4 py-3 text-sm font-semibold whitespace-nowrap ${np >= 0 ? 'text-blue-600' : 'text-red-600'}`}>{fmt(np)}</td>
-                      <td className="px-4 py-3 text-sm text-(--text-secondary) whitespace-nowrap">{row.units_sold}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-              <tfoot className="bg-(--bg) border-t-2 border-(--border)">
-                <tr>
-                  <td className="px-4 py-3 text-sm font-bold text-(--text-primary)">TOTAL</td>
-                  <td className="px-4 py-3 text-sm font-bold text-emerald-600">{fmt(totRevenue)}</td>
-                  {hasCogs && <td className="px-4 py-3 text-sm font-bold text-violet-600">{fmt(totCogs)}</td>}
-                  {hasCogs && <td className={`px-4 py-3 text-sm font-bold ${grossProfit >= 0 ? 'text-(--primary)' : 'text-red-600'}`}>{fmt(grossProfit)}</td>}
-                  <td className="px-4 py-3 text-sm font-bold text-(--primary)">{fmt(totExpense)}</td>
-                  <td className={`px-4 py-3 text-sm font-bold ${netProfit >= 0 ? 'text-blue-600' : 'text-red-600'}`}>{fmt(netProfit)}</td>
-                  <td className="px-4 py-3 text-sm font-bold text-(--text-secondary)">{s?.total_units_sold ?? 0}</td>
-                </tr>
-              </tfoot>
-            </table>
+          <div className="py-4 sm:p-6 sm:pt-4">
+            <Table
+              columns={[
+                { key: 'label', header: 'Period', render: (v) => <span className="font-medium">{v as string}</span> },
+                { key: 'revenue', header: 'Revenue', render: (v) => <span className="text-emerald-600 font-semibold">{fmt(v as number)}</span> },
+                ...(hasCogs ? [{
+                  key: 'cogs', header: 'Cost of Goods',
+                  render: (v: unknown) => <span className="text-violet-600 font-semibold">{(v as number) > 0 ? fmt(v as number) : '—'}</span>,
+                }] : []),
+                ...(hasCogs ? [{
+                  key: 'gross_profit', header: 'Gross Profit',
+                  render: (_: unknown, row: Record<string, unknown>) => {
+                    const gp = (row.revenue as number) - (row.cogs as number);
+                    return <span className={clsx('font-semibold', gp >= 0 ? 'text-(--primary)' : 'text-red-600')}>{(row.cogs as number) > 0 ? fmt(gp) : '—'}</span>;
+                  },
+                }] : []),
+                { key: 'expense', header: 'Expenses', render: (v) => <span className="text-(--primary) font-semibold">{fmt(v as number)}</span> },
+                {
+                  key: 'net_profit', header: 'Net Profit',
+                  render: (v) => <span className={clsx('font-semibold', (v as number) >= 0 ? 'text-blue-600' : 'text-red-600')}>{fmt(v as number)}</span>,
+                },
+                { key: 'units_sold', header: 'Units Sold' },
+              ]}
+              data={[...chart].reverse() as unknown as Record<string, unknown>[]}
+              footer={{
+                label: 'TOTAL',
+                revenue: totRevenue,
+                cogs: totCogs,
+                expense: totExpense,
+                net_profit: netProfit,
+                units_sold: s?.total_units_sold ?? 0,
+              } as unknown as Record<string, unknown>}
+            />
           </div>
         </section>
       )}
@@ -574,36 +571,41 @@ export default function InventoryAnalyticsPage() {
             {[1, 2, 3].map((i) => <div key={i} className="h-10 rounded-lg bg-(--bg) skeleton" />)}
           </div>
         ) : (data?.best_sellers ?? []).length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-(--border)">
-              <thead className="bg-(--bg)">
-                <tr>
-                  {['#', 'Product', 'Units Sold', 'Revenue', 'Cost of Goods', 'Gross Profit', 'Margin'].map((h) => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider whitespace-nowrap">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-(--border)">
-                {data!.best_sellers.map((item, i) => {
-                  const gp = item.cogs != null ? item.total_revenue - item.cogs : null;
-                  return (
-                    <tr key={i} className="hover:bg-(--primary-tint)/20 transition-colors">
-                      <td className="px-4 py-3 text-sm text-(--text-muted)">{i + 1}</td>
-                      <td className="px-4 py-3 text-sm font-medium text-(--text-primary)">{item.product_name}</td>
-                      <td className="px-4 py-3 text-sm text-(--text-secondary)">{item.total_qty}</td>
-                      <td className="px-4 py-3 text-sm font-semibold text-emerald-600">{fmt(item.total_revenue)}</td>
-                      <td className="px-4 py-3 text-sm text-violet-600">{item.cogs != null ? fmt(item.cogs) : <span className="text-(--text-muted)">—</span>}</td>
-                      <td className={`px-4 py-3 text-sm font-semibold ${gp == null ? '' : gp >= 0 ? 'text-(--primary)' : 'text-red-600'}`}>
-                        {gp != null ? fmt(gp) : <span className="text-(--text-muted)">—</span>}
-                      </td>
-                      <td className={`px-4 py-3 text-sm font-semibold ${item.profit_margin == null ? '' : item.profit_margin >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
-                        {pct(item.profit_margin)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div className="py-4 sm:p-6 sm:pt-4">
+            <Table
+              columns={[
+                {
+                  key: 'product_name',
+                  header: 'Product',
+                  render: (v, row) => <><span className="text-(--text-muted) font-normal mr-1.5">#{row.rank as number}</span>{v as string}</>,
+                },
+                { key: 'total_qty', header: 'Units Sold' },
+                { key: 'total_revenue', header: 'Revenue', render: (v) => <span className="text-emerald-600 font-semibold">{fmt(v as number)}</span> },
+                {
+                  key: 'cogs', header: 'Cost of Goods',
+                  render: (v) => (v != null ? <span className="text-violet-600">{fmt(v as number)}</span> : <span className="text-(--text-muted)">—</span>),
+                },
+                {
+                  key: 'gross_profit', header: 'Gross Profit',
+                  render: (_, row) => {
+                    const cogs = row.cogs as number | null;
+                    const gp = cogs != null ? (row.total_revenue as number) - cogs : null;
+                    return gp != null
+                      ? <span className={clsx('font-semibold', gp >= 0 ? 'text-(--primary)' : 'text-red-600')}>{fmt(gp)}</span>
+                      : <span className="text-(--text-muted)">—</span>;
+                  },
+                },
+                {
+                  key: 'profit_margin', header: 'Margin',
+                  render: (v) => (
+                    <span className={clsx('font-semibold', v == null ? '' : (v as number) >= 0 ? 'text-blue-600' : 'text-red-600')}>
+                      {pct(v as number | null)}
+                    </span>
+                  ),
+                },
+              ]}
+              data={data!.best_sellers.map((item, i) => ({ ...item, rank: i + 1 })) as unknown as Record<string, unknown>[]}
+            />
           </div>
         ) : (
           <p className="px-6 py-10 text-center text-sm text-(--text-muted)">No sales recorded for this period.</p>

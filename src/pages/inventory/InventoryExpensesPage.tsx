@@ -4,7 +4,7 @@ import { format, startOfMonth, startOfWeek } from 'date-fns';
 import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, ArrowDownTrayIcon, TagIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/Skeleton';
 import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
@@ -457,64 +457,63 @@ export default function InventoryExpensesPage() {
         </div>
       )}
 
+      {/* A date-grouped list rather than the shared Table component --
+          expenses only ever carry 3 real fields (category, description,
+          amount) and are always grouped under a day header, so a table's
+          column headers added nothing (the "Date" column just showed "—"
+          on every row, since the date already lives in the group header).
+          This reads fine at any width without needing a separate mobile
+          layout. */}
       <div className="surface-soft overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-(--border)">
-            <thead className="bg-(--bg)">
-              <tr>
-                {['Date', 'Category', 'Description', 'Amount', 'Actions'].map(h => (
-                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-(--border)">
-              {isLoading ? (
-                <SkeletonTable rows={5} cols={5} />
-              ) : expenses.length > 0 ? (
-                byDate.map(([day, dayExpenses]) => (
-                  <>
-                    <tr key={`hdr-${day}`} className="bg-(--bg)">
-                      <td colSpan={5} className="px-6 py-2 text-xs font-bold text-(--text-secondary) uppercase tracking-wider">
-                        {format(new Date(day + 'T00:00:00'), 'EEEE, dd MMM yyyy')}
-                        <span className="ml-2 font-normal normal-case text-(--text-muted)">
-                          ({formatCurrency(dayExpenses.reduce((s, e) => s + Number(e.amount), 0))})
-                        </span>
-                      </td>
-                    </tr>
-                    {dayExpenses.map(e => (
-                      <tr key={e.id} className="hover:bg-(--primary-tint)/30">
-                        <td className="px-6 py-4 text-sm text-(--text-muted) whitespace-nowrap pl-8">—</td>
-                        <td className="px-6 py-4 text-sm text-(--text-primary)">{e.category_label}</td>
-                        <td className="px-6 py-4 text-sm text-(--text-secondary)">{e.description || '—'}</td>
-                        <td className="px-6 py-4 text-sm font-semibold text-(--text-primary)">{formatCurrency(e.amount)}</td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-1">
-                            <button type="button" onClick={() => setEditExpense(e)}
-                              className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors" title="Edit">
-                              <PencilIcon className="h-4 w-4" />
-                            </button>
-                            <button type="button" onClick={() => { if (confirm('Delete this expense?')) deleteMutation.mutate(e.id); }}
-                              disabled={deleteMutation.isPending}
-                              className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete">
-                              <TrashIcon className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    No expenses recorded yet.{' '}
-                    <button type="button" onClick={() => setShowAdd(true)} className="text-(--primary) font-semibold hover:underline">Add the first one.</button>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        {isLoading ? (
+          <div className="p-4 sm:p-6 space-y-3">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-12 w-full" />)}
+          </div>
+        ) : expenses.length > 0 ? (
+          <div className="divide-y divide-(--border)">
+            {byDate.map(([day, dayExpenses]) => (
+              <div key={day}>
+                <div className="px-4 sm:px-6 py-2 bg-(--bg) flex items-center justify-between gap-3 flex-wrap">
+                  <span className="text-xs font-bold text-(--text-secondary) uppercase tracking-wider">
+                    {format(new Date(day + 'T00:00:00'), 'EEEE, dd MMM yyyy')}
+                  </span>
+                  <span className="text-xs font-semibold text-(--text-muted)">
+                    {formatCurrency(dayExpenses.reduce((s, e) => s + Number(e.amount), 0))}
+                  </span>
+                </div>
+                <div className="divide-y divide-(--border)">
+                  {dayExpenses.map(e => (
+                    <div key={e.id} className="px-4 sm:px-6 py-3 flex items-center justify-between gap-3 flex-wrap hover:bg-(--primary-tint)/30 transition-colors">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-(--text-primary)">{e.category_label}</p>
+                        {e.description && <p className="text-xs text-(--text-secondary) mt-0.5">{e.description}</p>}
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0">
+                        <span className="text-sm font-semibold text-(--text-primary)">{formatCurrency(e.amount)}</span>
+                        <div className="flex items-center gap-1">
+                          <button type="button" onClick={() => setEditExpense(e)}
+                            className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors" title="Edit">
+                            <PencilIcon className="h-4 w-4" />
+                          </button>
+                          <button type="button" onClick={() => { if (confirm('Delete this expense?')) deleteMutation.mutate(e.id); }}
+                            disabled={deleteMutation.isPending}
+                            className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors" title="Delete">
+                            <TrashIcon className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="px-6 py-12 text-center text-sm text-(--text-muted)">
+            No expenses recorded yet.{' '}
+            <button type="button" onClick={() => setShowAdd(true)} className="text-(--primary) font-semibold hover:underline">Add the first one.</button>
+          </p>
+        )}
       </div>
 
       <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />

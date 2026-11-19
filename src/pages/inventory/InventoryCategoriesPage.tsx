@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PlusIcon, PencilIcon, TrashIcon, XCircleIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
-import { SkeletonTable } from '../../components/ui/Skeleton';
+import { Table } from '../../components/ui/Table';
 import { Modal } from '../../components/ui/Modal';
 import api from '../../services/api';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
@@ -310,7 +310,7 @@ export default function InventoryCategoriesPage() {
     <div className="space-y-6">
       <InventoryNav />
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold text-(--text-primary)">Categories</h1>
           <p className="text-sm text-(--text-secondary)">Organise your products by category</p>
@@ -331,70 +331,62 @@ export default function InventoryCategoriesPage() {
         </div>
       )}
 
-      <div className="surface-soft overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-(--border)">
-            <thead className="bg-(--bg)">
-              <tr>
-                {['Category', 'Products', 'Actions'].map(h => (
-                  <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-(--border)">
-              {isLoading ? (
-                <SkeletonTable rows={4} cols={3} />
-              ) : categories && categories.length > 0 ? (
-                categories.map(cat => (
-                  <tr key={cat.id} className="hover:bg-(--primary-tint)/30">
-                    <td className="px-6 py-4 text-sm font-medium">
-                      <Link to={`/inventory/products/${cat.id}`} className="inline-flex items-center gap-2 text-(--primary) hover:underline">
-                        <span className="text-xl leading-none">{getCategoryEmoji(cat.name)}</span>
-                        <span>{cat.name}</span>
-                      </Link>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-(--text-secondary)">{cat.product_count}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => setCustomFieldsCat(cat)}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Custom Fields">
-                          <AdjustmentsHorizontalIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { setMutErr(''); setEditCat(cat); }}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors"
-                          title="Edit"
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { if (confirm(`Delete "${cat.name}"? This cannot be undone.`)) deleteMutation.mutate(cat.id); }}
-                          disabled={deleteMutation.isPending}
-                          className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors"
-                          title="Delete"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={3} className="px-6 py-12 text-center text-sm text-(--text-muted)">
-                    No categories yet.{' '}
-                    <button type="button" onClick={() => setShowAdd(true)} className="text-(--primary) font-semibold hover:underline">
-                      Add your first category.
-                    </button>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Table
+        columns={[
+          {
+            key: 'name',
+            header: 'Category',
+            render: (v, row) => (
+              <Link to={`/inventory/products/${row.id as number}`} className="inline-flex items-center gap-2 text-(--primary) hover:underline font-semibold">
+                <span className="text-xl leading-none">{getCategoryEmoji(v as string)}</span>
+                <span>{v as string}</span>
+              </Link>
+            ),
+          },
+          { key: 'product_count', header: 'Products' },
+          {
+            key: 'actions',
+            header: 'Actions',
+            render: (_, row) => {
+              const cat = row as unknown as Category;
+              return (
+                <div className="flex items-center gap-2">
+                  <button type="button" onClick={() => setCustomFieldsCat(cat)}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-blue-600 hover:bg-blue-50 transition-colors" title="Custom Fields">
+                    <AdjustmentsHorizontalIcon className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setMutErr(''); setEditCat(cat); }}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--primary) hover:bg-(--primary-tint) transition-colors"
+                    title="Edit"
+                  >
+                    <PencilIcon className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { if (confirm(`Delete "${cat.name}"? This cannot be undone.`)) deleteMutation.mutate(cat.id); }}
+                    disabled={deleteMutation.isPending}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-red-600 hover:bg-red-50 transition-colors"
+                    title="Delete"
+                  >
+                    <TrashIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              );
+            },
+          },
+        ]}
+        data={(categories ?? []) as unknown as Record<string, unknown>[]}
+        loading={isLoading}
+        emptyMessage={
+          <>No categories yet.{' '}
+            <button type="button" onClick={() => setShowAdd(true)} className="text-(--primary) font-semibold hover:underline">
+              Add your first category.
+            </button>
+          </>
+        }
+      />
 
       {showAdd && (
         <AddCategoryModal

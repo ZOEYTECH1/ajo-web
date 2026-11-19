@@ -274,7 +274,7 @@ export default function InventoryDashboardPage() {
           // padding on top of theirs (plus the page's own gutter) would eat
           // a third of a phone's width before any content starts. Same fix
           // as the Ajo/Thrift group detail tab panels.
-          <div className="py-4 md:p-6 md:pt-4">
+          <div className="px-3 py-4 md:p-6 md:pt-4">
             <Table
               columns={[
                 { key: 'name', header: 'Product' },
@@ -317,7 +317,7 @@ export default function InventoryDashboardPage() {
             ))}
           </div>
         ) : data?.expiring_soon_items.length ? (
-          <div className="py-4 md:p-6 md:pt-4">
+          <div className="px-3 py-4 md:p-6 md:pt-4">
             <Table
               columns={[
                 { key: 'name', header: 'Product' },

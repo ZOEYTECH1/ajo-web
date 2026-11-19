@@ -514,7 +514,7 @@ export default function InventoryAnalyticsPage() {
             <h2 className="text-base font-semibold text-(--text-primary)">Period Breakdown</h2>
             <p className="text-xs text-(--text-muted) mt-0.5">Net Profit = Revenue − Expenses &nbsp;|&nbsp; Gross Profit = Revenue − Cost of Goods</p>
           </div>
-          <div className="py-4 md:p-6 md:pt-4">
+          <div className="px-3 py-4 md:p-6 md:pt-4">
             <Table
               columns={[
                 { key: 'label', header: 'Period', render: (v) => <span className="font-medium">{v as string}</span> },
@@ -547,20 +547,13 @@ export default function InventoryAnalyticsPage() {
                 units_sold: s?.total_units_sold ?? 0,
               } as unknown as Record<string, unknown>}
             />
-            {/* Pagination is a plain row of buttons, not a card like Table's
-                own rows -- it has no border/padding of its own to create
-                breathing room, so being flush against the parent (correct
-                for Table's cards) would crowd its page-number buttons right
-                up against the card edge. Give it back its own gutter. */}
-            <div className="px-4 md:px-0">
-              <Pagination
-                page={breakdownSafePage}
-                totalPages={breakdownTotalPages}
-                totalCount={reversedChart.length}
-                pageSize={BREAKDOWN_PAGE_SIZE}
-                onChange={setBreakdownPage}
-              />
-            </div>
+            <Pagination
+              page={breakdownSafePage}
+              totalPages={breakdownTotalPages}
+              totalCount={reversedChart.length}
+              pageSize={BREAKDOWN_PAGE_SIZE}
+              onChange={setBreakdownPage}
+            />
           </div>
         </section>
       )}
@@ -599,7 +592,7 @@ export default function InventoryAnalyticsPage() {
             {[1, 2, 3].map((i) => <div key={i} className="h-10 rounded-lg bg-(--bg) skeleton" />)}
           </div>
         ) : (data?.best_sellers ?? []).length > 0 ? (
-          <div className="py-4 md:p-6 md:pt-4">
+          <div className="px-3 py-4 md:p-6 md:pt-4">
             <Table
               columns={[
                 {

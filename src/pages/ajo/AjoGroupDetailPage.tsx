@@ -1048,6 +1048,8 @@ function MembersTab({
   payments,
   activeCycle,
   currentUserId,
+  adminId,
+  subAdminId,
 }: {
   members: Membership[];
   groupId: number;
@@ -1056,6 +1058,8 @@ function MembersTab({
   payments: Payment[];
   activeCycle: Cycle | undefined;
   currentUserId?: number;
+  adminId: number;
+  subAdminId: number | null;
 }) {
   const { t } = useTranslation();
   const qc = useQueryClient();
@@ -1119,7 +1123,28 @@ function MembersTab({
   const pendingRemovals = removals.filter((r) => r.status === 'pending');
 
   const approvedCols: Column<Record<string, unknown>>[] = [
-    { key: 'user_name', header: t('groupDetail.membersTab.headers.name'), render: (_, row) => fullName(row.user as UserSnap) },
+    {
+      key: 'user_name',
+      header: t('groupDetail.membersTab.headers.name'),
+      render: (_, row) => {
+        const u = row.user as UserSnap;
+        return (
+          <span className="inline-flex items-center gap-1.5">
+            {fullName(u)}
+            {u.id === adminId && (
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-(--primary-tint) text-(--primary-dark)">
+                {t('groupDetail.membersTab.adminBadge')}
+              </span>
+            )}
+            {u.id === subAdminId && (
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-amber-100 text-amber-700">
+                {t('groupDetail.membersTab.subAdminBadge')}
+              </span>
+            )}
+          </span>
+        );
+      },
+    },
     { key: 'total_approved', header: t('groupDetail.membersTab.headers.totalSaved'), render: (v) => formatCurrency(v as string) },
     {
       key: 'consecutive_default_streak',
@@ -2171,12 +2196,12 @@ export default function AjoGroupDetailPage() {
     : undefined;
 
   const tabs: { key: TabKey; label: string; count?: number }[] = [
-    { key: 'payments', label: 'Payments', count: payments.length },
-    { key: 'members',  label: 'Members',  count: approvedMembers.length },
-    { key: 'cycles',   label: 'Cycles',   count: cycles.length },
-    { key: 'order',    label: 'Collection Order' },
-    { key: 'history',  label: 'History' },
-    ...(isAdmin ? [{ key: 'audit' as const, label: 'Audit Log' }] : []),
+    { key: 'payments', label: t('groupDetail.tabs.payments'), count: payments.length },
+    { key: 'members',  label: t('groupDetail.tabs.members'),  count: approvedMembers.length },
+    { key: 'cycles',   label: t('groupDetail.tabs.cycles'),   count: cycles.length },
+    { key: 'order',    label: t('groupDetail.tabs.order') },
+    { key: 'history',  label: t('groupDetail.tabs.history') },
+    ...(isAdmin ? [{ key: 'audit' as const, label: t('groupDetail.tabs.audit') }] : []),
   ];
 
   return (
@@ -2184,7 +2209,7 @@ export default function AjoGroupDetailPage() {
       {/* Back */}
       <Link to="/ajo" className="inline-flex items-center gap-1 text-sm text-(--text-secondary) hover:text-(--text-primary)">
         <ChevronLeftIcon className="h-4 w-4" />
-        Back to groups
+        {t('groupDetail.main.backToGroups')}
       </Link>
 
       {/* Header card */}
@@ -2197,8 +2222,8 @@ export default function AjoGroupDetailPage() {
                 <button
                   type="button"
                   onClick={() => setShowSettings(true)}
-                  title="Group settings"
-                  aria-label="Group settings"
+                  title={t('groupDetail.main.groupSettings')}
+                  aria-label={t('groupDetail.main.groupSettings')}
                   className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30"
                 >
                   <Cog6ToothIcon className="h-5 w-5" aria-hidden="true" />
@@ -2211,7 +2236,7 @@ export default function AjoGroupDetailPage() {
             {group.rules && (
               <details className="mt-2 group/rules">
                 <summary className="cursor-pointer text-xs text-(--primary) font-semibold hover:underline select-none">
-                  View group rules
+                  {t('groupDetail.main.viewRules')}
                 </summary>
                 <p className="mt-1.5 text-xs text-gray-600 bg-(--primary-tint) rounded-lg px-3 py-2 leading-relaxed whitespace-pre-line">
                   {group.rules}
@@ -2221,14 +2246,14 @@ export default function AjoGroupDetailPage() {
             <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-(--text-secondary)">
               <span className="inline-flex items-center gap-1">
                 <UserGroupIcon className="h-4 w-4" />
-                {group.member_count} members
+                {t('ajoGroups.memberCount', { count: group.member_count })}
               </span>
               {(activeCycle || roundJustCompleted) && (
                 <span className="inline-flex items-center gap-1.5 bg-(--primary-tint) text-(--primary-dark) text-xs font-semibold px-2.5 py-1 rounded-full">
                   <ArrowPathIcon className="h-3.5 w-3.5" />
                   {activeCycle
-                    ? `Round ${activeCycle.round_number} · Cycle ${activeCycle.cycle_number}`
-                    : `Round ${lastClosedCycle?.round_number} complete`}
+                    ? t('groupDetail.main.roundCycleBadge', { round: activeCycle.round_number, cycle: activeCycle.cycle_number })
+                    : t('groupDetail.main.roundCompleteBadge', { round: lastClosedCycle?.round_number })}
                 </span>
               )}
             </div>
@@ -2241,7 +2266,7 @@ export default function AjoGroupDetailPage() {
                 out in words when the icon is sitting right next to it. */}
             {isAdmin && (
               <div className="mt-3">
-                <p className="text-xs text-(--text-secondary) mb-1">Invite Code</p>
+                <p className="text-xs text-(--text-secondary) mb-1">{t('groupDetail.main.inviteCode')}</p>
                 <div className="flex items-center gap-2">
                   <span className="flex-1 min-w-0 inline-flex items-center gap-1.5 font-mono tracking-widest text-(--text-secondary) text-sm bg-(--bg) border border-(--border) rounded-lg px-3 py-1.5">
                     <KeyIcon className="h-4 w-4 text-(--text-muted) shrink-0" />
@@ -2250,8 +2275,8 @@ export default function AjoGroupDetailPage() {
                   <button
                     type="button"
                     onClick={() => copyInviteCode(group.invite_code)}
-                    title={copied ? 'Copied!' : 'Copy invite code'}
-                    aria-label="Copy invite code"
+                    title={copied ? t('groupDetail.main.copied') : t('groupDetail.main.copyInviteCode')}
+                    aria-label={t('groupDetail.main.copyInviteCode')}
                     className="shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30"
                   >
                     {copied
@@ -2262,8 +2287,8 @@ export default function AjoGroupDetailPage() {
                     type="button"
                     onClick={() => regenerateMutation.mutate()}
                     disabled={regenerateMutation.isPending}
-                    title="Regenerate invite code"
-                    aria-label="Regenerate invite code"
+                    title={t('groupDetail.main.regenerateInviteCode')}
+                    aria-label={t('groupDetail.main.regenerateInviteCode')}
                     className="shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-50 transition-colors"
                   >
                     <ArrowPathIcon className={clsx('h-4 w-4', regenerateMutation.isPending && 'animate-spin')} />
@@ -2293,28 +2318,34 @@ export default function AjoGroupDetailPage() {
                     : 'bg-red-50 text-red-600',
                 )}
               >
-                {group.is_on_trial ? 'Trial active — upgrade' : 'No subscription — pay now'}
+                {group.is_on_trial ? t('groupDetail.main.trialActive') : t('groupDetail.main.noSubscription')}
               </Link>
             )}
           </div>
         </div>
 
         {/* Stats row */}
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 pt-4 border-t border-(--border) text-sm">
+        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 pt-4 border-t border-(--border) text-sm">
           <div>
-            <p className="text-xs text-(--text-secondary)">Admin</p>
+            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.admin')}</p>
             <p className="font-medium text-(--text-primary)">{fullName(group.admin)}</p>
           </div>
           <div>
-            <p className="text-xs text-(--text-secondary)">Total Cycles</p>
+            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.subAdmin')}</p>
+            <p className="font-medium text-(--text-primary)">
+              {group.sub_admin ? fullName(group.sub_admin) : t('groupDetail.main.notAssigned')}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.totalCycles')}</p>
             <p className="font-medium text-(--text-primary)">{cycles.length}</p>
           </div>
           <div>
-            <p className="text-xs text-(--text-secondary)">Active Cycle</p>
-            <p className="font-medium text-(--text-primary)">{activeCycle ? `#${activeCycle.cycle_number}` : 'None'}</p>
+            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.activeCycle')}</p>
+            <p className="font-medium text-(--text-primary)">{activeCycle ? `#${activeCycle.cycle_number}` : t('groupDetail.main.none')}</p>
           </div>
           <div>
-            <p className="text-xs text-(--text-secondary)">This Cycle Approved</p>
+            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.thisCycleApproved')}</p>
             <p className="font-medium text-green-700">
               {activeCycle
                 ? formatCurrency(
@@ -2326,7 +2357,7 @@ export default function AjoGroupDetailPage() {
             </p>
           </div>
           <div>
-            <p className="text-xs text-(--text-secondary)">All-Time Approved</p>
+            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.allTimeApproved')}</p>
             <p className="font-medium text-(--primary)">
               {formatCurrency(
                 payments
@@ -2346,14 +2377,14 @@ export default function AjoGroupDetailPage() {
               className="inline-flex items-center gap-2 rounded-lg bg-(--accent) text-white px-5 py-2.5 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
             >
               <PlusIcon className="h-4 w-4" />
-              Submit My Payment
+              {t('groupDetail.main.submitMyPayment')}
             </button>
           </div>
         )}
 
         {myActivePay && !isAdmin && (
           <div className="mt-4 pt-4 border-t border-(--border) flex items-center gap-3">
-            <span className="text-sm text-(--text-secondary)">Your payment for this cycle:</span>
+            <span className="text-sm text-(--text-secondary)">{t('groupDetail.main.yourPaymentForCycle')}</span>
             <StatusBadge value={myActivePay.status} />
             {myActivePay.status === 'rejected' && myActivePay.rejection_reason && (
               <span className="text-xs text-red-600">— {myActivePay.rejection_reason}</span>
@@ -2374,16 +2405,13 @@ export default function AjoGroupDetailPage() {
         <div className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
           <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600 shrink-0" />
           <p className="text-sm text-yellow-800">
-            <span className="font-semibold">
-              {pendingPaymentsCount} pending payment{pendingPaymentsCount !== 1 ? 's' : ''}
-            </span>{' '}
-            in the active cycle awaiting your review.{' '}
+            {t('groupDetail.main.pendingPaymentsBanner', { count: pendingPaymentsCount })}{' '}
             <button
               type="button"
               onClick={() => setActiveTab('payments')}
               className="underline font-semibold hover:text-yellow-900"
             >
-              Review now
+              {t('groupDetail.main.reviewNow')}
             </button>
           </p>
         </div>
@@ -2394,14 +2422,13 @@ export default function AjoGroupDetailPage() {
         <div className="flex items-center gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
           <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600 shrink-0" />
           <p className="text-sm text-yellow-800">
-            <span className="font-semibold">{group.admin.first_name}'s payment</span>{' '}
-            is awaiting your review — you were randomly picked this round since the admin can't approve their own.{' '}
+            {t('groupDetail.main.subAdminBanner', { name: group.admin.first_name })}{' '}
             <button
               type="button"
               onClick={() => setActiveTab('payments')}
               className="underline font-semibold hover:text-yellow-900"
             >
-              Review now
+              {t('groupDetail.main.reviewNow')}
             </button>
           </p>
         </div>
@@ -2451,6 +2478,8 @@ export default function AjoGroupDetailPage() {
               payments={payments}
               activeCycle={activeCycle}
               currentUserId={currentUser?.id}
+              adminId={group.admin.id}
+              subAdminId={group.sub_admin?.id ?? null}
             />
           )}
           {activeTab === 'cycles' && (

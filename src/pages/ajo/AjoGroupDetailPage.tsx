@@ -307,6 +307,7 @@ function SubmitPaymentModal({
   contributionAmount: string;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
   const [amount, setAmount] = useState(String(Math.round(Number(contributionAmount))));
@@ -332,7 +333,7 @@ function SubmitPaymentModal({
       const d = e.response?.data;
       setErr(
         d?.amount_entered?.[0] ?? d?.receipt_image?.[0] ??
-        d?.non_field_errors?.[0] ?? d?.detail ?? 'Something went wrong.',
+        d?.non_field_errors?.[0] ?? d?.detail ?? t('groupDetail.submitPayment.errors.somethingWrong'),
       );
     },
   });
@@ -348,11 +349,11 @@ function SubmitPaymentModal({
     setErr('');
     const amt = Number(amount.trim());
     if (!amount.trim() || isNaN(amt) || amt <= 0) {
-      setErr('Enter a valid payment amount.');
+      setErr(t('groupDetail.submitPayment.errors.invalidAmount'));
       return;
     }
     if (!file) {
-      setErr('Attach a receipt photo before submitting.');
+      setErr(t('groupDetail.submitPayment.errors.noReceipt'));
       return;
     }
     mutation.mutate();
@@ -363,16 +364,16 @@ function SubmitPaymentModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
         <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) p-8 max-w-sm w-full text-center space-y-4">
           <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto" />
-          <h2 className="text-xl font-bold text-(--text-primary)">Payment Submitted!</h2>
+          <h2 className="text-xl font-bold text-(--text-primary)">{t('groupDetail.submitPayment.submitted')}</h2>
           <p className="text-sm text-(--text-secondary)">
-            Your payment is pending review by the group admin.
+            {t('groupDetail.submitPayment.pendingReview')}
           </p>
           <button
             type="button"
             onClick={onClose}
             className="w-full mt-2 rounded-lg bg-(--accent) text-white py-2.5 font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
-            Back to Group
+            {t('groupDetail.submitPayment.backToGroup')}
           </button>
         </div>
       </div>
@@ -383,19 +384,19 @@ function SubmitPaymentModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Submit Payment</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+          <h2 className="text-lg font-bold text-(--text-primary)">{t('groupDetail.submitPayment.title')}</h2>
+          <button type="button" onClick={onClose} aria-label={t('groupDetail.submitPayment.closeDialog')} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <p className="text-sm text-(--text-secondary)">
-            Group: <span className="font-medium text-(--text-primary)">{groupName}</span>
+            {t('groupDetail.submitPayment.groupLabel')} <span className="font-medium text-(--text-primary)">{groupName}</span>
           </p>
 
           <div>
-            <label htmlFor="submit-payment-amount" className="block text-sm font-semibold text-(--text-secondary) mb-1">Amount (NGN)</label>
+            <label htmlFor="submit-payment-amount" className="block text-sm font-semibold text-(--text-secondary) mb-1">{t('groupDetail.submitPayment.amountLabel')}</label>
             <input
               id="submit-payment-amount"
               type="number"
@@ -408,14 +409,14 @@ function SubmitPaymentModal({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Receipt (required)</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">{t('groupDetail.submitPayment.receiptLabel')}</label>
             {preview ? (
               <div className="relative rounded-xl overflow-hidden border border-(--border)">
                 <img src={preview} alt="Receipt preview" className="w-full h-48 object-cover" />
                 <button
                   type="button"
                   onClick={() => handleFile(null)}
-                  aria-label="Remove receipt image"
+                  aria-label={t('groupDetail.submitPayment.removeReceiptA11y')}
                   className="absolute top-2 right-2 bg-red-100 text-red-600 rounded-full p-1 hover:bg-red-200 transition-colors"
                 >
                   <XCircleIcon className="h-5 w-5" aria-hidden="true" />
@@ -428,8 +429,8 @@ function SubmitPaymentModal({
                 className="w-full rounded-xl border-2 border-dashed border-(--border) py-8 flex flex-col items-center gap-2 hover:border-(--primary-light) hover:bg-(--primary-tint) transition-colors"
               >
                 <PaperClipIcon className="h-8 w-8 text-(--text-muted)" />
-                <span className="text-sm font-medium text-(--text-secondary)">Attach receipt photo</span>
-                <span className="text-xs text-(--text-muted)">Click to choose from your files</span>
+                <span className="text-sm font-medium text-(--text-secondary)">{t('groupDetail.submitPayment.attachReceipt')}</span>
+                <span className="text-xs text-(--text-muted)">{t('groupDetail.submitPayment.clickToChoose')}</span>
               </button>
             )}
             <input
@@ -446,13 +447,13 @@ function SubmitPaymentModal({
           )}
 
           <div className="flex gap-3 pt-1">
-            <button type="button" onClick={onClose} className={`flex-1 ${cancelBtn}`}>Cancel</button>
+            <button type="button" onClick={onClose} className={`flex-1 ${cancelBtn}`}>{t('common.cancel')}</button>
             <button
               type="submit"
               disabled={mutation.isPending || !amount.trim() || !file}
               className={`flex-1 ${orangeBtn}`}
             >
-              {mutation.isPending ? 'Submitting…' : 'Submit Payment'}
+              {mutation.isPending ? t('groupDetail.submitPayment.submitting') : t('groupDetail.submitPayment.submitBtn')}
             </button>
           </div>
         </form>
@@ -474,6 +475,7 @@ function RejectModal({
   onCancel: () => void;
   loading?: boolean;
 }) {
+  const { t } = useTranslation();
   const [reason, setReason] = useState('');
   // The modal now stays mounted (Modal's Transition handles show/hide), so
   // reset the textarea each time it's freshly opened rather than relying on
@@ -483,20 +485,20 @@ function RejectModal({
     if (open) setReason('');
   }, [open]);
   return (
-    <Modal open={open} onClose={onCancel} title="Reject Payment" size="sm">
+    <Modal open={open} onClose={onCancel} title={t('groupDetail.rejectModal.title')} size="sm">
       <div className="space-y-4">
         <p className="text-sm text-(--text-secondary)">
-          Optionally provide a reason so the member knows what to fix.
+          {t('groupDetail.rejectModal.hint')}
         </p>
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           rows={3}
-          placeholder="e.g. Wrong amount entered"
+          placeholder={t('groupDetail.rejectModal.placeholder')}
           className="w-full rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-400"
         />
         <div className="flex gap-3">
-          <button type="button" onClick={onCancel} disabled={loading} className={`${cancelBtn} disabled:opacity-50`}>Cancel</button>
+          <button type="button" onClick={onCancel} disabled={loading} className={`${cancelBtn} disabled:opacity-50`}>{t('common.cancel')}</button>
           <button
             type="button"
             onClick={() => onConfirm(reason.trim())}
@@ -504,7 +506,7 @@ function RejectModal({
             className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 inline-flex items-center justify-center gap-2"
           >
             {loading && <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>}
-            {loading ? 'Rejecting…' : 'Reject'}
+            {loading ? t('groupDetail.rejectModal.rejecting') : t('groupDetail.rejectModal.reject')}
           </button>
         </div>
       </div>
@@ -515,6 +517,7 @@ function RejectModal({
 // ── Receipt Viewer Modal ──────────────────────────────────────────────────────
 
 function ReceiptViewerModal({ url, onClose }: { url: string; onClose: () => void }) {
+  const { t } = useTranslation();
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
@@ -530,11 +533,11 @@ function ReceiptViewerModal({ url, onClose }: { url: string; onClose: () => void
           className="absolute -top-10 right-0 text-white/80 hover:text-white text-sm flex items-center gap-1"
         >
           <XCircleIcon className="h-6 w-6" aria-hidden="true" />
-          <span>Close</span>
+          <span>{t('groupDetail.receiptViewer.close')}</span>
         </button>
         <img
           src={cloudinaryUrl(url, 1200, 1200, { crop: 'limit' })}
-          alt="Payment receipt"
+          alt={t('groupDetail.receiptViewer.alt')}
           className="rounded-xl object-contain max-h-[80vh] w-full"
         />
       </div>
@@ -551,6 +554,7 @@ function GroupSettingsModal({
   group: Group;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [form, setForm] = useState({
     name: group.name,
@@ -577,14 +581,14 @@ function GroupSettingsModal({
     onError: (e: any) => {
       const d = e.response?.data;
       const first = Object.values(d ?? {})[0];
-      setErr(d?.detail ?? (Array.isArray(first) ? (first as string[])[0] : String(first ?? 'Something went wrong.')));
+      setErr(d?.detail ?? (Array.isArray(first) ? (first as string[])[0] : String(first ?? t('groupDetail.settingsModal.errors.somethingWrong'))));
     },
   });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErr('');
-    if (!form.name.trim()) { setErr('Group name is required.'); return; }
+    if (!form.name.trim()) { setErr(t('groupDetail.settingsModal.errors.nameRequired')); return; }
     mutation.mutate();
   }
 
@@ -592,8 +596,8 @@ function GroupSettingsModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Group Settings</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+          <h2 className="text-lg font-bold text-(--text-primary)">{t('groupDetail.settingsModal.title')}</h2>
+          <button type="button" onClick={onClose} aria-label={t('groupDetail.settingsModal.closeDialog')} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
@@ -601,20 +605,20 @@ function GroupSettingsModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Read-only group config */}
           <div className="rounded-lg bg-(--bg) border border-(--border) px-4 py-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <span className="text-(--text-secondary)">Contribution</span>
+            <span className="text-(--text-secondary)">{t('groupDetail.settingsModal.contribution')}</span>
             <span className="font-medium text-(--text-primary)">{formatCurrency(group.contribution_amount)}</span>
-            <span className="text-(--text-secondary)">Frequency</span>
+            <span className="text-(--text-secondary)">{t('groupDetail.settingsModal.frequency')}</span>
             <span className="font-medium text-(--text-primary) capitalize">{group.contribution_frequency}</span>
             {group.collection_day != null && (
               <>
-                <span className="text-(--text-secondary)">Collection day</span>
+                <span className="text-(--text-secondary)">{t('groupDetail.settingsModal.collectionDay')}</span>
                 <span className="font-medium text-(--text-primary)">{group.collection_day}</span>
               </>
             )}
           </div>
 
           <div>
-            <label htmlFor="gs-name" className="block text-sm font-semibold text-(--text-secondary) mb-1">Group Name</label>
+            <label htmlFor="gs-name" className="block text-sm font-semibold text-(--text-secondary) mb-1">{t('groupDetail.settingsModal.nameLabel')}</label>
             <input
               id="gs-name"
               type="text"
@@ -625,7 +629,7 @@ function GroupSettingsModal({
           </div>
 
           <div>
-            <label htmlFor="gs-description" className="block text-sm font-semibold text-(--text-secondary) mb-1">Description</label>
+            <label htmlFor="gs-description" className="block text-sm font-semibold text-(--text-secondary) mb-1">{t('groupDetail.settingsModal.descriptionLabel')}</label>
             <textarea
               id="gs-description"
               rows={3}
@@ -636,20 +640,20 @@ function GroupSettingsModal({
           </div>
 
           <div>
-            <label htmlFor="gs-rules" className="block text-sm font-semibold text-(--text-secondary) mb-1">Rules (optional)</label>
+            <label htmlFor="gs-rules" className="block text-sm font-semibold text-(--text-secondary) mb-1">{t('groupDetail.settingsModal.rulesLabel')}</label>
             <textarea
               id="gs-rules"
               rows={3}
               value={form.rules}
               onChange={(e) => setForm((f) => ({ ...f, rules: e.target.value }))}
-              placeholder="e.g. All payments must be made by the 5th of each month…"
+              placeholder={t('groupDetail.settingsModal.rulesPlaceholder')}
               className={inputCls}
             />
           </div>
 
           <div>
             <label htmlFor="gs-grace" className="block text-sm font-semibold text-(--text-secondary) mb-1">
-              Grace Period (days, 0–30)
+              {t('groupDetail.settingsModal.gracePeriodLabel')}
             </label>
             <input
               id="gs-grace"
@@ -663,12 +667,12 @@ function GroupSettingsModal({
           </div>
 
           {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
-          {success && <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">Settings saved!</p>}
+          {success && <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">{t('groupDetail.settingsModal.saved')}</p>}
 
           <div className="flex gap-3 pt-1">
-            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+            <button type="button" onClick={onClose} className={cancelBtn}>{t('common.cancel')}</button>
             <button type="submit" disabled={mutation.isPending} className={orangeBtn}>
-              {mutation.isPending ? 'Saving…' : 'Save Settings'}
+              {mutation.isPending ? t('groupDetail.settingsModal.saving') : t('groupDetail.settingsModal.saveSettings')}
             </button>
           </div>
         </form>
@@ -688,6 +692,7 @@ function StartCycleModal({
   groupId: number;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [startDate, setStartDate] = useState('');
   const [err, setErr] = useState('');
@@ -706,22 +711,22 @@ function StartCycleModal({
     onError: (e: any) => {
       const d = e.response?.data;
       const first = Object.values(d ?? {})[0];
-      setErr(d?.detail ?? (Array.isArray(first) ? (first as string[])[0] : String(first ?? 'Something went wrong.')));
+      setErr(d?.detail ?? (Array.isArray(first) ? (first as string[])[0] : String(first ?? t('groupDetail.startCycleModal.errors.somethingWrong'))));
     },
   });
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErr('');
-    if (!startDate) { setErr('Start date is required.'); return; }
+    if (!startDate) { setErr(t('groupDetail.startCycleModal.errors.startDateRequired')); return; }
     mutation.mutate();
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Start New Cycle" size="sm">
+    <Modal open={open} onClose={onClose} title={t('groupDetail.startCycleModal.title')} size="sm">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="sc-start" className="block text-sm font-semibold text-(--text-secondary) mb-1">Start Date</label>
+          <label htmlFor="sc-start" className="block text-sm font-semibold text-(--text-secondary) mb-1">{t('groupDetail.startCycleModal.startDateLabel')}</label>
           <input
             id="sc-start"
             type="date"
@@ -732,15 +737,15 @@ function StartCycleModal({
           />
         </div>
         <p className="text-xs text-(--text-muted)">
-          The cycle's end date is set automatically based on the group's contribution frequency and collection day.
+          {t('groupDetail.startCycleModal.cycleEndHint')}
         </p>
 
         {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
         <div className="flex gap-3 pt-1">
-          <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+          <button type="button" onClick={onClose} className={cancelBtn}>{t('common.cancel')}</button>
           <button type="submit" disabled={mutation.isPending} className={orangeBtn}>
-            {mutation.isPending ? 'Creating…' : 'Create Cycle'}
+            {mutation.isPending ? t('groupDetail.startCycleModal.creating') : t('groupDetail.startCycleModal.createCycle')}
           </button>
         </div>
       </form>
@@ -761,6 +766,7 @@ function PaymentsTab({
   adminUserId: number;
   subAdminUserId: number | null;
 }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const currentUser = useAuthStore((s) => s.user);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
@@ -793,7 +799,7 @@ function PaymentsTab({
     // simply stopped looking busy. Looked indistinguishable from "the
     // button doesn't work."
     onError: (e: any) => {
-      setReviewError(e?.response?.data?.detail ?? 'Could not update this payment. Please try again.');
+      setReviewError(e?.response?.data?.detail ?? t('groupDetail.paymentsTab.reviewError'));
     },
   });
 
@@ -823,38 +829,38 @@ function PaymentsTab({
   }
 
   const filterPills = [
-    { key: 'all' as const,      label: 'All',      count: statusCounts?.all      ?? totalCount },
-    { key: 'pending' as const,  label: 'Pending',  count: statusCounts?.pending  ?? 0 },
-    { key: 'approved' as const, label: 'Approved', count: statusCounts?.approved ?? 0 },
-    { key: 'rejected' as const, label: 'Rejected', count: statusCounts?.rejected ?? 0 },
+    { key: 'all' as const,      label: t('groupDetail.paymentsTab.filterAll'),      count: statusCounts?.all      ?? totalCount },
+    { key: 'pending' as const,  label: t('groupDetail.paymentsTab.filterPending'),  count: statusCounts?.pending  ?? 0 },
+    { key: 'approved' as const, label: t('groupDetail.paymentsTab.filterApproved'), count: statusCounts?.approved ?? 0 },
+    { key: 'rejected' as const, label: t('groupDetail.paymentsTab.filterRejected'), count: statusCounts?.rejected ?? 0 },
   ];
 
   const cols: Column<Record<string, unknown>>[] = [
     {
       key: 'submitted_by',
-      header: 'Member',
+      header: t('groupDetail.paymentsTab.headers.member'),
       render: (_, row) => fullName(row.submitted_by as UserSnap),
     },
-    { key: 'cycle_number', header: 'Cycle', render: (v) => String(v ?? '—') },
-    { key: 'amount_entered', header: 'Amount', render: (v) => formatCurrency(v as string) },
+    { key: 'cycle_number', header: t('groupDetail.paymentsTab.headers.cycle'), render: (v) => String(v ?? '—') },
+    { key: 'amount_entered', header: t('groupDetail.paymentsTab.headers.amount'), render: (v) => formatCurrency(v as string) },
     {
       key: 'submitted_at',
-      header: 'Date',
+      header: t('groupDetail.paymentsTab.headers.date'),
       render: (v) => {
         try { return format(new Date(v as string), 'dd MMM yyyy'); } catch { return v as string; }
       },
     },
-    { key: 'status', header: 'Status', render: (v) => <StatusBadge value={v as string} /> },
+    { key: 'status', header: t('groupDetail.paymentsTab.headers.status'), render: (v) => <StatusBadge value={v as string} /> },
     {
       key: 'rejection_reason',
-      header: 'Reason',
+      header: t('groupDetail.paymentsTab.headers.reason'),
       render: (v) => v
         ? <span className="text-xs text-red-600">{v as string}</span>
         : <span className="text-xs text-(--text-muted)">—</span>,
     },
     {
       key: 'receipt_image',
-      header: 'Receipt',
+      header: t('groupDetail.paymentsTab.headers.receipt'),
       render: (v) => {
         if (!v) return <span className="text-xs text-(--text-muted)">—</span>;
         return (
@@ -864,7 +870,7 @@ function PaymentsTab({
             className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 text-xs font-semibold hover:bg-blue-100 transition-colors"
           >
             <EyeIcon className="h-3 w-3" />
-            View
+            {t('groupDetail.paymentsTab.viewReceipt')}
           </button>
         );
       },
@@ -877,7 +883,7 @@ function PaymentsTab({
     ...(isAdmin || (subAdminUserId !== null && currentUser?.id === subAdminUserId)
       ? [{
           key: 'id',
-          header: 'Actions',
+          header: t('groupDetail.paymentsTab.headers.actions'),
           render: (id: unknown, row: Record<string, unknown>) => {
             if ((row.status as string) !== 'pending') return <span className="text-xs text-(--text-muted)">—</span>;
             const submittedById = (row.submitted_by as { id: number } | undefined)?.id;
@@ -899,7 +905,7 @@ function PaymentsTab({
                   {approving
                     ? <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
                     : <CheckCircleIcon className="h-3.5 w-3.5" />}
-                  {approving ? 'Approving…' : 'Approve'}
+                  {approving ? t('groupDetail.paymentsTab.approving') : t('groupDetail.paymentsTab.approve')}
                 </button>
                 <button
                   type="button"
@@ -907,7 +913,7 @@ function PaymentsTab({
                   disabled={reviewMutation.isPending}
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
                 >
-                  <XCircleIcon className="h-3.5 w-3.5" /> Reject
+                  <XCircleIcon className="h-3.5 w-3.5" /> {t('groupDetail.paymentsTab.reject')}
                 </button>
               </div>
             );
@@ -953,14 +959,14 @@ function PaymentsTab({
         columns={cols}
         data={pagePayments as unknown as Record<string, unknown>[]}
         loading={isLoading}
-        emptyMessage="No payments yet."
+        emptyMessage={t('groupDetail.paymentsTab.noneYet')}
       />
 
       {/* Server-side pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4 gap-3 flex-wrap">
           <p className="text-xs text-(--text-muted)">
-            Showing {(page - 1) * 10 + 1}–{Math.min(page * 10, totalCount)} of {totalCount}
+            {t('pagination.showing', { start: (page - 1) * 10 + 1, end: Math.min(page * 10, totalCount), total: totalCount })}
           </p>
           <div className="flex items-center gap-1">
             <button
@@ -969,7 +975,7 @@ function PaymentsTab({
               disabled={page === 1}
               className="px-2.5 py-1.5 rounded-lg text-xs font-semibold surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
             >
-              ← Prev
+              {t('groupDetail.paymentsTab.prev')}
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1)
               .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
@@ -1003,7 +1009,7 @@ function PaymentsTab({
               disabled={page === totalPages}
               className="px-2.5 py-1.5 rounded-lg text-xs font-semibold surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-40 transition-colors"
             >
-              Next →
+              {t('groupDetail.paymentsTab.next')}
             </button>
           </div>
         </div>

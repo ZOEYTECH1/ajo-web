@@ -213,6 +213,91 @@
       "membershipPending": "Buƙatar ku na shiga wannan ƙungiya tana jiran amincewa.",
       "membershipRejected": "Ba a amince da buƙatar ku na shiga wannan ƙungiya ba.",
       "goBack": "Koma baya"
+    },
+    "submitPayment": {
+      "title": "Mika Biyan Kuɗi",
+      "closeDialog": "Rufe akwatin tattaunawa",
+      "submitted": "An Mika Biyan Kuɗi!",
+      "pendingReview": "Ana jiran bitar biyan kuɗin ku daga shugaban ƙungiya.",
+      "backToGroup": "Koma zuwa Ƙungiya",
+      "groupLabel": "Ƙungiya:",
+      "amountLabel": "Adadi (NGN)",
+      "receiptLabel": "Rasit (ana buƙata)",
+      "removeReceiptA11y": "Cire hoton rasit",
+      "attachReceipt": "Haɗa hoton rasit",
+      "clickToChoose": "Danna don zaɓar daga fayilolinku",
+      "submitting": "Ana mikawa…",
+      "submitBtn": "Mika Biyan Kuɗi",
+      "errors": {
+        "invalidAmount": "Shigar da adadin biya mai inganci.",
+        "noReceipt": "Haɗa hoton rasit kafin mikawa.",
+        "somethingWrong": "Wani abu ya yi kuskure."
+      }
+    },
+    "rejectModal": {
+      "title": "Ƙi Biyan Kuɗi",
+      "hint": "Za ku iya ba da dalili don memba ya san abin da zai gyara.",
+      "placeholder": "misali An shigar da adadi mara kyau",
+      "rejecting": "Ana ƙi…",
+      "reject": "Ƙi"
+    },
+    "receiptViewer": {
+      "close": "Rufe",
+      "alt": "Rasit na biyan kuɗi"
+    },
+    "settingsModal": {
+      "title": "Saitunan Ƙungiya",
+      "closeDialog": "Rufe akwatin tattaunawa",
+      "contribution": "Gudummawa",
+      "frequency": "Yawan Lokuta",
+      "collectionDay": "Ranar Karɓa",
+      "nameLabel": "Sunan Ƙungiya",
+      "descriptionLabel": "Bayani",
+      "rulesLabel": "Ƙa'idoji (zaɓi)",
+      "rulesPlaceholder": "misali Dole ne a yi dukkan biyan kuɗi kafin ranar 5 ga kowane wata…",
+      "gracePeriodLabel": "Lokacin Alheri (kwanaki, 0–30)",
+      "saved": "An ajiye saituna!",
+      "saving": "Ana ajiyewa…",
+      "saveSettings": "Ajiye Saituna",
+      "errors": {
+        "nameRequired": "Ana buƙatar sunan ƙungiya.",
+        "somethingWrong": "Wani abu ya yi kuskure."
+      }
+    },
+    "startCycleModal": {
+      "title": "Fara Sabon Zagaye",
+      "startDateLabel": "Ranar Farawa",
+      "cycleEndHint": "Ana saita ranar ƙarshen zagaye ta atomatik bisa yawan bayar da gudummawa da ranar karɓa ta ƙungiya.",
+      "creating": "Ana ƙirƙirawa…",
+      "createCycle": "Ƙirƙiri Zagaye",
+      "errors": {
+        "startDateRequired": "Ana buƙatar ranar farawa.",
+        "somethingWrong": "Wani abu ya yi kuskure."
+      }
+    },
+    "paymentsTab": {
+      "filterAll": "Duka",
+      "filterPending": "Jiran",
+      "filterApproved": "An Amince",
+      "filterRejected": "An Ƙi",
+      "reviewError": "An kasa sabunta wannan biyan kuɗi. Da fatan za a sake gwadawa.",
+      "headers": {
+        "member": "Memba",
+        "cycle": "Zagaye",
+        "amount": "Adadi",
+        "date": "Rana",
+        "status": "Matsayi",
+        "reason": "Dalili",
+        "receipt": "Rasit",
+        "actions": "Ayyuka"
+      },
+      "viewReceipt": "Duba",
+      "approving": "Ana amincewa…",
+      "approve": "Amince",
+      "reject": "Ƙi",
+      "noneYet": "Babu biyan kuɗi tukuna.",
+      "prev": "← Na baya",
+      "next": "Na gaba →"
     }
   },
   "pagination": {

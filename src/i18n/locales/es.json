@@ -212,6 +212,91 @@
       "membershipPending": "Tu solicitud para unirte a este grupo sigue pendiente de aprobación.",
       "membershipRejected": "Tu solicitud para unirte a este grupo no fue aprobada.",
       "goBack": "Volver"
+    },
+    "submitPayment": {
+      "title": "Enviar Pago",
+      "closeDialog": "Cerrar cuadro de diálogo",
+      "submitted": "¡Pago enviado!",
+      "pendingReview": "Tu pago está pendiente de revisión por el administrador del grupo.",
+      "backToGroup": "Volver al grupo",
+      "groupLabel": "Grupo:",
+      "amountLabel": "Monto (NGN)",
+      "receiptLabel": "Recibo (requerido)",
+      "removeReceiptA11y": "Eliminar imagen del recibo",
+      "attachReceipt": "Adjuntar foto del recibo",
+      "clickToChoose": "Haz clic para elegir de tus archivos",
+      "submitting": "Enviando…",
+      "submitBtn": "Enviar Pago",
+      "errors": {
+        "invalidAmount": "Ingresa un monto de pago válido.",
+        "noReceipt": "Adjunta una foto del recibo antes de enviar.",
+        "somethingWrong": "Algo salió mal."
+      }
+    },
+    "rejectModal": {
+      "title": "Rechazar Pago",
+      "hint": "Opcionalmente indica un motivo para que el miembro sepa qué corregir.",
+      "placeholder": "ej. Monto incorrecto ingresado",
+      "rejecting": "Rechazando…",
+      "reject": "Rechazar"
+    },
+    "receiptViewer": {
+      "close": "Cerrar",
+      "alt": "Recibo de pago"
+    },
+    "settingsModal": {
+      "title": "Configuración del Grupo",
+      "closeDialog": "Cerrar cuadro de diálogo",
+      "contribution": "Contribución",
+      "frequency": "Frecuencia",
+      "collectionDay": "Día de cobro",
+      "nameLabel": "Nombre del Grupo",
+      "descriptionLabel": "Descripción",
+      "rulesLabel": "Reglas (opcional)",
+      "rulesPlaceholder": "ej. Todos los pagos deben hacerse antes del día 5 de cada mes…",
+      "gracePeriodLabel": "Período de gracia (días, 0–30)",
+      "saved": "¡Configuración guardada!",
+      "saving": "Guardando…",
+      "saveSettings": "Guardar Configuración",
+      "errors": {
+        "nameRequired": "El nombre del grupo es obligatorio.",
+        "somethingWrong": "Algo salió mal."
+      }
+    },
+    "startCycleModal": {
+      "title": "Iniciar Nuevo Ciclo",
+      "startDateLabel": "Fecha de inicio",
+      "cycleEndHint": "La fecha de finalización del ciclo se establece automáticamente según la frecuencia de contribución y el día de cobro del grupo.",
+      "creating": "Creando…",
+      "createCycle": "Crear Ciclo",
+      "errors": {
+        "startDateRequired": "La fecha de inicio es obligatoria.",
+        "somethingWrong": "Algo salió mal."
+      }
+    },
+    "paymentsTab": {
+      "filterAll": "Todos",
+      "filterPending": "Pendientes",
+      "filterApproved": "Aprobados",
+      "filterRejected": "Rechazados",
+      "reviewError": "No se pudo actualizar este pago. Inténtalo de nuevo.",
+      "headers": {
+        "member": "Miembro",
+        "cycle": "Ciclo",
+        "amount": "Monto",
+        "date": "Fecha",
+        "status": "Estado",
+        "reason": "Motivo",
+        "receipt": "Recibo",
+        "actions": "Acciones"
+      },
+      "viewReceipt": "Ver",
+      "approving": "Aprobando…",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "noneYet": "Aún no hay pagos.",
+      "prev": "← Anterior",
+      "next": "Siguiente →"
     }
   },
   "pagination": {

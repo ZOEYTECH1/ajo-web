@@ -212,6 +212,91 @@
       "membershipPending": "Your request to join this group is still awaiting approval.",
       "membershipRejected": "Your request to join this group was not approved.",
       "goBack": "Go back"
+    },
+    "submitPayment": {
+      "title": "Submit Payment",
+      "closeDialog": "Close dialog",
+      "submitted": "Payment Submitted!",
+      "pendingReview": "Your payment is pending review by the group admin.",
+      "backToGroup": "Back to Group",
+      "groupLabel": "Group:",
+      "amountLabel": "Amount (NGN)",
+      "receiptLabel": "Receipt (required)",
+      "removeReceiptA11y": "Remove receipt image",
+      "attachReceipt": "Attach receipt photo",
+      "clickToChoose": "Click to choose from your files",
+      "submitting": "Submitting…",
+      "submitBtn": "Submit Payment",
+      "errors": {
+        "invalidAmount": "Enter a valid payment amount.",
+        "noReceipt": "Attach a receipt photo before submitting.",
+        "somethingWrong": "Something went wrong."
+      }
+    },
+    "rejectModal": {
+      "title": "Reject Payment",
+      "hint": "Optionally provide a reason so the member knows what to fix.",
+      "placeholder": "e.g. Wrong amount entered",
+      "rejecting": "Rejecting…",
+      "reject": "Reject"
+    },
+    "receiptViewer": {
+      "close": "Close",
+      "alt": "Payment receipt"
+    },
+    "settingsModal": {
+      "title": "Group Settings",
+      "closeDialog": "Close dialog",
+      "contribution": "Contribution",
+      "frequency": "Frequency",
+      "collectionDay": "Collection day",
+      "nameLabel": "Group Name",
+      "descriptionLabel": "Description",
+      "rulesLabel": "Rules (optional)",
+      "rulesPlaceholder": "e.g. All payments must be made by the 5th of each month…",
+      "gracePeriodLabel": "Grace Period (days, 0–30)",
+      "saved": "Settings saved!",
+      "saving": "Saving…",
+      "saveSettings": "Save Settings",
+      "errors": {
+        "nameRequired": "Group name is required.",
+        "somethingWrong": "Something went wrong."
+      }
+    },
+    "startCycleModal": {
+      "title": "Start New Cycle",
+      "startDateLabel": "Start Date",
+      "cycleEndHint": "The cycle's end date is set automatically based on the group's contribution frequency and collection day.",
+      "creating": "Creating…",
+      "createCycle": "Create Cycle",
+      "errors": {
+        "startDateRequired": "Start date is required.",
+        "somethingWrong": "Something went wrong."
+      }
+    },
+    "paymentsTab": {
+      "filterAll": "All",
+      "filterPending": "Pending",
+      "filterApproved": "Approved",
+      "filterRejected": "Rejected",
+      "reviewError": "Could not update this payment. Please try again.",
+      "headers": {
+        "member": "Member",
+        "cycle": "Cycle",
+        "amount": "Amount",
+        "date": "Date",
+        "status": "Status",
+        "reason": "Reason",
+        "receipt": "Receipt",
+        "actions": "Actions"
+      },
+      "viewReceipt": "View",
+      "approving": "Approving…",
+      "approve": "Approve",
+      "reject": "Reject",
+      "noneYet": "No payments yet.",
+      "prev": "← Prev",
+      "next": "Next →"
     }
   },
   "pagination": {

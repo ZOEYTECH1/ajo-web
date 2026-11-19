@@ -212,6 +212,91 @@
       "membershipPending": "Dein Antrag, dieser Gruppe beizutreten, wartet noch auf Genehmigung.",
       "membershipRejected": "Dein Antrag, dieser Gruppe beizutreten, wurde nicht genehmigt.",
       "goBack": "Zurück"
+    },
+    "submitPayment": {
+      "title": "Zahlung einreichen",
+      "closeDialog": "Dialog schließen",
+      "submitted": "Zahlung eingereicht!",
+      "pendingReview": "Deine Zahlung wartet auf die Prüfung durch den Gruppenadmin.",
+      "backToGroup": "Zurück zur Gruppe",
+      "groupLabel": "Gruppe:",
+      "amountLabel": "Betrag (NGN)",
+      "receiptLabel": "Beleg (erforderlich)",
+      "removeReceiptA11y": "Belegbild entfernen",
+      "attachReceipt": "Belegfoto anhängen",
+      "clickToChoose": "Klicken, um aus deinen Dateien auszuwählen",
+      "submitting": "Wird gesendet…",
+      "submitBtn": "Zahlung einreichen",
+      "errors": {
+        "invalidAmount": "Gib einen gültigen Zahlungsbetrag ein.",
+        "noReceipt": "Hänge ein Belegfoto an, bevor du einreichst.",
+        "somethingWrong": "Etwas ist schiefgelaufen."
+      }
+    },
+    "rejectModal": {
+      "title": "Zahlung ablehnen",
+      "hint": "Optional kannst du einen Grund angeben, damit das Mitglied weiß, was zu korrigieren ist.",
+      "placeholder": "z. B. Falscher Betrag eingegeben",
+      "rejecting": "Wird abgelehnt…",
+      "reject": "Ablehnen"
+    },
+    "receiptViewer": {
+      "close": "Schließen",
+      "alt": "Zahlungsbeleg"
+    },
+    "settingsModal": {
+      "title": "Gruppeneinstellungen",
+      "closeDialog": "Dialog schließen",
+      "contribution": "Beitrag",
+      "frequency": "Häufigkeit",
+      "collectionDay": "Einzugstag",
+      "nameLabel": "Gruppenname",
+      "descriptionLabel": "Beschreibung",
+      "rulesLabel": "Regeln (optional)",
+      "rulesPlaceholder": "z. B. Alle Zahlungen müssen bis zum 5. jeden Monats erfolgen…",
+      "gracePeriodLabel": "Nachfrist (Tage, 0–30)",
+      "saved": "Einstellungen gespeichert!",
+      "saving": "Wird gespeichert…",
+      "saveSettings": "Einstellungen speichern",
+      "errors": {
+        "nameRequired": "Gruppenname ist erforderlich.",
+        "somethingWrong": "Etwas ist schiefgelaufen."
+      }
+    },
+    "startCycleModal": {
+      "title": "Neuen Zyklus starten",
+      "startDateLabel": "Startdatum",
+      "cycleEndHint": "Das Enddatum des Zyklus wird automatisch anhand der Beitragshäufigkeit und des Einzugstags der Gruppe festgelegt.",
+      "creating": "Wird erstellt…",
+      "createCycle": "Zyklus erstellen",
+      "errors": {
+        "startDateRequired": "Startdatum ist erforderlich.",
+        "somethingWrong": "Etwas ist schiefgelaufen."
+      }
+    },
+    "paymentsTab": {
+      "filterAll": "Alle",
+      "filterPending": "Ausstehend",
+      "filterApproved": "Genehmigt",
+      "filterRejected": "Abgelehnt",
+      "reviewError": "Diese Zahlung konnte nicht aktualisiert werden. Bitte versuche es erneut.",
+      "headers": {
+        "member": "Mitglied",
+        "cycle": "Zyklus",
+        "amount": "Betrag",
+        "date": "Datum",
+        "status": "Status",
+        "reason": "Grund",
+        "receipt": "Beleg",
+        "actions": "Aktionen"
+      },
+      "viewReceipt": "Ansehen",
+      "approving": "Wird genehmigt…",
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "noneYet": "Noch keine Zahlungen.",
+      "prev": "← Zurück",
+      "next": "Weiter →"
     }
   },
   "pagination": {

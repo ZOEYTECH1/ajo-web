@@ -213,6 +213,91 @@
       "membershipPending": "Ìbéèrè rẹ láti darapọ̀ mọ́ ẹgbẹ́ yìí ṣì ń dúró de ìfọwọ́sí.",
       "membershipRejected": "A kò fọwọ́sí ìbéèrè rẹ láti darapọ̀ mọ́ ẹgbẹ́ yìí.",
       "goBack": "Padà"
+    },
+    "submitPayment": {
+      "title": "Fi Owó Ránṣẹ́",
+      "closeDialog": "Pa àsọyé náà",
+      "submitted": "A ti Fi Owó Ránṣẹ́!",
+      "pendingReview": "Owó rẹ ń dúró de àyẹ̀wò láti ọ̀dọ̀ alábòójútó ẹgbẹ́.",
+      "backToGroup": "Padà sí Ẹgbẹ́",
+      "groupLabel": "Ẹgbẹ́:",
+      "amountLabel": "Iye (NGN)",
+      "receiptLabel": "Ẹ̀rí ìsanwó (a nílò rẹ̀)",
+      "removeReceiptA11y": "Yọ àwòrán ẹ̀rí ìsanwó kúrò",
+      "attachReceipt": "Fi àwòrán ẹ̀rí ìsanwó kún",
+      "clickToChoose": "Tẹ̀ láti yan láti inú àwọn fáìlì rẹ",
+      "submitting": "Ń fi ránṣẹ́…",
+      "submitBtn": "Fi Owó Ránṣẹ́",
+      "errors": {
+        "invalidAmount": "Tẹ iye owó tó tọ́ sí i.",
+        "noReceipt": "Fi àwòrán ẹ̀rí ìsanwó kún kí o tó fi ránṣẹ́.",
+        "somethingWrong": "Ohun kan ṣẹlẹ̀ àṣìṣe."
+      }
+    },
+    "rejectModal": {
+      "title": "Kọ̀ Owó",
+      "hint": "O lè fún ìdí kan kí ọmọ ẹgbẹ́ mọ ohun tí ó yẹ kí ó tún ṣe.",
+      "placeholder": "fún àpẹẹrẹ A tẹ iye tí kò tọ́",
+      "rejecting": "Ń kọ̀…",
+      "reject": "Kọ̀"
+    },
+    "receiptViewer": {
+      "close": "Pa",
+      "alt": "Ẹ̀rí ìsanwó"
+    },
+    "settingsModal": {
+      "title": "Ètò Ẹgbẹ́",
+      "closeDialog": "Pa àsọyé náà",
+      "contribution": "Ìfọwọ́sowọ́pọ̀",
+      "frequency": "Ìgbà",
+      "collectionDay": "Ọjọ́ Gbígbà",
+      "nameLabel": "Orúkọ Ẹgbẹ́",
+      "descriptionLabel": "Àpèjúwe",
+      "rulesLabel": "Òfin (àṣàyàn)",
+      "rulesPlaceholder": "fún àpẹẹrẹ Gbogbo owó gbọ́dọ̀ wà ní sísan kí ó tó di ọjọ́ karùn-ún oṣù kọ̀ọ̀kan…",
+      "gracePeriodLabel": "Àkókò Oore (ọjọ́, 0–30)",
+      "saved": "A ti fi ètò pamọ́!",
+      "saving": "Ń fi pamọ́…",
+      "saveSettings": "Fi Ètò Pamọ́",
+      "errors": {
+        "nameRequired": "A nílò orúkọ ẹgbẹ́.",
+        "somethingWrong": "Ohun kan ṣẹlẹ̀ àṣìṣe."
+      }
+    },
+    "startCycleModal": {
+      "title": "Bẹ̀rẹ̀ Àyíká Tuntun",
+      "startDateLabel": "Ọjọ́ Ìbẹ̀rẹ̀",
+      "cycleEndHint": "A óò ṣètò ọjọ́ òpin àyíká láìfọwọ́kàn gẹ́gẹ́ bí ìgbà ìfọwọ́sowọ́pọ̀ àti ọjọ́ gbígbà ti ẹgbẹ́.",
+      "creating": "Ń ṣẹ̀dá…",
+      "createCycle": "Ṣẹ̀dá Àyíká",
+      "errors": {
+        "startDateRequired": "A nílò ọjọ́ ìbẹ̀rẹ̀.",
+        "somethingWrong": "Ohun kan ṣẹlẹ̀ àṣìṣe."
+      }
+    },
+    "paymentsTab": {
+      "filterAll": "Gbogbo",
+      "filterPending": "Ń dúró",
+      "filterApproved": "A Fọwọ́sí",
+      "filterRejected": "A Kọ̀",
+      "reviewError": "A kò lè ṣàtúnṣe owó yìí. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan sí i.",
+      "headers": {
+        "member": "Ọmọ Ẹgbẹ́",
+        "cycle": "Àyíká",
+        "amount": "Iye",
+        "date": "Ọjọ́",
+        "status": "Ipò",
+        "reason": "Ìdí",
+        "receipt": "Ẹ̀rí Ìsanwó",
+        "actions": "Ìgbésẹ̀"
+      },
+      "viewReceipt": "Wò",
+      "approving": "Ń fọwọ́sí…",
+      "approve": "Fọwọ́sí",
+      "reject": "Kọ̀",
+      "noneYet": "Kò sí owó kankan síbẹ̀.",
+      "prev": "← Ti tẹ̀lé",
+      "next": "Tó kàn →"
     }
   },
   "pagination": {

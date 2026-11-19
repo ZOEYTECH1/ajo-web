@@ -213,6 +213,91 @@
       "membershipPending": "Arịrịọ gị isonye n'otu a ka na-eche nkwado.",
       "membershipRejected": "Anabataghị arịrịọ gị isonye n'otu a.",
       "goBack": "Laghachi azụ"
+    },
+    "submitPayment": {
+      "title": "Zipu Ụgwọ",
+      "closeDialog": "Mechie ndaowa",
+      "submitted": "Ezipula Ụgwọ!",
+      "pendingReview": "Ụgwọ gị na-eche nyocha nke onye nlekọta otu.",
+      "backToGroup": "Laghachi n'Otu",
+      "groupLabel": "Otu:",
+      "amountLabel": "Ego (NGN)",
+      "receiptLabel": "Akwụkwọ akaijehe (achọrọ)",
+      "removeReceiptA11y": "Wepụ foto akwụkwọ akaijehe",
+      "attachReceipt": "Tinye foto akwụkwọ akaijehe",
+      "clickToChoose": "Pịa iji họrọ site na faịlụ gị",
+      "submitting": "Na-ezipu…",
+      "submitBtn": "Zipu Ụgwọ",
+      "errors": {
+        "invalidAmount": "Tinye ego ịkwụ ụgwọ ziri ezi.",
+        "noReceipt": "Tinye foto akwụkwọ akaijehe tupu izipu.",
+        "somethingWrong": "Ihe dara adaghị."
+      }
+    },
+    "rejectModal": {
+      "title": "Jụ Ụgwọ",
+      "hint": "Ị nwere ike inye ihe kpatara ya ka onye otu mara ihe ọ ga-edozi.",
+      "placeholder": "dịka Etinyere ego na-ezighị ezi",
+      "rejecting": "Na-ajụ…",
+      "reject": "Jụ"
+    },
+    "receiptViewer": {
+      "close": "Mechie",
+      "alt": "Akwụkwọ akaijehe ụgwọ"
+    },
+    "settingsModal": {
+      "title": "Ntọala Otu",
+      "closeDialog": "Mechie ndaowa",
+      "contribution": "Ntinye",
+      "frequency": "Ugboro",
+      "collectionDay": "Ụbọchị Nchịkọta",
+      "nameLabel": "Aha Otu",
+      "descriptionLabel": "Nkọwa",
+      "rulesLabel": "Iwu (nhọrọ)",
+      "rulesPlaceholder": "dịka A ghaghị ịkwụ ụgwọ niile tupu ụbọchị ise nke ọnwa ọ bụla…",
+      "gracePeriodLabel": "Oge Amara (ụbọchị, 0–30)",
+      "saved": "Echekwala ntọala!",
+      "saving": "Na-echekwa…",
+      "saveSettings": "Chekwaa Ntọala",
+      "errors": {
+        "nameRequired": "Achọrọ aha otu.",
+        "somethingWrong": "Ihe dara adaghị."
+      }
+    },
+    "startCycleModal": {
+      "title": "Malite Usoro Ọhụrụ",
+      "startDateLabel": "Ụbọchị Mmalite",
+      "cycleEndHint": "A na-ahazi ụbọchị njedebe nke usoro na-akpaghị aka dabere na ugboro ntinye ego na ụbọchị nchịkọta nke otu.",
+      "creating": "Na-emepụta…",
+      "createCycle": "Mepụta Usoro",
+      "errors": {
+        "startDateRequired": "Achọrọ ụbọchị mmalite.",
+        "somethingWrong": "Ihe dara adaghị."
+      }
+    },
+    "paymentsTab": {
+      "filterAll": "Niile",
+      "filterPending": "Na-eche",
+      "filterApproved": "Akwadoro",
+      "filterRejected": "Ajụrụ",
+      "reviewError": "Enweghị ike imeli ụgwọ a. Biko nwaa ọzọ.",
+      "headers": {
+        "member": "Onye Otu",
+        "cycle": "Usoro",
+        "amount": "Ego",
+        "date": "Ụbọchị",
+        "status": "Ọnọdụ",
+        "reason": "Ihe kpatara ya",
+        "receipt": "Akwụkwọ akaijehe",
+        "actions": "Omume"
+      },
+      "viewReceipt": "Lee",
+      "approving": "Na-akwado…",
+      "approve": "Kwado",
+      "reject": "Jụ",
+      "noneYet": "Enweghị ụgwọ ọ bụla ugbu a.",
+      "prev": "← Nke gara aga",
+      "next": "Nke ọzọ →"
     }
   },
   "pagination": {

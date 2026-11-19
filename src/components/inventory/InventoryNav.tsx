@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { useQueryClient } from '@tanstack/react-query';
@@ -54,6 +54,17 @@ export function InventoryNav() {
   const dropRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const isMoreActive = moreLinks.some((l) => pathname.startsWith(l.to));
+
+  // This nav remounts fresh on every page (each page renders its own
+  // <InventoryNav />), so its scrollable primary-link row always starts
+  // scrolled to the far left -- hiding the active tab if it's further
+  // right than the strip's visible width, which read as "navigating
+  // always jumps the nav back to Dashboard." Scroll whichever
+  // link/trigger is actually active into view once this instance mounts.
+  const activeLinkRef = useRef<HTMLAnchorElement | HTMLButtonElement | null>(null);
+  useEffect(() => {
+    activeLinkRef.current?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, [pathname]);
 
   function select(id: number) {
     setSelectedId(id);
@@ -156,23 +167,25 @@ export function InventoryNav() {
           border-bottom accent, so there's no border-alignment class of
           bug here to begin with. */}
       <div className="flex items-center gap-1 overflow-x-auto border-b border-(--border) pb-2">
-        {primaryLinks.map(({ to, label, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            className={({ isActive }) =>
-              clsx(
+        {primaryLinks.map(({ to, label, end }) => {
+          const isActive = end ? pathname === to : pathname.startsWith(to);
+          return (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              ref={isActive ? (activeLinkRef as React.RefObject<HTMLAnchorElement>) : undefined}
+              className={clsx(
                 'shrink-0 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200',
                 isActive
                   ? 'bg-(--accent) text-white shadow-(--shadow-soft-sm)'
                   : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--primary-tint)/30',
-              )
-            }
-          >
-            {label}
-          </NavLink>
-        ))}
+              )}
+            >
+              {label}
+            </NavLink>
+          );
+        })}
 
         {/* "More" overflow menu -- Headless UI's Menu rather than a
             hand-rolled dropdown, for the same reason real design systems
@@ -195,6 +208,7 @@ export function InventoryNav() {
               while hovering the trigger. A trigger for an anchored panel
               must only change shadow/colour on hover, never position. */}
           <MenuButton
+            ref={isMoreActive ? (activeLinkRef as React.RefObject<HTMLButtonElement>) : undefined}
             className={clsx(
               'group flex items-center gap-1.5 shrink-0 pl-2.5 pr-2 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all duration-200 active:scale-[0.97]',
               isMoreActive

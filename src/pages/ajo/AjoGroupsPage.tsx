@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { PlusIcon, KeyIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { Skeleton, SkeletonTable } from '../../components/ui/Skeleton';
@@ -24,7 +25,8 @@ function formatCurrency(value: string | number): string {
 }
 
 function StatusBadge({ group }: { group: AjoGroup }) {
-  const label = group.is_on_trial ? 'Trial' : group.is_subscription_active ? 'Active' : 'Inactive';
+  const { t } = useTranslation();
+  const label = group.is_on_trial ? t('ajoGroups.statusTrial') : group.is_subscription_active ? t('ajoGroups.statusActive') : t('ajoGroups.statusInactive');
   return (
     <span className={clsx(
       'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize',
@@ -42,6 +44,7 @@ function StatusBadge({ group }: { group: AjoGroup }) {
 // ── Mobile card list (table is unreadable below tablet width) ─────────────────
 
 function GroupCard({ group }: { group: AjoGroup }) {
+  const { t } = useTranslation();
   return (
     <Link
       to={`/ajo/${group.id}`}
@@ -61,7 +64,7 @@ function GroupCard({ group }: { group: AjoGroup }) {
         <span className="text-(--text-muted)">·</span>
         <span className="font-medium text-(--text-primary)">{formatCurrency(group.contribution_amount)}</span>
         <span className="text-(--text-muted)">·</span>
-        <span>{group.member_count} member{group.member_count === 1 ? '' : 's'}</span>
+        <span>{t('ajoGroups.memberCount', { count: group.member_count })}</span>
       </div>
     </Link>
   );
@@ -80,16 +83,17 @@ function GroupCardSkeleton() {
 }
 
 function EmptyGroupsMessage({ onJoin, onCreate }: { onJoin: () => void; onCreate: () => void }) {
+  const { t } = useTranslation();
   return (
     <p className="text-sm text-(--text-muted) text-center py-8">
-      You are not a member of any Ajo group yet.
+      {t('ajoGroups.notMemberYet')}
       <br />
       <button type="button" onClick={onJoin} className="mt-3 inline-block text-(--primary) font-semibold hover:underline">
-        Join with an invite code
+        {t('ajoGroups.joinWithCode')}
       </button>
-      {' or '}
+      {' '}{t('ajoGroups.orText')}{' '}
       <button type="button" onClick={onCreate} className="text-(--primary) font-semibold hover:underline">
-        create a new group
+        {t('ajoGroups.createNewGroup')}
       </button>
     </p>
   );
@@ -100,14 +104,17 @@ function EmptyGroupsMessage({ onJoin, onCreate }: { onJoin: () => void; onCreate
 // Mon=0 … Sun=6 — matches the backend's own weekday encoding exactly
 // (Group.compute_cycle_end_date / CreateGroupSerializer.validate_collection_day),
 // not an arbitrary frontend choice.
+// value → translation key suffix under ajoGroups.weekdays.*; resolved to a
+// display label inside CollectionDayPicker, where useTranslation() is
+// available (this array itself is module-level, outside any component).
 const WEEKDAYS = [
-  { value: 0, label: 'Mon' },
-  { value: 1, label: 'Tue' },
-  { value: 2, label: 'Wed' },
-  { value: 3, label: 'Thu' },
-  { value: 4, label: 'Fri' },
-  { value: 5, label: 'Sat' },
-  { value: 6, label: 'Sun' },
+  { value: 0, key: 'mon' },
+  { value: 1, key: 'tue' },
+  { value: 2, key: 'wed' },
+  { value: 3, key: 'thu' },
+  { value: 4, key: 'fri' },
+  { value: 5, key: 'sat' },
+  { value: 6, key: 'sun' },
 ];
 const MONTH_DAYS = Array.from({ length: 28 }, (_, i) => i + 1);
 
@@ -150,6 +157,7 @@ function CollectionDayPicker({
   value: string;
   onChange: (val: string) => void;
 }) {
+  const { t } = useTranslation();
   if (frequency === 'daily') return null;
 
   function toggle(day: number) {
@@ -159,21 +167,23 @@ function CollectionDayPicker({
   return (
     <fieldset>
       <legend className="block text-sm font-semibold text-(--text-secondary) mb-1">
-        Collection Day (optional)
+        {t('ajoGroups.createModal.collectionDayLabel')}
       </legend>
       <p className="text-xs text-(--text-muted) mb-2">
         {frequency === 'weekly'
-          ? 'Which day of the week should members pay by? '
-          : 'Which day of the month should members pay by? '}
+          ? t('ajoGroups.createModal.collectionDayWeeklyHint')
+          : t('ajoGroups.createModal.collectionDayMonthlyHint')}
         <span className="italic">
-          Leave blank to default to {frequency === 'weekly' ? 'Monday' : 'the 1st of the month'}.
+          {t('ajoGroups.createModal.leaveBlankDefault', {
+            default: frequency === 'weekly' ? t('ajoGroups.createModal.monday') : t('ajoGroups.createModal.the1st'),
+          })}
         </span>
       </p>
       {frequency === 'weekly' ? (
         <div className="grid grid-cols-7 gap-1.5">
           {WEEKDAYS.map((d) => (
             <DayPickerButton key={d.value} active={value === String(d.value)} onClick={() => toggle(d.value)}>
-              {d.label}
+              {t(`ajoGroups.weekdays.${d.key}`)}
             </DayPickerButton>
           ))}
         </div>
@@ -191,6 +201,7 @@ function CollectionDayPicker({
 }
 
 function CreateGroupModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [form, setForm] = useState({
     name: '',
@@ -222,7 +233,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
       const first = Object.values(d ?? {})[0];
       setErr(
         d?.detail ??
-        (Array.isArray(first) ? first[0] : String(first ?? 'Something went wrong.')),
+        (Array.isArray(first) ? first[0] : String(first ?? t('ajoGroups.createModal.errors.somethingWrong'))),
       );
     },
   });
@@ -234,9 +245,9 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim()) { setErr('Group name is required.'); return; }
+    if (!form.name.trim()) { setErr(t('ajoGroups.createModal.errors.nameRequired')); return; }
     if (!form.contribution_amount || Number(form.contribution_amount) <= 0) {
-      setErr('Enter a valid contribution amount.'); return;
+      setErr(t('ajoGroups.createModal.errors.invalidAmount')); return;
     }
     mutation.mutate();
   }
@@ -245,25 +256,25 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
-          <h2 className="text-lg font-bold text-(--text-primary)">Create Ajo Group</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+          <h2 className="text-lg font-bold text-(--text-primary)">{t('ajoGroups.createModal.title')}</h2>
+          <button type="button" onClick={onClose} aria-label={t('ajoGroups.createModal.closeDialog')} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <Field label="Group Name *" id="cg-name">
+          <Field label={t('ajoGroups.createModal.nameLabel')} id="cg-name">
             <input
               id="cg-name"
               type="text"
               value={form.name}
               onChange={(e) => set('name', e.target.value)}
-              placeholder="e.g. Lagos Professionals Ajo"
+              placeholder={t('ajoGroups.createModal.namePlaceholder')}
               className={inputCls}
             />
           </Field>
 
-          <Field label="Contribution Frequency *" id="cg-frequency">
+          <Field label={t('ajoGroups.createModal.frequencyLabel')} id="cg-frequency">
             <select
               id="cg-frequency"
               value={form.contribution_frequency}
@@ -277,20 +288,20 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
               }}
               className={inputCls}
             >
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
+              <option value="daily">{t('ajoGroups.createModal.daily')}</option>
+              <option value="weekly">{t('ajoGroups.createModal.weekly')}</option>
+              <option value="monthly">{t('ajoGroups.createModal.monthly')}</option>
             </select>
           </Field>
 
-          <Field label="Contribution Amount (NGN) *" id="cg-amount">
+          <Field label={t('ajoGroups.createModal.amountLabel')} id="cg-amount">
             <input
               id="cg-amount"
               type="number"
               min="1"
               value={form.contribution_amount}
               onChange={(e) => set('contribution_amount', e.target.value)}
-              placeholder="e.g. 10000"
+              placeholder={t('ajoGroups.createModal.amountPlaceholder')}
               className={inputCls}
             />
           </Field>
@@ -301,7 +312,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
             onChange={(val) => set('collection_day', val)}
           />
 
-          <Field label="Grace Period (days, 0–30)" id="cg-grace">
+          <Field label={t('ajoGroups.createModal.gracePeriodLabel')} id="cg-grace">
             <input
               id="cg-grace"
               type="number"
@@ -309,12 +320,12 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
               max="30"
               value={form.grace_period_days}
               onChange={(e) => set('grace_period_days', e.target.value)}
-              placeholder="e.g. 7"
+              placeholder={t('ajoGroups.createModal.gracePeriodPlaceholder')}
               className={inputCls}
             />
           </Field>
 
-          <Field label="First Cycle Start (optional)" id="cg-start">
+          <Field label={t('ajoGroups.createModal.firstCycleStartLabel')} id="cg-start">
             <input
               id="cg-start"
               type="date"
@@ -324,17 +335,17 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
               className={inputCls}
             />
             <p className="text-xs text-(--text-muted) mt-1">
-              The cycle's end date is set automatically based on the contribution frequency and collection day.
+              {t('ajoGroups.createModal.cycleEndHint')}
             </p>
           </Field>
 
-          <Field label="Description (optional)" id="cg-description">
+          <Field label={t('ajoGroups.createModal.descriptionLabel')} id="cg-description">
             <textarea
               id="cg-description"
               rows={2}
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
-              placeholder="What is this group for?"
+              placeholder={t('ajoGroups.createModal.descriptionPlaceholder')}
               className={inputCls}
             />
           </Field>
@@ -342,9 +353,9 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
           {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3 pt-1">
-            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+            <button type="button" onClick={onClose} className={cancelBtn}>{t('common.cancel')}</button>
             <button type="submit" disabled={mutation.isPending} className={submitBtn}>
-              {mutation.isPending ? 'Creating…' : 'Create Group'}
+              {mutation.isPending ? t('ajoGroups.createModal.creating') : t('ajoGroups.createModal.createGroup')}
             </button>
           </div>
         </form>
@@ -356,6 +367,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
 // ── Join Group Modal ──────────────────────────────────────────────────────────
 
 function JoinGroupModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [code, setCode] = useState('');
   const [stage, setStage] = useState<'code' | 'confirm'>('code');
@@ -369,7 +381,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
       setStage('confirm');
     },
     onError: (e: any) => {
-      setErr(e.response?.data?.detail ?? e.response?.data?.invite_code?.[0] ?? 'Invalid invite code.');
+      setErr(e.response?.data?.detail ?? e.response?.data?.invite_code?.[0] ?? t('ajoGroups.joinModal.invalidCode'));
     },
   });
 
@@ -377,8 +389,8 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-sm">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Join Ajo Group</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+          <h2 className="text-lg font-bold text-(--text-primary)">{t('ajoGroups.joinModal.title')}</h2>
+          <button type="button" onClick={onClose} aria-label={t('ajoGroups.joinModal.closeDialog')} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
@@ -387,7 +399,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
           {stage === 'code' ? (
             <>
               <p className="text-sm text-(--text-secondary)">
-                Enter the 8-character invite code shared by your group admin.
+                {t('ajoGroups.joinModal.enterCodeHint')}
               </p>
               <div>
                 <input
@@ -395,20 +407,20 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
                   value={code}
                   onChange={(e) => { setCode(e.target.value.toUpperCase()); setErr(''); }}
                   maxLength={8}
-                  placeholder="e.g. A1B2C3D4"
+                  placeholder={t('ajoGroups.joinModal.codePlaceholder')}
                   className={`${inputCls} tracking-[0.3em] uppercase font-mono text-center text-lg`}
                 />
               </div>
               {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
-                <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+                <button type="button" onClick={onClose} className={cancelBtn}>{t('common.cancel')}</button>
                 <button
                   type="button"
                   onClick={() => { setErr(''); lookupMutation.mutate(); }}
                   disabled={code.trim().length < 6 || lookupMutation.isPending}
                   className={submitBtn}
                 >
-                  {lookupMutation.isPending ? 'Looking up…' : 'Find Group'}
+                  {lookupMutation.isPending ? t('ajoGroups.joinModal.lookingUp') : t('ajoGroups.joinModal.findGroup')}
                 </button>
               </div>
             </>
@@ -418,15 +430,15 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
                 {/* Fixed light box regardless of theme — text here must stay
                     fixed dark too, not the theme-aware --text-* variables
                     (those turn near-white in dark mode and disappear here). */}
-                <p className="text-xs text-(--primary) uppercase tracking-wider font-semibold mb-1">Group found</p>
+                <p className="text-xs text-(--primary) uppercase tracking-wider font-semibold mb-1">{t('ajoGroups.joinModal.groupFound')}</p>
                 <p className="text-lg font-bold text-gray-900">{found?.group_name}</p>
                 <p className="text-sm text-gray-600 mt-1">{found?.message}</p>
               </div>
               <p className="text-sm text-(--text-secondary) text-center">
-                Your request will be sent to the group admin for approval.
+                {t('ajoGroups.joinModal.requestSentHint')}
               </p>
               <div className="flex gap-3">
-                <button type="button" onClick={() => setStage('code')} className={cancelBtn}>Back</button>
+                <button type="button" onClick={() => setStage('code')} className={cancelBtn}>{t('ajoGroups.joinModal.back')}</button>
                 <button
                   type="button"
                   onClick={() => {
@@ -435,7 +447,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
                   }}
                   className={submitBtn}
                 >
-                  Done
+                  {t('ajoGroups.joinModal.done')}
                 </button>
               </div>
             </>
@@ -467,6 +479,7 @@ function Field({ label, id, children }: { label: string; id?: string; children: 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function AjoGroupsPage() {
+  const { t } = useTranslation();
   const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
   const [slowLoad, setSlowLoad] = useState(false);
@@ -489,14 +502,14 @@ export default function AjoGroupsPage() {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-(--text-primary)">Ajo Groups</h1>
-            <p className="text-sm text-(--text-secondary)">Your savings circles</p>
+            <h1 className="text-2xl font-bold text-(--text-primary)">{t('ajoGroups.page.title')}</h1>
+            <p className="text-sm text-(--text-secondary)">{t('ajoGroups.page.subtitle')}</p>
           </div>
           <Link
             to="/ajo/history"
             className="text-sm text-(--text-muted) hover:text-(--primary) transition-colors whitespace-nowrap"
           >
-            My Payment History →
+            {t('ajoGroups.page.paymentHistoryLink')}
           </Link>
         </div>
         <div className="flex gap-2">
@@ -506,7 +519,7 @@ export default function AjoGroupsPage() {
             className="inline-flex items-center gap-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30"
           >
             <KeyIcon className="h-4 w-4" />
-            Join Group
+            {t('ajoGroups.page.joinGroup')}
           </button>
           <button
             type="button"
@@ -514,20 +527,20 @@ export default function AjoGroupsPage() {
             className="inline-flex items-center gap-1.5 rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
-            Create Group
+            {t('ajoGroups.page.createGroup')}
           </button>
         </div>
       </div>
 
       {slowLoad && isLoading && (
         <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-700">
-          The server is waking up — this can take up to 60 seconds on the first request. Hang tight…
+          {t('ajoGroups.page.serverWakingUp')}
         </div>
       )}
 
       {error && (
         <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
-          Failed to load groups. Please refresh.
+          {t('ajoGroups.page.failedToLoad')}
         </div>
       )}
 
@@ -551,7 +564,13 @@ export default function AjoGroupsPage() {
           <table className="min-w-full divide-y divide-(--border)">
             <thead className="bg-(--bg)">
               <tr>
-                {['Group Name', 'Frequency', 'Amount', 'Members', 'Status'].map((h) => (
+                {[
+                  t('ajoGroups.page.headers.groupName'),
+                  t('ajoGroups.page.headers.frequency'),
+                  t('ajoGroups.page.headers.amount'),
+                  t('ajoGroups.page.headers.members'),
+                  t('ajoGroups.page.headers.status'),
+                ].map((h) => (
                   <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-(--text-secondary) uppercase tracking-wider">
                     {h}
                   </th>

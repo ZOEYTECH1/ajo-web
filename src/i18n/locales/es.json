@@ -132,6 +132,80 @@
     "deleteConfirmBtn": "Sí, eliminar",
     "deleting": "Eliminando…"
   },
+  "ajoGroups": {
+    "statusTrial": "Prueba",
+    "statusActive": "Activo",
+    "statusInactive": "Inactivo",
+    "memberCount_one": "{{count}} miembro",
+    "memberCount_other": "{{count}} miembros",
+    "notMemberYet": "Aún no eres miembro de ningún grupo Ajo.",
+    "joinWithCode": "Unirse con un código de invitación",
+    "orText": "o",
+    "createNewGroup": "crear un nuevo grupo",
+    "page": {
+      "title": "Grupos Ajo",
+      "subtitle": "Tus círculos de ahorro",
+      "paymentHistoryLink": "Mi historial de pagos →",
+      "joinGroup": "Unirse a un grupo",
+      "createGroup": "Crear grupo",
+      "serverWakingUp": "El servidor se está activando — esto puede tardar hasta 60 segundos en la primera solicitud. Espera…",
+      "failedToLoad": "Error al cargar los grupos. Actualiza la página.",
+      "headers": {
+        "groupName": "Nombre del grupo",
+        "frequency": "Frecuencia",
+        "amount": "Monto",
+        "members": "Miembros",
+        "status": "Estado"
+      }
+    },
+    "weekdays": {
+      "mon": "Lun", "tue": "Mar", "wed": "Mié", "thu": "Jue", "fri": "Vie", "sat": "Sáb", "sun": "Dom"
+    },
+    "createModal": {
+      "title": "Crear grupo Ajo",
+      "closeDialog": "Cerrar cuadro de diálogo",
+      "nameLabel": "Nombre del grupo *",
+      "namePlaceholder": "ej. Ajo de Profesionales de Lagos",
+      "frequencyLabel": "Frecuencia de contribución *",
+      "daily": "Diaria",
+      "weekly": "Semanal",
+      "monthly": "Mensual",
+      "amountLabel": "Monto de contribución (NGN) *",
+      "amountPlaceholder": "ej. 10000",
+      "collectionDayLabel": "Día de cobro (opcional)",
+      "collectionDayWeeklyHint": "¿Qué día de la semana deben pagar los miembros? ",
+      "collectionDayMonthlyHint": "¿Qué día del mes deben pagar los miembros? ",
+      "leaveBlankDefault": "Déjalo en blanco para usar {{default}} por defecto.",
+      "monday": "lunes",
+      "the1st": "el día 1 del mes",
+      "gracePeriodLabel": "Período de gracia (días, 0–30)",
+      "gracePeriodPlaceholder": "ej. 7",
+      "firstCycleStartLabel": "Inicio del primer ciclo (opcional)",
+      "cycleEndHint": "La fecha de finalización del ciclo se establece automáticamente según la frecuencia de contribución y el día de cobro.",
+      "descriptionLabel": "Descripción (opcional)",
+      "descriptionPlaceholder": "¿Para qué es este grupo?",
+      "creating": "Creando…",
+      "createGroup": "Crear grupo",
+      "errors": {
+        "nameRequired": "El nombre del grupo es obligatorio.",
+        "invalidAmount": "Ingresa un monto de contribución válido.",
+        "somethingWrong": "Algo salió mal."
+      }
+    },
+    "joinModal": {
+      "title": "Unirse a un grupo Ajo",
+      "closeDialog": "Cerrar cuadro de diálogo",
+      "enterCodeHint": "Ingresa el código de invitación de 8 caracteres compartido por el administrador del grupo.",
+      "codePlaceholder": "ej. A1B2C3D4",
+      "lookingUp": "Buscando…",
+      "findGroup": "Buscar grupo",
+      "invalidCode": "Código de invitación inválido.",
+      "groupFound": "Grupo encontrado",
+      "requestSentHint": "Tu solicitud se enviará al administrador del grupo para su aprobación.",
+      "back": "Atrás",
+      "done": "Listo"
+    }
+  },
   "groupDetail": {
     "errors": {
       "failedToLoad": "Error al cargar los detalles del grupo.",

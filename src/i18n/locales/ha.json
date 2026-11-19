@@ -133,6 +133,80 @@
     "deleteConfirmBtn": "Eh, share shi",
     "deleting": "Ana sharewa…"
   },
+  "ajoGroups": {
+    "statusTrial": "Gwaji",
+    "statusActive": "Mai aiki",
+    "statusInactive": "Ba ya aiki",
+    "memberCount_one": "Memba {{count}}",
+    "memberCount_other": "Mambobi {{count}}",
+    "notMemberYet": "Ba ku memba a kowace ƙungiyar Ajo tukuna ba.",
+    "joinWithCode": "Shiga da lambar gayyata",
+    "orText": "ko",
+    "createNewGroup": "ƙirƙiri sabuwar ƙungiya",
+    "page": {
+      "title": "Ƙungiyoyin Ajo",
+      "subtitle": "Da'irorin ajiyar ku",
+      "paymentHistoryLink": "Tarihin Biyan Kuɗina →",
+      "joinGroup": "Shiga Ƙungiya",
+      "createGroup": "Ƙirƙiri Ƙungiya",
+      "serverWakingUp": "Sabar tana farkawa — wannan na iya ɗaukar har zuwa daƙiƙa 60 a buƙata ta farko. Ku jira…",
+      "failedToLoad": "An kasa loda ƙungiyoyi. Da fatan za a sake sabuntawa.",
+      "headers": {
+        "groupName": "Sunan Ƙungiya",
+        "frequency": "Yawan Lokuta",
+        "amount": "Adadi",
+        "members": "Mambobi",
+        "status": "Matsayi"
+      }
+    },
+    "weekdays": {
+      "mon": "Lit", "tue": "Tal", "wed": "Lar", "thu": "Alh", "fri": "Jum", "sat": "Asa", "sun": "Lah"
+    },
+    "createModal": {
+      "title": "Ƙirƙiri Ƙungiyar Ajo",
+      "closeDialog": "Rufe akwatin tattaunawa",
+      "nameLabel": "Sunan Ƙungiya *",
+      "namePlaceholder": "misali Ajo na Ƙwararru na Lagos",
+      "frequencyLabel": "Yawan Bayar da Gudummawa *",
+      "daily": "Kullum",
+      "weekly": "Mako-mako",
+      "monthly": "Wata-wata",
+      "amountLabel": "Adadin Gudummawa (NGN) *",
+      "amountPlaceholder": "misali 10000",
+      "collectionDayLabel": "Ranar Karɓa (zaɓi)",
+      "collectionDayWeeklyHint": "Wane rana na mako ne mambobi za su biya? ",
+      "collectionDayMonthlyHint": "Wace rana ta wata ne mambobi za su biya? ",
+      "leaveBlankDefault": "Ku bar fanko don amfani da {{default}} ta tsohuwa.",
+      "monday": "Litinin",
+      "the1st": "ranar 1 ga wata",
+      "gracePeriodLabel": "Lokacin Alheri (kwanaki, 0–30)",
+      "gracePeriodPlaceholder": "misali 7",
+      "firstCycleStartLabel": "Fara Zagaye na Farko (zaɓi)",
+      "cycleEndHint": "Ana saita ranar ƙarshen zagaye ta atomatik bisa yawan bayar da gudummawa da ranar karɓa.",
+      "descriptionLabel": "Bayani (zaɓi)",
+      "descriptionPlaceholder": "Me wannan ƙungiya take don?",
+      "creating": "Ana ƙirƙirawa…",
+      "createGroup": "Ƙirƙiri Ƙungiya",
+      "errors": {
+        "nameRequired": "Ana buƙatar sunan ƙungiya.",
+        "invalidAmount": "Shigar da adadin gudummawa mai inganci.",
+        "somethingWrong": "Wani abu ya yi kuskure."
+      }
+    },
+    "joinModal": {
+      "title": "Shiga Ƙungiyar Ajo",
+      "closeDialog": "Rufe akwatin tattaunawa",
+      "enterCodeHint": "Shigar da lambar gayyata ta haruffa 8 da shugaban ƙungiyarku ya raba.",
+      "codePlaceholder": "misali A1B2C3D4",
+      "lookingUp": "Ana bincike…",
+      "findGroup": "Nemo Ƙungiya",
+      "invalidCode": "Lambar gayyata ba daidai ba.",
+      "groupFound": "An sami ƙungiya",
+      "requestSentHint": "Za a aika buƙatarku zuwa ga shugaban ƙungiya don amincewa.",
+      "back": "Baya",
+      "done": "An gama"
+    }
+  },
   "groupDetail": {
     "errors": {
       "failedToLoad": "An kasa loda bayanan ƙungiya.",

@@ -132,6 +132,80 @@
     "deleteConfirmBtn": "Oui, supprimer",
     "deleting": "Suppression…"
   },
+  "ajoGroups": {
+    "statusTrial": "Essai",
+    "statusActive": "Actif",
+    "statusInactive": "Inactif",
+    "memberCount_one": "{{count}} membre",
+    "memberCount_other": "{{count}} membres",
+    "notMemberYet": "Vous n'êtes membre d'aucun groupe Ajo pour le moment.",
+    "joinWithCode": "Rejoindre avec un code d'invitation",
+    "orText": "ou",
+    "createNewGroup": "créer un nouveau groupe",
+    "page": {
+      "title": "Groupes Ajo",
+      "subtitle": "Vos cercles d'épargne",
+      "paymentHistoryLink": "Mon historique de paiements →",
+      "joinGroup": "Rejoindre un groupe",
+      "createGroup": "Créer un groupe",
+      "serverWakingUp": "Le serveur se réveille — cela peut prendre jusqu'à 60 secondes pour la première requête. Patientez…",
+      "failedToLoad": "Échec du chargement des groupes. Veuillez actualiser.",
+      "headers": {
+        "groupName": "Nom du groupe",
+        "frequency": "Fréquence",
+        "amount": "Montant",
+        "members": "Membres",
+        "status": "Statut"
+      }
+    },
+    "weekdays": {
+      "mon": "Lun", "tue": "Mar", "wed": "Mer", "thu": "Jeu", "fri": "Ven", "sat": "Sam", "sun": "Dim"
+    },
+    "createModal": {
+      "title": "Créer un groupe Ajo",
+      "closeDialog": "Fermer la boîte de dialogue",
+      "nameLabel": "Nom du groupe *",
+      "namePlaceholder": "ex. Ajo des Professionnels de Lagos",
+      "frequencyLabel": "Fréquence de contribution *",
+      "daily": "Quotidienne",
+      "weekly": "Hebdomadaire",
+      "monthly": "Mensuelle",
+      "amountLabel": "Montant de la contribution (NGN) *",
+      "amountPlaceholder": "ex. 10000",
+      "collectionDayLabel": "Jour de collecte (facultatif)",
+      "collectionDayWeeklyHint": "Quel jour de la semaine les membres doivent-ils payer ? ",
+      "collectionDayMonthlyHint": "Quel jour du mois les membres doivent-ils payer ? ",
+      "leaveBlankDefault": "Laissez vide pour utiliser {{default}} par défaut.",
+      "monday": "lundi",
+      "the1st": "le 1er du mois",
+      "gracePeriodLabel": "Période de grâce (jours, 0–30)",
+      "gracePeriodPlaceholder": "ex. 7",
+      "firstCycleStartLabel": "Début du premier cycle (facultatif)",
+      "cycleEndHint": "La date de fin du cycle est définie automatiquement selon la fréquence de contribution et le jour de collecte.",
+      "descriptionLabel": "Description (facultatif)",
+      "descriptionPlaceholder": "À quoi sert ce groupe ?",
+      "creating": "Création…",
+      "createGroup": "Créer le groupe",
+      "errors": {
+        "nameRequired": "Le nom du groupe est requis.",
+        "invalidAmount": "Saisissez un montant de contribution valide.",
+        "somethingWrong": "Une erreur s'est produite."
+      }
+    },
+    "joinModal": {
+      "title": "Rejoindre un groupe Ajo",
+      "closeDialog": "Fermer la boîte de dialogue",
+      "enterCodeHint": "Entrez le code d'invitation à 8 caractères partagé par l'administrateur du groupe.",
+      "codePlaceholder": "ex. A1B2C3D4",
+      "lookingUp": "Recherche en cours…",
+      "findGroup": "Trouver le groupe",
+      "invalidCode": "Code d'invitation invalide.",
+      "groupFound": "Groupe trouvé",
+      "requestSentHint": "Votre demande sera envoyée à l'administrateur du groupe pour approbation.",
+      "back": "Retour",
+      "done": "Terminé"
+    }
+  },
   "groupDetail": {
     "errors": {
       "failedToLoad": "Échec du chargement des détails du groupe.",

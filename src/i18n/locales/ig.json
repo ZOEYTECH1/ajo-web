@@ -133,6 +133,80 @@
     "deleteConfirmBtn": "Ee, hichapụ",
     "deleting": "Na-ehichapụ…"
   },
+  "ajoGroups": {
+    "statusTrial": "Nnwale",
+    "statusActive": "Na-arụ ọrụ",
+    "statusInactive": "Anaghị arụ ọrụ",
+    "memberCount_one": "Onye otu {{count}}",
+    "memberCount_other": "Ndị otu {{count}}",
+    "notMemberYet": "Ị bụbeghị onye otu Ajo ọ bụla ugbu a.",
+    "joinWithCode": "Jiri koodu nzipu sonye",
+    "orText": "ma ọ bụ",
+    "createNewGroup": "mepụta otu ọhụrụ",
+    "page": {
+      "title": "Ndị Otu Ajo",
+      "subtitle": "Okirikiri nchekwa gị",
+      "paymentHistoryLink": "Akụkọ Ịkwụ Ụgwọ M →",
+      "joinGroup": "Sonye n'Otu",
+      "createGroup": "Mepụta Otu",
+      "serverWakingUp": "Ihe nkesa na-eteta — nke a nwere ike were ruo sekọnd 60 na arịrịọ mbụ. Biko chere…",
+      "failedToLoad": "Ibu ndị otu emeghị nke ọma. Biko megharịa.",
+      "headers": {
+        "groupName": "Aha Otu",
+        "frequency": "Ugboro",
+        "amount": "Ego",
+        "members": "Ndị Otu",
+        "status": "Ọnọdụ"
+      }
+    },
+    "weekdays": {
+      "mon": "Mon", "tue": "Tiu", "wed": "Wen", "thu": "Tọọ", "fri": "Fraị", "sat": "Satọ", "sun": "Sọn"
+    },
+    "createModal": {
+      "title": "Mepụta Otu Ajo",
+      "closeDialog": "Mechie ndaowa",
+      "nameLabel": "Aha Otu *",
+      "namePlaceholder": "dịka Ajo Ndị Ọkachamara Lagos",
+      "frequencyLabel": "Ugboro Ntinye Ego *",
+      "daily": "Kwa ụbọchị",
+      "weekly": "Kwa izu",
+      "monthly": "Kwa ọnwa",
+      "amountLabel": "Ego Ntinye (NGN) *",
+      "amountPlaceholder": "dịka 10000",
+      "collectionDayLabel": "Ụbọchị Nchịkọta (nhọrọ)",
+      "collectionDayWeeklyHint": "Ụbọchị ole n'izu ka ndị otu ga-akwụ ụgwọ? ",
+      "collectionDayMonthlyHint": "Ụbọchị ole n'ọnwa ka ndị otu ga-akwụ ụgwọ? ",
+      "leaveBlankDefault": "Hapụ ya efu iji jiri {{default}} dị ka ndabara.",
+      "monday": "Mọnde",
+      "the1st": "ụbọchị mbụ nke ọnwa",
+      "gracePeriodLabel": "Oge Amara (ụbọchị, 0–30)",
+      "gracePeriodPlaceholder": "dịka 7",
+      "firstCycleStartLabel": "Mmalite Usoro Mbụ (nhọrọ)",
+      "cycleEndHint": "A na-ahazi ụbọchị njedebe nke usoro na-akpaghị aka dabere na ugboro ntinye ego na ụbọchị nchịkọta.",
+      "descriptionLabel": "Nkọwa (nhọrọ)",
+      "descriptionPlaceholder": "Gịnị ka otu a bụ?",
+      "creating": "Na-emepụta…",
+      "createGroup": "Mepụta Otu",
+      "errors": {
+        "nameRequired": "Achọrọ aha otu.",
+        "invalidAmount": "Tinye ego ntinye ziri ezi.",
+        "somethingWrong": "Ihe dara adaghị."
+      }
+    },
+    "joinModal": {
+      "title": "Sonye n'Otu Ajo",
+      "closeDialog": "Mechie ndaowa",
+      "enterCodeHint": "Tinye koodu nzipu mkpụrụedemede 8 nke onye nlekọta otu gị kesara.",
+      "codePlaceholder": "dịka A1B2C3D4",
+      "lookingUp": "Na-achọ…",
+      "findGroup": "Chọta Otu",
+      "invalidCode": "Koodu nzipu ezighị ezi.",
+      "groupFound": "Achọtara otu",
+      "requestSentHint": "A ga-eziga arịrịọ gị nye onye nlekọta otu maka nkwado.",
+      "back": "Azụ",
+      "done": "Emezuola"
+    }
+  },
   "groupDetail": {
     "errors": {
       "failedToLoad": "Ibu nkọwa otu emeghị nke ọma.",

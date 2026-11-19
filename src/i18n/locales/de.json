@@ -132,6 +132,80 @@
     "deleteConfirmBtn": "Ja, löschen",
     "deleting": "Wird gelöscht…"
   },
+  "ajoGroups": {
+    "statusTrial": "Testphase",
+    "statusActive": "Aktiv",
+    "statusInactive": "Inaktiv",
+    "memberCount_one": "{{count}} Mitglied",
+    "memberCount_other": "{{count}} Mitglieder",
+    "notMemberYet": "Du bist noch kein Mitglied einer Ajo-Gruppe.",
+    "joinWithCode": "Mit Einladungscode beitreten",
+    "orText": "oder",
+    "createNewGroup": "eine neue Gruppe erstellen",
+    "page": {
+      "title": "Ajo-Gruppen",
+      "subtitle": "Deine Sparkreise",
+      "paymentHistoryLink": "Mein Zahlungsverlauf →",
+      "joinGroup": "Gruppe beitreten",
+      "createGroup": "Gruppe erstellen",
+      "serverWakingUp": "Der Server wird aktiviert — dies kann bei der ersten Anfrage bis zu 60 Sekunden dauern. Bitte warten…",
+      "failedToLoad": "Gruppen konnten nicht geladen werden. Bitte aktualisieren.",
+      "headers": {
+        "groupName": "Gruppenname",
+        "frequency": "Häufigkeit",
+        "amount": "Betrag",
+        "members": "Mitglieder",
+        "status": "Status"
+      }
+    },
+    "weekdays": {
+      "mon": "Mo", "tue": "Di", "wed": "Mi", "thu": "Do", "fri": "Fr", "sat": "Sa", "sun": "So"
+    },
+    "createModal": {
+      "title": "Ajo-Gruppe erstellen",
+      "closeDialog": "Dialog schließen",
+      "nameLabel": "Gruppenname *",
+      "namePlaceholder": "z. B. Lagos Professionals Ajo",
+      "frequencyLabel": "Beitragshäufigkeit *",
+      "daily": "Täglich",
+      "weekly": "Wöchentlich",
+      "monthly": "Monatlich",
+      "amountLabel": "Beitragsbetrag (NGN) *",
+      "amountPlaceholder": "z. B. 10000",
+      "collectionDayLabel": "Einzugstag (optional)",
+      "collectionDayWeeklyHint": "An welchem Wochentag sollen Mitglieder zahlen? ",
+      "collectionDayMonthlyHint": "An welchem Tag des Monats sollen Mitglieder zahlen? ",
+      "leaveBlankDefault": "Leer lassen, um standardmäßig {{default}} zu verwenden.",
+      "monday": "Montag",
+      "the1st": "den 1. des Monats",
+      "gracePeriodLabel": "Nachfrist (Tage, 0–30)",
+      "gracePeriodPlaceholder": "z. B. 7",
+      "firstCycleStartLabel": "Beginn des ersten Zyklus (optional)",
+      "cycleEndHint": "Das Enddatum des Zyklus wird automatisch anhand der Beitragshäufigkeit und des Einzugstags festgelegt.",
+      "descriptionLabel": "Beschreibung (optional)",
+      "descriptionPlaceholder": "Wofür ist diese Gruppe?",
+      "creating": "Wird erstellt…",
+      "createGroup": "Gruppe erstellen",
+      "errors": {
+        "nameRequired": "Gruppenname ist erforderlich.",
+        "invalidAmount": "Gib einen gültigen Beitragsbetrag ein.",
+        "somethingWrong": "Etwas ist schiefgelaufen."
+      }
+    },
+    "joinModal": {
+      "title": "Ajo-Gruppe beitreten",
+      "closeDialog": "Dialog schließen",
+      "enterCodeHint": "Gib den 8-stelligen Einladungscode ein, den dein Gruppenadmin geteilt hat.",
+      "codePlaceholder": "z. B. A1B2C3D4",
+      "lookingUp": "Wird gesucht…",
+      "findGroup": "Gruppe finden",
+      "invalidCode": "Ungültiger Einladungscode.",
+      "groupFound": "Gruppe gefunden",
+      "requestSentHint": "Deine Anfrage wird zur Genehmigung an den Gruppenadmin gesendet.",
+      "back": "Zurück",
+      "done": "Fertig"
+    }
+  },
   "groupDetail": {
     "errors": {
       "failedToLoad": "Gruppendetails konnten nicht geladen werden.",

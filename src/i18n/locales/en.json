@@ -132,6 +132,80 @@
     "deleteConfirmBtn": "Yes, delete",
     "deleting": "Deleting…"
   },
+  "ajoGroups": {
+    "statusTrial": "Trial",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "memberCount_one": "{{count}} member",
+    "memberCount_other": "{{count}} members",
+    "notMemberYet": "You are not a member of any Ajo group yet.",
+    "joinWithCode": "Join with an invite code",
+    "orText": "or",
+    "createNewGroup": "create a new group",
+    "page": {
+      "title": "Ajo Groups",
+      "subtitle": "Your savings circles",
+      "paymentHistoryLink": "My Payment History →",
+      "joinGroup": "Join Group",
+      "createGroup": "Create Group",
+      "serverWakingUp": "The server is waking up — this can take up to 60 seconds on the first request. Hang tight…",
+      "failedToLoad": "Failed to load groups. Please refresh.",
+      "headers": {
+        "groupName": "Group Name",
+        "frequency": "Frequency",
+        "amount": "Amount",
+        "members": "Members",
+        "status": "Status"
+      }
+    },
+    "weekdays": {
+      "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu", "fri": "Fri", "sat": "Sat", "sun": "Sun"
+    },
+    "createModal": {
+      "title": "Create Ajo Group",
+      "closeDialog": "Close dialog",
+      "nameLabel": "Group Name *",
+      "namePlaceholder": "e.g. Lagos Professionals Ajo",
+      "frequencyLabel": "Contribution Frequency *",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "amountLabel": "Contribution Amount (NGN) *",
+      "amountPlaceholder": "e.g. 10000",
+      "collectionDayLabel": "Collection Day (optional)",
+      "collectionDayWeeklyHint": "Which day of the week should members pay by? ",
+      "collectionDayMonthlyHint": "Which day of the month should members pay by? ",
+      "leaveBlankDefault": "Leave blank to default to {{default}}.",
+      "monday": "Monday",
+      "the1st": "the 1st of the month",
+      "gracePeriodLabel": "Grace Period (days, 0–30)",
+      "gracePeriodPlaceholder": "e.g. 7",
+      "firstCycleStartLabel": "First Cycle Start (optional)",
+      "cycleEndHint": "The cycle's end date is set automatically based on the contribution frequency and collection day.",
+      "descriptionLabel": "Description (optional)",
+      "descriptionPlaceholder": "What is this group for?",
+      "creating": "Creating…",
+      "createGroup": "Create Group",
+      "errors": {
+        "nameRequired": "Group name is required.",
+        "invalidAmount": "Enter a valid contribution amount.",
+        "somethingWrong": "Something went wrong."
+      }
+    },
+    "joinModal": {
+      "title": "Join Ajo Group",
+      "closeDialog": "Close dialog",
+      "enterCodeHint": "Enter the 8-character invite code shared by your group admin.",
+      "codePlaceholder": "e.g. A1B2C3D4",
+      "lookingUp": "Looking up…",
+      "findGroup": "Find Group",
+      "invalidCode": "Invalid invite code.",
+      "groupFound": "Group found",
+      "requestSentHint": "Your request will be sent to the group admin for approval.",
+      "back": "Back",
+      "done": "Done"
+    }
+  },
   "groupDetail": {
     "errors": {
       "failedToLoad": "Failed to load group details.",

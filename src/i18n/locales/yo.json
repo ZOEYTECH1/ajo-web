@@ -133,6 +133,80 @@
     "deleteConfirmBtn": "Bẹ́ẹ̀ni, pa á rẹ́",
     "deleting": "Ń pa á rẹ́…"
   },
+  "ajoGroups": {
+    "statusTrial": "Ìdánwò",
+    "statusActive": "Ń ṣiṣẹ́",
+    "statusInactive": "Kò ṣiṣẹ́",
+    "memberCount_one": "Ọmọ ẹgbẹ́ {{count}}",
+    "memberCount_other": "Àwọn ọmọ ẹgbẹ́ {{count}}",
+    "notMemberYet": "O kò tíì jẹ́ ọmọ ẹgbẹ́ ẹgbẹ́ Ajo kankan.",
+    "joinWithCode": "Darapọ̀ pẹ̀lú koodu ìkésíni",
+    "orText": "tàbí",
+    "createNewGroup": "ṣẹ̀dá ẹgbẹ́ tuntun",
+    "page": {
+      "title": "Àwọn Ẹgbẹ́ Ajo",
+      "subtitle": "Àwọn àyíká ìfọ́wọ́pamọ́ rẹ",
+      "paymentHistoryLink": "Àkọsílẹ̀ Owó Mi →",
+      "joinGroup": "Darapọ̀ Mọ́ Ẹgbẹ́",
+      "createGroup": "Ṣẹ̀dá Ẹgbẹ́",
+      "serverWakingUp": "Sẹ́fà ń jí — èyí lè gba tó ìṣẹ́jú-àáyá 60 fún ìbéèrè àkọ́kọ́. Jọ̀wọ́ dúró…",
+      "failedToLoad": "Kíkó àwọn ẹgbẹ́ kùnà. Jọ̀wọ́ tún ojú ìwé ṣe.",
+      "headers": {
+        "groupName": "Orúkọ Ẹgbẹ́",
+        "frequency": "Ìgbà",
+        "amount": "Iye",
+        "members": "Àwọn Ọmọ Ẹgbẹ́",
+        "status": "Ipò"
+      }
+    },
+    "weekdays": {
+      "mon": "Ajé", "tue": "Ìsẹ́gun", "wed": "Ọjọ́rú", "thu": "Ọjọ́bọ", "fri": "Ẹtì", "sat": "Àbámẹ́ta", "sun": "Àìkú"
+    },
+    "createModal": {
+      "title": "Ṣẹ̀dá Ẹgbẹ́ Ajo",
+      "closeDialog": "Pa àsọyé náà",
+      "nameLabel": "Orúkọ Ẹgbẹ́ *",
+      "namePlaceholder": "fún àpẹẹrẹ Ajo Àwọn Akọ́ṣẹ́mọṣẹ́ Lagos",
+      "frequencyLabel": "Ìgbà Ìfọwọ́sowọ́pọ̀ *",
+      "daily": "Ojoojúmọ́",
+      "weekly": "Lọ́sọ̀ọ̀sẹ̀",
+      "monthly": "Lóṣooṣù",
+      "amountLabel": "Iye Ìfọwọ́sowọ́pọ̀ (NGN) *",
+      "amountPlaceholder": "fún àpẹẹrẹ 10000",
+      "collectionDayLabel": "Ọjọ́ Gbígbà (àṣàyàn)",
+      "collectionDayWeeklyHint": "Ọjọ́ wo nínú ọsẹ̀ ni àwọn ọmọ ẹgbẹ́ gbọ́dọ̀ san? ",
+      "collectionDayMonthlyHint": "Ọjọ́ wo nínú oṣù ni àwọn ọmọ ẹgbẹ́ gbọ́dọ̀ san? ",
+      "leaveBlankDefault": "Fi sílẹ̀ ní òfo láti lo {{default}} gẹ́gẹ́ bí àfọ̀kánsí.",
+      "monday": "ọjọ́ Ajé",
+      "the1st": "ọjọ́ kìíní oṣù",
+      "gracePeriodLabel": "Àkókò Oore (ọjọ́, 0–30)",
+      "gracePeriodPlaceholder": "fún àpẹẹrẹ 7",
+      "firstCycleStartLabel": "Ìbẹ̀rẹ̀ Àyíká Àkọ́kọ́ (àṣàyàn)",
+      "cycleEndHint": "A óò ṣètò ọjọ́ òpin àyíká láìfọwọ́kàn gẹ́gẹ́ bí ìgbà ìfọwọ́sowọ́pọ̀ àti ọjọ́ gbígbà.",
+      "descriptionLabel": "Àpèjúwe (àṣàyàn)",
+      "descriptionPlaceholder": "Kí ni ẹgbẹ́ yìí fún?",
+      "creating": "Ń ṣẹ̀dá…",
+      "createGroup": "Ṣẹ̀dá Ẹgbẹ́",
+      "errors": {
+        "nameRequired": "A nílò orúkọ ẹgbẹ́.",
+        "invalidAmount": "Tẹ iye ìfọwọ́sowọ́pọ̀ tó tọ́ sí i.",
+        "somethingWrong": "Ohun kan ṣẹlẹ̀ àṣìṣe."
+      }
+    },
+    "joinModal": {
+      "title": "Darapọ̀ Mọ́ Ẹgbẹ́ Ajo",
+      "closeDialog": "Pa àsọyé náà",
+      "enterCodeHint": "Tẹ koodu ìkésíni oníhàrà 8 tí alábòójútó ẹgbẹ́ rẹ fi ránṣẹ́ sí i.",
+      "codePlaceholder": "fún àpẹẹrẹ A1B2C3D4",
+      "lookingUp": "Ń wá…",
+      "findGroup": "Wá Ẹgbẹ́",
+      "invalidCode": "Koodu ìkésíni kò tọ̀nà.",
+      "groupFound": "A rí ẹgbẹ́",
+      "requestSentHint": "A óò fi ìbéèrè rẹ ránṣẹ́ sí alábòójútó ẹgbẹ́ fún ìfọwọ́sí.",
+      "back": "Padà",
+      "done": "Parí"
+    }
+  },
   "groupDetail": {
     "errors": {
       "failedToLoad": "Kíkó àwọn àlàyé ẹgbẹ́ kùnà.",

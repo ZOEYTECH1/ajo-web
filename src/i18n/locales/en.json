@@ -26,6 +26,69 @@
       "orContinueWith": "or continue with",
       "noAccount": "Don't have an account?",
       "signUp": "Sign up"
+    },
+    "register": {
+      "subtitle": "Create your account",
+      "creatingAccount": "Creating your account…",
+      "firstNameLabel": "First name",
+      "firstNamePlaceholder": "John",
+      "lastNameLabel": "Last name",
+      "lastNamePlaceholder": "Doe",
+      "phoneLabel": "Phone number",
+      "passwordPlaceholder": "At least 8 characters",
+      "createAccount": "Create account",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "errors": {
+        "firstNameRequired": "First name is required.",
+        "lastNameRequired": "Last name is required.",
+        "invalidEmail": "Enter a valid email address.",
+        "passwordTooShort": "Password must be at least 8 characters.",
+        "phoneRequired": "Phone number is required.",
+        "registrationFailed": "Registration failed. Please try again."
+      }
+    },
+    "otp": {
+      "subtitle": "Verify your email",
+      "weSentCodeTo": "We sent a 6-digit code to",
+      "yourEmail": "your email",
+      "emailVerified": "Email verified!",
+      "accountReady": "Your account is ready. You can now sign in.",
+      "goToLogin": "Go to Login",
+      "errorInvalidExpired": "Invalid or expired OTP. Please try again.",
+      "digitA11y": "OTP digit {{index}}",
+      "verify": "Verify",
+      "wrongEmail": "Wrong email?",
+      "goBack": "Go back"
+    },
+    "forgot": {
+      "subtitleEmail": "Enter your registered email and we'll send you a verification code.",
+      "subtitleOtp": "Enter the 6-digit code sent to {{email}}.",
+      "subtitlePassword": "Choose a new password for your account.",
+      "subtitleDone": "Your password has been reset successfully.",
+      "resetYourPassword": "Reset your password",
+      "emailLabel": "Email address",
+      "sendCode": "Send Code",
+      "verificationCodeLabel": "Verification code",
+      "verifyCode": "Verify Code",
+      "resendCode": "Resend code",
+      "newPasswordLabel": "New password",
+      "newPasswordPlaceholder": "Min. 8 characters",
+      "confirmNewPasswordLabel": "Confirm new password",
+      "confirmNewPasswordPlaceholder": "Repeat your password",
+      "resetPassword": "Reset Password",
+      "passwordResetTitle": "Password reset!",
+      "canSignInNow": "You can now sign in with your new password.",
+      "rememberPassword": "Remember your password?",
+      "errors": {
+        "enterEmail": "Please enter your email address.",
+        "failedSendCode": "Failed to send code. Check your email and try again.",
+        "enter6Digit": "Please enter the 6-digit code.",
+        "invalidExpiredCode": "Invalid or expired code.",
+        "passwordTooShort": "Password must be at least 8 characters.",
+        "passwordMismatch": "Passwords do not match.",
+        "failedReset": "Failed to reset password. Please try again."
+      }
     }
   },
   "account": {

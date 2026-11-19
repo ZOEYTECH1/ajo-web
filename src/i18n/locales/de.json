@@ -26,6 +26,69 @@
       "orContinueWith": "oder fortfahren mit",
       "noAccount": "Noch kein Konto?",
       "signUp": "Registrieren"
+    },
+    "register": {
+      "subtitle": "Erstelle dein Konto",
+      "creatingAccount": "Dein Konto wird erstellt…",
+      "firstNameLabel": "Vorname",
+      "firstNamePlaceholder": "Max",
+      "lastNameLabel": "Nachname",
+      "lastNamePlaceholder": "Mustermann",
+      "phoneLabel": "Telefonnummer",
+      "passwordPlaceholder": "Mindestens 8 Zeichen",
+      "createAccount": "Konto erstellen",
+      "alreadyHaveAccount": "Du hast bereits ein Konto?",
+      "signIn": "Anmelden",
+      "errors": {
+        "firstNameRequired": "Vorname ist erforderlich.",
+        "lastNameRequired": "Nachname ist erforderlich.",
+        "invalidEmail": "Gib eine gültige E-Mail-Adresse ein.",
+        "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+        "phoneRequired": "Telefonnummer ist erforderlich.",
+        "registrationFailed": "Registrierung fehlgeschlagen. Bitte versuche es erneut."
+      }
+    },
+    "otp": {
+      "subtitle": "Bestätige deine E-Mail-Adresse",
+      "weSentCodeTo": "Wir haben einen 6-stelligen Code gesendet an",
+      "yourEmail": "deine E-Mail",
+      "emailVerified": "E-Mail bestätigt!",
+      "accountReady": "Dein Konto ist bereit. Du kannst dich jetzt anmelden.",
+      "goToLogin": "Zur Anmeldung",
+      "errorInvalidExpired": "Ungültiger oder abgelaufener Code. Bitte versuche es erneut.",
+      "digitA11y": "Ziffer {{index}} des Codes",
+      "verify": "Bestätigen",
+      "wrongEmail": "Falsche E-Mail?",
+      "goBack": "Zurück"
+    },
+    "forgot": {
+      "subtitleEmail": "Gib deine registrierte E-Mail-Adresse ein und wir senden dir einen Bestätigungscode.",
+      "subtitleOtp": "Gib den 6-stelligen Code ein, der an {{email}} gesendet wurde.",
+      "subtitlePassword": "Wähle ein neues Passwort für dein Konto.",
+      "subtitleDone": "Dein Passwort wurde erfolgreich zurückgesetzt.",
+      "resetYourPassword": "Setze dein Passwort zurück",
+      "emailLabel": "E-Mail-Adresse",
+      "sendCode": "Code senden",
+      "verificationCodeLabel": "Bestätigungscode",
+      "verifyCode": "Code bestätigen",
+      "resendCode": "Code erneut senden",
+      "newPasswordLabel": "Neues Passwort",
+      "newPasswordPlaceholder": "Mind. 8 Zeichen",
+      "confirmNewPasswordLabel": "Neues Passwort bestätigen",
+      "confirmNewPasswordPlaceholder": "Passwort wiederholen",
+      "resetPassword": "Passwort zurücksetzen",
+      "passwordResetTitle": "Passwort zurückgesetzt!",
+      "canSignInNow": "Du kannst dich jetzt mit deinem neuen Passwort anmelden.",
+      "rememberPassword": "Erinnerst du dich an dein Passwort?",
+      "errors": {
+        "enterEmail": "Bitte gib deine E-Mail-Adresse ein.",
+        "failedSendCode": "Code konnte nicht gesendet werden. Überprüfe deine E-Mail und versuche es erneut.",
+        "enter6Digit": "Bitte gib den 6-stelligen Code ein.",
+        "invalidExpiredCode": "Ungültiger oder abgelaufener Code.",
+        "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+        "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+        "failedReset": "Zurücksetzen des Passworts fehlgeschlagen. Bitte versuche es erneut."
+      }
     }
   },
   "account": {

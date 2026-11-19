@@ -27,6 +27,69 @@
       "orContinueWith": "ko ci gaba da",
       "noAccount": "Ba ku da asusu?",
       "signUp": "Yi rajista"
+    },
+    "register": {
+      "subtitle": "Ƙirƙiri asusunku",
+      "creatingAccount": "Ana ƙirƙirar asusunku…",
+      "firstNameLabel": "Sunan farko",
+      "firstNamePlaceholder": "Musa",
+      "lastNameLabel": "Sunan ƙarshe",
+      "lastNamePlaceholder": "Bello",
+      "phoneLabel": "Lambar waya",
+      "passwordPlaceholder": "Aƙalla haruffa 8",
+      "createAccount": "Ƙirƙiri asusu",
+      "alreadyHaveAccount": "Kuna da asusu tuni?",
+      "signIn": "Shiga",
+      "errors": {
+        "firstNameRequired": "Ana buƙatar sunan farko.",
+        "lastNameRequired": "Ana buƙatar sunan ƙarshe.",
+        "invalidEmail": "Shigar da adireshin imel mai inganci.",
+        "passwordTooShort": "Kalmar sirri dole ta kasance aƙalla haruffa 8.",
+        "phoneRequired": "Ana buƙatar lambar waya.",
+        "registrationFailed": "Rajista ta kasa. Da fatan za a sake gwadawa."
+      }
+    },
+    "otp": {
+      "subtitle": "Tabbatar da imel ɗinku",
+      "weSentCodeTo": "Mun aika lambar ƙididdiga 6 zuwa",
+      "yourEmail": "imel ɗinku",
+      "emailVerified": "An tabbatar da imel!",
+      "accountReady": "Asusunku a shirye yake. Yanzu za ku iya shiga.",
+      "goToLogin": "Je zuwa Shiga",
+      "errorInvalidExpired": "OTP ba daidai ba ko ta ƙare. Da fatan za a sake gwadawa.",
+      "digitA11y": "Lambar {{index}} ta koodu",
+      "verify": "Tabbatar",
+      "wrongEmail": "Imel mara kyau?",
+      "goBack": "Koma baya"
+    },
+    "forgot": {
+      "subtitleEmail": "Shigar da imel ɗin da aka yi rajista da shi kuma za mu aiko muku da lambar tabbatarwa.",
+      "subtitleOtp": "Shigar da lambar ƙididdiga 6 da aka aika zuwa {{email}}.",
+      "subtitlePassword": "Zaɓi sabuwar kalmar sirri don asusunku.",
+      "subtitleDone": "An sake saita kalmar sirrinku cikin nasara.",
+      "resetYourPassword": "Sake saita kalmar sirrinku",
+      "emailLabel": "Adireshin imel",
+      "sendCode": "Aika Lamba",
+      "verificationCodeLabel": "Lambar tabbatarwa",
+      "verifyCode": "Tabbatar da Lamba",
+      "resendCode": "Sake aika lamba",
+      "newPasswordLabel": "Sabuwar kalmar sirri",
+      "newPasswordPlaceholder": "Aƙalla haruffa 8",
+      "confirmNewPasswordLabel": "Tabbatar da sabuwar kalmar sirri",
+      "confirmNewPasswordPlaceholder": "Maimaita kalmar sirrinku",
+      "resetPassword": "Sake Saita Kalmar Sirri",
+      "passwordResetTitle": "An sake saita kalmar sirri!",
+      "canSignInNow": "Yanzu za ku iya shiga da sabuwar kalmar sirrinku.",
+      "rememberPassword": "Kun tuna da kalmar sirrinku?",
+      "errors": {
+        "enterEmail": "Da fatan za a shigar da adireshin imel ɗinku.",
+        "failedSendCode": "An kasa aika lamba. Duba imel ɗinku kuma sake gwadawa.",
+        "enter6Digit": "Da fatan za a shigar da lambar ƙididdiga 6.",
+        "invalidExpiredCode": "Lambar ba daidai ba ko ta ƙare.",
+        "passwordTooShort": "Kalmar sirri dole ta kasance aƙalla haruffa 8.",
+        "passwordMismatch": "Kalmomin sirri ba su yi daidai ba.",
+        "failedReset": "An kasa sake saita kalmar sirri. Da fatan za a sake gwadawa."
+      }
     }
   },
   "account": {

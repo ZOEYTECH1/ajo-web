@@ -26,6 +26,69 @@
       "orContinueWith": "o continúa con",
       "noAccount": "¿No tienes una cuenta?",
       "signUp": "Regístrate"
+    },
+    "register": {
+      "subtitle": "Crea tu cuenta",
+      "creatingAccount": "Creando tu cuenta…",
+      "firstNameLabel": "Nombre",
+      "firstNamePlaceholder": "Juan",
+      "lastNameLabel": "Apellido",
+      "lastNamePlaceholder": "Pérez",
+      "phoneLabel": "Número de teléfono",
+      "passwordPlaceholder": "Mínimo 8 caracteres",
+      "createAccount": "Crear cuenta",
+      "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+      "signIn": "Inicia sesión",
+      "errors": {
+        "firstNameRequired": "El nombre es obligatorio.",
+        "lastNameRequired": "El apellido es obligatorio.",
+        "invalidEmail": "Ingresa una dirección de correo válida.",
+        "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+        "phoneRequired": "El número de teléfono es obligatorio.",
+        "registrationFailed": "Error en el registro. Inténtalo de nuevo."
+      }
+    },
+    "otp": {
+      "subtitle": "Verifica tu correo electrónico",
+      "weSentCodeTo": "Enviamos un código de 6 dígitos a",
+      "yourEmail": "tu correo electrónico",
+      "emailVerified": "¡Correo verificado!",
+      "accountReady": "Tu cuenta está lista. Ya puedes iniciar sesión.",
+      "goToLogin": "Ir a iniciar sesión",
+      "errorInvalidExpired": "OTP inválido o caducado. Inténtalo de nuevo.",
+      "digitA11y": "Dígito {{index}} del código",
+      "verify": "Verificar",
+      "wrongEmail": "¿Correo incorrecto?",
+      "goBack": "Volver"
+    },
+    "forgot": {
+      "subtitleEmail": "Ingresa tu correo registrado y te enviaremos un código de verificación.",
+      "subtitleOtp": "Ingresa el código de 6 dígitos enviado a {{email}}.",
+      "subtitlePassword": "Elige una nueva contraseña para tu cuenta.",
+      "subtitleDone": "Tu contraseña se restableció con éxito.",
+      "resetYourPassword": "Restablece tu contraseña",
+      "emailLabel": "Correo electrónico",
+      "sendCode": "Enviar código",
+      "verificationCodeLabel": "Código de verificación",
+      "verifyCode": "Verificar código",
+      "resendCode": "Reenviar código",
+      "newPasswordLabel": "Nueva contraseña",
+      "newPasswordPlaceholder": "Mín. 8 caracteres",
+      "confirmNewPasswordLabel": "Confirmar nueva contraseña",
+      "confirmNewPasswordPlaceholder": "Repite tu contraseña",
+      "resetPassword": "Restablecer contraseña",
+      "passwordResetTitle": "¡Contraseña restablecida!",
+      "canSignInNow": "Ya puedes iniciar sesión con tu nueva contraseña.",
+      "rememberPassword": "¿Recuerdas tu contraseña?",
+      "errors": {
+        "enterEmail": "Ingresa tu dirección de correo electrónico.",
+        "failedSendCode": "Error al enviar el código. Verifica tu correo e inténtalo de nuevo.",
+        "enter6Digit": "Ingresa el código de 6 dígitos.",
+        "invalidExpiredCode": "Código inválido o caducado.",
+        "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+        "passwordMismatch": "Las contraseñas no coinciden.",
+        "failedReset": "Error al restablecer la contraseña. Inténtalo de nuevo."
+      }
     }
   },
   "account": {

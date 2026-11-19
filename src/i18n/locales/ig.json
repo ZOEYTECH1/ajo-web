@@ -27,6 +27,69 @@
       "orContinueWith": "ma ọ bụ gaa n'ihu na",
       "noAccount": "Ị nweghị akaụntụ?",
       "signUp": "Debanye aha"
+    },
+    "register": {
+      "subtitle": "Mepụta akaụntụ gị",
+      "creatingAccount": "Na-emepụta akaụntụ gị…",
+      "firstNameLabel": "Aha mbụ",
+      "firstNamePlaceholder": "Chidi",
+      "lastNameLabel": "Aha ikpeazụ",
+      "lastNamePlaceholder": "Eze",
+      "phoneLabel": "Nọmba ekwentị",
+      "passwordPlaceholder": "Opekata mpe mkpụrụedemede 8",
+      "createAccount": "Mepụta akaụntụ",
+      "alreadyHaveAccount": "Ị nwelarị akaụntụ?",
+      "signIn": "Banye",
+      "errors": {
+        "firstNameRequired": "Achọrọ aha mbụ.",
+        "lastNameRequired": "Achọrọ aha ikpeazụ.",
+        "invalidEmail": "Tinye adreesị email ziri ezi.",
+        "passwordTooShort": "Okwuntughe aghaghị ịdị opekata mpe mkpụrụedemede 8.",
+        "phoneRequired": "Achọrọ nọmba ekwentị.",
+        "registrationFailed": "Ndebanye aha emeghị nke ọma. Biko nwaa ọzọ."
+      }
+    },
+    "otp": {
+      "subtitle": "Kwado email gị",
+      "weSentCodeTo": "Anyị zigara koodu nọmba isii na",
+      "yourEmail": "email gị",
+      "emailVerified": "Akwadoro email!",
+      "accountReady": "Akaụntụ gị dị njikere. Ị nwere ike ịbanye ugbu a.",
+      "goToLogin": "Gaa na Ịbanye",
+      "errorInvalidExpired": "OTP ezighị ezi ma ọ bụ agwụla. Biko nwaa ọzọ.",
+      "digitA11y": "Nọmba {{index}} nke koodu",
+      "verify": "Kwado",
+      "wrongEmail": "Email ezighị ezi?",
+      "goBack": "Laghachi azụ"
+    },
+    "forgot": {
+      "subtitleEmail": "Tinye email ndebanye aha gị, anyị ga-ezigara gị koodu nkwenye.",
+      "subtitleOtp": "Tinye koodu nọmba isii ezigara na {{email}}.",
+      "subtitlePassword": "Họrọ okwuntughe ọhụrụ maka akaụntụ gị.",
+      "subtitleDone": "Atọgharịala okwuntughe gị nke ọma.",
+      "resetYourPassword": "Tọgharịa okwuntughe gị",
+      "emailLabel": "Adreesị email",
+      "sendCode": "Ziga Koodu",
+      "verificationCodeLabel": "Koodu nkwenye",
+      "verifyCode": "Kwado Koodu",
+      "resendCode": "Zigharịa koodu",
+      "newPasswordLabel": "Okwuntughe ọhụrụ",
+      "newPasswordPlaceholder": "Opekata mpe mkpụrụedemede 8",
+      "confirmNewPasswordLabel": "Kwado okwuntughe ọhụrụ",
+      "confirmNewPasswordPlaceholder": "Kwughachi okwuntughe gị",
+      "resetPassword": "Tọgharịa Okwuntughe",
+      "passwordResetTitle": "Atọgharịala okwuntughe!",
+      "canSignInNow": "Ị nwere ike ịbanye ugbu a jiri okwuntughe ọhụrụ gị.",
+      "rememberPassword": "Ị chetara okwuntughe gị?",
+      "errors": {
+        "enterEmail": "Biko tinye adreesị email gị.",
+        "failedSendCode": "Izigara koodu emeghị nke ọma. Lelee email gị ma nwaa ọzọ.",
+        "enter6Digit": "Biko tinye koodu nọmba isii.",
+        "invalidExpiredCode": "Koodu ezighị ezi ma ọ bụ agwụla.",
+        "passwordTooShort": "Okwuntughe aghaghị ịdị opekata mpe mkpụrụedemede 8.",
+        "passwordMismatch": "Okwuntughe abụọ ahụ adịghị otu.",
+        "failedReset": "Ịtọgharịa okwuntughe emeghị nke ọma. Biko nwaa ọzọ."
+      }
     }
   },
   "account": {

@@ -27,6 +27,69 @@
       "orContinueWith": "tàbí tẹ̀síwájú pẹ̀lú",
       "noAccount": "O kò ní àkáǹtì?",
       "signUp": "Forúkọsílẹ̀"
+    },
+    "register": {
+      "subtitle": "Ṣẹ̀dá àkáǹtì rẹ",
+      "creatingAccount": "Ń ṣẹ̀dá àkáǹtì rẹ…",
+      "firstNameLabel": "Orúkọ àkọ́kọ́",
+      "firstNamePlaceholder": "Ṣọlá",
+      "lastNameLabel": "Orúkọ ìdílé",
+      "lastNamePlaceholder": "Adé",
+      "phoneLabel": "Nọ́mbà fóònù",
+      "passwordPlaceholder": "Ó kéré jù lẹ́tà mẹ́jọ",
+      "createAccount": "Ṣẹ̀dá àkáǹtì",
+      "alreadyHaveAccount": "Ṣé o ní àkáǹtì tẹ́lẹ̀?",
+      "signIn": "Wọlé",
+      "errors": {
+        "firstNameRequired": "A nílò orúkọ àkọ́kọ́.",
+        "lastNameRequired": "A nílò orúkọ ìdílé.",
+        "invalidEmail": "Tẹ àdírẹ́sì ímeèlì tó tọ́ sí i.",
+        "passwordTooShort": "Ọ̀rọ̀ àṣínà gbọ́dọ̀ ní ó kéré jù lẹ́tà mẹ́jọ.",
+        "phoneRequired": "A nílò nọ́mbà fóònù.",
+        "registrationFailed": "Ìforúkọsílẹ̀ kùnà. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan sí i."
+      }
+    },
+    "otp": {
+      "subtitle": "Jẹ́rìí sí ímeèlì rẹ",
+      "weSentCodeTo": "A fi koodu nọ́mbà mẹ́fà ránṣẹ́ sí",
+      "yourEmail": "ímeèlì rẹ",
+      "emailVerified": "A ti jẹ́rìí sí ímeèlì!",
+      "accountReady": "Àkáǹtì rẹ ti ṣetán. O lè wọlé nísinsìnyí.",
+      "goToLogin": "Lọ sí Wíwọlé",
+      "errorInvalidExpired": "OTP kò tọ̀nà tàbí ó ti parí. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan sí i.",
+      "digitA11y": "Nọ́mbà {{index}} nínú koodu",
+      "verify": "Jẹ́rìí",
+      "wrongEmail": "Ímeèlì tí kò tọ̀nà?",
+      "goBack": "Padà"
+    },
+    "forgot": {
+      "subtitleEmail": "Tẹ ímeèlì tí o forúkọsílẹ̀ sí i, a óò sì fi koodu ìmúdájú ránṣẹ́ sí ọ.",
+      "subtitleOtp": "Tẹ koodu nọ́mbà mẹ́fà tí a fi ránṣẹ́ sí {{email}} sí i.",
+      "subtitlePassword": "Yan ọ̀rọ̀ àṣínà tuntun fún àkáǹtì rẹ.",
+      "subtitleDone": "A ti tún ọ̀rọ̀ àṣínà rẹ ṣe ní àṣeyọrí.",
+      "resetYourPassword": "Tún ọ̀rọ̀ àṣínà rẹ ṣe",
+      "emailLabel": "Àdírẹ́sì ímeèlì",
+      "sendCode": "Fi Koodu Ránṣẹ́",
+      "verificationCodeLabel": "Koodu ìmúdájú",
+      "verifyCode": "Jẹ́rìí sí Koodu",
+      "resendCode": "Tún fi koodu ránṣẹ́",
+      "newPasswordLabel": "Ọ̀rọ̀ àṣínà tuntun",
+      "newPasswordPlaceholder": "Ó kéré jù lẹ́tà mẹ́jọ",
+      "confirmNewPasswordLabel": "Jẹ́rìí sí ọ̀rọ̀ àṣínà tuntun",
+      "confirmNewPasswordPlaceholder": "Tún ọ̀rọ̀ àṣínà rẹ ṣe",
+      "resetPassword": "Tún Ọ̀rọ̀ Àṣínà Ṣe",
+      "passwordResetTitle": "A ti tún ọ̀rọ̀ àṣínà ṣe!",
+      "canSignInNow": "O lè wọlé nísinsìnyí pẹ̀lú ọ̀rọ̀ àṣínà tuntun rẹ.",
+      "rememberPassword": "Ṣé o rántí ọ̀rọ̀ àṣínà rẹ?",
+      "errors": {
+        "enterEmail": "Jọ̀wọ́ tẹ àdírẹ́sì ímeèlì rẹ sí i.",
+        "failedSendCode": "Fífi koodu ránṣẹ́ kùnà. Ṣayẹ̀wò ímeèlì rẹ kí o sì tún gbìyànjú.",
+        "enter6Digit": "Jọ̀wọ́ tẹ koodu nọ́mbà mẹ́fà sí i.",
+        "invalidExpiredCode": "Koodu kò tọ̀nà tàbí ó ti parí.",
+        "passwordTooShort": "Ọ̀rọ̀ àṣínà gbọ́dọ̀ ní ó kéré jù lẹ́tà mẹ́jọ.",
+        "passwordMismatch": "Àwọn ọ̀rọ̀ àṣínà kò dọ́gba.",
+        "failedReset": "Àtúnṣe ọ̀rọ̀ àṣínà kùnà. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan sí i."
+      }
     }
   },
   "account": {

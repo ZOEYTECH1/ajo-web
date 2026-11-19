@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/Button';
 import { verifyEmail } from '../../services/authService';
 
@@ -7,6 +8,7 @@ const OTP_LENGTH = 6;
 
 export default function OTPPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const email = searchParams.get('email') ?? '';
 
@@ -60,7 +62,7 @@ export default function OTPPage() {
       await verifyEmail(email, code);
       setVerified(true);
     } catch {
-      setError('Invalid or expired OTP. Please try again.');
+      setError(t('auth.otp.errorInvalidExpired'));
       setDigits(Array(OTP_LENGTH).fill(''));
       inputRefs.current[0]?.focus();
     } finally {
@@ -73,7 +75,7 @@ export default function OTPPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-extrabold text-(--primary)">Scribe</h1>
-          <p className="mt-2 text-sm text-(--text-secondary)">Verify your email</p>
+          <p className="mt-2 text-sm text-(--text-secondary)">{t('auth.otp.subtitle')}</p>
         </div>
 
         <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-8">
@@ -84,19 +86,19 @@ export default function OTPPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
               </div>
-              <h2 className="text-lg font-semibold text-(--text-primary)">Email verified!</h2>
-              <p className="text-sm text-(--text-secondary)">Your account is ready. You can now sign in.</p>
+              <h2 className="text-lg font-semibold text-(--text-primary)">{t('auth.otp.emailVerified')}</h2>
+              <p className="text-sm text-(--text-secondary)">{t('auth.otp.accountReady')}</p>
               <Button variant="primary" fullWidth onClick={() => navigate('/login', { replace: true })}>
-                Go to Login
+                {t('auth.otp.goToLogin')}
               </Button>
             </div>
           ) : (
             <>
               <div className="text-center mb-6">
                 <p className="text-sm text-(--text-secondary)">
-                  We sent a 6-digit code to
+                  {t('auth.otp.weSentCodeTo')}
                 </p>
-                <p className="font-semibold text-(--text-primary) mt-0.5">{email || 'your email'}</p>
+                <p className="font-semibold text-(--text-primary) mt-0.5">{email || t('auth.otp.yourEmail')}</p>
               </div>
 
               {error && (
@@ -117,7 +119,7 @@ export default function OTPPage() {
                       value={digit}
                       onChange={(e) => handleChange(index, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(index, e)}
-                      aria-label={`OTP digit ${index + 1}`}
+                      aria-label={t('auth.otp.digitA11y', { index: index + 1 })}
                       className="w-11 h-12 text-center text-lg font-semibold border border-(--border) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary) focus:border-(--primary) text-(--text-primary) bg-(--surface)"
                     />
                   ))}
@@ -130,14 +132,14 @@ export default function OTPPage() {
                   loading={isLoading}
                   disabled={!isComplete}
                 >
-                  Verify
+                  {t('auth.otp.verify')}
                 </Button>
               </form>
 
               <p className="mt-4 text-center text-sm text-(--text-secondary)">
-                Wrong email?{' '}
+                {t('auth.otp.wrongEmail')}{' '}
                 <Link to="/register" className="font-medium text-(--primary) hover:text-(--primary-dark)">
-                  Go back
+                  {t('auth.otp.goBack')}
                 </Link>
               </p>
             </>

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import api from '../../services/api';
@@ -9,6 +10,7 @@ type Step = 'email' | 'otp' | 'password' | 'done';
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep]         = useState<Step>('email');
   const [email, setEmail]       = useState('');
   const [code, setCode]         = useState('');
@@ -20,7 +22,7 @@ export default function ForgotPasswordPage() {
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) { setError('Please enter your email address.'); return; }
+    if (!email.trim()) { setError(t('auth.forgot.errors.enterEmail')); return; }
     setLoading(true);
     setError('');
     try {
@@ -28,7 +30,7 @@ export default function ForgotPasswordPage() {
       setStep('otp');
     } catch (err: unknown) {
       const e = err as { response?: { data?: { email?: string[]; detail?: string } } };
-      setError(e.response?.data?.email?.[0] ?? e.response?.data?.detail ?? 'Failed to send code. Check your email and try again.');
+      setError(e.response?.data?.email?.[0] ?? e.response?.data?.detail ?? t('auth.forgot.errors.failedSendCode'));
     } finally {
       setLoading(false);
     }
@@ -36,7 +38,7 @@ export default function ForgotPasswordPage() {
 
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (code.length !== 6) { setError('Please enter the 6-digit code.'); return; }
+    if (code.length !== 6) { setError(t('auth.forgot.errors.enter6Digit')); return; }
     setLoading(true);
     setError('');
     try {
@@ -45,7 +47,7 @@ export default function ForgotPasswordPage() {
       setStep('password');
     } catch (err: unknown) {
       const e = err as { response?: { data?: { code?: string[]; detail?: string } } };
-      setError(e.response?.data?.code?.[0] ?? e.response?.data?.detail ?? 'Invalid or expired code.');
+      setError(e.response?.data?.code?.[0] ?? e.response?.data?.detail ?? t('auth.forgot.errors.invalidExpiredCode'));
     } finally {
       setLoading(false);
     }
@@ -53,8 +55,8 @@ export default function ForgotPasswordPage() {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newPw.length < 8) { setError('Password must be at least 8 characters.'); return; }
-    if (newPw !== confirmPw) { setError('Passwords do not match.'); return; }
+    if (newPw.length < 8) { setError(t('auth.forgot.errors.passwordTooShort')); return; }
+    if (newPw !== confirmPw) { setError(t('auth.forgot.errors.passwordMismatch')); return; }
     setLoading(true);
     setError('');
     try {
@@ -62,17 +64,17 @@ export default function ForgotPasswordPage() {
       setStep('done');
     } catch (err: unknown) {
       const e = err as { response?: { data?: { detail?: string } } };
-      setError(e.response?.data?.detail ?? 'Failed to reset password. Please try again.');
+      setError(e.response?.data?.detail ?? t('auth.forgot.errors.failedReset'));
     } finally {
       setLoading(false);
     }
   };
 
   const subtitleMap: Record<Step, string> = {
-    email:    "Enter your registered email and we'll send you a verification code.",
-    otp:      `Enter the 6-digit code sent to ${email}.`,
-    password: 'Choose a new password for your account.',
-    done:     'Your password has been reset successfully.',
+    email:    t('auth.forgot.subtitleEmail'),
+    otp:      t('auth.forgot.subtitleOtp', { email }),
+    password: t('auth.forgot.subtitlePassword'),
+    done:     t('auth.forgot.subtitleDone'),
   };
 
   return (
@@ -80,7 +82,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-(--primary)">Scribe</h1>
-          <p className="mt-1 text-sm text-(--text-secondary)">Reset your password</p>
+          <p className="mt-1 text-sm text-(--text-secondary)">{t('auth.forgot.resetYourPassword')}</p>
         </div>
 
         <div className="bg-(--surface) rounded-2xl shadow-sm border border-(--border) p-8">
@@ -95,16 +97,16 @@ export default function ForgotPasswordPage() {
           {step === 'email' && (
             <form onSubmit={handleSendCode} noValidate className="space-y-4">
               <Input
-                label="Email address"
+                label={t('auth.forgot.emailLabel')}
                 name="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t('auth.login.emailPlaceholder')}
                 required
               />
               <Button type="submit" variant="primary" fullWidth loading={loading} disabled={!email}>
-                Send Code
+                {t('auth.forgot.sendCode')}
               </Button>
             </form>
           )}
@@ -112,7 +114,7 @@ export default function ForgotPasswordPage() {
           {step === 'otp' && (
             <form onSubmit={handleVerifyCode} noValidate className="space-y-4">
               <Input
-                label="Verification code"
+                label={t('auth.forgot.verificationCodeLabel')}
                 name="code"
                 type="text"
                 inputMode="numeric"
@@ -123,14 +125,14 @@ export default function ForgotPasswordPage() {
                 required
               />
               <Button type="submit" variant="primary" fullWidth loading={loading} disabled={code.length !== 6}>
-                Verify Code
+                {t('auth.forgot.verifyCode')}
               </Button>
               <button
                 type="button"
                 onClick={handleSendCode}
                 className="w-full text-center text-sm text-(--primary) hover:underline mt-2"
               >
-                Resend code
+                {t('auth.forgot.resendCode')}
               </button>
             </form>
           )}
@@ -138,25 +140,25 @@ export default function ForgotPasswordPage() {
           {step === 'password' && (
             <form onSubmit={handleResetPassword} noValidate className="space-y-4">
               <Input
-                label="New password"
+                label={t('auth.forgot.newPasswordLabel')}
                 name="new_password"
                 type="password"
                 value={newPw}
                 onChange={(e) => setNewPw(e.target.value)}
-                placeholder="Min. 8 characters"
+                placeholder={t('auth.forgot.newPasswordPlaceholder')}
                 required
               />
               <Input
-                label="Confirm new password"
+                label={t('auth.forgot.confirmNewPasswordLabel')}
                 name="confirm_password"
                 type="password"
                 value={confirmPw}
                 onChange={(e) => setConfirmPw(e.target.value)}
-                placeholder="Repeat your password"
+                placeholder={t('auth.forgot.confirmNewPasswordPlaceholder')}
                 required
               />
               <Button type="submit" variant="primary" fullWidth loading={loading} disabled={!newPw || !confirmPw}>
-                Reset Password
+                {t('auth.forgot.resetPassword')}
               </Button>
             </form>
           )}
@@ -168,18 +170,18 @@ export default function ForgotPasswordPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
               </div>
-              <h2 className="text-lg font-semibold text-(--text-primary)">Password reset!</h2>
-              <p className="text-sm text-(--text-secondary)">You can now sign in with your new password.</p>
+              <h2 className="text-lg font-semibold text-(--text-primary)">{t('auth.forgot.passwordResetTitle')}</h2>
+              <p className="text-sm text-(--text-secondary)">{t('auth.forgot.canSignInNow')}</p>
               <Button variant="primary" fullWidth onClick={() => navigate('/login', { replace: true })}>
-                Go to Login
+                {t('auth.otp.goToLogin')}
               </Button>
             </div>
           )}
 
           <p className="mt-6 text-center text-sm text-(--text-secondary)">
-            Remember your password?{' '}
+            {t('auth.forgot.rememberPassword')}{' '}
             <Link to="/login" className="font-medium text-(--primary) hover:text-(--primary-dark)">
-              Sign in
+              {t('auth.login.signIn')}
             </Link>
           </p>
         </div>

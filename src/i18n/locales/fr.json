@@ -26,6 +26,69 @@
       "orContinueWith": "ou continuer avec",
       "noAccount": "Vous n'avez pas de compte ?",
       "signUp": "S'inscrire"
+    },
+    "register": {
+      "subtitle": "Créez votre compte",
+      "creatingAccount": "Création de votre compte…",
+      "firstNameLabel": "Prénom",
+      "firstNamePlaceholder": "Jean",
+      "lastNameLabel": "Nom",
+      "lastNamePlaceholder": "Dupont",
+      "phoneLabel": "Numéro de téléphone",
+      "passwordPlaceholder": "8 caractères minimum",
+      "createAccount": "Créer un compte",
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter",
+      "errors": {
+        "firstNameRequired": "Le prénom est requis.",
+        "lastNameRequired": "Le nom est requis.",
+        "invalidEmail": "Saisissez une adresse e-mail valide.",
+        "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+        "phoneRequired": "Le numéro de téléphone est requis.",
+        "registrationFailed": "L'inscription a échoué. Veuillez réessayer."
+      }
+    },
+    "otp": {
+      "subtitle": "Vérifiez votre e-mail",
+      "weSentCodeTo": "Nous avons envoyé un code à 6 chiffres à",
+      "yourEmail": "votre e-mail",
+      "emailVerified": "E-mail vérifié !",
+      "accountReady": "Votre compte est prêt. Vous pouvez maintenant vous connecter.",
+      "goToLogin": "Aller à la connexion",
+      "errorInvalidExpired": "Code invalide ou expiré. Veuillez réessayer.",
+      "digitA11y": "Chiffre {{index}} du code",
+      "verify": "Vérifier",
+      "wrongEmail": "Mauvais e-mail ?",
+      "goBack": "Retour"
+    },
+    "forgot": {
+      "subtitleEmail": "Entrez votre e-mail enregistré et nous vous enverrons un code de vérification.",
+      "subtitleOtp": "Entrez le code à 6 chiffres envoyé à {{email}}.",
+      "subtitlePassword": "Choisissez un nouveau mot de passe pour votre compte.",
+      "subtitleDone": "Votre mot de passe a été réinitialisé avec succès.",
+      "resetYourPassword": "Réinitialisez votre mot de passe",
+      "emailLabel": "Adresse e-mail",
+      "sendCode": "Envoyer le code",
+      "verificationCodeLabel": "Code de vérification",
+      "verifyCode": "Vérifier le code",
+      "resendCode": "Renvoyer le code",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "8 caractères min.",
+      "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
+      "confirmNewPasswordPlaceholder": "Répétez votre mot de passe",
+      "resetPassword": "Réinitialiser le mot de passe",
+      "passwordResetTitle": "Mot de passe réinitialisé !",
+      "canSignInNow": "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+      "errors": {
+        "enterEmail": "Veuillez saisir votre adresse e-mail.",
+        "failedSendCode": "Échec de l'envoi du code. Vérifiez votre e-mail et réessayez.",
+        "enter6Digit": "Veuillez saisir le code à 6 chiffres.",
+        "invalidExpiredCode": "Code invalide ou expiré.",
+        "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
+        "passwordMismatch": "Les mots de passe ne correspondent pas.",
+        "failedReset": "Échec de la réinitialisation du mot de passe. Veuillez réessayer."
+      }
     }
   },
   "account": {

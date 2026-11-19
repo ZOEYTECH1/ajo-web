@@ -297,6 +297,53 @@
       "noneYet": "Aucun paiement pour le moment.",
       "prev": "← Précédent",
       "next": "Suivant →"
+    },
+    "membersTab": {
+      "headers": {
+        "name": "Nom",
+        "totalSaved": "Total épargné",
+        "streak": "Série",
+        "joined": "Rejoint",
+        "thisCycle": "Ce cycle",
+        "memberStatus": "Statut du membre",
+        "action": "Action",
+        "requested": "Demandé",
+        "actions": "Actions"
+      },
+      "streakSuffix": "{{count}}× défaut",
+      "noCycle": "Aucun cycle",
+      "notPaid": "Non payé",
+      "approved": "Approuvé",
+      "pending": "En attente",
+      "proposeRemoval": "Proposer le retrait",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "subTabApproved": "Approuvés",
+      "subTabPending": "En attente",
+      "noApprovedMembers": "Aucun membre approuvé.",
+      "noPendingRequests": "Aucune demande d'adhésion en attente.",
+      "proposeRemovalModal": {
+        "title": "Proposer le retrait",
+        "confirmText": "Proposer de retirer {{name}} du groupe ? Les autres membres voteront pour approuver ou non ce retrait.",
+        "proposing": "Proposition en cours…",
+        "yesPropose": "Oui, proposer"
+      },
+      "removalProposalsTitle": "Propositions de retrait",
+      "voteCounts": "{{yes}} oui · {{no}} non · {{eligible}} éligibles",
+      "cannotVoteOwnRemoval": "Vous ne pouvez pas voter sur votre propre retrait",
+      "voteToRemove": "Voter pour retirer",
+      "voteToKeep": "Voter pour garder",
+      "youVotedRemove": "Vous avez voté pour retirer",
+      "youVotedKeep": "Vous avez voté pour garder",
+      "inFavourHint": "{{percent}}% en faveur · besoin de >50% pour passer",
+      "leaveGroup": "Quitter le groupe",
+      "leaveModal": {
+        "title": "Quitter le groupe",
+        "confirmText": "Voulez-vous vraiment quitter ce groupe ? Cette action est irréversible.",
+        "failedLeave": "Échec pour quitter le groupe.",
+        "leaving": "Départ en cours…",
+        "yesLeave": "Oui, quitter"
+      }
     }
   },
   "pagination": {

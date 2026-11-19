@@ -298,6 +298,53 @@
       "noneYet": "Babu biyan kuɗi tukuna.",
       "prev": "← Na baya",
       "next": "Na gaba →"
+    },
+    "membersTab": {
+      "headers": {
+        "name": "Suna",
+        "totalSaved": "Jimillar Ajiya",
+        "streak": "Jere",
+        "joined": "Ya Shiga",
+        "thisCycle": "Wannan Zagaye",
+        "memberStatus": "Matsayin Memba",
+        "action": "Aiki",
+        "requested": "An Nema",
+        "actions": "Ayyuka"
+      },
+      "streakSuffix": "sau {{count}} ba a biya ba",
+      "noCycle": "Babu zagaye",
+      "notPaid": "Ba a biya ba",
+      "approved": "An Amince",
+      "pending": "Jiran",
+      "proposeRemoval": "Bayar da Shawarar Cirewa",
+      "approve": "Amince",
+      "reject": "Ƙi",
+      "subTabApproved": "An Amince",
+      "subTabPending": "Jiran",
+      "noApprovedMembers": "Babu mambobi da aka amince da su.",
+      "noPendingRequests": "Babu buƙatun zama memba da ke jira.",
+      "proposeRemovalModal": {
+        "title": "Bayar da Shawarar Cirewa",
+        "confirmText": "Ba da shawarar cire {{name}} daga ƙungiya? Sauran mambobi za su kada ƙuri'a kan ko za a amince da cirewar.",
+        "proposing": "Ana bayar da shawara…",
+        "yesPropose": "Eh, Bayar da Shawara"
+      },
+      "removalProposalsTitle": "Shawarwarin Cirewa",
+      "voteCounts": "{{yes}} ee · {{no}} a'a · {{eligible}} masu cancanta",
+      "cannotVoteOwnRemoval": "Ba za ku iya kada ƙuri'a kan cirewar kanku ba",
+      "voteToRemove": "Kada Ƙuri'a don Cirewa",
+      "voteToKeep": "Kada Ƙuri'a don Ajiyewa",
+      "youVotedRemove": "Kun kada ƙuri'a don cirewa",
+      "youVotedKeep": "Kun kada ƙuri'a don ajiyewa",
+      "inFavourHint": "{{percent}}% a yarda · ana buƙatar >50% don wucewa",
+      "leaveGroup": "Bar Ƙungiya",
+      "leaveModal": {
+        "title": "Bar Ƙungiya",
+        "confirmText": "Kun tabbata kuna son barin wannan ƙungiya? Ba za a iya soke wannan ba.",
+        "failedLeave": "An kasa barin ƙungiya.",
+        "leaving": "Ana barinta…",
+        "yesLeave": "Eh, Bari"
+      }
     }
   },
   "pagination": {

@@ -297,6 +297,53 @@
       "noneYet": "No payments yet.",
       "prev": "← Prev",
       "next": "Next →"
+    },
+    "membersTab": {
+      "headers": {
+        "name": "Name",
+        "totalSaved": "Total Saved",
+        "streak": "Streak",
+        "joined": "Joined",
+        "thisCycle": "This Cycle",
+        "memberStatus": "Member Status",
+        "action": "Action",
+        "requested": "Requested",
+        "actions": "Actions"
+      },
+      "streakSuffix": "{{count}}× default",
+      "noCycle": "No cycle",
+      "notPaid": "Not paid",
+      "approved": "Approved",
+      "pending": "Pending",
+      "proposeRemoval": "Propose Removal",
+      "approve": "Approve",
+      "reject": "Reject",
+      "subTabApproved": "Approved",
+      "subTabPending": "Pending",
+      "noApprovedMembers": "No approved members.",
+      "noPendingRequests": "No pending membership requests.",
+      "proposeRemovalModal": {
+        "title": "Propose Removal",
+        "confirmText": "Propose removing {{name}} from the group? Other members will vote on whether to approve the removal.",
+        "proposing": "Proposing…",
+        "yesPropose": "Yes, Propose"
+      },
+      "removalProposalsTitle": "Removal Proposals",
+      "voteCounts": "{{yes}} yes · {{no}} no · {{eligible}} eligible",
+      "cannotVoteOwnRemoval": "You cannot vote on your own removal",
+      "voteToRemove": "Vote to Remove",
+      "voteToKeep": "Vote to Keep",
+      "youVotedRemove": "You voted to remove",
+      "youVotedKeep": "You voted to keep",
+      "inFavourHint": "{{percent}}% in favour · need >50% to pass",
+      "leaveGroup": "Leave Group",
+      "leaveModal": {
+        "title": "Leave Group",
+        "confirmText": "Are you sure you want to leave this group? This action cannot be undone.",
+        "failedLeave": "Failed to leave group.",
+        "leaving": "Leaving…",
+        "yesLeave": "Yes, Leave"
+      }
     }
   },
   "pagination": {

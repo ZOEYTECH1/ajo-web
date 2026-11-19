@@ -298,6 +298,53 @@
       "noneYet": "Enweghị ụgwọ ọ bụla ugbu a.",
       "prev": "← Nke gara aga",
       "next": "Nke ọzọ →"
+    },
+    "membersTab": {
+      "headers": {
+        "name": "Aha",
+        "totalSaved": "Mkpokọta Echekwara",
+        "streak": "Usoro",
+        "joined": "Sonyere",
+        "thisCycle": "Usoro A",
+        "memberStatus": "Ọnọdụ Onye Otu",
+        "action": "Omume",
+        "requested": "Rịọrọ",
+        "actions": "Omume"
+      },
+      "streakSuffix": "ugboro {{count}} akwụghị ụgwọ",
+      "noCycle": "Enweghị usoro",
+      "notPaid": "Akwụghị ụgwọ",
+      "approved": "Akwadoro",
+      "pending": "Na-eche",
+      "proposeRemoval": "Tụpụta Mwepụ",
+      "approve": "Kwado",
+      "reject": "Jụ",
+      "subTabApproved": "Akwadoro",
+      "subTabPending": "Na-eche",
+      "noApprovedMembers": "Enweghị ndị otu akwadoro.",
+      "noPendingRequests": "Enweghị arịrịọ ịbụ onye otu na-eche.",
+      "proposeRemovalModal": {
+        "title": "Tụpụta Mwepụ",
+        "confirmText": "Tụpụta iwepụ {{name}} n'otu? Ndị otu ndị ọzọ ga-atụ vootu ma ha kwadoro mwepụ ahụ.",
+        "proposing": "Na-atụpụta…",
+        "yesPropose": "Ee, Tụpụta"
+      },
+      "removalProposalsTitle": "Ntụpụta Mwepụ",
+      "voteCounts": "{{yes}} ee · {{no}} mba · {{eligible}} tozuru oke",
+      "cannotVoteOwnRemoval": "Ị nweghị ike ịtụ vootu na mwepụ nke gị",
+      "voteToRemove": "Tụọ Vootu Iwepụ",
+      "voteToKeep": "Tụọ Vootu Ịhapụ",
+      "youVotedRemove": "Ị tụrụ vootu iwepụ",
+      "youVotedKeep": "Ị tụrụ vootu ịhapụ",
+      "inFavourHint": "{{percent}}% kwadoro · achọrọ ihe karịrị 50% iji gafee",
+      "leaveGroup": "Hapụ Otu",
+      "leaveModal": {
+        "title": "Hapụ Otu",
+        "confirmText": "Ị ji n'aka na ị chọrọ ịhapụ otu a? Enweghị ike imegharị nke a.",
+        "failedLeave": "Ịhapụ otu emeghị nke ọma.",
+        "leaving": "Na-ahapụ…",
+        "yesLeave": "Ee, Hapụ"
+      }
     }
   },
   "pagination": {

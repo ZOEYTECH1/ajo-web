@@ -297,6 +297,53 @@
       "noneYet": "Aún no hay pagos.",
       "prev": "← Anterior",
       "next": "Siguiente →"
+    },
+    "membersTab": {
+      "headers": {
+        "name": "Nombre",
+        "totalSaved": "Total ahorrado",
+        "streak": "Racha",
+        "joined": "Se unió",
+        "thisCycle": "Este ciclo",
+        "memberStatus": "Estado del miembro",
+        "action": "Acción",
+        "requested": "Solicitado",
+        "actions": "Acciones"
+      },
+      "streakSuffix": "{{count}}× impago",
+      "noCycle": "Sin ciclo",
+      "notPaid": "No pagado",
+      "approved": "Aprobado",
+      "pending": "Pendiente",
+      "proposeRemoval": "Proponer expulsión",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "subTabApproved": "Aprobados",
+      "subTabPending": "Pendientes",
+      "noApprovedMembers": "No hay miembros aprobados.",
+      "noPendingRequests": "No hay solicitudes de membresía pendientes.",
+      "proposeRemovalModal": {
+        "title": "Proponer expulsión",
+        "confirmText": "¿Proponer expulsar a {{name}} del grupo? Los demás miembros votarán si aprueban la expulsión.",
+        "proposing": "Proponiendo…",
+        "yesPropose": "Sí, proponer"
+      },
+      "removalProposalsTitle": "Propuestas de expulsión",
+      "voteCounts": "{{yes}} sí · {{no}} no · {{eligible}} elegibles",
+      "cannotVoteOwnRemoval": "No puedes votar en tu propia expulsión",
+      "voteToRemove": "Votar por expulsar",
+      "voteToKeep": "Votar por mantener",
+      "youVotedRemove": "Votaste por expulsar",
+      "youVotedKeep": "Votaste por mantener",
+      "inFavourHint": "{{percent}}% a favor · se necesita >50% para aprobar",
+      "leaveGroup": "Salir del grupo",
+      "leaveModal": {
+        "title": "Salir del grupo",
+        "confirmText": "¿Seguro que quieres salir de este grupo? Esta acción no se puede deshacer.",
+        "failedLeave": "Error al salir del grupo.",
+        "leaving": "Saliendo…",
+        "yesLeave": "Sí, salir"
+      }
     }
   },
   "pagination": {

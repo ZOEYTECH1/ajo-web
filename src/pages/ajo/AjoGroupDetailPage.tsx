@@ -1048,6 +1048,7 @@ function MembersTab({
   activeCycle: Cycle | undefined;
   currentUserId?: number;
 }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [memberSubTab, setMemberSubTab] = useState<'approved' | 'pending'>('approved');
@@ -1109,11 +1110,11 @@ function MembersTab({
   const pendingRemovals = removals.filter((r) => r.status === 'pending');
 
   const approvedCols: Column<Record<string, unknown>>[] = [
-    { key: 'user_name', header: 'Name', render: (_, row) => fullName(row.user as UserSnap) },
-    { key: 'total_approved', header: 'Total Saved', render: (v) => formatCurrency(v as string) },
+    { key: 'user_name', header: t('groupDetail.membersTab.headers.name'), render: (_, row) => fullName(row.user as UserSnap) },
+    { key: 'total_approved', header: t('groupDetail.membersTab.headers.totalSaved'), render: (v) => formatCurrency(v as string) },
     {
       key: 'consecutive_default_streak',
-      header: 'Streak',
+      header: t('groupDetail.membersTab.headers.streak'),
       render: (v) => {
         const streak = v as number;
         if (!streak) return <span className="text-xs text-(--text-muted)">—</span>;
@@ -1122,14 +1123,14 @@ function MembersTab({
             'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold',
             streak >= 3 ? 'bg-red-100 text-red-600' : 'bg-yellow-100 text-yellow-700',
           )}>
-            {streak}× default
+            {t('groupDetail.membersTab.streakSuffix', { count: streak })}
           </span>
         );
       },
     },
     {
       key: 'joined_at',
-      header: 'Joined',
+      header: t('groupDetail.membersTab.headers.joined'),
       render: (v) => {
         if (!v) return '—';
         try { return format(new Date(v as string), 'dd MMM yyyy'); } catch { return v as string; }
@@ -1137,9 +1138,9 @@ function MembersTab({
     },
     {
       key: 'user',
-      header: 'This Cycle',
+      header: t('groupDetail.membersTab.headers.thisCycle'),
       render: (userSnap) => {
-        if (!activeCycle) return <span className="text-xs text-(--text-muted)">No cycle</span>;
+        if (!activeCycle) return <span className="text-xs text-(--text-muted)">{t('groupDetail.membersTab.noCycle')}</span>;
         const userId = (userSnap as UserSnap).id;
         const pay = payments.find(
           (p) => p.submitted_by.id === userId && p.cycle_number === activeCycle.cycle_number,
@@ -1147,32 +1148,32 @@ function MembersTab({
         if (!pay) {
           return (
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-600">
-              Not paid
+              {t('groupDetail.membersTab.notPaid')}
             </span>
           );
         }
         if (pay.status === 'approved') {
           return (
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
-              Approved
+              {t('groupDetail.membersTab.approved')}
             </span>
           );
         }
         if (pay.status === 'pending') {
           return (
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
-              Pending
+              {t('groupDetail.membersTab.pending')}
             </span>
           );
         }
         return <StatusBadge value={pay.status} />;
       },
     },
-    { key: 'status', header: 'Member Status', render: (v) => <StatusBadge value={v as string} /> },
+    { key: 'status', header: t('groupDetail.membersTab.headers.memberStatus'), render: (v) => <StatusBadge value={v as string} /> },
     ...(isAdmin
       ? [{
           key: 'id',
-          header: 'Action',
+          header: t('groupDetail.membersTab.headers.action'),
           render: (id: unknown, row: Record<string, unknown>) => (
             <button
               type="button"
@@ -1183,7 +1184,7 @@ function MembersTab({
               disabled={proposeRemovalMutation.isPending}
               className="px-2.5 py-1 rounded-md bg-red-50 text-red-600 text-xs font-semibold hover:bg-red-100 disabled:opacity-50 transition-colors"
             >
-              Propose Removal
+              {t('groupDetail.membersTab.proposeRemoval')}
             </button>
           ),
         } as Column<Record<string, unknown>>]
@@ -1191,10 +1192,10 @@ function MembersTab({
   ];
 
   const pendingCols: Column<Record<string, unknown>>[] = [
-    { key: 'user_name', header: 'Name', render: (_, row) => fullName(row.user as UserSnap) },
+    { key: 'user_name', header: t('groupDetail.membersTab.headers.name'), render: (_, row) => fullName(row.user as UserSnap) },
     {
       key: 'joined_at',
-      header: 'Requested',
+      header: t('groupDetail.membersTab.headers.requested'),
       render: (v) => {
         if (!v) return '—';
         try { return format(new Date(v as string), 'dd MMM yyyy'); } catch { return v as string; }
@@ -1202,7 +1203,7 @@ function MembersTab({
     },
     {
       key: 'id',
-      header: 'Actions',
+      header: t('groupDetail.membersTab.headers.actions'),
       render: (id: unknown) => (
         <div className="flex gap-2">
           <button
@@ -1211,7 +1212,7 @@ function MembersTab({
             disabled={approveMemberMutation.isPending}
             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 disabled:opacity-50 transition-colors"
           >
-            <CheckCircleIcon className="h-3.5 w-3.5" /> Approve
+            <CheckCircleIcon className="h-3.5 w-3.5" /> {t('groupDetail.membersTab.approve')}
           </button>
           <button
             type="button"
@@ -1219,7 +1220,7 @@ function MembersTab({
             disabled={approveMemberMutation.isPending}
             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
           >
-            <XCircleIcon className="h-3.5 w-3.5" /> Reject
+            <XCircleIcon className="h-3.5 w-3.5" /> {t('groupDetail.membersTab.reject')}
           </button>
         </div>
       ),
@@ -1240,7 +1241,7 @@ function MembersTab({
               : 'text-(--text-secondary) hover:text-(--text-primary)',
           )}
         >
-          Approved
+          {t('groupDetail.membersTab.subTabApproved')}
           <span className="ml-1.5 text-xs text-(--text-muted)">{approvedMembers.length}</span>
         </button>
         {isAdmin && (
@@ -1254,7 +1255,7 @@ function MembersTab({
                 : 'text-(--text-secondary) hover:text-(--text-primary)',
             )}
           >
-            Pending
+            {t('groupDetail.membersTab.subTabPending')}
             {pendingMembers.length > 0 && (
               <span className="ml-1.5 text-xs bg-(--primary-light)/30 text-(--primary) rounded-full px-1.5 py-0.5">
                 {pendingMembers.length}
@@ -1268,7 +1269,7 @@ function MembersTab({
         <Table
           columns={approvedCols}
           data={approvedMembers as unknown as Record<string, unknown>[]}
-          emptyMessage="No approved members."
+          emptyMessage={t('groupDetail.membersTab.noApprovedMembers')}
         />
       )}
 
@@ -1276,7 +1277,7 @@ function MembersTab({
         <Table
           columns={pendingCols}
           data={pendingMembers as unknown as Record<string, unknown>[]}
-          emptyMessage="No pending membership requests."
+          emptyMessage={t('groupDetail.membersTab.noPendingRequests')}
         />
       )}
 
@@ -1284,13 +1285,12 @@ function MembersTab({
       <Modal
         open={proposePendingId !== null}
         onClose={() => { setProposePendingId(null); setProposePendingName(''); }}
-        title="Propose Removal"
+        title={t('groupDetail.membersTab.proposeRemovalModal.title')}
         size="sm"
       >
         <div className="space-y-4">
           <p className="text-sm text-(--text-secondary)">
-            Propose removing <span className="font-semibold text-(--text-primary)">{proposePendingName}</span> from the group?
-            Other members will vote on whether to approve the removal.
+            {t('groupDetail.membersTab.proposeRemovalModal.confirmText', { name: proposePendingName })}
           </p>
           <div className="flex gap-3">
             <button
@@ -1298,7 +1298,7 @@ function MembersTab({
               onClick={() => { setProposePendingId(null); setProposePendingName(''); }}
               className={cancelBtn}
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -1310,7 +1310,7 @@ function MembersTab({
               }}
               className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
-              {proposeRemovalMutation.isPending ? 'Proposing…' : 'Yes, Propose'}
+              {proposeRemovalMutation.isPending ? t('groupDetail.membersTab.proposeRemovalModal.proposing') : t('groupDetail.membersTab.proposeRemovalModal.yesPropose')}
             </button>
           </div>
         </div>
@@ -1319,7 +1319,7 @@ function MembersTab({
       {/* Removal proposals */}
       {pendingRemovals.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-(--text-secondary)">Removal Proposals</h3>
+          <h3 className="text-sm font-semibold text-(--text-secondary)">{t('groupDetail.membersTab.removalProposalsTitle')}</h3>
           {pendingRemovals.map((proposal) => (
             <div
               key={proposal.id}
@@ -1329,13 +1329,13 @@ function MembersTab({
                 <div>
                   <p className="text-sm font-medium text-(--text-primary)">{proposal.target_name}</p>
                   <p className="text-xs text-(--text-secondary) mt-0.5">
-                    {proposal.yes_count} yes · {proposal.no_count} no · {proposal.eligible_count} eligible
+                    {t('groupDetail.membersTab.voteCounts', { yes: proposal.yes_count, no: proposal.no_count, eligible: proposal.eligible_count })}
                   </p>
                 </div>
 
                 <div className="flex gap-2">
                   {proposal.target_user_id === currentUserId ? (
-                    <span className="text-xs text-(--text-muted) italic">You cannot vote on your own removal</span>
+                    <span className="text-xs text-(--text-muted) italic">{t('groupDetail.membersTab.cannotVoteOwnRemoval')}</span>
                   ) : proposal.current_user_vote === null ? (
                     <>
                       <button
@@ -1344,7 +1344,7 @@ function MembersTab({
                         disabled={voteMutation.isPending}
                         className="px-3 py-1.5 rounded-lg bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
                       >
-                        Vote to Remove
+                        {t('groupDetail.membersTab.voteToRemove')}
                       </button>
                       <button
                         type="button"
@@ -1352,7 +1352,7 @@ function MembersTab({
                         disabled={voteMutation.isPending}
                         className="px-3 py-1.5 rounded-lg bg-(--bg) text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/50 disabled:opacity-50 transition-colors"
                       >
-                        Vote to Keep
+                        {t('groupDetail.membersTab.voteToKeep')}
                       </button>
                     </>
                   ) : (
@@ -1360,7 +1360,7 @@ function MembersTab({
                       'text-xs font-semibold px-3 py-1.5 rounded-lg',
                       proposal.current_user_vote ? 'bg-red-50 text-red-600' : 'bg-(--bg) text-(--text-secondary)',
                     )}>
-                      You voted {proposal.current_user_vote ? 'to remove' : 'to keep'}
+                      {proposal.current_user_vote ? t('groupDetail.membersTab.youVotedRemove') : t('groupDetail.membersTab.youVotedKeep')}
                     </span>
                   )}
                 </div>
@@ -1376,7 +1376,7 @@ function MembersTab({
                     />
                   </div>
                   <p className="text-xs text-(--text-muted) mt-1">
-                    {Math.round((proposal.yes_count / proposal.eligible_count) * 100)}% in favour · need &gt;50% to pass
+                    {t('groupDetail.membersTab.inFavourHint', { percent: Math.round((proposal.yes_count / proposal.eligible_count) * 100) })}
                   </p>
                 </div>
               )}
@@ -1394,20 +1394,20 @@ function MembersTab({
             className="inline-flex items-center gap-2 text-sm text-red-600 font-semibold hover:underline"
           >
             <ArrowRightStartOnRectangleIcon className="h-4 w-4" />
-            Leave Group
+            {t('groupDetail.membersTab.leaveGroup')}
           </button>
         </div>
       )}
 
       {/* Leave group confirm */}
-      <Modal open={showLeaveConfirm} onClose={() => setShowLeaveConfirm(false)} title="Leave Group" size="sm">
+      <Modal open={showLeaveConfirm} onClose={() => setShowLeaveConfirm(false)} title={t('groupDetail.membersTab.leaveModal.title')} size="sm">
         <div className="space-y-4">
           <p className="text-sm text-(--text-secondary)">
-            Are you sure you want to leave this group? This action cannot be undone.
+            {t('groupDetail.membersTab.leaveModal.confirmText')}
           </p>
           {leaveMutation.isError && (
             <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">
-              {(leaveMutation.error as any)?.response?.data?.detail ?? 'Failed to leave group.'}
+              {(leaveMutation.error as any)?.response?.data?.detail ?? t('groupDetail.membersTab.leaveModal.failedLeave')}
             </p>
           )}
           <div className="flex gap-3">
@@ -1416,7 +1416,7 @@ function MembersTab({
               onClick={() => setShowLeaveConfirm(false)}
               className={cancelBtn}
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -1424,7 +1424,7 @@ function MembersTab({
               onClick={() => leaveMutation.mutate()}
               className="flex-1 rounded-lg bg-red-600 text-white py-2 text-sm font-semibold hover:bg-red-700 hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
-              {leaveMutation.isPending ? 'Leaving…' : 'Yes, Leave'}
+              {leaveMutation.isPending ? t('groupDetail.membersTab.leaveModal.leaving') : t('groupDetail.membersTab.leaveModal.yesLeave')}
             </button>
           </div>
         </div>

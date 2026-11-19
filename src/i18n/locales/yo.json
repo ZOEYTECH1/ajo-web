@@ -298,6 +298,53 @@
       "noneYet": "Kò sí owó kankan síbẹ̀.",
       "prev": "← Ti tẹ̀lé",
       "next": "Tó kàn →"
+    },
+    "membersTab": {
+      "headers": {
+        "name": "Orúkọ",
+        "totalSaved": "Àpapọ̀ Ìfọ́wọ́pamọ́",
+        "streak": "Ọ̀wọ́n",
+        "joined": "Darapọ̀",
+        "thisCycle": "Àyíká Yìí",
+        "memberStatus": "Ipò Ọmọ Ẹgbẹ́",
+        "action": "Ìgbésẹ̀",
+        "requested": "Béèrè",
+        "actions": "Ìgbésẹ̀"
+      },
+      "streakSuffix": "ìgbà {{count}} aṣìnà",
+      "noCycle": "Kò sí àyíká",
+      "notPaid": "Kò san",
+      "approved": "A Fọwọ́sí",
+      "pending": "Ń dúró",
+      "proposeRemoval": "Dábàá Yíyọ",
+      "approve": "Fọwọ́sí",
+      "reject": "Kọ̀",
+      "subTabApproved": "A Fọwọ́sí",
+      "subTabPending": "Ń dúró",
+      "noApprovedMembers": "Kò sí ọmọ ẹgbẹ́ tí a fọwọ́sí.",
+      "noPendingRequests": "Kò sí ìbéèrè ìdápọ̀ tí ń dúró.",
+      "proposeRemovalModal": {
+        "title": "Dábàá Yíyọ",
+        "confirmText": "Dábàá yíyọ {{name}} kúrò nínú ẹgbẹ́? Àwọn ọmọ ẹgbẹ́ mìíràn yóò dìbò bóyá kí a fọwọ́sí yíyọ náà.",
+        "proposing": "Ń dábàá…",
+        "yesPropose": "Bẹ́ẹ̀ni, Dábàá"
+      },
+      "removalProposalsTitle": "Àwọn Dábàá Yíyọ",
+      "voteCounts": "{{yes}} bẹ́ẹ̀ni · {{no}} rárá · {{eligible}} tó yẹ",
+      "cannotVoteOwnRemoval": "O kò lè dìbò lórí yíyọ ara rẹ",
+      "voteToRemove": "Dìbò láti Yọ",
+      "voteToKeep": "Dìbò láti Pa Mọ́",
+      "youVotedRemove": "O dìbò láti yọ",
+      "youVotedKeep": "O dìbò láti pa mọ́",
+      "inFavourHint": "{{percent}}% ní ojúrere · a nílò ju 50% láti kọjá",
+      "leaveGroup": "Fi Ẹgbẹ́ Sílẹ̀",
+      "leaveModal": {
+        "title": "Fi Ẹgbẹ́ Sílẹ̀",
+        "confirmText": "Ṣé o dá ọ lójú pé o fẹ́ fi ẹgbẹ́ yìí sílẹ̀? A kò lè yí èyí padà.",
+        "failedLeave": "Fífi ẹgbẹ́ sílẹ̀ kùnà.",
+        "leaving": "Ń kúrò…",
+        "yesLeave": "Bẹ́ẹ̀ni, Kúrò"
+      }
     }
   },
   "pagination": {

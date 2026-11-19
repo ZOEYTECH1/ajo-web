@@ -297,6 +297,53 @@
       "noneYet": "Noch keine Zahlungen.",
       "prev": "← Zurück",
       "next": "Weiter →"
+    },
+    "membersTab": {
+      "headers": {
+        "name": "Name",
+        "totalSaved": "Insgesamt gespart",
+        "streak": "Serie",
+        "joined": "Beigetreten",
+        "thisCycle": "Dieser Zyklus",
+        "memberStatus": "Mitgliedsstatus",
+        "action": "Aktion",
+        "requested": "Angefragt",
+        "actions": "Aktionen"
+      },
+      "streakSuffix": "{{count}}× versäumt",
+      "noCycle": "Kein Zyklus",
+      "notPaid": "Nicht bezahlt",
+      "approved": "Genehmigt",
+      "pending": "Ausstehend",
+      "proposeRemoval": "Entfernung vorschlagen",
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "subTabApproved": "Genehmigt",
+      "subTabPending": "Ausstehend",
+      "noApprovedMembers": "Keine genehmigten Mitglieder.",
+      "noPendingRequests": "Keine ausstehenden Mitgliedschaftsanfragen.",
+      "proposeRemovalModal": {
+        "title": "Entfernung vorschlagen",
+        "confirmText": "{{name}} aus der Gruppe entfernen vorschlagen? Andere Mitglieder stimmen darüber ab, ob die Entfernung genehmigt wird.",
+        "proposing": "Wird vorgeschlagen…",
+        "yesPropose": "Ja, vorschlagen"
+      },
+      "removalProposalsTitle": "Entfernungsvorschläge",
+      "voteCounts": "{{yes}} Ja · {{no}} Nein · {{eligible}} stimmberechtigt",
+      "cannotVoteOwnRemoval": "Du kannst nicht über deine eigene Entfernung abstimmen",
+      "voteToRemove": "Für Entfernung stimmen",
+      "voteToKeep": "Für Verbleib stimmen",
+      "youVotedRemove": "Du hast für Entfernung gestimmt",
+      "youVotedKeep": "Du hast für Verbleib gestimmt",
+      "inFavourHint": "{{percent}}% dafür · >50% nötig",
+      "leaveGroup": "Gruppe verlassen",
+      "leaveModal": {
+        "title": "Gruppe verlassen",
+        "confirmText": "Möchtest du diese Gruppe wirklich verlassen? Dies kann nicht rückgängig gemacht werden.",
+        "failedLeave": "Verlassen der Gruppe fehlgeschlagen.",
+        "leaving": "Wird verlassen…",
+        "yesLeave": "Ja, verlassen"
+      }
     }
   },
   "pagination": {

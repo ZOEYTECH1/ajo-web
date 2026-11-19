@@ -13,7 +13,9 @@
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "lint": "oxlint src"
+    "lint": "oxlint src",
+    "typecheck": "tsc -b",
+    "verify": "npm run lint && npm run typecheck && npm test && npm audit"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",

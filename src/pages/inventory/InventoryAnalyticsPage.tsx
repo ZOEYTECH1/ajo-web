@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { SkeletonCard } from '../../components/ui/Skeleton';
 import { Table } from '../../components/ui/Table';
+import { Pagination } from '../../components/ui/Pagination';
 import { InventoryNav } from '../../components/inventory/InventoryNav';
 import api from '../../services/api';
 import { useInventoryBusiness } from '../../hooks/useInventoryBusiness';
@@ -150,8 +151,11 @@ interface LifetimeTrendEntry {
   expenses: string;
 }
 
+const BREAKDOWN_PAGE_SIZE = 10;
+
 export default function InventoryAnalyticsPage() {
   const [period, setPeriod] = useState<Period>('monthly');
+  const [breakdownPage, setBreakdownPage] = useState(1);
   const sel = PERIODS.find((p) => p.value === period) ?? PERIODS[0];
   const { selectedId } = useInventoryBusiness();
 
@@ -179,6 +183,16 @@ export default function InventoryAnalyticsPage() {
 
   /* ── Derived period totals ──────────────────────────────────────────────── */
   const chart = data?.chart ?? [];
+  // Newest period first, like the table already showed -- paginated
+  // client-side since the whole chart is already loaded for the graph
+  // above; no need to round-trip to the backend for this.
+  const reversedChart = [...chart].reverse();
+  const breakdownTotalPages = Math.max(1, Math.ceil(reversedChart.length / BREAKDOWN_PAGE_SIZE));
+  const breakdownSafePage = Math.min(breakdownPage, breakdownTotalPages);
+  const breakdownPageData = reversedChart.slice(
+    (breakdownSafePage - 1) * BREAKDOWN_PAGE_SIZE,
+    breakdownSafePage * BREAKDOWN_PAGE_SIZE,
+  );
   const totRevenue  = chart.reduce((s, p) => s + p.revenue, 0);
   const totCogs     = chart.reduce((s, p) => s + p.cogs, 0);
   const totExpense  = chart.reduce((s, p) => s + p.expense, 0);
@@ -523,7 +537,7 @@ export default function InventoryAnalyticsPage() {
                 },
                 { key: 'units_sold', header: 'Units Sold' },
               ]}
-              data={[...chart].reverse() as unknown as Record<string, unknown>[]}
+              data={breakdownPageData as unknown as Record<string, unknown>[]}
               footer={{
                 label: 'TOTAL',
                 revenue: totRevenue,
@@ -532,6 +546,13 @@ export default function InventoryAnalyticsPage() {
                 net_profit: netProfit,
                 units_sold: s?.total_units_sold ?? 0,
               } as unknown as Record<string, unknown>}
+            />
+            <Pagination
+              page={breakdownSafePage}
+              totalPages={breakdownTotalPages}
+              totalCount={reversedChart.length}
+              pageSize={BREAKDOWN_PAGE_SIZE}
+              onChange={setBreakdownPage}
             />
           </div>
         </section>

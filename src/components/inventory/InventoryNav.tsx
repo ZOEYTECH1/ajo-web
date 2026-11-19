@@ -78,7 +78,7 @@ export function InventoryNav() {
   return (
     // Sticky so the business switcher and tabs stay reachable on long
     // pages (Analytics, Products) without scrolling all the way back up.
-    // <main> (Layout.tsx) has its own "p-4 sm:p-6" padding, and sticky
+    // <main> (Layout.tsx) has its own "px-3 py-4 sm:p-6" padding, and sticky
     // offsets are measured from the *padding* edge of the scroll
     // container, not its border edge -- so covering that padding strip
     // takes three matched pieces, not just one:
@@ -91,7 +91,7 @@ export function InventoryNav() {
     //     margin and the "stuck" position disagree and the element can
     //     end up stuck in the wrong place entirely instead of just
     //     leaving a gap. All three have to match main's own padding.
-    <div className="sticky -top-4 sm:-top-6 z-10 -mx-4 sm:-mx-6 -mt-4 sm:-mt-6 px-4 sm:px-6 pt-4 sm:pt-6 bg-(--bg) pb-2 space-y-2">
+    <div className="sticky -top-4 sm:-top-6 z-10 -mx-3 sm:-mx-6 -mt-4 sm:-mt-6 px-3 sm:px-6 pt-4 sm:pt-6 bg-(--bg) pb-2 space-y-2">
       {/* Business switcher — only shown when multiple locations exist */}
       {businesses.length > 1 && (
         <div className="relative" ref={dropRef}>

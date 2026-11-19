@@ -130,7 +130,7 @@ export function Layout({ children }: LayoutProps) {
           </div>
         </header>
 
-        <main id="main-content" className="flex-1 overflow-y-auto p-4 sm:p-6" tabIndex={-1}>
+        <main id="main-content" className="flex-1 overflow-y-auto px-3 py-4 sm:p-6" tabIndex={-1}>
           {children}
         </main>
       </div>

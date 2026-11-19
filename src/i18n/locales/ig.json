@@ -208,6 +208,50 @@
     }
   },
   "groupDetail": {
+    "overdueDays_one": "Agafeela ụbọchị {{count}}",
+    "overdueDays_other": "Agafeela ụbọchị {{count}}",
+    "endsToday": "Ọ na-agwụ taa",
+    "daysLeft_one": "Ụbọchị {{count}} fọdụrụ",
+    "daysLeft_other": "Ụbọchị {{count}} fọdụrụ",
+    "startsTomorrow": "Ọ ga-amalite echi",
+    "startsInDays": "Ọ ga-amalite n'ime ụbọchị {{count}}",
+    "statusValues": {
+      "approved": "Akwadoro",
+      "pending": "Na-eche",
+      "rejected": "Ajụrụ",
+      "active": "Na-arụ ọrụ",
+      "closed": "Emechiela"
+    },
+    "roundProgress": {
+      "roundComplete": "Gburugburu {{number}} zuru oke 🎉",
+      "noActiveCycle": "Enweghị usoro na-arụ ọrụ",
+      "everyMemberCollected": "Onye otu ọ bụla anataala otu ugboro",
+      "startFromCyclesTab": "Malite otu site na ntabi Usoro",
+      "round": "Gburugburu {{number}}",
+      "cycleOfTotal": "Usoro {{number}} nke {{total}}",
+      "memberCollecting": "Onye otu {{slot}} nke {{total}} na-anata",
+      "acceptedEarlyClose": "{{accepted}}/{{total}} kwadoro imechi n'oge"
+    },
+    "cyclesTab": {
+      "startNewCycle": "Malite Usoro Ọhụrụ",
+      "noCyclesYet": "Amalitebeghị usoro ọ bụla.",
+      "cycleNumber": "Usoro #{{number}}",
+      "roundNumber": "Gburugburu {{number}}",
+      "earlyCloseProgress": "Imechi n'oge: {{accepted}}/{{total}} kwadoro",
+      "hideDefaulters": "Zoo Ndị Na-akwụghị Ụgwọ",
+      "defaulters": "Ndị Na-akwụghị Ụgwọ",
+      "closing": "Na-emechi…",
+      "closeCycle": "Mechie Usoro",
+      "requesting": "Na-arịọ…",
+      "requestEarlyClose": "Rịọ Imechi n'Oge",
+      "accepting": "Na-akwado…",
+      "acceptEarlyClose": "Kwado Imechi n'Oge",
+      "loadingDefaulters": "Na-ebu ndị na-akwụghị ụgwọ…",
+      "failedLoadDefaulters": "Ibu ndị na-akwụghị ụgwọ emeghị nke ọma.",
+      "gracePeriodActive": "Oge amara na-arụ ọrụ — a ga-ahụ ndị na-akwụghị ụgwọ malite {{date}}.",
+      "noDefaultersThisCycle": "Enweghị onye na-akwụghị ụgwọ na usoro a.",
+      "paidAmount": "· kwụrụ {{amount}}"
+    },
     "errors": {
       "failedToLoad": "Ibu nkọwa otu emeghị nke ọma.",
       "membershipPending": "Arịrịọ gị isonye n'otu a ka na-eche nkwado.",

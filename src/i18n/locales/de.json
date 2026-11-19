@@ -207,6 +207,50 @@
     }
   },
   "groupDetail": {
+    "overdueDays_one": "Überfällig seit {{count}} Tag",
+    "overdueDays_other": "Überfällig seit {{count}} Tagen",
+    "endsToday": "Endet heute",
+    "daysLeft_one": "Noch {{count}} Tag",
+    "daysLeft_other": "Noch {{count}} Tage",
+    "startsTomorrow": "Beginnt morgen",
+    "startsInDays": "Beginnt in {{count}} Tagen",
+    "statusValues": {
+      "approved": "Genehmigt",
+      "pending": "Ausstehend",
+      "rejected": "Abgelehnt",
+      "active": "Aktiv",
+      "closed": "Geschlossen"
+    },
+    "roundProgress": {
+      "roundComplete": "Runde {{number}} abgeschlossen 🎉",
+      "noActiveCycle": "Kein aktiver Zyklus",
+      "everyMemberCollected": "Jedes Mitglied hat einmal eingesammelt",
+      "startFromCyclesTab": "Starte einen über den Zyklen-Tab",
+      "round": "Runde {{number}}",
+      "cycleOfTotal": "Zyklus {{number}} von {{total}}",
+      "memberCollecting": "Mitglied {{slot}} von {{total}} sammelt ein",
+      "acceptedEarlyClose": "{{accepted}}/{{total}} haben vorzeitigen Abschluss akzeptiert"
+    },
+    "cyclesTab": {
+      "startNewCycle": "Neuen Zyklus starten",
+      "noCyclesYet": "Noch kein Zyklus gestartet.",
+      "cycleNumber": "Zyklus #{{number}}",
+      "roundNumber": "Runde {{number}}",
+      "earlyCloseProgress": "Vorzeitiger Abschluss: {{accepted}}/{{total}} akzeptiert",
+      "hideDefaulters": "Säumige ausblenden",
+      "defaulters": "Säumige",
+      "closing": "Wird geschlossen…",
+      "closeCycle": "Zyklus schließen",
+      "requesting": "Wird angefragt…",
+      "requestEarlyClose": "Vorzeitigen Abschluss anfragen",
+      "accepting": "Wird akzeptiert…",
+      "acceptEarlyClose": "Vorzeitigen Abschluss akzeptieren",
+      "loadingDefaulters": "Säumige werden geladen…",
+      "failedLoadDefaulters": "Säumige konnten nicht geladen werden.",
+      "gracePeriodActive": "Nachfrist aktiv — Säumige sichtbar ab {{date}}.",
+      "noDefaultersThisCycle": "Keine Säumigen in diesem Zyklus.",
+      "paidAmount": "· bezahlt {{amount}}"
+    },
     "errors": {
       "failedToLoad": "Gruppendetails konnten nicht geladen werden.",
       "membershipPending": "Dein Antrag, dieser Gruppe beizutreten, wartet noch auf Genehmigung.",

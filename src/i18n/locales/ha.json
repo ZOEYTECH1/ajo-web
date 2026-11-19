@@ -208,6 +208,50 @@
     }
   },
   "groupDetail": {
+    "overdueDays_one": "Ya ƙare kwana {{count}} da wuce",
+    "overdueDays_other": "Ya ƙare kwanaki {{count}} da wuce",
+    "endsToday": "Ya ƙare yau",
+    "daysLeft_one": "Kwana {{count}} ya rage",
+    "daysLeft_other": "Kwanaki {{count}} suka rage",
+    "startsTomorrow": "Zai fara gobe",
+    "startsInDays": "Zai fara bayan kwanaki {{count}}",
+    "statusValues": {
+      "approved": "An Amince",
+      "pending": "Jiran",
+      "rejected": "An Ƙi",
+      "active": "Mai aiki",
+      "closed": "An Rufe"
+    },
+    "roundProgress": {
+      "roundComplete": "An kammala Zagaye {{number}} 🎉",
+      "noActiveCycle": "Babu zagaye mai aiki",
+      "everyMemberCollected": "Kowane memba ya tattara sau ɗaya",
+      "startFromCyclesTab": "Fara ɗaya daga shafin Zagaye",
+      "round": "Zagaye {{number}}",
+      "cycleOfTotal": "Zagaye {{number}} daga cikin {{total}}",
+      "memberCollecting": "Memba {{slot}} daga cikin {{total}} yana tattarawa",
+      "acceptedEarlyClose": "{{accepted}}/{{total}} sun amince da rufewa da wuri"
+    },
+    "cyclesTab": {
+      "startNewCycle": "Fara Sabon Zagaye",
+      "noCyclesYet": "Babu zagaye da aka fara tukuna.",
+      "cycleNumber": "Zagaye #{{number}}",
+      "roundNumber": "Zagaye {{number}}",
+      "earlyCloseProgress": "Rufewa da wuri: {{accepted}}/{{total}} sun amince",
+      "hideDefaulters": "Ɓoye Wadanda Basu Biya",
+      "defaulters": "Wadanda Basu Biya",
+      "closing": "Ana rufewa…",
+      "closeCycle": "Rufe Zagaye",
+      "requesting": "Ana nema…",
+      "requestEarlyClose": "Nemi Rufewa da Wuri",
+      "accepting": "Ana amincewa…",
+      "acceptEarlyClose": "Amince da Rufewa da Wuri",
+      "loadingDefaulters": "Ana loda wadanda basu biya…",
+      "failedLoadDefaulters": "An kasa loda wadanda basu biya.",
+      "gracePeriodActive": "Lokacin alheri na aiki — za a ga wadanda basu biya daga {{date}}.",
+      "noDefaultersThisCycle": "Babu wadanda basu biya a wannan zagaye.",
+      "paidAmount": "· ya biya {{amount}}"
+    },
     "errors": {
       "failedToLoad": "An kasa loda bayanan ƙungiya.",
       "membershipPending": "Buƙatar ku na shiga wannan ƙungiya tana jiran amincewa.",

@@ -208,6 +208,50 @@
     }
   },
   "groupDetail": {
+    "overdueDays_one": "Ó ti kọjá ọjọ́ {{count}} lọ",
+    "overdueDays_other": "Ó ti kọjá ọjọ́ {{count}} lọ",
+    "endsToday": "Ó parí lónìí",
+    "daysLeft_one": "Ọjọ́ {{count}} kù",
+    "daysLeft_other": "Ọjọ́ {{count}} kù",
+    "startsTomorrow": "Yóò bẹ̀rẹ̀ lọ́la",
+    "startsInDays": "Yóò bẹ̀rẹ̀ ní ọjọ́ {{count}}",
+    "statusValues": {
+      "approved": "A Fọwọ́sí",
+      "pending": "Ń dúró",
+      "rejected": "A Kọ̀",
+      "active": "Ń ṣiṣẹ́",
+      "closed": "A Ti Tì"
+    },
+    "roundProgress": {
+      "roundComplete": "Àyíká {{number}} ti parí 🎉",
+      "noActiveCycle": "Kò sí àyíká tó ń ṣiṣẹ́",
+      "everyMemberCollected": "Gbogbo ọmọ ẹgbẹ́ ti gba owó lẹ́ẹ̀kan",
+      "startFromCyclesTab": "Bẹ̀rẹ̀ ọ̀kan láti orí tabu Àwọn Àyíká",
+      "round": "Àyíká {{number}}",
+      "cycleOfTotal": "Àyíká {{number}} nínú {{total}}",
+      "memberCollecting": "Ọmọ ẹgbẹ́ {{slot}} nínú {{total}} ń gba owó",
+      "acceptedEarlyClose": "{{accepted}}/{{total}} ti gbà láti tì ní kíákíá"
+    },
+    "cyclesTab": {
+      "startNewCycle": "Bẹ̀rẹ̀ Àyíká Tuntun",
+      "noCyclesYet": "Kò sí àyíká tí a ti bẹ̀rẹ̀ síbẹ̀.",
+      "cycleNumber": "Àyíká #{{number}}",
+      "roundNumber": "Àyíká {{number}}",
+      "earlyCloseProgress": "Títì ní kíákíá: {{accepted}}/{{total}} ti gbà",
+      "hideDefaulters": "Fi Àwọn Aṣìnà Pamọ́",
+      "defaulters": "Àwọn Aṣìnà",
+      "closing": "Ń tì…",
+      "closeCycle": "Ti Àyíká",
+      "requesting": "Ń béèrè…",
+      "requestEarlyClose": "Béèrè Títì ní Kíákíá",
+      "accepting": "Ń gbà…",
+      "acceptEarlyClose": "Gba Títì ní Kíákíá",
+      "loadingDefaulters": "Ń kó àwọn aṣìnà…",
+      "failedLoadDefaulters": "Kíkó àwọn aṣìnà kùnà.",
+      "gracePeriodActive": "Àkókò oore ń ṣiṣẹ́ — àwọn aṣìnà yóò hàn láti {{date}}.",
+      "noDefaultersThisCycle": "Kò sí aṣìnà fún àyíká yìí.",
+      "paidAmount": "· san {{amount}}"
+    },
     "errors": {
       "failedToLoad": "Kíkó àwọn àlàyé ẹgbẹ́ kùnà.",
       "membershipPending": "Ìbéèrè rẹ láti darapọ̀ mọ́ ẹgbẹ́ yìí ṣì ń dúró de ìfọwọ́sí.",

@@ -207,6 +207,50 @@
     }
   },
   "groupDetail": {
+    "overdueDays_one": "Overdue {{count}} day",
+    "overdueDays_other": "Overdue {{count}} days",
+    "endsToday": "Ends today",
+    "daysLeft_one": "{{count}} day left",
+    "daysLeft_other": "{{count}} days left",
+    "startsTomorrow": "Starts tomorrow",
+    "startsInDays": "Starts in {{count}} days",
+    "statusValues": {
+      "approved": "Approved",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "active": "Active",
+      "closed": "Closed"
+    },
+    "roundProgress": {
+      "roundComplete": "Round {{number}} complete 🎉",
+      "noActiveCycle": "No active cycle",
+      "everyMemberCollected": "Every member has collected once",
+      "startFromCyclesTab": "Start one from the Cycles tab",
+      "round": "Round {{number}}",
+      "cycleOfTotal": "Cycle {{number}} of {{total}}",
+      "memberCollecting": "Member {{slot}} of {{total}} collecting",
+      "acceptedEarlyClose": "{{accepted}}/{{total}} accepted early close"
+    },
+    "cyclesTab": {
+      "startNewCycle": "Start New Cycle",
+      "noCyclesYet": "No cycles started yet.",
+      "cycleNumber": "Cycle #{{number}}",
+      "roundNumber": "Round {{number}}",
+      "earlyCloseProgress": "Early close: {{accepted}}/{{total}} accepted",
+      "hideDefaulters": "Hide Defaulters",
+      "defaulters": "Defaulters",
+      "closing": "Closing…",
+      "closeCycle": "Close Cycle",
+      "requesting": "Requesting…",
+      "requestEarlyClose": "Request Early Close",
+      "accepting": "Accepting…",
+      "acceptEarlyClose": "Accept Early Close",
+      "loadingDefaulters": "Loading defaulters…",
+      "failedLoadDefaulters": "Failed to load defaulters.",
+      "gracePeriodActive": "Grace period active — defaulters visible from {{date}}.",
+      "noDefaultersThisCycle": "No defaulters for this cycle.",
+      "paidAmount": "· paid {{amount}}"
+    },
     "errors": {
       "failedToLoad": "Failed to load group details.",
       "membershipPending": "Your request to join this group is still awaiting approval.",

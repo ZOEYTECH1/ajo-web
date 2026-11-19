@@ -207,6 +207,50 @@
     }
   },
   "groupDetail": {
+    "overdueDays_one": "Vencido hace {{count}} día",
+    "overdueDays_other": "Vencido hace {{count}} días",
+    "endsToday": "Termina hoy",
+    "daysLeft_one": "Queda {{count}} día",
+    "daysLeft_other": "Quedan {{count}} días",
+    "startsTomorrow": "Comienza mañana",
+    "startsInDays": "Comienza en {{count}} días",
+    "statusValues": {
+      "approved": "Aprobado",
+      "pending": "Pendiente",
+      "rejected": "Rechazado",
+      "active": "Activo",
+      "closed": "Cerrado"
+    },
+    "roundProgress": {
+      "roundComplete": "¡Ronda {{number}} completada! 🎉",
+      "noActiveCycle": "Sin ciclo activo",
+      "everyMemberCollected": "Todos los miembros han cobrado una vez",
+      "startFromCyclesTab": "Inicia uno desde la pestaña Ciclos",
+      "round": "Ronda {{number}}",
+      "cycleOfTotal": "Ciclo {{number}} de {{total}}",
+      "memberCollecting": "Miembro {{slot}} de {{total}} cobrando",
+      "acceptedEarlyClose": "{{accepted}}/{{total}} aceptaron el cierre anticipado"
+    },
+    "cyclesTab": {
+      "startNewCycle": "Iniciar Nuevo Ciclo",
+      "noCyclesYet": "Aún no se ha iniciado ningún ciclo.",
+      "cycleNumber": "Ciclo #{{number}}",
+      "roundNumber": "Ronda {{number}}",
+      "earlyCloseProgress": "Cierre anticipado: {{accepted}}/{{total}} aceptado",
+      "hideDefaulters": "Ocultar morosos",
+      "defaulters": "Morosos",
+      "closing": "Cerrando…",
+      "closeCycle": "Cerrar Ciclo",
+      "requesting": "Solicitando…",
+      "requestEarlyClose": "Solicitar Cierre Anticipado",
+      "accepting": "Aceptando…",
+      "acceptEarlyClose": "Aceptar Cierre Anticipado",
+      "loadingDefaulters": "Cargando morosos…",
+      "failedLoadDefaulters": "Error al cargar morosos.",
+      "gracePeriodActive": "Período de gracia activo — morosos visibles desde el {{date}}.",
+      "noDefaultersThisCycle": "No hay morosos en este ciclo.",
+      "paidAmount": "· pagó {{amount}}"
+    },
     "errors": {
       "failedToLoad": "Error al cargar los detalles del grupo.",
       "membershipPending": "Tu solicitud para unirte a este grupo sigue pendiente de aprobación.",

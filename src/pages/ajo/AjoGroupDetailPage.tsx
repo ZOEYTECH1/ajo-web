@@ -157,25 +157,31 @@ function daysFromToday(dateStr: string): number {
   return Math.round((target - today) / 86_400_000);
 }
 
-function computePeriodLabel(cycle: Cycle): string {
+// t is passed in explicitly -- these are module-level helpers, not
+// components, so they have no hook access of their own. `any` here rather
+// than TFunction's own overloaded signature, which TS can't cleanly narrow
+// to a plain (key, options) => string shape for this kind of pass-through.
+type TFn = (key: string, options?: any) => string;
+
+function computePeriodLabel(cycle: Cycle, t: TFn): string {
   const diffDays = daysFromToday(cycle.end_date);
   if (cycle.is_over) {
     const overdue = Math.abs(diffDays);
-    return `Overdue ${overdue} day${overdue === 1 ? '' : 's'}`;
+    return t('groupDetail.overdueDays', { count: overdue });
   }
-  if (diffDays === 0) return 'Ends today';
-  return `${diffDays} day${diffDays === 1 ? '' : 's'} left`;
+  if (diffDays === 0) return t('groupDetail.endsToday');
+  return t('groupDetail.daysLeft', { count: diffDays });
 }
 
 // A cycle is already fully live (collecting, payable) from the moment it's
 // created, regardless of start_date — this label is purely so a cycle
 // dated for the future doesn't show a misleading end-date countdown before
 // it's actually begun. It does not affect payment/collection behavior.
-function computeStartLabel(cycle: Cycle): string | null {
+function computeStartLabel(cycle: Cycle, t: TFn): string | null {
   const diffDays = daysFromToday(cycle.start_date);
   if (diffDays <= 0) return null;
-  if (diffDays === 1) return 'Starts tomorrow';
-  return `Starts in ${diffDays} days`;
+  if (diffDays === 1) return t('groupDetail.startsTomorrow');
+  return t('groupDetail.startsInDays', { count: diffDays });
 }
 
 // ── Round progress card ─────────────────────────────────────────────────────
@@ -186,6 +192,7 @@ function RoundProgressCard({
   roundJustCompleted: boolean;
   lastClosedCycle: Cycle | undefined;
 }) {
+  const { t } = useTranslation();
   if (!activeCycle) {
     return (
       <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-5 flex items-center gap-4">
@@ -199,10 +206,10 @@ function RoundProgressCard({
         </div>
         <div>
           <p className="font-bold text-(--text-primary)">
-            {roundJustCompleted ? `Round ${lastClosedCycle?.round_number} complete 🎉` : 'No active cycle'}
+            {roundJustCompleted ? t('groupDetail.roundProgress.roundComplete', { number: lastClosedCycle?.round_number }) : t('groupDetail.roundProgress.noActiveCycle')}
           </p>
           <p className="text-sm text-(--text-secondary) mt-0.5">
-            {roundJustCompleted ? 'Every member has collected once' : 'Start one from the Cycles tab'}
+            {roundJustCompleted ? t('groupDetail.roundProgress.everyMemberCollected') : t('groupDetail.roundProgress.startFromCyclesTab')}
           </p>
         </div>
       </div>
@@ -210,11 +217,11 @@ function RoundProgressCard({
   }
 
   const cycle = activeCycle;
-  const startLabel = computeStartLabel(cycle);
+  const startLabel = computeStartLabel(cycle, t as unknown as TFn);
   const pct = startLabel || cycle.total_member_count <= 0
     ? 0
     : Math.min(100, Math.max(0, (cycle.slot_number / cycle.total_member_count) * 100));
-  const periodLabel = computePeriodLabel(cycle);
+  const periodLabel = computePeriodLabel(cycle, t as unknown as TFn);
 
   return (
     <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-5">
@@ -223,9 +230,9 @@ function RoundProgressCard({
           <ArrowPathIcon className="h-5 w-5 text-(--primary)" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-lg font-extrabold text-(--text-primary)">Round {cycle.round_number}</p>
+          <p className="text-lg font-extrabold text-(--text-primary)">{t('groupDetail.roundProgress.round', { number: cycle.round_number })}</p>
           <p className="text-xs text-(--text-secondary) mt-0.5">
-            Cycle {cycle.cycle_number} of {cycle.total_member_count}
+            {t('groupDetail.roundProgress.cycleOfTotal', { number: cycle.cycle_number, total: cycle.total_member_count })}
           </p>
         </div>
         <StatusBadge value={cycle.status} />
@@ -244,7 +251,7 @@ function RoundProgressCard({
           ) : (
             <>
               <p className="text-xs text-(--text-muted)">
-                Member {cycle.slot_number} of {cycle.total_member_count} collecting
+                {t('groupDetail.roundProgress.memberCollecting', { slot: cycle.slot_number, total: cycle.total_member_count })}
               </p>
               {periodLabel && (
                 <p className={clsx('text-xs font-semibold', cycle.is_over ? 'text-red-600' : 'text-(--primary)')}>
@@ -260,7 +267,7 @@ function RoundProgressCard({
         <CalendarIcon className="h-3.5 w-3.5 text-(--text-muted)" />
         {format(new Date(cycle.start_date), 'dd MMM yyyy')} – {format(new Date(cycle.end_date), 'dd MMM yyyy')}
         {cycle.force_close_requested
-          ? ` · ${cycle.force_close_acceptor_count}/${cycle.total_member_count} accepted early close`
+          ? ` · ${t('groupDetail.roundProgress.acceptedEarlyClose', { accepted: cycle.force_close_acceptor_count, total: cycle.total_member_count })}`
           : ''}
       </div>
     </div>
@@ -268,7 +275,9 @@ function RoundProgressCard({
 }
 
 function StatusBadge({ value }: { value: string }) {
+  const { t } = useTranslation();
   const s = value.toLowerCase();
+  const label = t(`groupDetail.statusValues.${s}`, { defaultValue: value });
   return (
     <span className={clsx(
       'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize',
@@ -280,7 +289,7 @@ function StatusBadge({ value }: { value: string }) {
         ? 'bg-red-100 text-red-600'
         : 'bg-(--bg) text-(--text-secondary)',
     )}>
-      {value}
+      {label}
     </span>
   );
 }
@@ -1444,6 +1453,7 @@ function CyclesTab({
   groupId: number;
   isAdmin: boolean;
 }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [showStartCycle, setShowStartCycle] = useState(false);
   const [expandedDefaulters, setExpandedDefaulters] = useState<Record<number, boolean>>({});
@@ -1454,7 +1464,7 @@ function CyclesTab({
     const d = e.response?.data;
     if (d?.detail) return d.detail;
     const first = Object.values(d ?? {})[0];
-    return Array.isArray(first) ? (first as string[])[0] : String(first ?? 'Something went wrong.');
+    return Array.isArray(first) ? (first as string[])[0] : String(first ?? t('groupDetail.startCycleModal.errors.somethingWrong'));
   }
 
   const closeCycleMutation = useMutation({
@@ -1501,7 +1511,7 @@ function CyclesTab({
         const res = await api.get<DefaultersResponse>(`/groups/${groupId}/cycles/${cycleId}/defaulters/`);
         setDefaulterData((prev) => ({ ...prev, [cycleId]: res.data }));
       } catch {
-        setDefaulterData((prev) => ({ ...prev, [cycleId]: 'Failed to load defaulters.' }));
+        setDefaulterData((prev) => ({ ...prev, [cycleId]: t('groupDetail.cyclesTab.failedLoadDefaulters') }));
       }
     }
   }
@@ -1516,13 +1526,13 @@ function CyclesTab({
             className={`inline-flex items-center gap-2 ${orangeBtn}`}
           >
             <PlusIcon className="h-4 w-4" />
-            Start New Cycle
+            {t('groupDetail.cyclesTab.startNewCycle')}
           </button>
         </div>
       )}
 
       {cycles.length === 0 ? (
-        <p className="text-sm text-(--text-secondary) text-center py-8">No cycles started yet.</p>
+        <p className="text-sm text-(--text-secondary) text-center py-8">{t('groupDetail.cyclesTab.noCyclesYet')}</p>
       ) : (
         <div className="space-y-3">
           {cycles.map((cycle) => (
@@ -1531,9 +1541,9 @@ function CyclesTab({
                 <div className="flex items-center gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold text-(--text-primary)">Cycle #{cycle.cycle_number}</p>
+                      <p className="text-sm font-semibold text-(--text-primary)">{t('groupDetail.cyclesTab.cycleNumber', { number: cycle.cycle_number })}</p>
                       <span className="text-xs font-medium text-(--text-muted) bg-(--bg) rounded-full px-2 py-0.5">
-                        Round {cycle.round_number}
+                        {t('groupDetail.cyclesTab.roundNumber', { number: cycle.round_number })}
                       </span>
                     </div>
                     <p className="text-xs text-(--text-secondary) mt-0.5">
@@ -1542,18 +1552,18 @@ function CyclesTab({
                     </p>
                     {cycle.status === 'active' && (
                       <p className={clsx('text-xs font-semibold mt-0.5', cycle.is_over ? 'text-red-600' : 'text-(--primary)')}>
-                        {computeStartLabel(cycle) ?? computePeriodLabel(cycle)}
+                        {computeStartLabel(cycle, t as unknown as TFn) ?? computePeriodLabel(cycle, t as unknown as TFn)}
                       </p>
                     )}
                     {cycle.force_close_requested && (
                       <p className="mt-1 text-xs text-(--primary) flex items-center gap-1">
                         <ClockIcon className="h-3 w-3" />
-                        Early close: {cycle.force_close_acceptor_count}/{cycle.total_member_count} accepted
+                        {t('groupDetail.cyclesTab.earlyCloseProgress', { accepted: cycle.force_close_acceptor_count, total: cycle.total_member_count })}
                       </p>
                     )}
                   </div>
                   <StatusBadge value={cycle.status} />
-                  <span className="text-xs text-(--text-muted)">{cycle.total_member_count} members</span>
+                  <span className="text-xs text-(--text-muted)">{t('ajoGroups.memberCount', { count: cycle.total_member_count })}</span>
                 </div>
 
                 <div className="flex gap-2 flex-wrap">
@@ -1562,7 +1572,7 @@ function CyclesTab({
                     onClick={() => toggleDefaulters(cycle.id)}
                     className="px-3 py-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) text-xs font-semibold hover:bg-(--primary-tint)/30"
                   >
-                    {expandedDefaulters[cycle.id] ? 'Hide Defaulters' : 'Defaulters'}
+                    {expandedDefaulters[cycle.id] ? t('groupDetail.cyclesTab.hideDefaulters') : t('groupDetail.cyclesTab.defaulters')}
                   </button>
 
                   {/* Normal close — all members have paid */}
@@ -1573,7 +1583,7 @@ function CyclesTab({
                       disabled={closeCycleMutation.isPending}
                       className="px-3 py-1.5 rounded-lg bg-red-100 text-red-600 text-xs font-semibold hover:bg-red-200 disabled:opacity-50 transition-colors"
                     >
-                      {closeCycleMutation.isPending ? 'Closing…' : 'Close Cycle'}
+                      {closeCycleMutation.isPending ? t('groupDetail.cyclesTab.closing') : t('groupDetail.cyclesTab.closeCycle')}
                     </button>
                   )}
 
@@ -1585,7 +1595,7 @@ function CyclesTab({
                       disabled={requestForceCloseMutation.isPending}
                       className="px-3 py-1.5 rounded-lg bg-(--primary-light)/30 text-(--primary) text-xs font-semibold hover:bg-(--primary)/30 disabled:opacity-50 transition-colors"
                     >
-                      {requestForceCloseMutation.isPending ? 'Requesting…' : 'Request Early Close'}
+                      {requestForceCloseMutation.isPending ? t('groupDetail.cyclesTab.requesting') : t('groupDetail.cyclesTab.requestEarlyClose')}
                     </button>
                   )}
 
@@ -1597,7 +1607,7 @@ function CyclesTab({
                       disabled={acceptForceCloseMutation.isPending}
                       className="px-3 py-1.5 rounded-lg bg-(--primary-light)/30 text-(--primary) text-xs font-semibold hover:bg-(--primary)/30 disabled:opacity-50 transition-colors"
                     >
-                      {acceptForceCloseMutation.isPending ? 'Accepting…' : 'Accept Early Close'}
+                      {acceptForceCloseMutation.isPending ? t('groupDetail.cyclesTab.accepting') : t('groupDetail.cyclesTab.acceptEarlyClose')}
                     </button>
                   )}
                 </div>
@@ -1610,22 +1620,21 @@ function CyclesTab({
               {expandedDefaulters[cycle.id] && (
                 <div className="border-t border-(--border) bg-(--bg) px-4 py-3">
                   {!defaulterData[cycle.id] ? (
-                    <p className="text-xs text-(--text-muted) animate-pulse">Loading defaulters…</p>
+                    <p className="text-xs text-(--text-muted) animate-pulse">{t('groupDetail.cyclesTab.loadingDefaulters')}</p>
                   ) : typeof defaulterData[cycle.id] === 'string' ? (
                     <p className="text-xs text-red-500">{defaulterData[cycle.id] as string}</p>
                   ) : (defaulterData[cycle.id] as DefaultersResponse).grace_period_active ? (
                     <p className="text-xs text-(--text-secondary)">
-                      Grace period active — defaulters visible from{' '}
-                      {format(new Date((defaulterData[cycle.id] as DefaultersResponse).visible_from), 'dd MMM yyyy')}.
+                      {t('groupDetail.cyclesTab.gracePeriodActive', { date: format(new Date((defaulterData[cycle.id] as DefaultersResponse).visible_from), 'dd MMM yyyy') })}
                     </p>
                   ) : (defaulterData[cycle.id] as DefaultersResponse).defaulters.length === 0 ? (
-                    <p className="text-xs text-(--text-secondary)">No defaulters for this cycle.</p>
+                    <p className="text-xs text-(--text-secondary)">{t('groupDetail.cyclesTab.noDefaultersThisCycle')}</p>
                   ) : (
                     <ul className="space-y-1">
                       {(defaulterData[cycle.id] as DefaultersResponse).defaulters.map((d) => (
                         <li key={d.id} className="text-xs text-(--text-secondary)">
                           {d.user.first_name} {d.user.last_name}{' '}
-                          <span className="text-(--primary)">· paid {formatCurrency(d.total_approved)}</span>
+                          <span className="text-(--primary)">{t('groupDetail.cyclesTab.paidAmount', { amount: formatCurrency(d.total_approved) })}</span>
                         </li>
                       ))}
                     </ul>

@@ -1,5 +1,6 @@
 ﻿import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import {
   UserGroupIcon,
@@ -46,14 +47,15 @@ function QuickLink({ to, icon: Icon, label, description, iconBg, iconColor }: Qu
   );
 }
 
-function getGreeting(): string {
+function getGreetingKey(): 'dashboard.greetingMorning' | 'dashboard.greetingAfternoon' | 'dashboard.greetingEvening' {
   const h = new Date().getHours();
-  if (h < 12) return 'morning';
-  if (h < 17) return 'afternoon';
-  return 'evening';
+  if (h < 12) return 'dashboard.greetingMorning';
+  if (h < 17) return 'dashboard.greetingAfternoon';
+  return 'dashboard.greetingEvening';
 }
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const { user } = useAuthStore();
 
   const { data: notifications, isLoading: notifLoading, isError: notifError, refetch: refetchNotif } = useQuery<Notification[]>({
@@ -65,7 +67,7 @@ export default function DashboardPage() {
     retry: 1,
   });
 
-  const firstName = user?.first_name || 'there';
+  const firstName = user?.first_name || t('dashboard.defaultName');
   const { usesAjo, usesThrift, usesInventory } = useModuleAccess();
 
   const quickLinks: QuickLinkProps[] = [
@@ -100,7 +102,7 @@ export default function DashboardPage() {
       {/* Welcome */}
       <div>
         <h1 className="text-2xl font-bold text-(--text-primary)">
-          Good {getGreeting()}, {firstName}!
+          {t(getGreetingKey(), { name: firstName })}
         </h1>
         <p className="text-sm text-(--text-secondary)">
           {format(new Date(), 'EEEE, d MMMM yyyy')}

@@ -11,6 +11,7 @@ import type { ReactNode } from 'react';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ErrorBoundary } from '../components/ui/ErrorBoundary';
+import en from '../i18n/locales/en.json';
 
 const ROOT = path.resolve(__dirname, '../..');
 
@@ -22,7 +23,10 @@ describe('Layer 12.1 — Skip-to-content link', () => {
   it('Layout.tsx contains a skip-to-content anchor targeting #main-content', () => {
     const content = fs.readFileSync(path.resolve(ROOT, 'src/components/ui/Layout.tsx'), 'utf8');
     expect(content).toMatch(/href="#main-content"/);
-    expect(content).toMatch(/Skip to main content/i);
+    // Text is translated (t('layout.skipToContent')) rather than hardcoded --
+    // check the call is wired up and the English translation reads right.
+    expect(content).toMatch(/t\('layout\.skipToContent'\)/);
+    expect(en.layout.skipToContent).toMatch(/skip to main content/i);
   });
 
   it('Layout.tsx has a <main> element with id="main-content"', () => {
@@ -43,21 +47,26 @@ describe('Layer 12.1 — Skip-to-content link', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('Layer 12.2 — Aria-labels on icon-only buttons', () => {
-  it('hamburger menu button has aria-label="Open sidebar"', () => {
+  it('hamburger menu button has aria-label (translated)', () => {
     const content = fs.readFileSync(path.resolve(ROOT, 'src/components/ui/Layout.tsx'), 'utf8');
-    expect(content).toMatch(/aria-label="Open sidebar"/);
+    expect(content).toMatch(/aria-label=\{t\('layout\.openSidebar'\)\}/);
+    expect(en.layout.openSidebar).toMatch(/open sidebar/i);
   });
 
-  it('close sidebar button has aria-label="Close sidebar"', () => {
+  it('close sidebar button has aria-label (translated)', () => {
     const content = fs.readFileSync(path.resolve(ROOT, 'src/components/ui/Layout.tsx'), 'utf8');
-    expect(content).toMatch(/aria-label="Close sidebar"/);
+    expect(content).toMatch(/aria-label=\{t\('layout\.closeSidebar'\)\}/);
+    expect(en.layout.closeSidebar).toMatch(/close sidebar/i);
   });
 
-  it('theme buttons each carry an aria-label', () => {
+  it('theme buttons each carry a translated aria-label', () => {
     const content = fs.readFileSync(path.resolve(ROOT, 'src/components/ui/Layout.tsx'), 'utf8');
-    expect(content).toMatch(/aria-label="Switch to light mode"/);
-    expect(content).toMatch(/aria-label="Switch to dark mode"/);
-    expect(content).toMatch(/aria-label="Use system/i);
+    expect(content).toMatch(/aria-label=\{t\('layout\.lightMode'\)\}/);
+    expect(content).toMatch(/aria-label=\{t\('layout\.darkMode'\)\}/);
+    expect(content).toMatch(/aria-label=\{t\('layout\.systemMode'\)\}/);
+    expect(en.layout.lightMode).toMatch(/light mode/i);
+    expect(en.layout.darkMode).toMatch(/dark mode/i);
+    expect(en.layout.systemMode).toMatch(/system/i);
   });
 });
 
@@ -116,7 +125,8 @@ describe('Layer 12.5 — Theme toggle container has role="group"', () => {
   it('theme button container uses role="group" in Layout.tsx', () => {
     const content = fs.readFileSync(path.resolve(ROOT, 'src/components/ui/Layout.tsx'), 'utf8');
     expect(content).toMatch(/role="group"/);
-    expect(content).toMatch(/aria-label="Theme selection"/);
+    expect(content).toMatch(/aria-label=\{t\('layout\.themeSelection'\)\}/);
+    expect(en.layout.themeSelection).toMatch(/theme selection/i);
   });
 });
 

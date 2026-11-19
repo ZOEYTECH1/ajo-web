@@ -1,0 +1,82 @@
+{
+  "_note": "Machine-translated first pass (Phase 1 i18n) -- not reviewed by a native speaker. Needs native review before production reliance.",
+  "common": {
+    "cancel": "Soke"
+  },
+  "layout": {
+    "skipToContent": "Tsallake zuwa babban abun ciki",
+    "openSidebar": "Buɗe menu",
+    "closeSidebar": "Rufe menu",
+    "themeSelection": "Zaɓin jigo",
+    "lightMode": "Canza zuwa yanayin haske",
+    "systemMode": "Yi amfani da zaɓin tsarin",
+    "darkMode": "Canza zuwa yanayin duhu",
+    "languageSelection": "Zaɓin harshe"
+  },
+  "auth": {
+    "login": {
+      "subtitle": "Shiga cikin asusunku",
+      "signingIn": "Ana shiga…",
+      "errorBothFields": "Da fatan za a shigar da imel da kalmar sirri.",
+      "errorInvalid": "Imel ko kalmar sirri ba daidai ba. Da fatan za a sake gwadawa.",
+      "emailLabel": "Adireshin imel",
+      "emailPlaceholder": "kai@misali.com",
+      "passwordLabel": "Kalmar sirri",
+      "forgotPassword": "Kun manta kalmar sirri?",
+      "signIn": "Shiga",
+      "orContinueWith": "ko ci gaba da",
+      "noAccount": "Ba ku da asusu?",
+      "signUp": "Yi rajista"
+    }
+  },
+  "account": {
+    "title": "Asusu",
+    "subtitle": "Sarrafa bayanan bayananku",
+    "uploadPhoto": "Loda hoto",
+    "uploadProfilePhotoA11y": "Loda hoton bayani",
+    "addPhotoHint": "Ƙara hoton bayani — ana buƙata don shiga ƙungiyoyi.",
+    "emailVerified": "An tabbatar da imel",
+    "emailNotVerified": "Ba a tabbatar da imel ba",
+    "defaultRole": "Memba",
+    "personalInfo": "Bayanin Kai",
+    "profileUpdated": "An sabunta bayanin kai cikin nasara.",
+    "failedUpdateProfile": "An kasa sabunta bayanin kai.",
+    "firstNameLabel": "Sunan farko",
+    "lastNameLabel": "Sunan ƙarshe",
+    "emailLabel": "Adireshin imel",
+    "phoneLabel": "Lambar waya",
+    "saveChanges": "Ajiye canje-canje",
+    "changePasswordTitle": "Canza Kalmar Sirri",
+    "passwordChanged": "An canza kalmar sirri cikin nasara.",
+    "failedChangePassword": "An kasa canza kalmar sirri.",
+    "currentPasswordLabel": "Kalmar sirri ta yanzu",
+    "newPasswordLabel": "Sabuwar kalmar sirri",
+    "confirmPasswordLabel": "Tabbatar da sabuwar kalmar sirri",
+    "changePasswordBtn": "Canza kalmar sirri",
+    "passwordMismatch": "Sabbin kalmomin sirri ba su yi daidai ba.",
+    "passwordTooShort": "Sabuwar kalmar sirri dole ta kasance aƙalla haruffa 8.",
+    "activeModules": "Sassan da ke Aiki",
+    "support": "Tallafi",
+    "helpLink": "Taimako & Tallafi (FAQ) →",
+    "legal": "Shari'a",
+    "privacyLink": "Manufar Sirri & Sharuɗɗan Sabis →",
+    "dangerZone": "Yankin Hatsari",
+    "dangerZoneHint": "Yana share asusunku na dindindin. Ba za a iya soke wannan ba — za a cire duk bayananku.",
+    "deleteMyAccount": "Share asusuna",
+    "deleteModalTitle": "Share Asusu",
+    "deleteConfirmText": "Kun tabbata kuna son share asusunku? Wannan aikin",
+    "deleteConfirmBold": "na dindindin ne kuma ba za a iya mayar da shi ba",
+    "failedDelete": "An kasa share asusu. Da fatan za a sake gwadawa.",
+    "deleteConfirmBtn": "Eh, share shi",
+    "deleting": "Ana sharewa…"
+  },
+  "pagination": {
+    "showing": "Ana nuna {{start}}–{{end}} daga cikin {{total}}"
+  },
+  "dashboard": {
+    "greetingMorning": "Ina kwana, {{name}}!",
+    "greetingAfternoon": "Barka da rana, {{name}}!",
+    "greetingEvening": "Barka da yamma, {{name}}!",
+    "defaultName": "kai"
+  }
+}

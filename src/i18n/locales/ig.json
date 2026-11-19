@@ -1,0 +1,82 @@
+{
+  "_note": "Machine-translated first pass (Phase 1 i18n) -- not reviewed by a native speaker. Needs native review before production reliance.",
+  "common": {
+    "cancel": "Kagbuo"
+  },
+  "layout": {
+    "skipToContent": "Wụga na isi odide",
+    "openSidebar": "Mepee menu",
+    "closeSidebar": "Mechie menu",
+    "themeSelection": "Nhọrọ isiokwu",
+    "lightMode": "Gbanwee ka ọ bụrụ ìhè",
+    "systemMode": "Jiri mmasị sistemu",
+    "darkMode": "Gbanwee ka ọ bụrụ ọchịchịrị",
+    "languageSelection": "Nhọrọ asụsụ"
+  },
+  "auth": {
+    "login": {
+      "subtitle": "Banye n'akaụntụ gị",
+      "signingIn": "Na-abanye…",
+      "errorBothFields": "Biko tinye email na okwuntughe gị.",
+      "errorInvalid": "Email ma ọ bụ okwuntughe ezighị ezi. Biko nwaa ọzọ.",
+      "emailLabel": "Adreesị email",
+      "emailPlaceholder": "gị@ihe-atụ.com",
+      "passwordLabel": "Okwuntughe",
+      "forgotPassword": "Chefuru okwuntughe?",
+      "signIn": "Banye",
+      "orContinueWith": "ma ọ bụ gaa n'ihu na",
+      "noAccount": "Ị nweghị akaụntụ?",
+      "signUp": "Debanye aha"
+    }
+  },
+  "account": {
+    "title": "Akaụntụ",
+    "subtitle": "Jikwaa ozi profaịlụ gị",
+    "uploadPhoto": "Bulite foto",
+    "uploadProfilePhotoA11y": "Bulite foto profaịlụ",
+    "addPhotoHint": "Tinye foto profaịlụ — achọrọ ya iji sonye n'òtù.",
+    "emailVerified": "Akwadoro email",
+    "emailNotVerified": "Akwadoghị email",
+    "defaultRole": "Onye òtù",
+    "personalInfo": "Ozi Onwe",
+    "profileUpdated": "Emelitela profaịlụ nke ọma.",
+    "failedUpdateProfile": "Imeli profaịlụ emeghị nke ọma.",
+    "firstNameLabel": "Aha mbụ",
+    "lastNameLabel": "Aha ikpeazụ",
+    "emailLabel": "Adreesị email",
+    "phoneLabel": "Nọmba ekwentị",
+    "saveChanges": "Chekwaa mgbanwe",
+    "changePasswordTitle": "Gbanwee Okwuntughe",
+    "passwordChanged": "Agbanweela okwuntughe nke ọma.",
+    "failedChangePassword": "Ịgbanwe okwuntughe emeghị nke ọma.",
+    "currentPasswordLabel": "Okwuntughe ugbu a",
+    "newPasswordLabel": "Okwuntughe ọhụrụ",
+    "confirmPasswordLabel": "Kwado okwuntughe ọhụrụ",
+    "changePasswordBtn": "Gbanwee okwuntughe",
+    "passwordMismatch": "Okwuntughe ọhụrụ abụọ ahụ adịghị otu.",
+    "passwordTooShort": "Okwuntughe ọhụrụ aghaghị ịdị opekata mpe mkpụrụedemede 8.",
+    "activeModules": "Modụl Na-arụ Ọrụ",
+    "support": "Nkwado",
+    "helpLink": "Enyemaka & Nkwado (FAQ) →",
+    "legal": "Iwu",
+    "privacyLink": "Amụma Nzuzo & Usoro Ọrụ →",
+    "dangerZone": "Mpaghara Ihe Ize Ndụ",
+    "dangerZoneHint": "Ga-ehichapụ akaụntụ gị kpamkpam. Enweghị ike imegharị nke a — a ga-ewepụ data gị niile.",
+    "deleteMyAccount": "Hichapụ akaụntụ m",
+    "deleteModalTitle": "Hichapụ Akaụntụ",
+    "deleteConfirmText": "Ị ji n'aka na ị chọrọ ihichapụ akaụntụ gị? Omume a bụ",
+    "deleteConfirmBold": "nke mgbe ebighị ebi na enweghị ike imegharị ya",
+    "failedDelete": "Ihichapụ akaụntụ emeghị nke ọma. Biko nwaa ọzọ.",
+    "deleteConfirmBtn": "Ee, hichapụ",
+    "deleting": "Na-ehichapụ…"
+  },
+  "pagination": {
+    "showing": "Na-egosi {{start}}–{{end}} nke {{total}}"
+  },
+  "dashboard": {
+    "greetingMorning": "Ụtụtụ ọma, {{name}}!",
+    "greetingAfternoon": "Ehihie ọma, {{name}}!",
+    "greetingEvening": "Mgbede ọma, {{name}}!",
+    "defaultName": "ebe ahụ"
+  }
+}

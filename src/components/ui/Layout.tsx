@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { useTranslation } from 'react-i18next';
+import { Bars3Icon, XMarkIcon, SunIcon, MoonIcon, ComputerDesktopIcon, ChevronRightIcon, LanguageIcon } from '@heroicons/react/24/outline';
 import { Sidebar } from './Sidebar';
 import { InstallPrompt } from './InstallPrompt';
 import { NotificationPrompt } from './NotificationPrompt';
 import { useTheme } from '../../context/ThemeContext';
 import { getBreadcrumb } from '../../lib/breadcrumbs';
+import { SUPPORTED_LANGUAGES, setLanguage, type LanguageCode } from '../../i18n';
+import api from '../../services/api';
+import useAuthStore from '../../store/useAuthStore';
 import type { ReactNode } from 'react';
 
 interface LayoutProps {
@@ -14,9 +18,24 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { t, i18n } = useTranslation();
   const { pathname } = useLocation();
   const crumbs = getBreadcrumb(pathname);
+  const setUser = useAuthStore((s) => s.setUser);
+
+  const chooseLanguage = (code: LanguageCode) => {
+    setLanguage(code);
+    setLangOpen(false);
+    // Best-effort sync to the backend so server-generated text (notification
+    // emails, API error messages) matches too -- failure here just means the
+    // frontend's own language changed but the account-level preference
+    // didn't sync this time; not worth blocking the UI switch over.
+    api.patch('/auth/me/', { language: code })
+      .then((res) => setUser(res.data))
+      .catch(() => {});
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-(--bg)">
@@ -25,7 +44,7 @@ export function Layout({ children }: LayoutProps) {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-(--primary) focus:text-white focus:font-medium focus:shadow-lg"
       >
-        Skip to main content
+        {t('layout.skipToContent')}
       </a>
 
       {/* Desktop sidebar */}
@@ -47,7 +66,7 @@ export function Layout({ children }: LayoutProps) {
             <div className="absolute top-0 right-0 -mr-12 pt-2">
               <button
                 type="button"
-                aria-label="Close sidebar"
+                aria-label={t('layout.closeSidebar')}
                 className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
                 onClick={() => setSidebarOpen(false)}
               >
@@ -73,7 +92,7 @@ export function Layout({ children }: LayoutProps) {
           <div className="flex items-center gap-3 lg:hidden">
             <button
               type="button"
-              aria-label="Open sidebar"
+              aria-label={t('layout.openSidebar')}
               className="text-(--text-secondary) hover:text-(--text-primary) transition-colors"
               onClick={() => setSidebarOpen(true)}
             >
@@ -112,21 +131,61 @@ export function Layout({ children }: LayoutProps) {
             ))}
           </nav>
 
-          {/* Theme toggle */}
-          <div
-            role="group"
-            aria-label="Theme selection"
-            className="flex items-center gap-1 p-1 rounded-lg bg-(--bg) border border-(--border)"
-          >
-            <ThemeButton active={theme === 'light'} aria-label="Switch to light mode" onClick={() => setTheme('light')}>
-              <SunIcon className="h-4 w-4" />
-            </ThemeButton>
-            <ThemeButton active={theme === 'system'} aria-label="Use system colour preference" onClick={() => setTheme('system')}>
-              <ComputerDesktopIcon className="h-4 w-4" />
-            </ThemeButton>
-            <ThemeButton active={theme === 'dark'} aria-label="Switch to dark mode" onClick={() => setTheme('dark')}>
-              <MoonIcon className="h-4 w-4" />
-            </ThemeButton>
+          <div className="flex items-center gap-2">
+            {/* Language selector */}
+            <div className="relative">
+              <button
+                type="button"
+                aria-haspopup="listbox"
+                aria-expanded={langOpen}
+                aria-label={t('layout.languageSelection')}
+                onClick={() => setLangOpen((v) => !v)}
+                className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-(--bg) border border-(--border) text-(--text-secondary) hover:text-(--text-primary) transition-colors"
+              >
+                <LanguageIcon className="h-4 w-4" aria-hidden="true" />
+                <span className="text-xs font-semibold uppercase hidden sm:inline">{i18n.language}</span>
+              </button>
+              {langOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} aria-hidden="true" />
+                  <div
+                    role="listbox"
+                    aria-label={t('layout.languageSelection')}
+                    className="absolute right-0 mt-1 w-40 rounded-lg border border-(--border) bg-(--surface) shadow-lg z-50 py-1"
+                  >
+                    {SUPPORTED_LANGUAGES.map((l) => (
+                      <button
+                        key={l.code}
+                        type="button"
+                        role="option"
+                        aria-selected={i18n.language === l.code}
+                        onClick={() => chooseLanguage(l.code as LanguageCode)}
+                        className={`w-full text-left px-3 py-1.5 text-sm hover:bg-(--primary-tint)/30 ${i18n.language === l.code ? 'font-semibold text-(--primary)' : 'text-(--text-primary)'}`}
+                      >
+                        {l.label}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Theme toggle */}
+            <div
+              role="group"
+              aria-label={t('layout.themeSelection')}
+              className="flex items-center gap-1 p-1 rounded-lg bg-(--bg) border border-(--border)"
+            >
+              <ThemeButton active={theme === 'light'} aria-label={t('layout.lightMode')} onClick={() => setTheme('light')}>
+                <SunIcon className="h-4 w-4" />
+              </ThemeButton>
+              <ThemeButton active={theme === 'system'} aria-label={t('layout.systemMode')} onClick={() => setTheme('system')}>
+                <ComputerDesktopIcon className="h-4 w-4" />
+              </ThemeButton>
+              <ThemeButton active={theme === 'dark'} aria-label={t('layout.darkMode')} onClick={() => setTheme('dark')}>
+                <MoonIcon className="h-4 w-4" />
+              </ThemeButton>
+            </div>
           </div>
         </header>
 

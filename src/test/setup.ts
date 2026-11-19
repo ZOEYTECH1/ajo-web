@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import '../i18n'; // same init main.tsx does -- without it, t() falls back to raw keys in tests
 
 // jsdom does not implement ResizeObserver — mock it so GoogleAuthButton (and
 // anything else measuring an element's size) works in tests.

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/Button';
 import { GoogleAuthButton } from '../../components/ui/GoogleAuthButton';
 import { Input } from '../../components/ui/Input';
@@ -11,6 +12,7 @@ import useAuthStore from '../../store/useAuthStore';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { setAuth } = useAuthStore();
 
   // Plays every time this page mounts -- first-ever visit, a plain reload,
@@ -29,7 +31,7 @@ export default function LoginPage() {
     setError('');
 
     if (!email.trim() || !password) {
-      setError('Please enter both your email and password.');
+      setError(t('auth.login.errorBothFields'));
       return;
     }
 
@@ -49,7 +51,7 @@ export default function LoginPage() {
       const message =
         (typeof data?.detail === 'string' ? data.detail : undefined) ||
         fieldMessage ||
-        'Invalid email or password. Please try again.';
+        t('auth.login.errorInvalid');
       setError(String(message));
     } finally {
       setIsLoading(false);
@@ -64,7 +66,7 @@ export default function LoginPage() {
           completely finished -- it decides when to go away, nothing here
           cuts it short. */}
       {showSplash && <WelcomeSplash onComplete={() => setShowSplash(false)} />}
-      {isLoading && <AjoLoaderOverlay message="Signing you in…" />}
+      {isLoading && <AjoLoaderOverlay message={t('auth.login.signingIn')} />}
 
       <div className="w-full max-w-md">
         {/* Brand */}
@@ -73,7 +75,7 @@ export default function LoginPage() {
             <AjoLoader size={52} />
           </div>
           <h1 className="text-3xl font-extrabold text-(--primary) mt-2">Scribe</h1>
-          <p className="mt-1 text-sm text-(--text-secondary)">Sign in to your account</p>
+          <p className="mt-1 text-sm text-(--text-secondary)">{t('auth.login.subtitle')}</p>
         </div>
 
         <div className="bg-(--surface) rounded-2xl shadow-sm border border-(--border) p-8">
@@ -88,16 +90,16 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <Input
-              label="Email address"
+              label={t('auth.login.emailLabel')}
               name="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder={t('auth.login.emailPlaceholder')}
               required
             />
             <Input
-              label="Password"
+              label={t('auth.login.passwordLabel')}
               name="password"
               type="password"
               value={password}
@@ -108,7 +110,7 @@ export default function LoginPage() {
 
             <div className="flex justify-end">
               <Link to="/forgot-password" className="text-xs text-(--text-muted) hover:text-(--primary)">
-                Forgot password?
+                {t('auth.login.forgotPassword')}
               </Link>
             </div>
 
@@ -118,22 +120,22 @@ export default function LoginPage() {
               fullWidth
               loading={isLoading}
             >
-              Sign in
+              {t('auth.login.signIn')}
             </Button>
           </form>
 
           <div className="my-5 flex items-center gap-3">
             <div className="flex-1 border-t border-(--border)" />
-            <span className="text-xs text-(--text-muted)">or continue with</span>
+            <span className="text-xs text-(--text-muted)">{t('auth.login.orContinueWith')}</span>
             <div className="flex-1 border-t border-(--border)" />
           </div>
 
           <GoogleAuthButton onSuccess={handleGoogleSuccess} onError={handleGoogleError} text="continue_with" />
 
           <p className="mt-6 text-center text-sm text-(--text-secondary)">
-            Don't have an account?{' '}
+            {t('auth.login.noAccount')}{' '}
             <Link to="/register" className="font-medium text-(--primary) hover:text-(--primary-dark)">
-              Sign up
+              {t('auth.login.signUp')}
             </Link>
           </p>
         </div>

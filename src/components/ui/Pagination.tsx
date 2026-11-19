@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 interface PaginationProps {
@@ -16,6 +17,7 @@ export function Pagination({
   pageSize = 20,
   onChange,
 }: PaginationProps) {
+  const { t } = useTranslation();
   if (totalPages <= 1) return null;
 
   const start = (page - 1) * pageSize + 1;
@@ -32,7 +34,7 @@ export function Pagination({
   return (
     <div className="flex items-center justify-between mt-4 gap-3 flex-wrap">
       <p className="text-xs text-(--text-muted)">
-        Showing {start}–{end} of {totalCount}
+        {t('pagination.showing', { start, end, total: totalCount })}
       </p>
       <div className="flex items-center gap-1">
         <button

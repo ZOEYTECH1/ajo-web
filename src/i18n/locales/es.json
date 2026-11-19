@@ -1,0 +1,81 @@
+{
+  "common": {
+    "cancel": "Cancelar"
+  },
+  "layout": {
+    "skipToContent": "Saltar al contenido principal",
+    "openSidebar": "Abrir barra lateral",
+    "closeSidebar": "Cerrar barra lateral",
+    "themeSelection": "Selección de tema",
+    "lightMode": "Cambiar a modo claro",
+    "systemMode": "Usar la preferencia del sistema",
+    "darkMode": "Cambiar a modo oscuro",
+    "languageSelection": "Selección de idioma"
+  },
+  "auth": {
+    "login": {
+      "subtitle": "Inicia sesión en tu cuenta",
+      "signingIn": "Iniciando sesión…",
+      "errorBothFields": "Ingresa tu correo electrónico y contraseña.",
+      "errorInvalid": "Correo electrónico o contraseña inválidos. Inténtalo de nuevo.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu@ejemplo.com",
+      "passwordLabel": "Contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "signIn": "Iniciar sesión",
+      "orContinueWith": "o continúa con",
+      "noAccount": "¿No tienes una cuenta?",
+      "signUp": "Regístrate"
+    }
+  },
+  "account": {
+    "title": "Cuenta",
+    "subtitle": "Gestiona la información de tu perfil",
+    "uploadPhoto": "Subir foto",
+    "uploadProfilePhotoA11y": "Subir foto de perfil",
+    "addPhotoHint": "Agrega una foto de perfil — necesaria para unirte a grupos.",
+    "emailVerified": "Correo verificado",
+    "emailNotVerified": "Correo no verificado",
+    "defaultRole": "Miembro",
+    "personalInfo": "Información personal",
+    "profileUpdated": "Perfil actualizado con éxito.",
+    "failedUpdateProfile": "Error al actualizar el perfil.",
+    "firstNameLabel": "Nombre",
+    "lastNameLabel": "Apellido",
+    "emailLabel": "Correo electrónico",
+    "phoneLabel": "Número de teléfono",
+    "saveChanges": "Guardar cambios",
+    "changePasswordTitle": "Cambiar contraseña",
+    "passwordChanged": "Contraseña cambiada con éxito.",
+    "failedChangePassword": "Error al cambiar la contraseña.",
+    "currentPasswordLabel": "Contraseña actual",
+    "newPasswordLabel": "Nueva contraseña",
+    "confirmPasswordLabel": "Confirmar nueva contraseña",
+    "changePasswordBtn": "Cambiar contraseña",
+    "passwordMismatch": "Las nuevas contraseñas no coinciden.",
+    "passwordTooShort": "La nueva contraseña debe tener al menos 8 caracteres.",
+    "activeModules": "Módulos activos",
+    "support": "Soporte",
+    "helpLink": "Ayuda y soporte (FAQ) →",
+    "legal": "Legal",
+    "privacyLink": "Política de privacidad y términos de servicio →",
+    "dangerZone": "Zona de peligro",
+    "dangerZoneHint": "Elimina tu cuenta de forma permanente. Esta acción no se puede deshacer — se eliminarán todos tus datos.",
+    "deleteMyAccount": "Eliminar mi cuenta",
+    "deleteModalTitle": "Eliminar cuenta",
+    "deleteConfirmText": "¿Seguro que quieres eliminar tu cuenta? Esta acción es",
+    "deleteConfirmBold": "permanente y no se puede revertir",
+    "failedDelete": "Error al eliminar la cuenta. Inténtalo de nuevo.",
+    "deleteConfirmBtn": "Sí, eliminar",
+    "deleting": "Eliminando…"
+  },
+  "pagination": {
+    "showing": "Mostrando {{start}}–{{end}} de {{total}}"
+  },
+  "dashboard": {
+    "greetingMorning": "Buenos días, {{name}}!",
+    "greetingAfternoon": "Buenas tardes, {{name}}!",
+    "greetingEvening": "Buenas noches, {{name}}!",
+    "defaultName": "allí"
+  }
+}

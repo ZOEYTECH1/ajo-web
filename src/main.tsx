@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import './index.css';
+import './i18n'; // initialise i18next before any route renders translated text
 
 import App, { ProtectedLayout } from './App';
 import OrgAdminLayout from './layouts/OrgAdminLayout';

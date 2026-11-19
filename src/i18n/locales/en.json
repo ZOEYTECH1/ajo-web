@@ -1,0 +1,81 @@
+{
+  "common": {
+    "cancel": "Cancel"
+  },
+  "layout": {
+    "skipToContent": "Skip to main content",
+    "openSidebar": "Open sidebar",
+    "closeSidebar": "Close sidebar",
+    "themeSelection": "Theme selection",
+    "lightMode": "Switch to light mode",
+    "systemMode": "Use system colour preference",
+    "darkMode": "Switch to dark mode",
+    "languageSelection": "Language selection"
+  },
+  "auth": {
+    "login": {
+      "subtitle": "Sign in to your account",
+      "signingIn": "Signing you in…",
+      "errorBothFields": "Please enter both your email and password.",
+      "errorInvalid": "Invalid email or password. Please try again.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "forgotPassword": "Forgot password?",
+      "signIn": "Sign in",
+      "orContinueWith": "or continue with",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    }
+  },
+  "account": {
+    "title": "Account",
+    "subtitle": "Manage your profile information",
+    "uploadPhoto": "Upload photo",
+    "uploadProfilePhotoA11y": "Upload profile photo",
+    "addPhotoHint": "Add a profile photo — required to join groups.",
+    "emailVerified": "Email verified",
+    "emailNotVerified": "Email not verified",
+    "defaultRole": "Member",
+    "personalInfo": "Personal Information",
+    "profileUpdated": "Profile updated successfully.",
+    "failedUpdateProfile": "Failed to update profile.",
+    "firstNameLabel": "First name",
+    "lastNameLabel": "Last name",
+    "emailLabel": "Email address",
+    "phoneLabel": "Phone number",
+    "saveChanges": "Save changes",
+    "changePasswordTitle": "Change Password",
+    "passwordChanged": "Password changed successfully.",
+    "failedChangePassword": "Failed to change password.",
+    "currentPasswordLabel": "Current password",
+    "newPasswordLabel": "New password",
+    "confirmPasswordLabel": "Confirm new password",
+    "changePasswordBtn": "Change password",
+    "passwordMismatch": "New passwords do not match.",
+    "passwordTooShort": "New password must be at least 8 characters.",
+    "activeModules": "Active Modules",
+    "support": "Support",
+    "helpLink": "Help & Support (FAQ) →",
+    "legal": "Legal",
+    "privacyLink": "Privacy Policy & Terms of Service →",
+    "dangerZone": "Danger Zone",
+    "dangerZoneHint": "Permanently delete your account. This cannot be undone — all your data will be removed.",
+    "deleteMyAccount": "Delete my account",
+    "deleteModalTitle": "Delete Account",
+    "deleteConfirmText": "Are you sure you want to delete your account? This action is",
+    "deleteConfirmBold": "permanent and cannot be reversed",
+    "failedDelete": "Failed to delete account. Please try again.",
+    "deleteConfirmBtn": "Yes, delete",
+    "deleting": "Deleting…"
+  },
+  "pagination": {
+    "showing": "Showing {{start}}–{{end}} of {{total}}"
+  },
+  "dashboard": {
+    "greetingMorning": "Good morning, {{name}}!",
+    "greetingAfternoon": "Good afternoon, {{name}}!",
+    "greetingEvening": "Good evening, {{name}}!",
+    "defaultName": "there"
+  }
+}

@@ -38,6 +38,10 @@ export interface User {
   // account uses -- account-level (not per-device), shared with the mobile
   // app. Empty array means the user hasn't picked yet.
   selected_modules: string[];
+  // UI/notification/email language -- account-level, synced with the
+  // language switcher on both platforms (see src/i18n). Drives the
+  // backend's own translated text too (notifications, emails, API errors).
+  language?: string;
 }
 
 export interface LoginResponse extends AuthTokens {

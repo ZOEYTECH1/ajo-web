@@ -1,0 +1,82 @@
+{
+  "_note": "Machine-translated first pass (Phase 1 i18n) -- not reviewed by a native speaker. Needs native review before production reliance.",
+  "common": {
+    "cancel": "Fagilé"
+  },
+  "layout": {
+    "skipToContent": "Fo lọ sí àkóónú àkọ́kọ́",
+    "openSidebar": "Ṣí àkójọpọ̀",
+    "closeSidebar": "Ti àkójọpọ̀",
+    "themeSelection": "Yíyan ẹ̀wò",
+    "lightMode": "Yí padà sí ipò ìmọ́lẹ̀",
+    "systemMode": "Lo àyànfẹ́ ẹ̀rọ",
+    "darkMode": "Yí padà sí ipò òkùnkùn",
+    "languageSelection": "Yíyan èdè"
+  },
+  "auth": {
+    "login": {
+      "subtitle": "Wọlé sí àkáǹtì rẹ",
+      "signingIn": "Ń wọlé…",
+      "errorBothFields": "Jọ̀wọ́ tẹ ímeèlì àti ọ̀rọ̀ àṣínà rẹ sí i.",
+      "errorInvalid": "Ímeèlì tàbí ọ̀rọ̀ àṣínà kò tọ̀nà. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan sí i.",
+      "emailLabel": "Àdírẹ́sì ímeèlì",
+      "emailPlaceholder": "iwọ@àpẹẹrẹ.com",
+      "passwordLabel": "Ọ̀rọ̀ àṣínà",
+      "forgotPassword": "Ṣé o gbàgbé ọ̀rọ̀ àṣínà?",
+      "signIn": "Wọlé",
+      "orContinueWith": "tàbí tẹ̀síwájú pẹ̀lú",
+      "noAccount": "O kò ní àkáǹtì?",
+      "signUp": "Forúkọsílẹ̀"
+    }
+  },
+  "account": {
+    "title": "Àkáǹtì",
+    "subtitle": "Ṣàkóso ìsọfúnni profaili rẹ",
+    "uploadPhoto": "Gbé fọ́tò sókè",
+    "uploadProfilePhotoA11y": "Gbé fọ́tò profaili sókè",
+    "addPhotoHint": "Fi fọ́tò profaili kún — a nílò rẹ̀ láti dara pọ̀ mọ́ àwọn ẹgbẹ́.",
+    "emailVerified": "A ti jẹ́rìí sí ímeèlì",
+    "emailNotVerified": "A kò tíì jẹ́rìí sí ímeèlì",
+    "defaultRole": "Ọmọ ẹgbẹ́",
+    "personalInfo": "Ìsọfúnni Ara Ẹni",
+    "profileUpdated": "A ti ṣàtúnṣe profaili ní àṣeyọrí.",
+    "failedUpdateProfile": "Ìsàtúnṣe profaili kùnà.",
+    "firstNameLabel": "Orúkọ àkọ́kọ́",
+    "lastNameLabel": "Orúkọ ìdílé",
+    "emailLabel": "Àdírẹ́sì ímeèlì",
+    "phoneLabel": "Nọ́mbà fóònù",
+    "saveChanges": "Fi àwọn ìyípadà pamọ́",
+    "changePasswordTitle": "Yí Ọ̀rọ̀ Àṣínà Padà",
+    "passwordChanged": "A ti yí ọ̀rọ̀ àṣínà padà ní àṣeyọrí.",
+    "failedChangePassword": "Ìyípadà ọ̀rọ̀ àṣínà kùnà.",
+    "currentPasswordLabel": "Ọ̀rọ̀ àṣínà lọ́wọ́lọ́wọ́",
+    "newPasswordLabel": "Ọ̀rọ̀ àṣínà tuntun",
+    "confirmPasswordLabel": "Jẹ́rìí sí ọ̀rọ̀ àṣínà tuntun",
+    "changePasswordBtn": "Yí ọ̀rọ̀ àṣínà padà",
+    "passwordMismatch": "Àwọn ọ̀rọ̀ àṣínà tuntun kò dọ́gba.",
+    "passwordTooShort": "Ọ̀rọ̀ àṣínà tuntun gbọ́dọ̀ ní ó kéré jù lẹ́tà mẹ́jọ.",
+    "activeModules": "Àwọn Modulu Tí Ń Ṣiṣẹ́",
+    "support": "Ìrànlọ́wọ́",
+    "helpLink": "Ìrànlọ́wọ́ & Àtìlẹ́yìn (FAQ) →",
+    "legal": "Òfin",
+    "privacyLink": "Òfin Ìpamọ́ & Àwọn Òfin Iṣẹ́ →",
+    "dangerZone": "Agbègbè Ewu",
+    "dangerZoneHint": "Yóò pa àkáǹtì rẹ rẹ́ pátápátá. A kò lè yí èyí padà — gbogbo dátà rẹ ni a óò yọ kúrò.",
+    "deleteMyAccount": "Pa àkáǹtì mi rẹ́",
+    "deleteModalTitle": "Pa Àkáǹtì Rẹ́",
+    "deleteConfirmText": "Ṣé o dá ọ lójú pé o fẹ́ pa àkáǹtì rẹ rẹ́? Ìgbésẹ̀ yìí jẹ́",
+    "deleteConfirmBold": "ayérayé tí a kò lè yípadà",
+    "failedDelete": "Pípa àkáǹtì rẹ́ kùnà. Jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan sí i.",
+    "deleteConfirmBtn": "Bẹ́ẹ̀ni, pa á rẹ́",
+    "deleting": "Ń pa á rẹ́…"
+  },
+  "pagination": {
+    "showing": "Ń fi {{start}}–{{end}} hàn nínú {{total}}"
+  },
+  "dashboard": {
+    "greetingMorning": "Ẹ kú àárọ̀, {{name}}!",
+    "greetingAfternoon": "Ẹ kú ọ̀sán, {{name}}!",
+    "greetingEvening": "Ẹ kú alẹ́, {{name}}!",
+    "defaultName": "ìwọ"
+  }
+}

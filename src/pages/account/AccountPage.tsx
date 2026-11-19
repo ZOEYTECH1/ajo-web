@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CameraIcon } from '@heroicons/react/24/outline';
 import { Button } from '../../components/ui/Button';
@@ -19,6 +20,7 @@ interface ProfileUpdatePayload {
 
 export default function AccountPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { setUser, clearAuth } = useAuthStore();
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -70,7 +72,7 @@ export default function AccountPage() {
     onError: (e: any) => {
       const d = e.response?.data;
       const first = Object.values(d ?? {})[0];
-      setSaveErr(d?.detail ?? (Array.isArray(first) ? (first as string[])[0] : String(first ?? 'Failed to update profile.')));
+      setSaveErr(d?.detail ?? (Array.isArray(first) ? (first as string[])[0] : String(first ?? t('account.failedUpdateProfile'))));
     },
   });
 
@@ -101,7 +103,7 @@ export default function AccountPage() {
       setPhotoErr('');
     },
     onError: (e: any) => {
-      setPhotoErr(e.response?.data?.detail ?? e.response?.data?.photo?.[0] ?? 'Failed to upload photo.');
+      setPhotoErr(e.response?.data?.detail ?? e.response?.data?.photo?.[0] ?? t('account.failedUpdateProfile'));
     },
   });
 
@@ -123,7 +125,7 @@ export default function AccountPage() {
       setTimeout(() => setPwSuccess(false), 3000);
     },
     onError: (e: any) => {
-      setPwErr(e.response?.data?.detail ?? 'Failed to change password.');
+      setPwErr(e.response?.data?.detail ?? t('account.failedChangePassword'));
     },
   });
 
@@ -131,11 +133,11 @@ export default function AccountPage() {
     e.preventDefault();
     setPwErr('');
     if (pwForm.next !== pwForm.confirm) {
-      setPwErr('New passwords do not match.');
+      setPwErr(t('account.passwordMismatch'));
       return;
     }
     if (pwForm.next.length < 8) {
-      setPwErr('New password must be at least 8 characters.');
+      setPwErr(t('account.passwordTooShort'));
       return;
     }
     changePwMutation.mutate({ current_password: pwForm.current, new_password: pwForm.next });
@@ -165,8 +167,8 @@ export default function AccountPage() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-(--text-primary)">Account</h1>
-        <p className="text-sm text-(--text-secondary)">Manage your profile information</p>
+        <h1 className="text-2xl font-bold text-(--text-primary)">{t('account.title')}</h1>
+        <p className="text-sm text-(--text-secondary)">{t('account.subtitle')}</p>
       </div>
 
       {/* Avatar + photo upload */}
@@ -189,8 +191,8 @@ export default function AccountPage() {
               onClick={() => fileRef.current?.click()}
               disabled={photoMutation.isPending}
               className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-(--accent) text-white flex items-center justify-center shadow hover:bg-(--accent-dark) disabled:opacity-50 transition-colors"
-              title="Upload photo"
-              aria-label="Upload profile photo"
+              title={t('account.uploadPhoto')}
+              aria-label={t('account.uploadProfilePhotoA11y')}
             >
               {photoMutation.isPending ? (
                 <span className="block h-3 w-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -210,16 +212,16 @@ export default function AccountPage() {
             <p className="font-semibold text-(--text-primary) text-lg">{displayName}</p>
             <p className="text-sm text-(--text-secondary)">{user?.email}</p>
             <p className="text-xs text-(--text-muted) mt-0.5 capitalize">
-              {user?.role ?? 'Member'} ·{' '}
+              {user?.role ?? t('account.defaultRole')} ·{' '}
               {user?.is_email_verified ? (
-                <span className="text-green-600">Email verified</span>
+                <span className="text-green-600">{t('account.emailVerified')}</span>
               ) : (
-                <span className="text-yellow-600">Email not verified</span>
+                <span className="text-yellow-600">{t('account.emailNotVerified')}</span>
               )}
             </p>
             {!user?.profile_photo && (
               <p className="text-xs text-(--primary) mt-1">
-                Add a profile photo — required to join groups.
+                {t('account.addPhotoHint')}
               </p>
             )}
           </div>
@@ -231,11 +233,11 @@ export default function AccountPage() {
 
       {/* Edit form */}
       <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
-        <h2 className="text-base font-semibold text-(--text-primary) mb-4">Personal Information</h2>
+        <h2 className="text-base font-semibold text-(--text-primary) mb-4">{t('account.personalInfo')}</h2>
 
         {saveSuccess && (
           <div role="status" className="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
-            Profile updated successfully.
+            {t('account.profileUpdated')}
           </div>
         )}
 
@@ -248,13 +250,13 @@ export default function AccountPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="First name"
+              label={t('account.firstNameLabel')}
               name="first_name"
               value={form.first_name}
               onChange={handleChange}
             />
             <Input
-              label="Last name"
+              label={t('account.lastNameLabel')}
               name="last_name"
               value={form.last_name}
               onChange={handleChange}
@@ -262,7 +264,7 @@ export default function AccountPage() {
           </div>
 
           <Input
-            label="Email address"
+            label={t('account.emailLabel')}
             name="email"
             type="email"
             value={user?.email ?? ''}
@@ -271,7 +273,7 @@ export default function AccountPage() {
           />
 
           <Input
-            label="Phone number"
+            label={t('account.phoneLabel')}
             name="phone_number"
             type="tel"
             value={form.phone_number}
@@ -280,7 +282,7 @@ export default function AccountPage() {
 
           <div className="flex justify-end">
             <Button type="submit" variant="primary" loading={updateMutation.isPending}>
-              Save changes
+              {t('account.saveChanges')}
             </Button>
           </div>
         </form>
@@ -288,11 +290,11 @@ export default function AccountPage() {
 
       {/* Change password */}
       <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
-        <h2 className="text-base font-semibold text-(--text-primary) mb-4">Change Password</h2>
+        <h2 className="text-base font-semibold text-(--text-primary) mb-4">{t('account.changePasswordTitle')}</h2>
 
         {pwSuccess && (
           <div role="status" className="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
-            Password changed successfully.
+            {t('account.passwordChanged')}
           </div>
         )}
         {pwErr && (
@@ -303,7 +305,7 @@ export default function AccountPage() {
 
         <form onSubmit={handlePwSubmit} className="space-y-4">
           <Input
-            label="Current password"
+            label={t('account.currentPasswordLabel')}
             name="current"
             type="password"
             value={pwForm.current}
@@ -311,7 +313,7 @@ export default function AccountPage() {
             autoComplete="current-password"
           />
           <Input
-            label="New password"
+            label={t('account.newPasswordLabel')}
             name="next"
             type="password"
             value={pwForm.next}
@@ -319,7 +321,7 @@ export default function AccountPage() {
             autoComplete="new-password"
           />
           <Input
-            label="Confirm new password"
+            label={t('account.confirmPasswordLabel')}
             name="confirm"
             type="password"
             value={pwForm.confirm}
@@ -328,7 +330,7 @@ export default function AccountPage() {
           />
           <div className="flex justify-end">
             <Button type="submit" variant="primary" loading={changePwMutation.isPending}>
-              Change password
+              {t('account.changePasswordBtn')}
             </Button>
           </div>
         </form>
@@ -337,7 +339,7 @@ export default function AccountPage() {
       {/* Active modules */}
       {user?.selected_modules && user.selected_modules.length > 0 && (
         <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
-          <h2 className="text-base font-semibold text-(--text-primary) mb-3">Active Modules</h2>
+          <h2 className="text-base font-semibold text-(--text-primary) mb-3">{t('account.activeModules')}</h2>
           <div className="flex flex-wrap gap-2">
             {user.selected_modules.map((mod) => (
               <span
@@ -353,51 +355,51 @@ export default function AccountPage() {
 
       {/* Help & Support */}
       <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
-        <h2 className="text-base font-semibold text-(--text-primary) mb-3">Support</h2>
+        <h2 className="text-base font-semibold text-(--text-primary) mb-3">{t('account.support')}</h2>
         <Link
           to="/account/help"
           className="text-sm text-(--primary) hover:underline font-medium"
         >
-          Help &amp; Support (FAQ) →
+          {t('account.helpLink')}
         </Link>
       </div>
 
       {/* Privacy & Terms */}
       <div className="bg-(--surface) rounded-xl shadow-sm border border-(--border) p-6">
-        <h2 className="text-base font-semibold text-(--text-primary) mb-3">Legal</h2>
+        <h2 className="text-base font-semibold text-(--text-primary) mb-3">{t('account.legal')}</h2>
         <Link
           to="/account/privacy"
           className="text-sm text-(--primary) hover:underline font-medium"
         >
-          Privacy Policy &amp; Terms of Service →
+          {t('account.privacyLink')}
         </Link>
       </div>
 
       {/* Danger zone */}
       <div className="bg-(--surface) rounded-xl border border-red-200 dark:border-red-900 p-6">
-        <h2 className="text-base font-semibold text-red-700 dark:text-red-400 mb-1">Danger Zone</h2>
+        <h2 className="text-base font-semibold text-red-700 dark:text-red-400 mb-1">{t('account.dangerZone')}</h2>
         <p className="text-sm text-(--text-secondary) mb-4">
-          Permanently delete your account. This cannot be undone — all your data will be removed.
+          {t('account.dangerZoneHint')}
         </p>
         <button
           type="button"
           onClick={() => setShowDeleteConfirm(true)}
           className="rounded-lg border border-red-300 text-red-600 px-4 py-2 text-sm font-semibold hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
         >
-          Delete my account
+          {t('account.deleteMyAccount')}
         </button>
       </div>
 
       {/* Delete confirm modal */}
-      <Modal open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} title="Delete Account" size="sm">
+      <Modal open={showDeleteConfirm} onClose={() => setShowDeleteConfirm(false)} title={t('account.deleteModalTitle')} size="sm">
         <div className="space-y-4">
           <p className="text-sm text-(--text-secondary)">
-            Are you sure you want to delete your account? This action is{' '}
-            <span className="font-semibold text-red-600">permanent and cannot be reversed</span>.
+            {t('account.deleteConfirmText')}{' '}
+            <span className="font-semibold text-red-600">{t('account.deleteConfirmBold')}</span>.
           </p>
           {deleteMutation.isError && (
             <p role="alert" className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
-              Failed to delete account. Please try again.
+              {t('account.failedDelete')}
             </p>
           )}
           <div className="flex gap-3">
@@ -406,7 +408,7 @@ export default function AccountPage() {
               onClick={() => setShowDeleteConfirm(false)}
               className="flex-1 rounded-lg border border-(--border) text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30 transition-colors"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -414,7 +416,7 @@ export default function AccountPage() {
               onClick={() => deleteMutation.mutate()}
               className="flex-1 rounded-lg bg-red-600 text-white py-2.5 text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
             >
-              {deleteMutation.isPending ? 'Deleting…' : 'Yes, delete'}
+              {deleteMutation.isPending ? t('account.deleting') : t('account.deleteConfirmBtn')}
             </button>
           </div>
         </div>

@@ -1664,6 +1664,7 @@ function CollectionOrderTab({
   active: boolean;
   activeCycleSlot?: number;
 }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { data, isLoading, error } = useQuery<CollectionOrderEntry[]>({
     queryKey: ['ajo-group-collection-order', String(groupId)],
@@ -1696,7 +1697,7 @@ function CollectionOrderTab({
       qc.invalidateQueries({ queryKey: ['ajo-group-collection-order', String(groupId)] });
     },
     onError: (e: any) => {
-      setSaveErr(e.response?.data?.detail ?? 'Failed to save order.');
+      setSaveErr(e.response?.data?.detail ?? t('groupDetail.collectionOrderTab.failedSave'));
     },
   });
 
@@ -1733,15 +1734,15 @@ function CollectionOrderTab({
   }
 
   if (!active) return null;
-  if (isLoading) return <p className="text-sm text-(--text-muted) animate-pulse">Loading collection order…</p>;
-  if (error) return <p className="text-sm text-red-500">Failed to load collection order.</p>;
-  if (!data || data.length === 0) return <p className="text-sm text-(--text-secondary) text-center py-8">No collection order set.</p>;
+  if (isLoading) return <p className="text-sm text-(--text-muted) animate-pulse">{t('groupDetail.collectionOrderTab.loading')}</p>;
+  if (error) return <p className="text-sm text-red-500">{t('groupDetail.collectionOrderTab.failedLoad')}</p>;
+  if (!data || data.length === 0) return <p className="text-sm text-(--text-secondary) text-center py-8">{t('groupDetail.collectionOrderTab.noneSet')}</p>;
 
   return (
     <div className="space-y-4">
       {isAdmin && (
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm text-(--text-secondary)">Drag members up or down, then save.</p>
+          <p className="text-sm text-(--text-secondary)">{t('groupDetail.collectionOrderTab.dragHint')}</p>
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -1749,7 +1750,7 @@ function CollectionOrderTab({
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) text-sm font-semibold hover:bg-(--primary-tint)/30"
             >
               <ArrowPathIcon className="h-4 w-4" />
-              Shuffle
+              {t('groupDetail.collectionOrderTab.shuffle')}
             </button>
             <button
               type="button"
@@ -1762,7 +1763,7 @@ function CollectionOrderTab({
                   : 'bg-(--bg) text-(--text-muted) cursor-not-allowed',
               )}
             >
-              {saveMutation.isPending ? 'Saving…' : 'Save Order'}
+              {saveMutation.isPending ? t('groupDetail.collectionOrderTab.saving') : t('groupDetail.collectionOrderTab.saveOrder')}
             </button>
           </div>
         </div>
@@ -1792,7 +1793,7 @@ function CollectionOrderTab({
                 {isCurrent && <TrophyIcon className="h-4 w-4 text-(--primary) shrink-0" />}
                 <span className={clsx('text-sm font-medium flex-1', isCurrent ? 'text-(--primary-dark) font-semibold' : 'text-(--text-secondary)')}>{entry.full_name}</span>
                 {isCurrent && (
-                  <span className="text-xs font-semibold bg-(--primary-light)/30 text-(--primary) rounded-full px-2 py-0.5">Now</span>
+                  <span className="text-xs font-semibold bg-(--primary-light)/30 text-(--primary) rounded-full px-2 py-0.5">{t('groupDetail.collectionOrderTab.now')}</span>
                 )}
                 {isAdmin && (
                   <div className="flex gap-1">
@@ -1801,8 +1802,8 @@ function CollectionOrderTab({
                       onClick={() => moveUp(index)}
                       disabled={index === 0}
                       className="p-1 rounded text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30 disabled:opacity-30 transition-colors"
-                      title="Move up"
-                      aria-label={`Move ${entry.full_name} up`}
+                      title={t('groupDetail.collectionOrderTab.moveUp')}
+                      aria-label={t('groupDetail.collectionOrderTab.moveUpA11y', { name: entry.full_name })}
                     >
                       <ChevronUpIcon className="h-4 w-4" aria-hidden="true" />
                     </button>
@@ -1811,8 +1812,8 @@ function CollectionOrderTab({
                       onClick={() => moveDown(index)}
                       disabled={index === localOrder.length - 1}
                       className="p-1 rounded text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30 disabled:opacity-30 transition-colors"
-                      title="Move down"
-                      aria-label={`Move ${entry.full_name} down`}
+                      title={t('groupDetail.collectionOrderTab.moveDown')}
+                      aria-label={t('groupDetail.collectionOrderTab.moveDownA11y', { name: entry.full_name })}
                     >
                       <ChevronDownIcon className="h-4 w-4" aria-hidden="true" />
                     </button>
@@ -1840,6 +1841,7 @@ function HistoryTab({
   payments: Payment[];
   active: boolean;
 }) {
+  const { t } = useTranslation();
   const { data: collectionOrder = [] } = useQuery<CollectionOrderEntry[]>({
     queryKey: ['ajo-group-collection-order', String(groupId)],
     queryFn: () => api.get(`/groups/${groupId}/collection-order/`).then((r) => r.data),
@@ -1853,7 +1855,7 @@ function HistoryTab({
   if (closedCycles.length === 0) {
     return (
       <p className="text-sm text-(--text-secondary) text-center py-8">
-        No completed cycles yet. History will appear here once cycles are closed.
+        {t('groupDetail.historyTab.noCompletedCycles')}
       </p>
     );
   }
@@ -1884,7 +1886,7 @@ function HistoryTab({
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-(--text-primary)">
-                    Cycle #{cycle.cycle_number} <span className="text-(--text-muted) font-normal">· Round {cycle.round_number}</span>
+                    {t('groupDetail.cyclesTab.cycleNumber', { number: cycle.cycle_number })} <span className="text-(--text-muted) font-normal">{t('groupDetail.historyTab.roundSuffix', { number: cycle.round_number })}</span>
                   </p>
                   <p className="text-xs text-(--text-secondary) mt-0.5">
                     {format(new Date(cycle.start_date), 'dd MMM yyyy')} —{' '}
@@ -1896,16 +1898,16 @@ function HistoryTab({
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                 {recipientName && (
                   <div>
-                    <p className="text-xs text-(--text-secondary)">Recipient</p>
+                    <p className="text-xs text-(--text-secondary)">{t('groupDetail.historyTab.recipient')}</p>
                     <p className="text-sm font-semibold text-(--text-primary)">{recipientName}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-xs text-(--text-secondary)">Members Paid</p>
+                  <p className="text-xs text-(--text-secondary)">{t('groupDetail.historyTab.membersPaid')}</p>
                   <p className="text-sm font-semibold text-(--text-primary)">{paidCount}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-(--text-secondary)">Total Collected</p>
+                  <p className="text-xs text-(--text-secondary)">{t('groupDetail.historyTab.totalCollected')}</p>
                   <p className="text-sm font-semibold text-green-700">{formatCurrency(pot)}</p>
                 </div>
               </div>
@@ -1942,6 +1944,7 @@ function summarizeExtraData(data: Record<string, unknown>): string {
 }
 
 function AuditLogTab({ groupId, active }: { groupId: number; active: boolean }) {
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useQuery<PaginatedAuditLog>({
@@ -1955,22 +1958,22 @@ function AuditLogTab({ groupId, active }: { groupId: number; active: boolean }) 
   const totalPages = Math.max(1, Math.ceil(totalCount / 20));
 
   const cols: Column<Record<string, unknown>>[] = [
-    { key: 'action_display', header: 'Action', render: (v) => String(v ?? '—') },
+    { key: 'action_display', header: t('groupDetail.auditTab.headers.action'), render: (v) => String(v ?? '—') },
     {
       key: 'actor',
-      header: 'By',
-      render: (v) => v ? fullName(v as UserSnap) : <span className="text-(--text-muted)">System</span>,
+      header: t('groupDetail.auditTab.headers.by'),
+      render: (v) => v ? fullName(v as UserSnap) : <span className="text-(--text-muted)">{t('groupDetail.auditTab.system')}</span>,
     },
     {
       key: 'extra_data',
-      header: 'Details',
+      header: t('groupDetail.auditTab.headers.details'),
       render: (v) => (
         <span className="text-xs text-(--text-secondary)">{summarizeExtraData(v as Record<string, unknown>)}</span>
       ),
     },
     {
       key: 'timestamp',
-      header: 'When',
+      header: t('groupDetail.auditTab.headers.when'),
       render: (v) => {
         try { return format(new Date(v as string), 'dd MMM yyyy, HH:mm'); } catch { return v as string; }
       },
@@ -1980,18 +1983,18 @@ function AuditLogTab({ groupId, active }: { groupId: number; active: boolean }) 
   return (
     <>
       <p className="text-xs text-(--text-muted) mb-3">
-        This group's full activity trail — every recorded action, newest first.
+        {t('groupDetail.auditTab.description')}
       </p>
       <Table
         columns={cols}
         data={entries as unknown as Record<string, unknown>[]}
         loading={isLoading}
-        emptyMessage="No activity recorded yet."
+        emptyMessage={t('groupDetail.auditTab.noActivity')}
       />
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4 gap-3 flex-wrap">
           <p className="text-xs text-(--text-muted)">
-            Showing {(page - 1) * 20 + 1}–{Math.min(page * 20, totalCount)} of {totalCount}
+            {t('pagination.showing', { start: (page - 1) * 20 + 1, end: Math.min(page * 20, totalCount), total: totalCount })}
           </p>
           <div className="flex gap-2">
             <button
@@ -2000,7 +2003,7 @@ function AuditLogTab({ groupId, active }: { groupId: number; active: boolean }) 
               disabled={page <= 1}
               className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-(--bg) text-(--text-secondary) disabled:opacity-40 hover:bg-(--primary-tint)/50"
             >
-              Previous
+              {t('groupDetail.auditTab.previous')}
             </button>
             <button
               type="button"
@@ -2008,7 +2011,7 @@ function AuditLogTab({ groupId, active }: { groupId: number; active: boolean }) 
               disabled={page >= totalPages}
               className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-(--bg) text-(--text-secondary) disabled:opacity-40 hover:bg-(--primary-tint)/50"
             >
-              Next
+              {t('groupDetail.auditTab.next')}
             </button>
           </div>
         </div>

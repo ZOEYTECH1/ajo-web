@@ -251,6 +251,41 @@
       "noDefaultersThisCycle": "Keine Säumigen in diesem Zyklus.",
       "paidAmount": "· bezahlt {{amount}}"
     },
+    "collectionOrderTab": {
+      "failedSave": "Reihenfolge konnte nicht gespeichert werden.",
+      "loading": "Einzugsreihenfolge wird geladen…",
+      "failedLoad": "Einzugsreihenfolge konnte nicht geladen werden.",
+      "noneSet": "Keine Einzugsreihenfolge festgelegt.",
+      "dragHint": "Mitglieder nach oben oder unten ziehen, dann speichern.",
+      "shuffle": "Mischen",
+      "saving": "Wird gespeichert…",
+      "saveOrder": "Reihenfolge speichern",
+      "now": "Jetzt",
+      "moveUp": "Nach oben",
+      "moveUpA11y": "{{name}} nach oben verschieben",
+      "moveDown": "Nach unten",
+      "moveDownA11y": "{{name}} nach unten verschieben"
+    },
+    "historyTab": {
+      "noCompletedCycles": "Noch keine abgeschlossenen Zyklen. Der Verlauf erscheint hier, sobald Zyklen geschlossen werden.",
+      "roundSuffix": "· Runde {{number}}",
+      "recipient": "Empfänger",
+      "membersPaid": "Zahlende Mitglieder",
+      "totalCollected": "Insgesamt eingesammelt"
+    },
+    "auditTab": {
+      "description": "Der vollständige Aktivitätsverlauf dieser Gruppe — jede erfasste Aktion, neueste zuerst.",
+      "headers": {
+        "action": "Aktion",
+        "by": "Von",
+        "details": "Details",
+        "when": "Wann"
+      },
+      "system": "System",
+      "noActivity": "Noch keine Aktivität erfasst.",
+      "previous": "Zurück",
+      "next": "Weiter"
+    },
     "errors": {
       "failedToLoad": "Gruppendetails konnten nicht geladen werden.",
       "membershipPending": "Dein Antrag, dieser Gruppe beizutreten, wartet noch auf Genehmigung.",

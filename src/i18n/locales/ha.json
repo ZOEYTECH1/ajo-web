@@ -252,6 +252,41 @@
       "noDefaultersThisCycle": "Babu wadanda basu biya a wannan zagaye.",
       "paidAmount": "· ya biya {{amount}}"
     },
+    "collectionOrderTab": {
+      "failedSave": "An kasa ajiye tsari.",
+      "loading": "Ana loda tsarin karɓa…",
+      "failedLoad": "An kasa loda tsarin karɓa.",
+      "noneSet": "Ba a saita tsarin karɓa ba.",
+      "dragHint": "Ja mambobi sama ko ƙasa, sa'an nan ajiye.",
+      "shuffle": "Gauraya",
+      "saving": "Ana ajiyewa…",
+      "saveOrder": "Ajiye Tsari",
+      "now": "Yanzu",
+      "moveUp": "Matsa sama",
+      "moveUpA11y": "Matsa {{name}} sama",
+      "moveDown": "Matsa ƙasa",
+      "moveDownA11y": "Matsa {{name}} ƙasa"
+    },
+    "historyTab": {
+      "noCompletedCycles": "Babu zagaye da aka kammala tukuna. Tarihi zai bayyana a nan da zarar an rufe zagaye.",
+      "roundSuffix": "· Zagaye {{number}}",
+      "recipient": "Mai Karɓa",
+      "membersPaid": "Mambobi da Suka Biya",
+      "totalCollected": "Jimillar da Aka Tattara"
+    },
+    "auditTab": {
+      "description": "Cikakken tarihin ayyukan wannan ƙungiya — kowane aiki da aka rubuta, sabo da farko.",
+      "headers": {
+        "action": "Aiki",
+        "by": "Daga",
+        "details": "Bayani",
+        "when": "Lokacin"
+      },
+      "system": "Tsarin",
+      "noActivity": "Babu ayyukan da aka rubuta tukuna.",
+      "previous": "Na Baya",
+      "next": "Na Gaba"
+    },
     "errors": {
       "failedToLoad": "An kasa loda bayanan ƙungiya.",
       "membershipPending": "Buƙatar ku na shiga wannan ƙungiya tana jiran amincewa.",

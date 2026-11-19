@@ -251,6 +251,41 @@
       "noDefaultersThisCycle": "No hay morosos en este ciclo.",
       "paidAmount": "· pagó {{amount}}"
     },
+    "collectionOrderTab": {
+      "failedSave": "Error al guardar el orden.",
+      "loading": "Cargando orden de cobro…",
+      "failedLoad": "Error al cargar el orden de cobro.",
+      "noneSet": "No se ha definido un orden de cobro.",
+      "dragHint": "Arrastra a los miembros hacia arriba o abajo, luego guarda.",
+      "shuffle": "Mezclar",
+      "saving": "Guardando…",
+      "saveOrder": "Guardar Orden",
+      "now": "Ahora",
+      "moveUp": "Subir",
+      "moveUpA11y": "Subir a {{name}}",
+      "moveDown": "Bajar",
+      "moveDownA11y": "Bajar a {{name}}"
+    },
+    "historyTab": {
+      "noCompletedCycles": "Aún no hay ciclos completados. El historial aparecerá aquí una vez que se cierren los ciclos.",
+      "roundSuffix": "· Ronda {{number}}",
+      "recipient": "Destinatario",
+      "membersPaid": "Miembros que pagaron",
+      "totalCollected": "Total recaudado"
+    },
+    "auditTab": {
+      "description": "El registro completo de actividad de este grupo — cada acción registrada, de la más reciente a la más antigua.",
+      "headers": {
+        "action": "Acción",
+        "by": "Por",
+        "details": "Detalles",
+        "when": "Cuándo"
+      },
+      "system": "Sistema",
+      "noActivity": "Aún no hay actividad registrada.",
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
     "errors": {
       "failedToLoad": "Error al cargar los detalles del grupo.",
       "membershipPending": "Tu solicitud para unirte a este grupo sigue pendiente de aprobación.",

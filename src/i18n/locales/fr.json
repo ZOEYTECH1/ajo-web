@@ -251,6 +251,41 @@
       "noDefaultersThisCycle": "Aucun défaillant pour ce cycle.",
       "paidAmount": "· payé {{amount}}"
     },
+    "collectionOrderTab": {
+      "failedSave": "Échec de l'enregistrement de l'ordre.",
+      "loading": "Chargement de l'ordre de collecte…",
+      "failedLoad": "Échec du chargement de l'ordre de collecte.",
+      "noneSet": "Aucun ordre de collecte défini.",
+      "dragHint": "Faites glisser les membres vers le haut ou le bas, puis enregistrez.",
+      "shuffle": "Mélanger",
+      "saving": "Enregistrement…",
+      "saveOrder": "Enregistrer l'ordre",
+      "now": "Maintenant",
+      "moveUp": "Monter",
+      "moveUpA11y": "Monter {{name}}",
+      "moveDown": "Descendre",
+      "moveDownA11y": "Descendre {{name}}"
+    },
+    "historyTab": {
+      "noCompletedCycles": "Aucun cycle terminé pour le moment. L'historique apparaîtra ici une fois les cycles clôturés.",
+      "roundSuffix": "· Tour {{number}}",
+      "recipient": "Bénéficiaire",
+      "membersPaid": "Membres ayant payé",
+      "totalCollected": "Total collecté"
+    },
+    "auditTab": {
+      "description": "L'historique complet d'activité de ce groupe — chaque action enregistrée, du plus récent au plus ancien.",
+      "headers": {
+        "action": "Action",
+        "by": "Par",
+        "details": "Détails",
+        "when": "Quand"
+      },
+      "system": "Système",
+      "noActivity": "Aucune activité enregistrée pour le moment.",
+      "previous": "Précédent",
+      "next": "Suivant"
+    },
     "errors": {
       "failedToLoad": "Échec du chargement des détails du groupe.",
       "membershipPending": "Votre demande d'adhésion à ce groupe est toujours en attente d'approbation.",

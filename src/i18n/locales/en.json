@@ -251,6 +251,41 @@
       "noDefaultersThisCycle": "No defaulters for this cycle.",
       "paidAmount": "· paid {{amount}}"
     },
+    "collectionOrderTab": {
+      "failedSave": "Failed to save order.",
+      "loading": "Loading collection order…",
+      "failedLoad": "Failed to load collection order.",
+      "noneSet": "No collection order set.",
+      "dragHint": "Drag members up or down, then save.",
+      "shuffle": "Shuffle",
+      "saving": "Saving…",
+      "saveOrder": "Save Order",
+      "now": "Now",
+      "moveUp": "Move up",
+      "moveUpA11y": "Move {{name}} up",
+      "moveDown": "Move down",
+      "moveDownA11y": "Move {{name}} down"
+    },
+    "historyTab": {
+      "noCompletedCycles": "No completed cycles yet. History will appear here once cycles are closed.",
+      "roundSuffix": "· Round {{number}}",
+      "recipient": "Recipient",
+      "membersPaid": "Members Paid",
+      "totalCollected": "Total Collected"
+    },
+    "auditTab": {
+      "description": "This group's full activity trail — every recorded action, newest first.",
+      "headers": {
+        "action": "Action",
+        "by": "By",
+        "details": "Details",
+        "when": "When"
+      },
+      "system": "System",
+      "noActivity": "No activity recorded yet.",
+      "previous": "Previous",
+      "next": "Next"
+    },
     "errors": {
       "failedToLoad": "Failed to load group details.",
       "membershipPending": "Your request to join this group is still awaiting approval.",

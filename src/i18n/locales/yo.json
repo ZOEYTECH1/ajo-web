@@ -252,6 +252,41 @@
       "noDefaultersThisCycle": "Kò sí aṣìnà fún àyíká yìí.",
       "paidAmount": "· san {{amount}}"
     },
+    "collectionOrderTab": {
+      "failedSave": "Fífi ìlànà pamọ́ kùnà.",
+      "loading": "Ń kó ìlànà gbígbà…",
+      "failedLoad": "Kíkó ìlànà gbígbà kùnà.",
+      "noneSet": "Kò sí ìlànà gbígbà tí a ti ṣètò.",
+      "dragHint": "Fa àwọn ọmọ ẹgbẹ́ sókè tàbí sísàlẹ̀, lẹ́yìn náà fi pamọ́.",
+      "shuffle": "Dàpọ̀",
+      "saving": "Ń fi pamọ́…",
+      "saveOrder": "Fi Ìlànà Pamọ́",
+      "now": "Nísinsìnyí",
+      "moveUp": "Gbé sókè",
+      "moveUpA11y": "Gbé {{name}} sókè",
+      "moveDown": "Gbé sísàlẹ̀",
+      "moveDownA11y": "Gbé {{name}} sísàlẹ̀"
+    },
+    "historyTab": {
+      "noCompletedCycles": "Kò sí àyíká tí ó parí síbẹ̀. Àkọsílẹ̀ yóò farahàn níhìn-ín nígbà tí àwọn àyíká bá ti tì.",
+      "roundSuffix": "· Àyíká {{number}}",
+      "recipient": "Olùgbà",
+      "membersPaid": "Àwọn Ọmọ Ẹgbẹ́ Tó San",
+      "totalCollected": "Àpapọ̀ Tí A Kójọ"
+    },
+    "auditTab": {
+      "description": "Gbogbo àkọsílẹ̀ iṣẹ́ ẹgbẹ́ yìí — gbogbo ìgbésẹ̀ tí a kọ sílẹ̀, tuntun jùlọ ní àkọ́kọ́.",
+      "headers": {
+        "action": "Ìgbésẹ̀",
+        "by": "Láti ọ̀dọ̀",
+        "details": "Àlàyé",
+        "when": "Nígbàwo"
+      },
+      "system": "Ètò",
+      "noActivity": "Kò sí iṣẹ́ tí a kọ sílẹ̀ síbẹ̀.",
+      "previous": "Tí Tẹ̀lé",
+      "next": "Tó Kàn"
+    },
     "errors": {
       "failedToLoad": "Kíkó àwọn àlàyé ẹgbẹ́ kùnà.",
       "membershipPending": "Ìbéèrè rẹ láti darapọ̀ mọ́ ẹgbẹ́ yìí ṣì ń dúró de ìfọwọ́sí.",

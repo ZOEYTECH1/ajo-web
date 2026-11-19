@@ -252,6 +252,41 @@
       "noDefaultersThisCycle": "Enweghị onye na-akwụghị ụgwọ na usoro a.",
       "paidAmount": "· kwụrụ {{amount}}"
     },
+    "collectionOrderTab": {
+      "failedSave": "Ichekwa usoro emeghị nke ọma.",
+      "loading": "Na-ebu usoro nchịkọta…",
+      "failedLoad": "Ibu usoro nchịkọta emeghị nke ọma.",
+      "noneSet": "Edobeghị usoro nchịkọta.",
+      "dragHint": "Dọkpụrụ ndị otu gaa elu ma ọ bụ ala, mgbe ahụ chekwaa.",
+      "shuffle": "Gbanwee usoro",
+      "saving": "Na-echekwa…",
+      "saveOrder": "Chekwaa Usoro",
+      "now": "Ugbu a",
+      "moveUp": "Kwaga elu",
+      "moveUpA11y": "Kwaga {{name}} elu",
+      "moveDown": "Kwaga ala",
+      "moveDownA11y": "Kwaga {{name}} ala"
+    },
+    "historyTab": {
+      "noCompletedCycles": "Enwebeghị usoro gụchara ugbu a. Akụkọ ihe mere eme ga-apụta ebe a ozugbo emechiri usoro.",
+      "roundSuffix": "· Gburugburu {{number}}",
+      "recipient": "Onye Nnata",
+      "membersPaid": "Ndị Otu Kwụrụ Ụgwọ",
+      "totalCollected": "Mkpokọta Anatara"
+    },
+    "auditTab": {
+      "description": "Akụkọ ihe mere eme zuru oke nke otu a — omume ọ bụla edekọrọ, nke kasị ọhụrụ na mbụ.",
+      "headers": {
+        "action": "Omume",
+        "by": "Site na",
+        "details": "Nkọwa",
+        "when": "Mgbe"
+      },
+      "system": "Usoro",
+      "noActivity": "Enwebeghị omume edekọrọ ugbu a.",
+      "previous": "Nke gara aga",
+      "next": "Nke ọzọ"
+    },
     "errors": {
       "failedToLoad": "Ibu nkọwa otu emeghị nke ọma.",
       "membershipPending": "Arịrịọ gị isonye n'otu a ka na-eche nkwado.",

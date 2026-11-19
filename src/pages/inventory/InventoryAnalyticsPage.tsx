@@ -514,7 +514,7 @@ export default function InventoryAnalyticsPage() {
             <h2 className="text-base font-semibold text-(--text-primary)">Period Breakdown</h2>
             <p className="text-xs text-(--text-muted) mt-0.5">Net Profit = Revenue − Expenses &nbsp;|&nbsp; Gross Profit = Revenue − Cost of Goods</p>
           </div>
-          <div className="py-4 sm:p-6 sm:pt-4">
+          <div className="py-4 md:p-6 md:pt-4">
             <Table
               columns={[
                 { key: 'label', header: 'Period', render: (v) => <span className="font-medium">{v as string}</span> },
@@ -592,7 +592,7 @@ export default function InventoryAnalyticsPage() {
             {[1, 2, 3].map((i) => <div key={i} className="h-10 rounded-lg bg-(--bg) skeleton" />)}
           </div>
         ) : (data?.best_sellers ?? []).length > 0 ? (
-          <div className="py-4 sm:p-6 sm:pt-4">
+          <div className="py-4 md:p-6 md:pt-4">
             <Table
               columns={[
                 {

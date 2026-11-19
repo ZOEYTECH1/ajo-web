@@ -464,8 +464,13 @@ export default function InventoryBusinessPage() {
             // panel wrapping another padded tab's content stacked on top of
             // the page's own gutter eats width on a phone before the tab
             // content even starts (same fix as the Ajo/Thrift group detail
-            // pages). Boxed look returns at sm: and up.
-            <div className="sm:bg-(--surface) rounded-xl sm:shadow-sm sm:border sm:border-(--border) overflow-hidden">
+            // pages). Boxed look returns at md: and up -- matching md: and
+            // not sm: matters here: Table itself switches from cards to a
+            // table at md:, so using sm: for this wrapper reactivated the
+            // box chrome + padding a breakpoint early, on any device between
+            // 640-767px wide -- cards still showing, but nested inside a
+            // padded box again, exactly the bug this fix exists to prevent.
+            <div className="md:bg-(--surface) rounded-xl md:shadow-sm md:border md:border-(--border) overflow-hidden">
               {/* Tabs */}
               <div className="border-b border-(--border) flex overflow-x-auto">
                 {([
@@ -477,7 +482,7 @@ export default function InventoryBusinessPage() {
                     type="button"
                     onClick={() => setActiveTab(key)}
                     className={clsx(
-                      'flex items-center gap-2 px-4 sm:px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors',
+                      'flex items-center gap-2 px-4 md:px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors',
                       activeTab === key
                         ? 'border-b-2 border-(--primary) text-(--primary)'
                         : 'text-(--text-secondary) hover:text-(--text-primary)',
@@ -489,7 +494,7 @@ export default function InventoryBusinessPage() {
                 ))}
               </div>
 
-              <div className="py-4 sm:p-6">
+              <div className="py-4 md:p-6">
                 {/* Details tab */}
                 {activeTab === 'details' && (
                   <div className="space-y-4">

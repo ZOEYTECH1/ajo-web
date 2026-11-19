@@ -98,14 +98,17 @@ export function InventoryNav() {
           <button
             type="button"
             onClick={() => setOpen(v => !v)}
-            className="flex items-center gap-2 rounded-lg surface-soft-sm surface-soft-interactive px-3 py-2 text-sm font-semibold text-(--text-primary) hover:border-(--primary-light)"
+            className="flex items-center gap-2 max-w-full rounded-lg surface-soft-sm surface-soft-interactive px-3 py-2 text-sm font-semibold text-(--text-primary) hover:border-(--primary-light)"
           >
             <Icon className="h-4 w-4 text-(--primary) shrink-0" />
-            <span className="max-w-[180px] truncate">{selectedBiz?.name ?? 'Select location'}</span>
-            <span className="text-xs font-normal text-(--text-muted) capitalize ml-0.5">
+            <span className="max-w-35 sm:max-w-45 truncate">{selectedBiz?.name ?? 'Select location'}</span>
+            {/* The mode icon already encodes this -- the "(mode)" label is
+                a nice-to-have that can drop on the narrowest phones rather
+                than risk pushing the button wider than the viewport. */}
+            <span className="hidden sm:inline text-xs font-normal text-(--text-muted) capitalize shrink-0">
               ({selectedBiz?.mode ?? ''})
             </span>
-            <ChevronDownIcon className={clsx('h-3.5 w-3.5 text-(--text-muted) transition-transform ml-auto', open && 'rotate-180')} />
+            <ChevronDownIcon className={clsx('h-3.5 w-3.5 text-(--text-muted) transition-transform shrink-0 ml-auto', open && 'rotate-180')} />
           </button>
 
           {open && (
@@ -141,15 +144,18 @@ export function InventoryNav() {
       )}
 
       {/* Nav links -- a primary row plus a "More" dropdown (GitHub's own
-          repo-tabs pattern), instead of either wrapping onto a second row
-          or forcing a horizontal scrollbar once there are this many
-          destinations. Primary links still wrap on genuinely narrow
-          screens (phones) rather than scrolling -- six short labels wrap
-          cleanly onto at most two rows there, which is still better than
-          a scrollbar. Active state is a pill background, not a
+          repo-tabs pattern). The primary row now scrolls horizontally on
+          narrow screens rather than wrapping -- with 7 primary links plus
+          the "More" trigger, wrapping produced a ragged 2-3 row block
+          whose height varied with viewport width, pushing page content
+          down unpredictably and reading as cramped. Scrolling keeps the
+          nav a single, predictable row at every width -- the same
+          treatment already used for the Ajo/Thrift group detail tab bars.
+          No visual change at all once everything already fits on one row
+          (tablet/desktop). Active state is a pill background, not a
           border-bottom accent, so there's no border-alignment class of
           bug here to begin with. */}
-      <div className="flex items-center gap-1 flex-wrap border-b border-(--border) pb-2">
+      <div className="flex items-center gap-1 overflow-x-auto border-b border-(--border) pb-2">
         {primaryLinks.map(({ to, label, end }) => (
           <NavLink
             key={to}

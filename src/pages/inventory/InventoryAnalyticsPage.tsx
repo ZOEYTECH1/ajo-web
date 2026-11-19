@@ -547,13 +547,20 @@ export default function InventoryAnalyticsPage() {
                 units_sold: s?.total_units_sold ?? 0,
               } as unknown as Record<string, unknown>}
             />
-            <Pagination
-              page={breakdownSafePage}
-              totalPages={breakdownTotalPages}
-              totalCount={reversedChart.length}
-              pageSize={BREAKDOWN_PAGE_SIZE}
-              onChange={setBreakdownPage}
-            />
+            {/* Pagination is a plain row of buttons, not a card like Table's
+                own rows -- it has no border/padding of its own to create
+                breathing room, so being flush against the parent (correct
+                for Table's cards) would crowd its page-number buttons right
+                up against the card edge. Give it back its own gutter. */}
+            <div className="px-4 md:px-0">
+              <Pagination
+                page={breakdownSafePage}
+                totalPages={breakdownTotalPages}
+                totalCount={reversedChart.length}
+                pageSize={BREAKDOWN_PAGE_SIZE}
+                onChange={setBreakdownPage}
+              />
+            </div>
           </div>
         </section>
       )}

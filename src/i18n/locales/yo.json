@@ -302,6 +302,7 @@
       "roundCycleBadge": "Yípo {{round}} · Àyípo {{cycle}}",
       "roundCompleteBadge": "Yípo {{round}} ti parí",
       "inviteCode": "Kóòdù Ìkésíni",
+      "inviteCodeHint": "Pín kóòdù yìí fún ẹnikẹ́ni tí o fẹ́ pè — wọ́n lè lò ó láti béèrè láti dápọ̀.",
       "copied": "Ti dà kọ́pì!",
       "copyInviteCode": "Dà kọ́pì kóòdù ìkésíni",
       "regenerateInviteCode": "Ṣẹ̀dá kóòdù ìkésíni tuntun",

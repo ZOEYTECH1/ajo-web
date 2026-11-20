@@ -36,7 +36,7 @@ export function Pagination({
       <p className="text-xs text-(--text-muted)">
         {t('pagination.showing', { start, end, total: totalCount })}
       </p>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={() => onChange(Math.max(1, page - 1))}
@@ -46,27 +46,29 @@ export function Pagination({
           <ChevronLeftIcon className="h-4 w-4" />
         </button>
 
-        {pageNums.map((n, i) =>
-          n === '…' ? (
-            <span key={`ellipsis-${i}`} className="px-1.5 text-xs text-(--text-muted)">
-              …
-            </span>
-          ) : (
-            <button
-              key={n}
-              type="button"
-              onClick={() => onChange(n as number)}
-              className={clsx(
-                'w-8 h-8 rounded-lg text-xs font-semibold transition-all duration-150 active:scale-[0.95]',
-                page === n
-                  ? 'bg-(--accent) text-white shadow-sm'
-                  : 'surface-soft-sm surface-soft-interactive text-(--text-secondary)',
-              )}
-            >
-              {n}
-            </button>
-          ),
-        )}
+        <div className="flex items-center gap-1.5">
+          {pageNums.map((n, i) =>
+            n === '…' ? (
+              <span key={`ellipsis-${i}`} className="px-1 text-xs text-(--text-muted)">
+                …
+              </span>
+            ) : (
+              <button
+                key={n}
+                type="button"
+                onClick={() => onChange(n as number)}
+                className={clsx(
+                  'w-8 h-8 rounded-lg text-xs font-semibold transition-all duration-150 active:scale-[0.95]',
+                  page === n
+                    ? 'bg-(--accent) text-white shadow-sm'
+                    : 'surface-soft-sm surface-soft-interactive text-(--text-secondary)',
+                )}
+              >
+                {n}
+              </button>
+            ),
+          )}
+        </div>
 
         <button
           type="button"

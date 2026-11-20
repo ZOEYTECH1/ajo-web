@@ -977,7 +977,7 @@ function PaymentsTab({
           <p className="text-xs text-(--text-muted)">
             {t('pagination.showing', { start: (page - 1) * 10 + 1, end: Math.min(page * 10, totalCount), total: totalCount })}
           </p>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -986,32 +986,34 @@ function PaymentsTab({
             >
               {t('groupDetail.paymentsTab.prev')}
             </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
-              .reduce<(number | '…')[]>((acc, n, idx, arr) => {
-                if (idx > 0 && n - (arr[idx - 1] as number) > 1) acc.push('…');
-                acc.push(n);
-                return acc;
-              }, [])
-              .map((n, i) =>
-                n === '…' ? (
-                  <span key={`ellipsis-${i}`} className="px-1.5 text-xs text-(--text-muted)">…</span>
-                ) : (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setPage(n as number)}
-                    className={clsx(
-                      'w-8 h-8 rounded-lg text-xs font-semibold transition-colors',
-                      page === n
-                        ? 'bg-(--accent) text-white'
-                        : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30',
-                    )}
-                  >
-                    {n}
-                  </button>
-                ),
-              )}
+            <div className="flex items-center gap-1.5">
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((n) => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
+                .reduce<(number | '…')[]>((acc, n, idx, arr) => {
+                  if (idx > 0 && n - (arr[idx - 1] as number) > 1) acc.push('…');
+                  acc.push(n);
+                  return acc;
+                }, [])
+                .map((n, i) =>
+                  n === '…' ? (
+                    <span key={`ellipsis-${i}`} className="px-1 text-xs text-(--text-muted)">…</span>
+                  ) : (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setPage(n as number)}
+                      className={clsx(
+                        'w-8 h-8 rounded-lg text-xs font-semibold transition-colors',
+                        page === n
+                          ? 'bg-(--accent) text-white'
+                          : 'surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30',
+                      )}
+                    >
+                      {n}
+                    </button>
+                  ),
+                )}
+            </div>
             <button
               type="button"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
@@ -2057,6 +2059,7 @@ export default function AjoGroupDetailPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('payments');
   const [showSubmit, setShowSubmit] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showInviteCode, setShowInviteCode] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const [groupQ, membersQ, paymentsQ, cyclesQ] = useQueries({
@@ -2229,15 +2232,26 @@ export default function AjoGroupDetailPage() {
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-(--text-primary)">{group.name}</h1>
               {isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => setShowSettings(true)}
-                  title={t('groupDetail.main.groupSettings')}
-                  aria-label={t('groupDetail.main.groupSettings')}
-                  className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30"
-                >
-                  <Cog6ToothIcon className="h-5 w-5" aria-hidden="true" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowInviteCode(true)}
+                    title={t('groupDetail.main.inviteCode')}
+                    aria-label={t('groupDetail.main.inviteCode')}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30"
+                  >
+                    <KeyIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowSettings(true)}
+                    title={t('groupDetail.main.groupSettings')}
+                    aria-label={t('groupDetail.main.groupSettings')}
+                    className="p-1.5 rounded-lg text-(--text-muted) hover:text-(--text-primary) hover:bg-(--primary-tint)/30"
+                  >
+                    <Cog6ToothIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                </div>
               )}
             </div>
             {group.description && (
@@ -2268,44 +2282,6 @@ export default function AjoGroupDetailPage() {
               )}
             </div>
 
-            {/* Invite code section — admin only. The code field is the
-                dominant element (label above, like the stats grid below);
-                Copy/Regenerate are icon-only buttons beside it rather than
-                full text pills, so three same-weight chips don't compete
-                for the same line -- the code doesn't need "Copy" spelled
-                out in words when the icon is sitting right next to it. */}
-            {isAdmin && (
-              <div className="mt-3">
-                <p className="text-xs text-(--text-secondary) mb-1">{t('groupDetail.main.inviteCode')}</p>
-                <div className="flex items-center gap-2">
-                  <span className="flex-1 min-w-0 inline-flex items-center gap-1.5 font-mono tracking-widest text-(--text-secondary) text-sm bg-(--bg) border border-(--border) rounded-lg px-3 py-1.5">
-                    <KeyIcon className="h-4 w-4 text-(--text-muted) shrink-0" />
-                    <span className="truncate">{group.invite_code}</span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => copyInviteCode(group.invite_code)}
-                    title={copied ? t('groupDetail.main.copied') : t('groupDetail.main.copyInviteCode')}
-                    aria-label={t('groupDetail.main.copyInviteCode')}
-                    className="shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30"
-                  >
-                    {copied
-                      ? <CheckCircleIcon className="h-4 w-4 text-green-600" />
-                      : <ClipboardDocumentIcon className="h-4 w-4" />}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => regenerateMutation.mutate()}
-                    disabled={regenerateMutation.isPending}
-                    title={t('groupDetail.main.regenerateInviteCode')}
-                    aria-label={t('groupDetail.main.regenerateInviteCode')}
-                    className="shrink-0 inline-flex items-center justify-center h-9 w-9 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-50 transition-colors"
-                  >
-                    <ArrowPathIcon className={clsx('h-4 w-4', regenerateMutation.isPending && 'animate-spin')} />
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* On mobile this was a small tile floating at the right edge of a
@@ -2334,68 +2310,76 @@ export default function AjoGroupDetailPage() {
           </div>
         </div>
 
-        {/* Stats row */}
-        <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 pt-4 border-t border-(--border) text-sm">
-          <div>
-            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.admin')}</p>
-            <p className="font-medium text-(--text-primary)">{fullName(group.admin)}</p>
-          </div>
-          <div>
-            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.subAdmin')}</p>
-            {group.sub_admin ? (
-              <p className="font-medium text-(--text-primary)">{fullName(group.sub_admin)}</p>
-            ) : isAdmin ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() => assignSubAdminMutation.mutate()}
-                  disabled={assignSubAdminMutation.isPending}
-                  className="font-medium text-(--primary) hover:underline disabled:opacity-50 text-sm"
-                >
-                  {assignSubAdminMutation.isPending
-                    ? t('groupDetail.main.assigning')
-                    : t('groupDetail.main.assignSubAdmin')}
-                </button>
-                {assignSubAdminMutation.isError && (
-                  <p className="text-xs text-red-600 mt-0.5">
-                    {(assignSubAdminMutation.error as { response?: { data?: { detail?: string } } })
-                      ?.response?.data?.detail ?? t('groupDetail.main.assignSubAdminFailed')}
-                  </p>
-                )}
-              </>
-            ) : (
-              <p className="font-medium text-(--text-primary)">{t('groupDetail.main.notAssigned')}</p>
-            )}
-          </div>
-          <div>
-            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.totalCycles')}</p>
-            <p className="font-medium text-(--text-primary)">{cycles.length}</p>
-          </div>
-          <div>
-            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.activeCycle')}</p>
-            <p className="font-medium text-(--text-primary)">{activeCycle ? `#${activeCycle.cycle_number}` : t('groupDetail.main.none')}</p>
-          </div>
-          <div>
-            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.thisCycleApproved')}</p>
-            <p className="font-medium text-green-700">
-              {activeCycle
-                ? formatCurrency(
-                    payments
-                      .filter((p) => p.cycle_number === activeCycle.cycle_number && p.status === 'approved')
-                      .reduce((sum, p) => sum + Number(p.amount_entered), 0),
-                  )
-                : '—'}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.allTimeApproved')}</p>
-            <p className="font-medium text-(--primary)">
-              {formatCurrency(
-                payments
-                  .filter((p) => p.status === 'approved')
-                  .reduce((sum, p) => sum + Number(p.amount_entered), 0),
+        {/* Stats row — capped at 3 columns even on wide screens (was 6)
+            so each cell keeps real width to breathe in, grouped into two
+            visual rows (people, then cycle/money figures) rather than one
+            undifferentiated strip. */}
+        <div className="mt-5 pt-4 border-t border-(--border) text-sm space-y-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4">
+            <div>
+              <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.admin')}</p>
+              <p className="font-medium text-(--text-primary) mt-1">{fullName(group.admin)}</p>
+            </div>
+            <div>
+              <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.subAdmin')}</p>
+              {group.sub_admin ? (
+                <p className="font-medium text-(--text-primary) mt-1">{fullName(group.sub_admin)}</p>
+              ) : isAdmin ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => assignSubAdminMutation.mutate()}
+                    disabled={assignSubAdminMutation.isPending}
+                    className="font-medium text-(--primary) hover:underline disabled:opacity-50 text-sm mt-1 block"
+                  >
+                    {assignSubAdminMutation.isPending
+                      ? t('groupDetail.main.assigning')
+                      : t('groupDetail.main.assignSubAdmin')}
+                  </button>
+                  {assignSubAdminMutation.isError && (
+                    <p className="text-xs text-red-600 mt-0.5">
+                      {(assignSubAdminMutation.error as { response?: { data?: { detail?: string } } })
+                        ?.response?.data?.detail ?? t('groupDetail.main.assignSubAdminFailed')}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="font-medium text-(--text-primary) mt-1">{t('groupDetail.main.notAssigned')}</p>
               )}
-            </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 pt-4 border-t border-(--border)/60">
+            <div>
+              <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.totalCycles')}</p>
+              <p className="font-medium text-(--text-primary) mt-1">{cycles.length}</p>
+            </div>
+            <div>
+              <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.activeCycle')}</p>
+              <p className="font-medium text-(--text-primary) mt-1">{activeCycle ? `#${activeCycle.cycle_number}` : t('groupDetail.main.none')}</p>
+            </div>
+            <div>
+              <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.thisCycleApproved')}</p>
+              <p className="font-medium text-green-700 mt-1">
+                {activeCycle
+                  ? formatCurrency(
+                      payments
+                        .filter((p) => p.cycle_number === activeCycle.cycle_number && p.status === 'approved')
+                        .reduce((sum, p) => sum + Number(p.amount_entered), 0),
+                    )
+                  : '—'}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.allTimeApproved')}</p>
+              <p className="font-medium text-(--primary) mt-1">
+                {formatCurrency(
+                  payments
+                    .filter((p) => p.status === 'approved')
+                    .reduce((sum, p) => sum + Number(p.amount_entered), 0),
+                )}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -2565,6 +2549,41 @@ export default function AjoGroupDetailPage() {
 
       {showSettings && isAdmin && (
         <GroupSettingsModal group={group} onClose={() => setShowSettings(false)} />
+      )}
+
+      {showInviteCode && isAdmin && (
+        <Modal open={showInviteCode} onClose={() => setShowInviteCode(false)} title={t('groupDetail.main.inviteCode')} size="sm">
+          <div className="flex items-center gap-2">
+            <span className="flex-1 min-w-0 inline-flex items-center gap-1.5 font-mono tracking-widest text-(--text-secondary) text-sm bg-(--bg) border border-(--border) rounded-lg px-3 py-2">
+              <KeyIcon className="h-4 w-4 text-(--text-muted) shrink-0" />
+              <span className="truncate">{group.invite_code}</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => copyInviteCode(group.invite_code)}
+              title={copied ? t('groupDetail.main.copied') : t('groupDetail.main.copyInviteCode')}
+              aria-label={t('groupDetail.main.copyInviteCode')}
+              className="shrink-0 inline-flex items-center justify-center h-10 w-10 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30"
+            >
+              {copied
+                ? <CheckCircleIcon className="h-4 w-4 text-green-600" />
+                : <ClipboardDocumentIcon className="h-4 w-4" />}
+            </button>
+            <button
+              type="button"
+              onClick={() => regenerateMutation.mutate()}
+              disabled={regenerateMutation.isPending}
+              title={t('groupDetail.main.regenerateInviteCode')}
+              aria-label={t('groupDetail.main.regenerateInviteCode')}
+              className="shrink-0 inline-flex items-center justify-center h-10 w-10 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) hover:bg-(--primary-tint)/30 disabled:opacity-50 transition-colors"
+            >
+              <ArrowPathIcon className={clsx('h-4 w-4', regenerateMutation.isPending && 'animate-spin')} />
+            </button>
+          </div>
+          <p className="text-xs text-(--text-muted) mt-3">
+            {t('groupDetail.main.inviteCodeHint')}
+          </p>
+        </Modal>
       )}
     </div>
   );

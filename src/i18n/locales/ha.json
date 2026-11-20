@@ -302,6 +302,7 @@
       "roundCycleBadge": "Zagaye {{round}} · Cycle {{cycle}}",
       "roundCompleteBadge": "Zagaye {{round}} ya ƙare",
       "inviteCode": "Lambar Gayyata",
+      "inviteCodeHint": "Raba wannan lambar da duk wanda kake son gayyata — za su iya shigar da ita don neman shiga.",
       "copied": "An kwafi!",
       "copyInviteCode": "Kwafa lambar gayyata",
       "regenerateInviteCode": "Sake ƙirƙiro lambar gayyata",

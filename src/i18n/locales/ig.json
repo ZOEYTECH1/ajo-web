@@ -302,6 +302,7 @@
       "roundCycleBadge": "Okirikiri {{round}} · Saịkụl {{cycle}}",
       "roundCompleteBadge": "Okirikiri {{round}} agwụla",
       "inviteCode": "Koodu Ọkpụkpọ",
+      "inviteCodeHint": "Kesaa koodu a nye onye ọ bụla ị chọrọ ịkpọ — ha nwere ike iji ya rịọ ka ha sonye.",
       "copied": "Edepụtala!",
       "copyInviteCode": "Depụta koodu ọkpụkpọ",
       "regenerateInviteCode": "Mepụtaghachi koodu ọkpụkpọ",

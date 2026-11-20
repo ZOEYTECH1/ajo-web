@@ -301,6 +301,7 @@
       "roundCycleBadge": "Runde {{round}} · Zyklus {{cycle}}",
       "roundCompleteBadge": "Runde {{round}} abgeschlossen",
       "inviteCode": "Einladungscode",
+      "inviteCodeHint": "Teile diesen Code mit allen, die du einladen möchtest — sie können damit um Beitritt bitten.",
       "copied": "Kopiert!",
       "copyInviteCode": "Einladungscode kopieren",
       "regenerateInviteCode": "Einladungscode neu erstellen",

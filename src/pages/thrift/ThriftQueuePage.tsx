@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { format } from 'date-fns';
 import { Skeleton } from '../../components/ui/Skeleton';
@@ -99,6 +100,7 @@ function FlagModal({
   onClose: () => void;
   isPending: boolean;
 }) {
+  const { t } = useTranslation();
   const [reason, setReason] = useState('');
 
   useEffect(() => {
@@ -106,21 +108,22 @@ function FlagModal({
   }, [open]);
 
   return (
-    <Modal open={open} onClose={onClose} title="Flag Amount">
+    <Modal open={open} onClose={onClose} title={t('thriftPage.queue.flagModal.title')}>
       {member && (
         <div className="space-y-4">
           <p className="text-sm text-(--text-secondary)">
-            Flag <span className="font-semibold text-(--text-primary)">{member.user.first_name} {member.user.last_name}</span>'s
-            contribution of <span className="font-semibold text-(--text-primary)">{formatCurrency(member.personal_amount)}</span> and
-            ask them to correct it. Provide a reason below.
+            {t('thriftPage.queue.flagModal.description', {
+              name: `${member.user.first_name} ${member.user.last_name}`,
+              amount: formatCurrency(member.personal_amount),
+            })}
           </p>
           <div>
-            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">Reason *</label>
+            <label className="block text-sm font-semibold text-(--text-secondary) mb-1">{t('thriftPage.queue.flagModal.reasonLabel')}</label>
             <textarea
               rows={3}
               value={reason}
               onChange={e => setReason(e.target.value)}
-              placeholder="e.g. Contribution amount doesn't match the group minimum"
+              placeholder={t('thriftPage.queue.flagModal.reasonPlaceholder')}
               className={inputCls}
             />
           </div>
@@ -130,7 +133,7 @@ function FlagModal({
               onClick={onClose}
               className="flex-1 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) py-2.5 text-sm font-semibold hover:bg-(--primary-tint)/30"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               type="button"
@@ -138,7 +141,7 @@ function FlagModal({
               onClick={() => onConfirm(reason.trim())}
               className="flex-1 rounded-lg bg-yellow-500 text-white py-2.5 text-sm font-semibold hover:bg-yellow-600 disabled:opacity-50 transition-colors"
             >
-              {isPending ? 'Flaggingâ€¦' : 'Flag Amount'}
+              {isPending ? t('thriftPage.queue.flagModal.flagging') : t('thriftPage.queue.flagAmount')}
             </button>
           </div>
         </div>
@@ -152,6 +155,7 @@ function FlagModal({
 type QueueTab = 'pending' | 'disputed';
 
 export default function ThriftQueuePage() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState<QueueTab>('pending');
   const [actionError, setActionError] = useState<Record<number, string>>({});
@@ -173,7 +177,7 @@ export default function ThriftQueuePage() {
     onError: (e: any, vars) => {
       setActionError(prev => ({
         ...prev,
-        [vars.memberId]: e.response?.data?.detail ?? 'Something went wrong.',
+        [vars.memberId]: e.response?.data?.detail ?? t('thriftPage.createModal.errors.somethingWrong'),
       }));
       setFlagTarget(null);
     },
@@ -183,40 +187,40 @@ export default function ThriftQueuePage() {
   const disputedPayments = data?.disputed_payments ?? [];
 
   const tabs: { key: QueueTab; label: string }[] = [
-    { key: 'pending', label: `Pending Members (${pendingMembers.length})` },
-    { key: 'disputed', label: `Disputed Payments (${disputedPayments.length})` },
+    { key: 'pending', label: t('thriftPage.queue.tabPendingMembers', { count: pendingMembers.length }) },
+    { key: 'disputed', label: t('thriftPage.queue.tabDisputedPayments', { count: disputedPayments.length }) },
   ];
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-(--text-primary)">Collector Queue</h1>
-        <p className="text-sm text-(--text-secondary)">Pending approvals and disputed payments</p>
+        <h1 className="text-2xl font-bold text-(--text-primary)">{t('thriftPage.queue.title')}</h1>
+        <p className="text-sm text-(--text-secondary)">{t('thriftPage.queue.subtitle')}</p>
       </div>
 
       {/* Global error */}
       {error && (
         <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
-          Failed to load queue. Please refresh.
+          {t('thriftPage.queue.failedToLoad')}
         </div>
       )}
 
       {/* Sub-tabs */}
       <div className="flex gap-2">
-        {tabs.map(t => (
+        {tabs.map(tab => (
           <button
-            key={t.key}
+            key={tab.key}
             type="button"
-            onClick={() => setActiveTab(t.key)}
+            onClick={() => setActiveTab(tab.key)}
             className={clsx(
               'px-4 py-1.5 rounded-full text-sm font-semibold transition-colors',
-              activeTab === t.key
+              activeTab === tab.key
                 ? 'bg-(--accent) text-white'
                 : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
             )}
           >
-            {t.label}
+            {tab.label}
           </button>
         ))}
       </div>
@@ -228,7 +232,7 @@ export default function ThriftQueuePage() {
             <SkeletonCards />
           ) : pendingMembers.length === 0 ? (
             <div className="surface-soft px-6 py-16 text-center">
-              <p className="text-sm text-(--text-muted)">No pending approvals</p>
+              <p className="text-sm text-(--text-muted)">{t('thriftPage.queue.noPendingApprovals')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -240,7 +244,7 @@ export default function ThriftQueuePage() {
                         {member.user.first_name} {member.user.last_name}
                       </p>
                       <p className="text-xs text-(--text-secondary)">
-                        Group:{' '}
+                        {t('thriftPage.queue.groupLabel')}{' '}
                         <Link
                           to={`/thrift/${member.group_uuid}`}
                           className="text-(--primary) hover:underline font-medium"
@@ -249,17 +253,17 @@ export default function ThriftQueuePage() {
                         </Link>
                       </p>
                       <p className="text-xs text-(--text-secondary)">
-                        Contribution:{' '}
+                        {t('thriftPage.queue.contributionLabel')}{' '}
                         <span className="font-semibold text-(--text-primary)">
                           {formatCurrency(member.personal_amount)}
                         </span>
                       </p>
-                      <p className="text-xs text-(--text-muted)">Requested {fmt(member.created_at)}</p>
+                      <p className="text-xs text-(--text-muted)">{t('thriftPage.queue.requestedOn', { date: fmt(member.created_at) })}</p>
                     </div>
 
                     <div className="flex gap-2 flex-shrink-0 flex-wrap">
                       {member.status === 'amount_pending' ? (
-                        /* Member has proposed corrected amount â€” approve or reject */
+                        /* Member has proposed corrected amount -- approve or reject */
                         <>
                           <button
                             type="button"
@@ -271,7 +275,7 @@ export default function ThriftQueuePage() {
                             })}
                             className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-3 py-1.5 hover:bg-green-100 transition-colors disabled:opacity-50"
                           >
-                            Approve Amount
+                            {t('thriftPage.queue.approveAmount')}
                           </button>
                           <button
                             type="button"
@@ -283,11 +287,11 @@ export default function ThriftQueuePage() {
                             })}
                             className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-1.5 hover:bg-red-100 transition-colors disabled:opacity-50"
                           >
-                            Reject
+                            {t('thriftPage.queue.reject')}
                           </button>
                         </>
                       ) : (
-                        /* Fresh pending member â€” approve, flag amount, or reject */
+                        /* Fresh pending member -- approve, flag amount, or reject */
                         <>
                           <button
                             type="button"
@@ -299,7 +303,7 @@ export default function ThriftQueuePage() {
                             })}
                             className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-3 py-1.5 hover:bg-green-100 transition-colors disabled:opacity-50"
                           >
-                            Approve
+                            {t('thriftPage.queue.approve')}
                           </button>
                           <button
                             type="button"
@@ -307,7 +311,7 @@ export default function ThriftQueuePage() {
                             onClick={() => setFlagTarget(member)}
                             className="text-xs font-semibold text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-1.5 hover:bg-yellow-100 transition-colors disabled:opacity-50"
                           >
-                            Flag Amount
+                            {t('thriftPage.queue.flagAmount')}
                           </button>
                           <button
                             type="button"
@@ -319,7 +323,7 @@ export default function ThriftQueuePage() {
                             })}
                             className="text-xs font-semibold text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg px-3 py-1.5 hover:bg-red-100 transition-colors disabled:opacity-50"
                           >
-                            Reject
+                            {t('thriftPage.queue.reject')}
                           </button>
                         </>
                       )}
@@ -329,7 +333,7 @@ export default function ThriftQueuePage() {
                   {/* Amount flagged banner */}
                   {member.status === 'amount_pending' && member.flag_reason && (
                     <div className="rounded-lg bg-yellow-50 border border-yellow-200 px-3 py-2 text-xs text-yellow-800">
-                      <span className="font-semibold">Flag reason: </span>{member.flag_reason}
+                      <span className="font-semibold">{t('thriftPage.queue.flagReasonLabel')} </span>{member.flag_reason}
                     </div>
                   )}
 
@@ -351,7 +355,7 @@ export default function ThriftQueuePage() {
             <SkeletonCards />
           ) : disputedPayments.length === 0 ? (
             <div className="surface-soft px-6 py-16 text-center">
-              <p className="text-sm text-(--text-muted)">No disputed payments</p>
+              <p className="text-sm text-(--text-muted)">{t('thriftPage.queue.noDisputedPayments')}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -361,7 +365,7 @@ export default function ThriftQueuePage() {
                     <div className="space-y-0.5">
                       <p className="text-sm font-semibold text-(--text-primary)">{payment.member_name}</p>
                       <p className="text-xs text-(--text-secondary)">
-                        Group:{' '}
+                        {t('thriftPage.queue.groupLabel')}{' '}
                         <Link
                           to={`/thrift/${payment.group_uuid}`}
                           className="text-(--primary) hover:underline font-medium"
@@ -370,30 +374,30 @@ export default function ThriftQueuePage() {
                         </Link>
                       </p>
                       <p className="text-xs text-(--text-secondary)">
-                        Amount:{' '}
+                        {t('thriftPage.queue.amountLabel')}{' '}
                         <span className="font-semibold text-(--text-primary)">{formatCurrency(payment.amount)}</span>
-                        <span className="mx-1.5 text-(--text-muted)">Â·</span>
-                        Period: <span className="font-medium">{fmt(payment.period_date)}</span>
+                        <span className="mx-1.5 text-(--text-muted)">·</span>
+                        {t('thriftPage.queue.periodLabel')} <span className="font-medium">{fmt(payment.period_date)}</span>
                       </p>
-                      <p className="text-xs text-(--text-muted)">Marked {fmt(payment.marked_at)}</p>
+                      <p className="text-xs text-(--text-muted)">{t('thriftPage.queue.markedOn', { date: fmt(payment.marked_at) })}</p>
                     </div>
 
-                    {/* Navigate to group to resolve â€” no direct queue resolution endpoint */}
+                    {/* Navigate to group to resolve -- no direct queue resolution endpoint */}
                     <Link
                       to={`/thrift/${payment.group_uuid}`}
                       className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-lg px-3 py-1.5 hover:bg-(--primary-light)/30 transition-colors flex-shrink-0"
                     >
-                      View in Group
+                      {t('thriftPage.queue.viewInGroup')}
                     </Link>
                   </div>
 
                   {/* Dispute reason */}
                   <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-3 py-2 text-xs text-red-800 dark:text-red-400">
-                    <span className="font-semibold">Dispute reason: </span>{payment.dispute_reason}
+                    <span className="font-semibold">{t('thriftPage.queue.disputeReasonLabel')} </span>{payment.dispute_reason}
                   </div>
 
                   {payment.notes && (
-                    <p className="text-xs text-(--text-secondary)">Notes: {payment.notes}</p>
+                    <p className="text-xs text-(--text-secondary)">{t('thriftPage.queue.notesLabel')} {payment.notes}</p>
                   )}
                 </div>
               ))}

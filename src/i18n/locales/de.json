@@ -534,6 +534,36 @@
       "disputed": "Angefochten",
       "voided": "Storniert"
     },
+    "queue": {
+      "title": "Einzieher-Warteschlange",
+      "subtitle": "Ausstehende Genehmigungen und angefochtene Zahlungen",
+      "failedToLoad": "Warteschlange konnte nicht geladen werden. Bitte aktualisieren.",
+      "tabPendingMembers": "Ausstehende Mitglieder ({{count}})",
+      "tabDisputedPayments": "Angefochtene Zahlungen ({{count}})",
+      "noPendingApprovals": "Keine ausstehenden Genehmigungen",
+      "noDisputedPayments": "Keine angefochtenen Zahlungen",
+      "groupLabel": "Gruppe:",
+      "contributionLabel": "Beitrag:",
+      "requestedOn": "Angefragt am {{date}}",
+      "approveAmount": "Betrag genehmigen",
+      "reject": "Ablehnen",
+      "approve": "Genehmigen",
+      "flagAmount": "Betrag markieren",
+      "flagReasonLabel": "Markierungsgrund:",
+      "amountLabel": "Betrag:",
+      "periodLabel": "Zeitraum:",
+      "markedOn": "Markiert am {{date}}",
+      "viewInGroup": "In der Gruppe ansehen",
+      "disputeReasonLabel": "Einspruchsgrund:",
+      "notesLabel": "Notizen:",
+      "flagModal": {
+        "title": "Betrag markieren",
+        "description": "Markiere den Beitrag von {{name}} über {{amount}} und bitte sie, ihn zu korrigieren. Gib unten einen Grund an.",
+        "reasonLabel": "Grund *",
+        "reasonPlaceholder": "z. B. Beitragsbetrag entspricht nicht dem Gruppenminimum",
+        "flagging": "Wird markiert…"
+      }
+    },
     "paymentHistory": {
       "backToThriftGroups": "← Spargruppen",
       "title": "Meine Zahlungshistorie",

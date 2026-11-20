@@ -534,6 +534,36 @@
       "disputed": "Disputado",
       "voided": "Anulado"
     },
+    "queue": {
+      "title": "Cola del colector",
+      "subtitle": "Aprobaciones pendientes y pagos disputados",
+      "failedToLoad": "Error al cargar la cola. Por favor, actualiza.",
+      "tabPendingMembers": "Miembros pendientes ({{count}})",
+      "tabDisputedPayments": "Pagos disputados ({{count}})",
+      "noPendingApprovals": "No hay aprobaciones pendientes",
+      "noDisputedPayments": "No hay pagos disputados",
+      "groupLabel": "Grupo:",
+      "contributionLabel": "Contribución:",
+      "requestedOn": "Solicitado el {{date}}",
+      "approveAmount": "Aprobar monto",
+      "reject": "Rechazar",
+      "approve": "Aprobar",
+      "flagAmount": "Marcar monto",
+      "flagReasonLabel": "Motivo del marcado:",
+      "amountLabel": "Monto:",
+      "periodLabel": "Periodo:",
+      "markedOn": "Marcado el {{date}}",
+      "viewInGroup": "Ver en el grupo",
+      "disputeReasonLabel": "Motivo de la disputa:",
+      "notesLabel": "Notas:",
+      "flagModal": {
+        "title": "Marcar monto",
+        "description": "Marca la contribución de {{name}} por {{amount}} y pídele que la corrija. Indica un motivo a continuación.",
+        "reasonLabel": "Motivo *",
+        "reasonPlaceholder": "ej. El monto de la contribución no coincide con el mínimo del grupo",
+        "flagging": "Marcando…"
+      }
+    },
     "paymentHistory": {
       "backToThriftGroups": "← Grupos de ahorro",
       "title": "Mi historial de pagos",

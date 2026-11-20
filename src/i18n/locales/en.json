@@ -534,6 +534,36 @@
       "disputed": "Disputed",
       "voided": "Voided"
     },
+    "queue": {
+      "title": "Collector Queue",
+      "subtitle": "Pending approvals and disputed payments",
+      "failedToLoad": "Failed to load queue. Please refresh.",
+      "tabPendingMembers": "Pending Members ({{count}})",
+      "tabDisputedPayments": "Disputed Payments ({{count}})",
+      "noPendingApprovals": "No pending approvals",
+      "noDisputedPayments": "No disputed payments",
+      "groupLabel": "Group:",
+      "contributionLabel": "Contribution:",
+      "requestedOn": "Requested {{date}}",
+      "approveAmount": "Approve Amount",
+      "reject": "Reject",
+      "approve": "Approve",
+      "flagAmount": "Flag Amount",
+      "flagReasonLabel": "Flag reason:",
+      "amountLabel": "Amount:",
+      "periodLabel": "Period:",
+      "markedOn": "Marked {{date}}",
+      "viewInGroup": "View in Group",
+      "disputeReasonLabel": "Dispute reason:",
+      "notesLabel": "Notes:",
+      "flagModal": {
+        "title": "Flag Amount",
+        "description": "Flag {{name}}'s contribution of {{amount}} and ask them to correct it. Provide a reason below.",
+        "reasonLabel": "Reason *",
+        "reasonPlaceholder": "e.g. Contribution amount doesn't match the group minimum",
+        "flagging": "Flagging…"
+      }
+    },
     "paymentHistory": {
       "backToThriftGroups": "← Thrift Groups",
       "title": "My Payment History",

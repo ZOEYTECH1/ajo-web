@@ -535,6 +535,36 @@
       "disputed": "An Yi Takaddama",
       "voided": "An Soke"
     },
+    "queue": {
+      "title": "Jerin Mai Karɓa",
+      "subtitle": "Yarda da ke jira da kuɗaɗen takaddama",
+      "failedToLoad": "An kasa loda jeri. Da fatan za a sabunta.",
+      "tabPendingMembers": "Mambobi Masu Jira ({{count}})",
+      "tabDisputedPayments": "Kuɗaɗen Takaddama ({{count}})",
+      "noPendingApprovals": "Babu yardar da ke jira",
+      "noDisputedPayments": "Babu kuɗaɗen takaddama",
+      "groupLabel": "Ƙungiya:",
+      "contributionLabel": "Gudummawa:",
+      "requestedOn": "An nema {{date}}",
+      "approveAmount": "Amince da Adadi",
+      "reject": "Ƙi",
+      "approve": "Amince",
+      "flagAmount": "Yi Alamar Adadi",
+      "flagReasonLabel": "Dalilin alama:",
+      "amountLabel": "Adadi:",
+      "periodLabel": "Zagaye:",
+      "markedOn": "An alama {{date}}",
+      "viewInGroup": "Duba a Ƙungiya",
+      "disputeReasonLabel": "Dalilin takaddama:",
+      "notesLabel": "Bayanai:",
+      "flagModal": {
+        "title": "Yi Alamar Adadi",
+        "description": "Yi alamar gudummawar {{name}} ta {{amount}} ka tambaye su su gyara ta. Bayar da dalili a ƙasa.",
+        "reasonLabel": "Dalili *",
+        "reasonPlaceholder": "misali. Adadin gudummawa bai dace da mafi ƙarancin ƙungiya ba",
+        "flagging": "Ana alama…"
+      }
+    },
     "paymentHistory": {
       "backToThriftGroups": "← Ƙungiyoyin Ajiya",
       "title": "Tarihin Biyan Kuɗi Na",

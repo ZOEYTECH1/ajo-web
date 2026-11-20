@@ -534,6 +534,36 @@
       "disputed": "Contesté",
       "voided": "Annulé"
     },
+    "queue": {
+      "title": "File du collecteur",
+      "subtitle": "Approbations en attente et paiements contestés",
+      "failedToLoad": "Échec du chargement de la file. Veuillez actualiser.",
+      "tabPendingMembers": "Membres en attente ({{count}})",
+      "tabDisputedPayments": "Paiements contestés ({{count}})",
+      "noPendingApprovals": "Aucune approbation en attente",
+      "noDisputedPayments": "Aucun paiement contesté",
+      "groupLabel": "Groupe :",
+      "contributionLabel": "Cotisation :",
+      "requestedOn": "Demandé le {{date}}",
+      "approveAmount": "Approuver le montant",
+      "reject": "Refuser",
+      "approve": "Approuver",
+      "flagAmount": "Signaler le montant",
+      "flagReasonLabel": "Motif du signalement :",
+      "amountLabel": "Montant :",
+      "periodLabel": "Période :",
+      "markedOn": "Marqué le {{date}}",
+      "viewInGroup": "Voir dans le groupe",
+      "disputeReasonLabel": "Motif de la contestation :",
+      "notesLabel": "Notes :",
+      "flagModal": {
+        "title": "Signaler le montant",
+        "description": "Signalez la cotisation de {{name}} d'un montant de {{amount}} et demandez-leur de la corriger. Indiquez un motif ci-dessous.",
+        "reasonLabel": "Motif *",
+        "reasonPlaceholder": "ex. Le montant de la cotisation ne correspond pas au minimum du groupe",
+        "flagging": "Signalement…"
+      }
+    },
     "paymentHistory": {
       "backToThriftGroups": "← Groupes de tontine",
       "title": "Mon historique de paiements",

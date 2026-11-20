@@ -535,6 +535,36 @@
       "disputed": "Enwere Esemokwu",
       "voided": "Akagburu"
     },
+    "queue": {
+      "title": "Usoro Onye Nchịkọta",
+      "subtitle": "Nkwenye na-eche na ego nwere esemokwu",
+      "failedToLoad": "Enweghị ike ibu usoro. Biko megharịa.",
+      "tabPendingMembers": "Ndị Otu Na-eche ({{count}})",
+      "tabDisputedPayments": "Ego Nwere Esemokwu ({{count}})",
+      "noPendingApprovals": "Enweghị nkwenye na-eche",
+      "noDisputedPayments": "Enweghị ego nwere esemokwu",
+      "groupLabel": "Ìgwè:",
+      "contributionLabel": "Onyinye:",
+      "requestedOn": "Arịọrọ {{date}}",
+      "approveAmount": "Kwenye Ego",
+      "reject": "Jụ",
+      "approve": "Kwenye",
+      "flagAmount": "Kaa Ego Akara",
+      "flagReasonLabel": "Ihe kpatara akara:",
+      "amountLabel": "Ego:",
+      "periodLabel": "Oge:",
+      "markedOn": "Akarara {{date}}",
+      "viewInGroup": "Lee n'Ìgwè",
+      "disputeReasonLabel": "Ihe kpatara esemokwu:",
+      "notesLabel": "Ndetu:",
+      "flagModal": {
+        "title": "Kaa Ego Akara",
+        "description": "Kaa onyinye {{name}} nke {{amount}} akara ma rịọ ha ka ha mezie ya. Nye ihe kpatara ya n'okpuru.",
+        "reasonLabel": "Ihe kpatara *",
+        "reasonPlaceholder": "ọmụmaatụ. Ego onyinye adabaghị ole dị ala nke ìgwè",
+        "flagging": "Na-aka akara…"
+      }
+    },
     "paymentHistory": {
       "backToThriftGroups": "← Ìgwè Ndekọ",
       "title": "Akụkọ Ego Ikwu M",

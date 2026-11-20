@@ -535,6 +535,36 @@
       "disputed": "Tí a Jiyàn",
       "voided": "Tí a Fagilé"
     },
+    "queue": {
+      "title": "Ìlà Agbagbowó",
+      "subtitle": "Àwọn ìfọwọ́sí tí ń dúró àti owó tí a jiyàn",
+      "failedToLoad": "Kò lè gba ìlà. Jọ̀wọ́ tún ṣe.",
+      "tabPendingMembers": "Àwọn Ọmọ Ẹgbẹ́ Tí Ń Dúró ({{count}})",
+      "tabDisputedPayments": "Owó Tí A Jiyàn ({{count}})",
+      "noPendingApprovals": "Kò sí ìfọwọ́sí tí ń dúró",
+      "noDisputedPayments": "Kò sí owó tí a jiyàn",
+      "groupLabel": "Ẹgbẹ́:",
+      "contributionLabel": "Ìfisílẹ̀:",
+      "requestedOn": "Tí a béèrè {{date}}",
+      "approveAmount": "Fọwọ́sí Iye",
+      "reject": "Kọ̀",
+      "approve": "Fọwọ́sí",
+      "flagAmount": "Sàmì sí Iye",
+      "flagReasonLabel": "Ìdí àmì sí:",
+      "amountLabel": "Iye:",
+      "periodLabel": "Àyípo:",
+      "markedOn": "Àmì sí {{date}}",
+      "viewInGroup": "Wo Nínú Ẹgbẹ́",
+      "disputeReasonLabel": "Ìdí ìjiyàn:",
+      "notesLabel": "Àkọsílẹ̀:",
+      "flagModal": {
+        "title": "Sàmì sí Iye",
+        "description": "Sàmì sí ìfisílẹ̀ {{name}} ti {{amount}} kí o sì bèèrè kí wọ́n ṣàtúnṣe rẹ̀. Pèsè ìdí ní ìsàlẹ̀.",
+        "reasonLabel": "Ìdí *",
+        "reasonPlaceholder": "f.a. Iye ìfisílẹ̀ kò bá iye tó kéré jùlọ nínú ẹgbẹ́ mu",
+        "flagging": "Ń sàmì sí…"
+      }
+    },
     "paymentHistory": {
       "backToThriftGroups": "← Àwọn Ẹgbẹ́ Ìfowópamọ́",
       "title": "Ìtàn Owó Mi",

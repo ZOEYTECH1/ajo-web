@@ -6,6 +6,7 @@ import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { Table } from '../../components/ui/Table';
 import { Modal } from '../../components/ui/Modal';
+import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 
 // ── Shared styles ────────────────────────────────────────────────────────────
@@ -67,6 +68,13 @@ interface OrgReport {
   reviewed_at: string | null;
 }
 
+interface PaginatedReports {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: OrgReport[];
+}
+
 interface PaymentSummary {
   total: number;
   confirmed: number;
@@ -90,6 +98,13 @@ interface RemovalRequest {
   resolved_by_name: string | null;
   created_at: string;
   resolved_at: string | null;
+}
+
+interface PaginatedRemovalRequests {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: RemovalRequest[];
 }
 
 interface Organization {
@@ -568,6 +583,11 @@ export default function ThriftOrgPage() {
   const [removalFilter, setRemovalFilter] = useState<'pending' | 'approved' | 'rejected'>('pending');
   const [actionError, setActionError] = useState<Record<number, string>>({});
   const [reportFilter, setReportFilter] = useState<'all' | 'pending' | 'reviewed' | 'resolved' | 'dismissed'>('all');
+  const [reportsPage, setReportsPage] = useState(1);
+  const [removalPage, setRemovalPage] = useState(1);
+
+  useEffect(() => { setReportsPage(1); }, [reportFilter]);
+  useEffect(() => { setRemovalPage(1); }, [removalFilter]);
 
   const { data, isLoading, error } = useQuery<OrgDashboard>({
     queryKey: ['thrift-org', orgUuid],
@@ -575,20 +595,37 @@ export default function ThriftOrgPage() {
     enabled: !!orgUuid,
   });
 
-  const { data: allReports = [], isLoading: reportsLoading } = useQuery<OrgReport[]>({
-    queryKey: ['thrift-org-reports', orgUuid, reportFilter],
-    queryFn: () => {
-      const params = reportFilter !== 'all' ? `?status=${reportFilter}` : '';
-      return api.get(`/thrift/orgs/${orgUuid}/reports/${params}`).then(r => r.data);
-    },
+  const { data: reportsData, isLoading: reportsLoading } = useQuery<PaginatedReports>({
+    queryKey: ['thrift-org-reports', orgUuid, reportFilter, reportsPage],
+    queryFn: () => api.get(`/thrift/orgs/${orgUuid}/reports/`, {
+      params: { page: reportsPage, ...(reportFilter !== 'all' ? { status: reportFilter } : {}) },
+    }).then(r => r.data),
     enabled: !!orgUuid && !!data,
   });
+  const allReports = reportsData?.results ?? [];
+  const reportsTotalCount = reportsData?.count ?? 0;
+  const reportsTotalPages = Math.max(1, Math.ceil(reportsTotalCount / 20));
 
-  const { data: removalRequests = [], isLoading: removalLoading } = useQuery<RemovalRequest[]>({
-    queryKey: ['thrift-org-removal-requests', orgUuid, removalFilter],
-    queryFn: () => api.get(`/thrift/orgs/${orgUuid}/removal-requests/?status=${removalFilter}`).then(r => r.data),
+  // Independent of reportFilter/reportsPage -- the header badge always wants
+  // the true system-wide pending count, not "pending items on this page" or
+  // "pending items matching whatever filter tab happens to be selected".
+  const { data: pendingReportsData } = useQuery<PaginatedReports>({
+    queryKey: ['thrift-org-reports-pending-count', orgUuid],
+    queryFn: () => api.get(`/thrift/orgs/${orgUuid}/reports/`, { params: { page: 1, status: 'pending' } }).then(r => r.data),
     enabled: !!orgUuid && !!data,
   });
+  const pendingReportsCount = pendingReportsData?.count ?? 0;
+
+  const { data: removalData, isLoading: removalLoading } = useQuery<PaginatedRemovalRequests>({
+    queryKey: ['thrift-org-removal-requests', orgUuid, removalFilter, removalPage],
+    queryFn: () => api.get(`/thrift/orgs/${orgUuid}/removal-requests/`, {
+      params: { page: removalPage, status: removalFilter },
+    }).then(r => r.data),
+    enabled: !!orgUuid && !!data,
+  });
+  const removalRequests = removalData?.results ?? [];
+  const removalTotalCount = removalData?.count ?? 0;
+  const removalTotalPages = Math.max(1, Math.ceil(removalTotalCount / 20));
 
   const rejectRemovalMutation = useMutation({
     mutationFn: ({ requestId, reason }: { requestId: number; reason: string }) =>
@@ -624,6 +661,7 @@ export default function ThriftOrgPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['thrift-org', orgUuid] });
       qc.invalidateQueries({ queryKey: ['thrift-org-reports', orgUuid] });
+      qc.invalidateQueries({ queryKey: ['thrift-org-reports-pending-count', orgUuid] });
     },
   });
 
@@ -893,9 +931,9 @@ export default function ThriftOrgPage() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <h2 className="text-base font-bold text-(--text-primary)">
             Reports
-            {allReports.filter(r => r.status === 'pending').length > 0 && (
+            {pendingReportsCount > 0 && (
               <span className="ml-2 text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                {allReports.filter(r => r.status === 'pending').length} pending
+                {pendingReportsCount} pending
               </span>
             )}
           </h2>
@@ -988,6 +1026,7 @@ export default function ThriftOrgPage() {
             ))}
           </div>
         )}
+        <Pagination page={reportsPage} totalPages={reportsTotalPages} totalCount={reportsTotalCount} pageSize={20} onChange={setReportsPage} />
       </div>
 
       {/* ── Removal Requests ── */}
@@ -995,9 +1034,9 @@ export default function ThriftOrgPage() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <h2 className="text-base font-bold text-(--text-primary)">
             Removal Requests
-            {removalRequests.filter(r => r.status === 'pending').length > 0 && removalFilter === 'pending' && (
+            {removalTotalCount > 0 && removalFilter === 'pending' && (
               <span className="ml-2 text-xs font-semibold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                {removalRequests.length} pending
+                {removalTotalCount} pending
               </span>
             )}
           </h2>
@@ -1113,6 +1152,7 @@ export default function ThriftOrgPage() {
             ))}
           </div>
         )}
+        <Pagination page={removalPage} totalPages={removalTotalPages} totalCount={removalTotalCount} pageSize={20} onChange={setRemovalPage} />
       </div>
 
       {/* Modals */}

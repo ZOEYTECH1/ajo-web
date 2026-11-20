@@ -4,7 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { Table, type Column } from '../../components/ui/Table';
-import { getOrgInvoices, getOrgBillingStatus, generateOrgInvoice, payOrgInvoice, verifyOrgInvoice, type ThriftInvoice } from '../../services/billingService';
+import { Pagination } from '../../components/ui/Pagination';
+import { getOrgInvoices, getOrgBillingStatus, generateOrgInvoice, payOrgInvoice, verifyOrgInvoice, type ThriftInvoice, type PaginatedInvoices } from '../../services/billingService';
 import { useFlutterwaveRedirect, currentPageRedirectUrl } from '../../hooks/useFlutterwaveRedirect';
 
 // Multiple invoices share this one page, so there's no single invoice id
@@ -217,6 +218,7 @@ export default function ThriftOrgBillingPage() {
 
   const qc = useQueryClient();
   const [generateError, setGenerateError] = useState('');
+  const [page, setPage] = useState(1);
 
   const [incoming, setIncoming] = useState<{ invoiceId: number; txId: string } | null>(null);
   useFlutterwaveRedirect((transactionId) => {
@@ -225,11 +227,14 @@ export default function ThriftOrgBillingPage() {
     if (invoiceId) setIncoming({ invoiceId, txId: transactionId });
   });
 
-  const { data: invoices, isLoading, error } = useQuery<ThriftInvoice[]>({
-    queryKey: ['thrift-org-billing-invoices', orgUuid],
-    queryFn: () => getOrgInvoices(orgUuid),
+  const { data: invoicesData, isLoading, error } = useQuery<PaginatedInvoices>({
+    queryKey: ['thrift-org-billing-invoices', orgUuid, page],
+    queryFn: () => getOrgInvoices(orgUuid, page),
     enabled: !!orgUuid,
   });
+  const invoices = invoicesData?.results ?? [];
+  const totalCount = invoicesData?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 20));
 
   const { data: billingStatus } = useQuery<{ can_generate_invoice: boolean }>({
     queryKey: ['thrift-org-billing-status', orgUuid],
@@ -241,6 +246,7 @@ export default function ThriftOrgBillingPage() {
   const generateMutation = useMutation({
     mutationFn: () => generateOrgInvoice(orgUuid),
     onSuccess: () => {
+      setPage(1);
       qc.invalidateQueries({ queryKey: ['thrift-org-billing-invoices', orgUuid] });
       qc.invalidateQueries({ queryKey: ['thrift-org-billing-status', orgUuid] });
       setGenerateError('');
@@ -301,7 +307,7 @@ export default function ThriftOrgBillingPage() {
       {/* Invoice list */}
       {isLoading ? (
         <SkeletonInvoices />
-      ) : !invoices || invoices.length === 0 ? (
+      ) : invoices.length === 0 ? (
         <div className="surface-soft px-6 py-16 text-center">
           <p className="text-sm text-(--text-muted)">No invoices yet. Generate your first invoice.</p>
         </div>
@@ -317,6 +323,8 @@ export default function ThriftOrgBillingPage() {
           ))}
         </div>
       )}
+
+      <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
     </div>
   );
 }

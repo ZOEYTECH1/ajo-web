@@ -16,8 +16,15 @@ export interface ThriftInvoice {
   }[];
 }
 
-export const getOrgInvoices = (orgUuid: string): Promise<ThriftInvoice[]> =>
-  api.get(`/thrift/orgs/${orgUuid}/billing/invoices/`).then((r) => r.data);
+export interface PaginatedInvoices {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ThriftInvoice[];
+}
+
+export const getOrgInvoices = (orgUuid: string, page: number): Promise<PaginatedInvoices> =>
+  api.get(`/thrift/orgs/${orgUuid}/billing/invoices/`, { params: { page } }).then((r) => r.data);
 
 export const getOrgBillingStatus = (orgUuid: string): Promise<{ can_generate_invoice: boolean }> =>
   api.get(`/thrift/orgs/${orgUuid}/billing/status/`).then((r) => r.data);

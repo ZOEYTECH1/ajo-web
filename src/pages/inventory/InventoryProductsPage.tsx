@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { getCategoryEmoji } from '../../utils/inventoryHelpers';
 import { Table } from '../../components/ui/Table';
+import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
 import { useDebounce } from '../../hooks/useDebounce';
 import { cloudinaryUrl } from '../../lib/cloudinary';
@@ -35,6 +36,13 @@ interface Product {
   expiry_date: string | null;
   image_url: string | null;
   created_at: string;
+}
+
+interface PaginatedProducts {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Product[];
 }
 
 interface Category { id: number; name: string; }
@@ -552,6 +560,13 @@ export default function InventoryProductsPage() {
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebounce(search);
   const [stockFilter, setStockFilter] = useState<'all' | 'in' | 'low' | 'out'>('all');
+  const [page, setPage] = useState(1);
+
+  // A new search term or stock filter changes what page 1 even means --
+  // staying on e.g. page 3 of the old results would either show a stale/
+  // wrong slice or an empty "past the end" page once the filtered count
+  // shrinks.
+  useEffect(() => { setPage(1); }, [debouncedSearch, stockFilter]);
 
   const { data: category } = useQuery<Category>({
     queryKey: ['inventory-category', catId],
@@ -559,9 +574,15 @@ export default function InventoryProductsPage() {
     enabled: !!catId,
   });
 
-  const { data, isLoading, error } = useQuery<Product[]>({
-    queryKey: ['inventory-products', catId],
-    queryFn: () => api.get(`/inventory/categories/${catId}/products/`).then(r => r.data),
+  const { data, isLoading, error } = useQuery<PaginatedProducts>({
+    queryKey: ['inventory-products', catId, page, debouncedSearch, stockFilter],
+    queryFn: () => api.get(`/inventory/categories/${catId}/products/`, {
+      params: {
+        page,
+        ...(debouncedSearch.trim() ? { search: debouncedSearch.trim() } : {}),
+        ...(stockFilter !== 'all' ? { stock: stockFilter } : {}),
+      },
+    }).then(r => r.data),
     enabled: !!catId,
   });
 
@@ -570,14 +591,9 @@ export default function InventoryProductsPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['inventory-products', catId] }),
   });
 
-  const filteredData = useMemo(() => {
-    let list = data ?? [];
-    if (debouncedSearch.trim()) list = list.filter(p => p.name.toLowerCase().includes(debouncedSearch.toLowerCase()) || p.barcode?.toLowerCase().includes(debouncedSearch.toLowerCase()));
-    if (stockFilter === 'out') list = list.filter(p => p.quantity === 0);
-    else if (stockFilter === 'low') list = list.filter(p => p.quantity > 0 && p.quantity <= p.low_stock_threshold);
-    else if (stockFilter === 'in') list = list.filter(p => p.quantity > p.low_stock_threshold);
-    return list;
-  }, [data, search, stockFilter]);
+  const products = data?.results ?? [];
+  const totalCount = data?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / 20));
 
   return (
     <div className="space-y-6">
@@ -738,7 +754,7 @@ export default function InventoryProductsPage() {
             },
           },
         ]}
-        data={filteredData as unknown as Record<string, unknown>[]}
+        data={products as unknown as Record<string, unknown>[]}
         loading={isLoading}
         emptyMessage={
           search || stockFilter !== 'all' ? 'No products match your filter.' : (
@@ -748,6 +764,8 @@ export default function InventoryProductsPage() {
           )
         }
       />
+
+      <Pagination page={page} totalPages={totalPages} totalCount={totalCount} pageSize={20} onChange={setPage} />
 
       {showAdd && catId && <ProductModal catId={catId} onClose={() => setShowAdd(false)} />}
       {editProduct && catId && (

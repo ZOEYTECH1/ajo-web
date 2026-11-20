@@ -563,6 +563,15 @@
       "paidOn": "Sanwó {{date}}",
       "somethingWrong": "Àṣìṣe kan ṣẹlẹ̀."
     },
+    "orgBilling": {
+      "backToOrganisation": "← Àjọ",
+      "title": "Owó Sísan Àjọ",
+      "subtitle": "Àwọn ìwé owó tí a kójọ pọ̀ ní oye báńkì (déédé −0.25%)",
+      "bankRate": "Oye Báńkì",
+      "infoBanner": "Àwọn ọmọ ẹgbẹ́ àjọ máa ń rí ẹ̀dínwó 0.25% lórí oye déédé. Gbogbo ẹgbẹ́ tí ó wà lábẹ́ àwọn agbagbowó rẹ ni a óò kó jọ pọ̀ nígbàkigbà tí àyípo bá parí.",
+      "generateHint": "Dídá yóò wà nígbà tí àyípo ọ̀kan nínú àwọn agbagbowó rẹ bá parí — èyí máa ń ṣẹlẹ̀ láìfọwọ́kàn pẹ̀lú ní àkókò yẹn.",
+      "verificationFailed": "Ìfẹsẹ̀múlẹ̀ kùnà. Ṣàyẹ̀wò ID ìṣòwò kí o sì tún gbìyànjú."
+    },
     "queue": {
       "title": "Ìlà Agbagbowó",
       "subtitle": "Àwọn ìfọwọ́sí tí ń dúró àti owó tí a jiyàn",

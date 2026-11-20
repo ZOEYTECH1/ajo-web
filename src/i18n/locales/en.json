@@ -562,6 +562,15 @@
       "paidOn": "Paid {{date}}",
       "somethingWrong": "Something went wrong."
     },
+    "orgBilling": {
+      "backToOrganisation": "← Organisation",
+      "title": "Organisation Billing",
+      "subtitle": "Consolidated invoices at bank rate (standard −0.25%)",
+      "bankRate": "Bank rate",
+      "infoBanner": "Organisation members receive a 0.25% discount on the standard rate. All groups across your collectors are consolidated whenever a circle completes.",
+      "generateHint": "Generate becomes available once one of your collectors' circles completes — it also happens automatically at that point.",
+      "verificationFailed": "Verification failed. Check the transaction ID and try again."
+    },
     "queue": {
       "title": "Collector Queue",
       "subtitle": "Pending approvals and disputed payments",

@@ -562,6 +562,15 @@
       "paidOn": "Payé le {{date}}",
       "somethingWrong": "Une erreur s'est produite."
     },
+    "orgBilling": {
+      "backToOrganisation": "← Organisation",
+      "title": "Facturation de l'organisation",
+      "subtitle": "Factures consolidées au taux bancaire (standard −0,25 %)",
+      "bankRate": "Taux bancaire",
+      "infoBanner": "Les membres de l'organisation bénéficient d'une réduction de 0,25 % sur le taux standard. Tous les groupes de vos collecteurs sont consolidés dès qu'un cercle se termine.",
+      "generateHint": "La génération devient disponible une fois qu'un cercle de l'un de vos collecteurs se termine — cela se produit aussi automatiquement à ce moment-là.",
+      "verificationFailed": "Échec de la vérification. Vérifiez l'ID de transaction et réessayez."
+    },
     "queue": {
       "title": "File du collecteur",
       "subtitle": "Approbations en attente et paiements contestés",

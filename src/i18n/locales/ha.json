@@ -563,6 +563,15 @@
       "paidOn": "An biya {{date}}",
       "somethingWrong": "Wani abu ya yi kuskure."
     },
+    "orgBilling": {
+      "backToOrganisation": "← Ƙungiya",
+      "title": "Biyan Kuɗin Ƙungiya",
+      "subtitle": "Lissafin kuɗi haɗaɗɗe a farashin banki (daidaitacce −0.25%)",
+      "bankRate": "Farashin Banki",
+      "infoBanner": "Mambobin ƙungiya suna samun rangwame na 0.25% akan farashin daidaitacce. Duk ƙungiyoyin masu karɓarka ana haɗa su duk lokacin da zagaye ya kammala.",
+      "generateHint": "Ƙirƙira zai samu da zarar zagayen ɗaya daga cikin masu karɓarka ya kammala — hakan kuma yana faruwa kai tsaye a wannan lokacin.",
+      "verificationFailed": "Tabbatarwa ta kasa. Duba ID na ma'amala sake gwadawa."
+    },
     "queue": {
       "title": "Jerin Mai Karɓa",
       "subtitle": "Yarda da ke jira da kuɗaɗen takaddama",

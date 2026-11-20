@@ -563,6 +563,15 @@
       "paidOn": "Akwụla {{date}}",
       "somethingWrong": "Ọ dị ihe mejọrọ."
     },
+    "orgBilling": {
+      "backToOrganisation": "← Òtù",
+      "title": "Ịkwụ Ụgwọ Òtù",
+      "subtitle": "Akwụkwọ ọnụahịa jikọtara ọnụ n'ọnụego ụlọ akụ (nkezi −0.25%)",
+      "bankRate": "Ọnụego Ụlọ Akụ",
+      "infoBanner": "Ndị otu Òtù na-enweta mbelata 0.25% na ọnụego nkezi. A na-ejikọta ìgwè niile n'okpuru ndị nchịkọta gị mgbe ọ bụla okirikiri gụchara.",
+      "generateHint": "Ịmepụta ga-adị mgbe okirikiri otu n'ime ndị nchịkọta gị gụchara — nke a na-emekwa na-akpaghị aka n'oge ahụ.",
+      "verificationFailed": "Nyocha dara ada. Lelee ID azụmahịa ma nwaa ọzọ."
+    },
     "queue": {
       "title": "Usoro Onye Nchịkọta",
       "subtitle": "Nkwenye na-eche na ego nwere esemokwu",

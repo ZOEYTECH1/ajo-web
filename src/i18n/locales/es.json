@@ -562,6 +562,15 @@
       "paidOn": "Pagado el {{date}}",
       "somethingWrong": "Algo salió mal."
     },
+    "orgBilling": {
+      "backToOrganisation": "← Organización",
+      "title": "Facturación de la organización",
+      "subtitle": "Facturas consolidadas a tasa bancaria (estándar −0.25%)",
+      "bankRate": "Tasa bancaria",
+      "infoBanner": "Los miembros de la organización reciben un descuento del 0.25% sobre la tasa estándar. Todos los grupos de tus colectores se consolidan cada vez que un círculo se completa.",
+      "generateHint": "Generar estará disponible una vez que un círculo de uno de tus colectores se complete — también ocurre automáticamente en ese momento.",
+      "verificationFailed": "Error de verificación. Revisa el ID de transacción e inténtalo de nuevo."
+    },
     "queue": {
       "title": "Cola del colector",
       "subtitle": "Aprobaciones pendientes y pagos disputados",

@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { Table, type Column } from '../../components/ui/Table';
 import { Pagination } from '../../components/ui/Pagination';
 import { getOrgInvoices, getOrgBillingStatus, generateOrgInvoice, payOrgInvoice, verifyOrgInvoice, type ThriftInvoice, type PaginatedInvoices } from '../../services/billingService';
 import { useFlutterwaveRedirect, currentPageRedirectUrl } from '../../hooks/useFlutterwaveRedirect';
+
+type TFn = (key: string, options?: any) => string;
 
 // Multiple invoices share this one page, so there's no single invoice id
 // already in the URL to know which card a Flutterwave redirect is
@@ -23,6 +26,7 @@ function formatCurrency(v: string | number) {
 }
 
 function StatusBadge({ status }: { status: ThriftInvoice['status'] }) {
+  const { t } = useTranslation();
   return (
     <span className={clsx(
       'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize',
@@ -30,17 +34,19 @@ function StatusBadge({ status }: { status: ThriftInvoice['status'] }) {
       : status === 'overdue' ? 'bg-red-100 text-red-700'
       : 'bg-yellow-100 text-yellow-700',
     )}>
-      {status}
+      {t(`thriftPage.statusValues.${status}`, { defaultValue: status })}
     </span>
   );
 }
 
-const LINE_ITEM_COLS: Column<Record<string, unknown>>[] = [
-  { key: 'group_name', header: 'Group' },
-  { key: 'member_count', header: 'Members' },
-  { key: 'rate_percent', header: 'Rate' },
-  { key: 'fee', header: 'Fee', render: (v) => formatCurrency(v as string) },
-];
+function getLineItemCols(t: TFn): Column<Record<string, unknown>>[] {
+  return [
+    { key: 'group_name', header: t('thriftPage.billing.headers.group') },
+    { key: 'member_count', header: t('thriftPage.billing.headers.members') },
+    { key: 'rate_percent', header: t('thriftPage.billing.headers.rate') },
+    { key: 'fee', header: t('thriftPage.billing.headers.fee'), render: (v) => formatCurrency(v as string) },
+  ];
+}
 
 // ── Invoice Card ──────────────────────────────────────────────────────────────
 
@@ -51,6 +57,7 @@ function InvoiceCard({
   orgUuid: string;
   incomingTransactionId?: string | null;
 }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   // Was previously pre-filled with invoice.tx_ref -- that's our own
   // internal reference, not Flutterwave's real transaction id the verify
@@ -73,7 +80,7 @@ function InvoiceCard({
       }
     },
     onError: (e: any) => {
-      setPayError(e.response?.data?.detail ?? 'Something went wrong.');
+      setPayError(e.response?.data?.detail ?? t('thriftPage.billing.somethingWrong'));
     },
   });
 
@@ -85,7 +92,7 @@ function InvoiceCard({
       setShowVerify(false);
     },
     onError: (e: any) => {
-      setVerifyError(e.response?.data?.detail ?? 'Verification failed. Check the transaction ID and try again.');
+      setVerifyError(e.response?.data?.detail ?? t('thriftPage.orgBilling.verificationFailed'));
     },
   });
 
@@ -108,14 +115,14 @@ function InvoiceCard({
             <StatusBadge status={invoice.status} />
             {invoice.is_bank && (
               <span className="text-xs font-semibold text-(--primary-dark) bg-(--primary-tint) border border-(--primary)/30 rounded-full px-2.5 py-0.5">
-                Bank rate
+                {t('thriftPage.orgBilling.bankRate')}
               </span>
             )}
           </div>
           <p className="text-2xl font-bold text-(--text-primary) mt-1">{formatCurrency(invoice.total_fee)}</p>
           {invoice.paid_at && (
             <p className="text-xs text-(--text-muted) mt-0.5">
-              Paid {new Date(invoice.paid_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}
+              {t('thriftPage.billing.paidOn', { date: new Date(invoice.paid_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) })}
             </p>
           )}
         </div>
@@ -128,12 +135,12 @@ function InvoiceCard({
               onClick={() => { setPayError(''); payMutation.mutate(); }}
               className="inline-flex items-center rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
-              {payMutation.isPending ? 'Loading…' : 'Pay Now'}
+              {payMutation.isPending ? t('thriftPage.billing.loading') : t('thriftPage.billing.payNow')}
             </button>
           )}
           {verifySuccess && (
             <span className="text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg px-3 py-1.5">
-              Verified!
+              {t('thriftPage.billing.verified')}
             </span>
           )}
         </div>
@@ -150,15 +157,15 @@ function InvoiceCard({
       {showVerify && !verifySuccess && (
         <div className="px-5 pb-4 space-y-2">
           <p className="text-xs text-(--text-secondary)">
-            Complete payment in the new tab, then verify your transaction below.
+            {t('thriftPage.billing.completePaymentHint')}
           </p>
           <div className="flex gap-2">
             <input
               type="text"
               value={verifyTxId}
               onChange={(e) => { setVerifyTxId(e.target.value); setVerifyError(''); }}
-              placeholder="Transaction ID"
-              aria-label="Transaction ID for verification"
+              placeholder={t('thriftPage.billing.transactionIdPlaceholder')}
+              aria-label={t('thriftPage.billing.transactionIdAriaLabel')}
               className="flex-1 rounded-lg border border-(--border) px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-(--primary)"
             />
             <button
@@ -167,7 +174,7 @@ function InvoiceCard({
               onClick={() => verifyMutation.mutate(verifyTxId)}
               className="rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
             >
-              {verifyMutation.isPending ? 'Verifying…' : 'Verify'}
+              {verifyMutation.isPending ? t('thriftPage.billing.verifying') : t('thriftPage.billing.verify')}
             </button>
           </div>
           {verifyError && (
@@ -180,7 +187,7 @@ function InvoiceCard({
       {invoice.line_items.length > 0 && (
         <div className="border-t border-(--border) p-5 pt-4">
           <Table
-            columns={LINE_ITEM_COLS}
+            columns={getLineItemCols(t as unknown as TFn)}
             data={invoice.line_items as unknown as Record<string, unknown>[]}
           />
         </div>
@@ -214,6 +221,7 @@ function SkeletonInvoices() {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function ThriftOrgBillingPage() {
+  const { t } = useTranslation();
   const { uuid: orgUuid = '' } = useParams<{ uuid: string }>();
 
   const qc = useQueryClient();
@@ -252,7 +260,7 @@ export default function ThriftOrgBillingPage() {
       setGenerateError('');
     },
     onError: (e: any) => {
-      setGenerateError(e.response?.data?.detail ?? 'Something went wrong.');
+      setGenerateError(e.response?.data?.detail ?? t('thriftPage.billing.somethingWrong'));
     },
   });
 
@@ -260,33 +268,33 @@ export default function ThriftOrgBillingPage() {
     <div className="space-y-6">
       {/* Back link */}
       <Link to={`/org/${orgUuid}`} className="text-sm text-(--text-secondary) hover:text-(--primary)">
-        ← Organisation
+        {t('thriftPage.orgBilling.backToOrganisation')}
       </Link>
 
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-(--text-primary)">Organisation Billing</h1>
-          <p className="text-sm text-(--text-secondary)">Consolidated invoices at bank rate (standard −0.25%)</p>
+          <h1 className="text-2xl font-bold text-(--text-primary)">{t('thriftPage.orgBilling.title')}</h1>
+          <p className="text-sm text-(--text-secondary)">{t('thriftPage.orgBilling.subtitle')}</p>
         </div>
         <button
           type="button"
           disabled={generateMutation.isPending || !canGenerate}
           onClick={() => generateMutation.mutate()}
-          title={canGenerate ? undefined : 'No completed circles are ready to bill yet.'}
+          title={canGenerate ? undefined : t('thriftPage.billing.generateDisabledTitle')}
           className="inline-flex items-center rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 active:scale-[0.97] disabled:active:scale-100"
         >
-          {generateMutation.isPending ? 'Generating…' : 'Generate Invoice'}
+          {generateMutation.isPending ? t('thriftPage.billing.generating') : t('thriftPage.billing.generateInvoice')}
         </button>
       </div>
 
       {/* Info banner */}
       <div className="rounded-lg bg-(--primary-tint) border border-(--primary)/30 px-4 py-3 text-sm text-(--primary-dark)">
-        Organisation members receive a 0.25% discount on the standard rate. All groups across your collectors are consolidated whenever a circle completes.
+        {t('thriftPage.orgBilling.infoBanner')}
       </div>
       {!canGenerate && !generateMutation.isPending && (
         <p className="text-xs text-(--text-muted)">
-          Generate becomes available once one of your collectors' circles completes — it also happens automatically at that point.
+          {t('thriftPage.orgBilling.generateHint')}
         </p>
       )}
 
@@ -300,7 +308,7 @@ export default function ThriftOrgBillingPage() {
       {/* Load error */}
       {error && (
         <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
-          Failed to load invoices. Please refresh.
+          {t('thriftPage.billing.failedToLoad')}
         </div>
       )}
 
@@ -309,7 +317,7 @@ export default function ThriftOrgBillingPage() {
         <SkeletonInvoices />
       ) : invoices.length === 0 ? (
         <div className="surface-soft px-6 py-16 text-center">
-          <p className="text-sm text-(--text-muted)">No invoices yet. Generate your first invoice.</p>
+          <p className="text-sm text-(--text-muted)">{t('thriftPage.billing.noInvoicesYet')}</p>
         </div>
       ) : (
         <div className="space-y-4">

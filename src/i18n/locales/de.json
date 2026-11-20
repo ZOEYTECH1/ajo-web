@@ -562,6 +562,15 @@
       "paidOn": "Bezahlt am {{date}}",
       "somethingWrong": "Etwas ist schiefgelaufen."
     },
+    "orgBilling": {
+      "backToOrganisation": "← Organisation",
+      "title": "Organisationsabrechnung",
+      "subtitle": "Konsolidierte Rechnungen zum Banksatz (Standard −0,25 %)",
+      "bankRate": "Banksatz",
+      "infoBanner": "Organisationsmitglieder erhalten einen Rabatt von 0,25 % auf den Standardsatz. Alle Gruppen deiner Einzieher werden konsolidiert, sobald ein Kreis abgeschlossen ist.",
+      "generateHint": "Erstellen wird verfügbar, sobald der Kreis eines deiner Einzieher abgeschlossen ist — das passiert zu diesem Zeitpunkt auch automatisch.",
+      "verificationFailed": "Überprüfung fehlgeschlagen. Prüfe die Transaktions-ID und versuche es erneut."
+    },
     "queue": {
       "title": "Einzieher-Warteschlange",
       "subtitle": "Ausstehende Genehmigungen und angefochtene Zahlungen",

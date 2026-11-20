@@ -2098,6 +2098,8 @@ export default function AjoGroupDetailPage() {
     if (e.event === 'join_request' || e.event === 'membership_approved' || e.event === 'membership_rejected') {
       qc.invalidateQueries({ queryKey: ['ajo-group-members', id] });
       qc.invalidateQueries({ queryKey: ['ajo-group', id] });
+    } else if (e.event === 'sub_admin_assigned') {
+      qc.invalidateQueries({ queryKey: ['ajo-group', id] });
     } else {
       qc.invalidateQueries({ queryKey: ['ajo-group-payments', id] });
     }
@@ -2105,6 +2107,13 @@ export default function AjoGroupDetailPage() {
 
   const regenerateMutation = useMutation({
     mutationFn: () => api.post(`/groups/${id}/invite/regenerate/`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['ajo-group', id] });
+    },
+  });
+
+  const assignSubAdminMutation = useMutation({
+    mutationFn: () => api.post(`/groups/${id}/assign-sub-admin/`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ajo-group', id] });
     },
@@ -2332,9 +2341,30 @@ export default function AjoGroupDetailPage() {
           </div>
           <div>
             <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.subAdmin')}</p>
-            <p className="font-medium text-(--text-primary)">
-              {group.sub_admin ? fullName(group.sub_admin) : t('groupDetail.main.notAssigned')}
-            </p>
+            {group.sub_admin ? (
+              <p className="font-medium text-(--text-primary)">{fullName(group.sub_admin)}</p>
+            ) : isAdmin ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => assignSubAdminMutation.mutate()}
+                  disabled={assignSubAdminMutation.isPending}
+                  className="font-medium text-(--primary) hover:underline disabled:opacity-50 text-sm"
+                >
+                  {assignSubAdminMutation.isPending
+                    ? t('groupDetail.main.assigning')
+                    : t('groupDetail.main.assignSubAdmin')}
+                </button>
+                {assignSubAdminMutation.isError && (
+                  <p className="text-xs text-red-600 mt-0.5">
+                    {(assignSubAdminMutation.error as { response?: { data?: { detail?: string } } })
+                      ?.response?.data?.detail ?? t('groupDetail.main.assignSubAdminFailed')}
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="font-medium text-(--text-primary)">{t('groupDetail.main.notAssigned')}</p>
+            )}
           </div>
           <div>
             <p className="text-xs text-(--text-secondary)">{t('groupDetail.main.totalCycles')}</p>

@@ -1,11 +1,14 @@
 ﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { PlusIcon, KeyIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { Table, type Column } from '../../components/ui/Table';
 import api from '../../services/api';
 import useAuthStore from '../../store/useAuthStore';
+
+type TFn = (key: string, options?: any) => string;
 
 interface ThriftGroup {
   id: number;
@@ -24,14 +27,17 @@ interface ThriftGroup {
 
 
 function SubscriptionBadge({ group }: { group: ThriftGroup }) {
+  const { t } = useTranslation();
   if (group.organization) {
     return (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-(--primary-tint) text-(--primary-dark)">
-        Bank managed
+        {t('thriftPage.page.statusBadge.bankManaged')}
       </span>
     );
   }
-  const label = group.is_on_trial ? 'Trial' : group.is_subscription_active ? 'Active' : 'Inactive';
+  const label = group.is_on_trial ? t('thriftPage.page.statusBadge.trial')
+    : group.is_subscription_active ? t('thriftPage.page.statusBadge.active')
+    : t('thriftPage.page.statusBadge.inactive');
   return (
     <span className={clsx(
       'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
@@ -44,31 +50,33 @@ function SubscriptionBadge({ group }: { group: ThriftGroup }) {
   );
 }
 
-const GROUP_COLS: Column<Record<string, unknown>>[] = [
-  {
-    key: 'name',
-    header: 'Group Name',
-    render: (v, row) => (
-      <Link to={`/thrift/${row.uuid as string}`} className="text-(--primary) hover:underline font-semibold">
-        {v as string}
-      </Link>
-    ),
-  },
-  { key: 'frequency', header: 'Payout Cycle', render: (v) => <span className="capitalize">{v as string}</span> },
-  { key: 'cycle_type', header: 'Cycle Type', render: (v) => <span className="capitalize">{v as string}</span> },
-  { key: 'member_count', header: 'Members' },
-  {
-    key: 'collector',
-    header: 'Collector',
-    render: (v) => (v as ThriftGroup['collector'])?.full_name ?? '—',
-  },
-  {
-    key: 'organization',
-    header: 'Organisation',
-    render: (v) => (v as ThriftGroup['organization'])?.name ?? '—',
-  },
-  { key: 'id', header: 'Status', render: (_, row) => <SubscriptionBadge group={row as unknown as ThriftGroup} /> },
-];
+function getGroupCols(t: TFn): Column<Record<string, unknown>>[] {
+  return [
+    {
+      key: 'name',
+      header: t('thriftPage.page.headers.groupName'),
+      render: (v, row) => (
+        <Link to={`/thrift/${row.uuid as string}`} className="text-(--primary) hover:underline font-semibold">
+          {v as string}
+        </Link>
+      ),
+    },
+    { key: 'frequency', header: t('thriftPage.page.headers.payoutCycle'), render: (v) => <span className="capitalize">{v as string}</span> },
+    { key: 'cycle_type', header: t('thriftPage.page.headers.cycleType'), render: (v) => <span className="capitalize">{v as string}</span> },
+    { key: 'member_count', header: t('thriftPage.page.headers.members') },
+    {
+      key: 'collector',
+      header: t('thriftPage.page.headers.collector'),
+      render: (v) => (v as ThriftGroup['collector'])?.full_name ?? '—',
+    },
+    {
+      key: 'organization',
+      header: t('thriftPage.page.headers.organisation'),
+      render: (v) => (v as ThriftGroup['organization'])?.name ?? '—',
+    },
+    { key: 'id', header: t('thriftPage.page.headers.status'), render: (_, row) => <SubscriptionBadge group={row as unknown as ThriftGroup} /> },
+  ];
+}
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
 
@@ -88,6 +96,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 // ── Create Group Modal ────────────────────────────────────────────────────────
 
 function CreateGroupModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [form, setForm] = useState({
     name: '',
@@ -112,7 +121,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
     onError: (e: any) => {
       const d = e.response?.data;
       const first = Object.values(d ?? {})[0];
-      setErr(d?.detail ?? (Array.isArray(first) ? first[0] : String(first ?? 'Something went wrong.')));
+      setErr(d?.detail ?? (Array.isArray(first) ? first[0] : String(first ?? t('thriftPage.createModal.errors.somethingWrong'))));
     },
   });
 
@@ -120,7 +129,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim()) { setErr('Group name is required.'); return; }
+    if (!form.name.trim()) { setErr(t('thriftPage.createModal.errors.nameRequired')); return; }
     mutation.mutate();
   }
 
@@ -128,53 +137,53 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border) sticky top-0 bg-(--surface) z-10">
-          <h2 className="text-lg font-bold text-(--text-primary)">Create Thrift Group</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)">
+          <h2 className="text-lg font-bold text-(--text-primary)">{t('thriftPage.createModal.title')}</h2>
+          <button type="button" onClick={onClose} aria-label={t('thriftPage.createModal.closeDialog')} className="text-(--text-muted) hover:text-(--text-primary)">
             <XCircleIcon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <Field label="Group Name *">
-            <input type="text" value={form.name} onChange={(e) => set('name', e.target.value)} placeholder="e.g. Apapa Market Monthly Thrift" className={inputCls} />
+          <Field label={t('thriftPage.createModal.nameLabel')}>
+            <input type="text" value={form.name} onChange={(e) => set('name', e.target.value)} placeholder={t('thriftPage.createModal.namePlaceholder')} className={inputCls} />
           </Field>
 
-          <Field label="Payout Cycle *">
+          <Field label={t('thriftPage.createModal.payoutCycleLabel')}>
             <select value={form.frequency} onChange={(e) => set('frequency', e.target.value)} className={inputCls}>
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
+              <option value="monthly">{t('thriftPage.createModal.monthly')}</option>
+              <option value="yearly">{t('thriftPage.createModal.yearly')}</option>
             </select>
-            <p className="text-xs text-(--text-muted) mt-1">Members contribute daily; this is when the pot pays out and a new cycle starts.</p>
+            <p className="text-xs text-(--text-muted) mt-1">{t('thriftPage.createModal.payoutCycleHint')}</p>
           </Field>
 
-          <Field label="Cycle Type *">
+          <Field label={t('thriftPage.createModal.cycleTypeLabel')}>
             <select value={form.cycle_type} onChange={(e) => set('cycle_type', e.target.value)} className={inputCls}>
-              <option value="rolling">Rolling / Open-ended</option>
-              <option value="fixed">Fixed Cycle</option>
+              <option value="rolling">{t('thriftPage.createModal.rolling')}</option>
+              <option value="fixed">{t('thriftPage.createModal.fixed')}</option>
             </select>
           </Field>
 
           {form.cycle_type === 'fixed' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field label="Start Date *">
+              <Field label={t('thriftPage.createModal.startDateLabel')}>
                 <input type="date" value={form.start_date} onChange={(e) => set('start_date', e.target.value)} className={inputCls} />
               </Field>
-              <Field label="End Date *">
+              <Field label={t('thriftPage.createModal.endDateLabel')}>
                 <input type="date" value={form.end_date} onChange={(e) => set('end_date', e.target.value)} className={inputCls} />
               </Field>
             </div>
           )}
 
-          <Field label="Description (optional)">
-            <textarea rows={2} value={form.description} onChange={(e) => set('description', e.target.value)} placeholder="What is this group for?" className={inputCls} />
+          <Field label={t('thriftPage.createModal.descriptionLabel')}>
+            <textarea rows={2} value={form.description} onChange={(e) => set('description', e.target.value)} placeholder={t('thriftPage.createModal.descriptionPlaceholder')} className={inputCls} />
           </Field>
 
           {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
 
           <div className="flex gap-3 pt-1">
-            <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+            <button type="button" onClick={onClose} className={cancelBtn}>{t('common.cancel')}</button>
             <button type="submit" disabled={mutation.isPending} className={submitBtn}>
-              {mutation.isPending ? 'Creating…' : 'Create Group'}
+              {mutation.isPending ? t('thriftPage.createModal.creating') : t('thriftPage.createModal.createGroup')}
             </button>
           </div>
         </form>
@@ -186,6 +195,7 @@ function CreateGroupModal({ onClose }: { onClose: () => void }) {
 // ── Join Group Modal ──────────────────────────────────────────────────────────
 
 function JoinGroupModal({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [code, setCode] = useState('');
   const [amount, setAmount] = useState('');
@@ -199,12 +209,12 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
       personal_amount: amount,
     }),
     onSuccess: (r) => {
-      setGroupName(r.data?.member?.group?.name ?? 'the group');
+      setGroupName(r.data?.member?.group?.name ?? t('thriftPage.joinModal.theGroup'));
       setStage('confirm');
     },
     onError: (e: any) => {
       const d = e.response?.data;
-      setErr(d?.detail ?? d?.invite_code?.[0] ?? d?.personal_amount?.[0] ?? 'Something went wrong.');
+      setErr(d?.detail ?? d?.invite_code?.[0] ?? d?.personal_amount?.[0] ?? t('thriftPage.createModal.errors.somethingWrong'));
     },
   });
 
@@ -212,28 +222,28 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-(--surface) border border-(--border) rounded-2xl shadow-(--shadow-soft-lg) w-full max-w-sm">
         <div className="flex items-center justify-between px-6 py-4 border-b border-(--border)">
-          <h2 className="text-lg font-bold text-(--text-primary)">Join Thrift Group</h2>
-          <button type="button" onClick={onClose} aria-label="Close dialog" className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
+          <h2 className="text-lg font-bold text-(--text-primary)">{t('thriftPage.joinModal.title')}</h2>
+          <button type="button" onClick={onClose} aria-label={t('thriftPage.joinModal.closeDialog')} className="text-(--text-muted) hover:text-(--text-primary)"><XCircleIcon className="h-6 w-6" aria-hidden="true" /></button>
         </div>
 
         <div className="p-6 space-y-4">
           {stage === 'code' && (
             <>
-              <p className="text-sm text-(--text-secondary)">Enter the invite code shared by your collector.</p>
+              <p className="text-sm text-(--text-secondary)">{t('thriftPage.joinModal.enterCodeHint')}</p>
               <input
                 type="text"
                 value={code}
                 onChange={(e) => { setCode(e.target.value.toUpperCase()); setErr(''); }}
                 maxLength={8}
-                placeholder="e.g. A1B2C3D4"
-                aria-label="Invite code"
+                placeholder={t('thriftPage.joinModal.codePlaceholder')}
+                aria-label={t('thriftPage.joinModal.codeAriaLabel')}
                 className={`${inputCls} tracking-[0.3em] uppercase font-mono text-center text-lg`}
               />
               {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
-                <button type="button" onClick={onClose} className={cancelBtn}>Cancel</button>
+                <button type="button" onClick={onClose} className={cancelBtn}>{t('common.cancel')}</button>
                 <button type="button" onClick={() => { setErr(''); setStage('amount'); }} disabled={code.trim().length < 6} className={submitBtn}>
-                  Next
+                  {t('thriftPage.joinModal.next')}
                 </button>
               </div>
             </>
@@ -241,27 +251,27 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 
           {stage === 'amount' && (
             <>
-              <p className="text-sm text-(--text-secondary)">Enter the amount you will contribute per collection period.</p>
-              <Field label="My Contribution Amount (NGN) *">
+              <p className="text-sm text-(--text-secondary)">{t('thriftPage.joinModal.amountHint')}</p>
+              <Field label={t('thriftPage.joinModal.amountLabel')}>
                 <input
                   type="number"
                   min="1"
                   value={amount}
                   onChange={(e) => { setAmount(e.target.value); setErr(''); }}
-                  placeholder="e.g. 5000"
+                  placeholder={t('thriftPage.joinModal.amountPlaceholder')}
                   className={inputCls}
                 />
               </Field>
               {err && <p role="alert" className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">{err}</p>}
               <div className="flex gap-3">
-                <button type="button" onClick={() => setStage('code')} className={cancelBtn}>Back</button>
+                <button type="button" onClick={() => setStage('code')} className={cancelBtn}>{t('thriftPage.joinModal.back')}</button>
                 <button
                   type="button"
                   onClick={() => joinMutation.mutate()}
                   disabled={!amount || Number(amount) <= 0 || joinMutation.isPending}
                   className={submitBtn}
                 >
-                  {joinMutation.isPending ? 'Joining…' : 'Send Request'}
+                  {joinMutation.isPending ? t('thriftPage.joinModal.joining') : t('thriftPage.joinModal.sendRequest')}
                 </button>
               </div>
             </>
@@ -270,16 +280,16 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
           {stage === 'confirm' && (
             <>
               <div className="rounded-xl bg-(--primary-tint) border border-(--primary-light)/30 p-4 text-center">
-                <p className="text-xs text-(--primary) uppercase tracking-wider font-semibold mb-1">Request sent!</p>
+                <p className="text-xs text-(--primary) uppercase tracking-wider font-semibold mb-1">{t('thriftPage.joinModal.requestSent')}</p>
                 <p className="text-lg font-bold text-(--text-primary)">{groupName}</p>
-                <p className="text-sm text-(--text-secondary) mt-1">Waiting for collector approval.</p>
+                <p className="text-sm text-(--text-secondary) mt-1">{t('thriftPage.joinModal.waitingApproval')}</p>
               </div>
               <button
                 type="button"
                 onClick={() => { qc.invalidateQueries({ queryKey: ['thrift-groups'] }); onClose(); }}
                 className={submitBtn}
               >
-                Done
+                {t('thriftPage.joinModal.done')}
               </button>
             </>
           )}
@@ -292,6 +302,7 @@ function JoinGroupModal({ onClose }: { onClose: () => void }) {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function ThriftPage() {
+  const { t } = useTranslation();
   const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
   const currentUser = useAuthStore((s) => s.user);
@@ -322,32 +333,32 @@ export default function ThriftPage() {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold text-(--text-primary)">Thrift Groups</h1>
-            <p className="text-sm text-(--text-secondary)">Your cooperative savings groups</p>
+            <h1 className="text-2xl font-bold text-(--text-primary)">{t('thriftPage.page.title')}</h1>
+            <p className="text-sm text-(--text-secondary)">{t('thriftPage.page.subtitle')}</p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             {/* Payers only: collectors don't make payments */}
             {isAnyPayer && (
               <Link to="/thrift/history" className="text-sm text-(--text-muted) hover:text-(--primary) transition-colors whitespace-nowrap">
-                My Payment History →
+                {t('thriftPage.page.paymentHistoryLink')}
               </Link>
             )}
             {/* Collectors only: rotation queue */}
             {isAnyCollector && (
               <Link to="/thrift/queue" className="text-sm text-(--text-muted) hover:text-(--primary) transition-colors whitespace-nowrap">
-                Collector Queue →
+                {t('thriftPage.page.collectorQueueLink')}
               </Link>
             )}
             {/* Solo collectors only: platform billing (org-linked groups are billed via the org) */}
             {hasSoloGroup && (
               <Link to="/thrift/billing" className="text-sm text-(--text-muted) hover:text-(--primary) transition-colors whitespace-nowrap">
-                Billing →
+                {t('thriftPage.page.billingLink')}
               </Link>
             )}
             {/* Org admins see their dashboard; solo collectors see create form */}
             {(isOrgAdmin || isAnyCollector) && (
               <Link to={orgLink} className="text-sm text-(--text-muted) hover:text-(--primary) transition-colors whitespace-nowrap">
-                Organisation →
+                {t('thriftPage.page.organisationLink')}
               </Link>
             )}
           </div>
@@ -359,7 +370,7 @@ export default function ThriftPage() {
             className="inline-flex items-center gap-1.5 rounded-lg surface-soft-sm surface-soft-interactive text-(--text-secondary) px-4 py-2 text-sm font-semibold hover:bg-(--primary-tint)/30"
           >
             <KeyIcon className="h-4 w-4" />
-            Join Group
+            {t('thriftPage.page.joinGroup')}
           </button>
           <button
             type="button"
@@ -367,31 +378,31 @@ export default function ThriftPage() {
             className="inline-flex items-center gap-1.5 rounded-lg bg-(--accent) text-white px-4 py-2 text-sm font-semibold hover:bg-(--accent-dark) hover:shadow-md shadow-sm transition-all duration-150 active:scale-[0.97]"
           >
             <PlusIcon className="h-4 w-4" />
-            Create Group
+            {t('thriftPage.page.createGroup')}
           </button>
         </div>
       </div>
 
       {error && (
         <div role="alert" className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-400">
-          Failed to load thrift groups. Please refresh.
+          {t('thriftPage.page.failedToLoad')}
         </div>
       )}
 
       <Table
-        columns={GROUP_COLS}
+        columns={getGroupCols(t as unknown as TFn)}
         data={groups as unknown as Record<string, unknown>[]}
         loading={isLoading}
         emptyMessage={
           <>
-            You are not a member of any thrift group yet.
+            {t('thriftPage.page.notMemberYet')}
             <br />
             <button type="button" onClick={() => setShowJoin(true)} className="mt-3 text-(--primary) font-semibold hover:underline">
-              Join with an invite code
+              {t('ajoGroups.joinWithCode')}
             </button>
-            {' or '}
+            {` ${t('ajoGroups.orText')} `}
             <button type="button" onClick={() => setShowCreate(true)} className="text-(--primary) font-semibold hover:underline">
-              create a new group
+              {t('ajoGroups.createNewGroup')}
             </button>
           </>
         }

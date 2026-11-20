@@ -477,5 +477,75 @@
     "greetingAfternoon": "Ẹ kú ọ̀sán, {{name}}!",
     "greetingEvening": "Ẹ kú alẹ́, {{name}}!",
     "defaultName": "ìwọ"
+  },
+  "thriftPage": {
+    "page": {
+      "title": "Àwọn Ẹgbẹ́ Ìfowópamọ́",
+      "subtitle": "Àwọn ẹgbẹ́ ìfowópamọ́ ìjọpọ̀ rẹ",
+      "paymentHistoryLink": "Ìtàn Owó Mi →",
+      "collectorQueueLink": "Ìlà Agbagbowó →",
+      "billingLink": "Owó Sísan →",
+      "organisationLink": "Àjọ →",
+      "joinGroup": "Dápọ̀ Ẹgbẹ́",
+      "createGroup": "Dá Ẹgbẹ́ Sílẹ̀",
+      "failedToLoad": "Kò lè gba àwọn ẹgbẹ́ ìfowópamọ́. Jọ̀wọ́ tún ṣe.",
+      "notMemberYet": "O kò tíì jẹ́ ọmọ ẹgbẹ́ ìfowópamọ́ kankan.",
+      "headers": {
+        "groupName": "Orúkọ Ẹgbẹ́",
+        "payoutCycle": "Àyípo Owó Síse",
+        "cycleType": "Irú Àyípo",
+        "members": "Àwọn Ọmọ Ẹgbẹ́",
+        "collector": "Agbagbowó",
+        "organisation": "Àjọ",
+        "status": "Ipò"
+      },
+      "statusBadge": {
+        "bankManaged": "Báńkì ń ṣàkóso",
+        "trial": "Àdánwò",
+        "active": "Ń Ṣiṣẹ́",
+        "inactive": "Kò Ń Ṣiṣẹ́"
+      }
+    },
+    "createModal": {
+      "title": "Dá Ẹgbẹ́ Ìfowópamọ́ Sílẹ̀",
+      "closeDialog": "Ti àwíjàre",
+      "nameLabel": "Orúkọ Ẹgbẹ́ *",
+      "namePlaceholder": "f.a. Ìfowópamọ́ Oṣooṣù ti Ọjà Apapa",
+      "payoutCycleLabel": "Àyípo Owó Síse *",
+      "payoutCycleHint": "Àwọn ọmọ ẹgbẹ́ ń dá owó sílẹ̀ lójoojúmọ́; èyí ni ìgbà tí a máa san owó inú agbada kí àyípo tuntun sì bẹ̀rẹ̀.",
+      "monthly": "Oṣooṣù",
+      "yearly": "Ọdọọdún",
+      "cycleTypeLabel": "Irú Àyípo *",
+      "rolling": "Tí ń lọ lọ́wọ́ / Tí kò ní òpin",
+      "fixed": "Àyípo Tí A Dá Kalẹ̀",
+      "startDateLabel": "Ọjọ́ Ìbẹ̀rẹ̀ *",
+      "endDateLabel": "Ọjọ́ Ìparí *",
+      "descriptionLabel": "Àpèjúwe (yíyàn)",
+      "descriptionPlaceholder": "Kíni ẹgbẹ́ yìí ṣe fún?",
+      "creating": "Ń dá sílẹ̀…",
+      "createGroup": "Dá Ẹgbẹ́ Sílẹ̀",
+      "errors": {
+        "nameRequired": "Orúkọ ẹgbẹ́ nílò.",
+        "somethingWrong": "Àṣìṣe kan ṣẹlẹ̀."
+      }
+    },
+    "joinModal": {
+      "title": "Dápọ̀ Ẹgbẹ́ Ìfowópamọ́",
+      "closeDialog": "Ti àwíjàre",
+      "theGroup": "ẹgbẹ́ náà",
+      "enterCodeHint": "Tẹ kóòdù ìkésíni tí agbagbowó rẹ pín.",
+      "codePlaceholder": "f.a. A1B2C3D4",
+      "codeAriaLabel": "Kóòdù ìkésíni",
+      "next": "Tó Kàn",
+      "amountHint": "Tẹ iye tí o máa ń dá sílẹ̀ ní àkókò gbígba kọ̀ọ̀kan.",
+      "amountLabel": "Iye Ìfisílẹ̀ Mi (NGN) *",
+      "amountPlaceholder": "f.a. 5000",
+      "back": "Padà",
+      "joining": "Ń dápọ̀…",
+      "sendRequest": "Fi Ìbéèrè Ránṣẹ́",
+      "requestSent": "Ìbéèrè ránṣẹ́!",
+      "waitingApproval": "Ń dúró de ìfọwọ́sí agbagbowó.",
+      "done": "Parí"
+    }
   }
 }

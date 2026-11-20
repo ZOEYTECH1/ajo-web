@@ -476,5 +476,75 @@
     "greetingAfternoon": "Buenas tardes, {{name}}!",
     "greetingEvening": "Buenas noches, {{name}}!",
     "defaultName": "allí"
+  },
+  "thriftPage": {
+    "page": {
+      "title": "Grupos de ahorro",
+      "subtitle": "Tus grupos de ahorro cooperativo",
+      "paymentHistoryLink": "Mi historial de pagos →",
+      "collectorQueueLink": "Cola del colector →",
+      "billingLink": "Facturación →",
+      "organisationLink": "Organización →",
+      "joinGroup": "Unirse a un grupo",
+      "createGroup": "Crear grupo",
+      "failedToLoad": "Error al cargar los grupos de ahorro. Por favor, actualiza.",
+      "notMemberYet": "Aún no eres miembro de ningún grupo de ahorro.",
+      "headers": {
+        "groupName": "Nombre del grupo",
+        "payoutCycle": "Ciclo de pago",
+        "cycleType": "Tipo de ciclo",
+        "members": "Miembros",
+        "collector": "Colector",
+        "organisation": "Organización",
+        "status": "Estado"
+      },
+      "statusBadge": {
+        "bankManaged": "Gestionado por el banco",
+        "trial": "Prueba",
+        "active": "Activo",
+        "inactive": "Inactivo"
+      }
+    },
+    "createModal": {
+      "title": "Crear grupo de ahorro",
+      "closeDialog": "Cerrar diálogo",
+      "nameLabel": "Nombre del grupo *",
+      "namePlaceholder": "ej. Ahorro mensual del mercado de Apapa",
+      "payoutCycleLabel": "Ciclo de pago *",
+      "payoutCycleHint": "Los miembros contribuyen a diario; este es el momento en que se paga el bote y comienza un nuevo ciclo.",
+      "monthly": "Mensual",
+      "yearly": "Anual",
+      "cycleTypeLabel": "Tipo de ciclo *",
+      "rolling": "Continuo / abierto",
+      "fixed": "Ciclo fijo",
+      "startDateLabel": "Fecha de inicio *",
+      "endDateLabel": "Fecha de fin *",
+      "descriptionLabel": "Descripción (opcional)",
+      "descriptionPlaceholder": "¿Para qué es este grupo?",
+      "creating": "Creando…",
+      "createGroup": "Crear grupo",
+      "errors": {
+        "nameRequired": "El nombre del grupo es obligatorio.",
+        "somethingWrong": "Algo salió mal."
+      }
+    },
+    "joinModal": {
+      "title": "Unirse a un grupo de ahorro",
+      "closeDialog": "Cerrar diálogo",
+      "theGroup": "el grupo",
+      "enterCodeHint": "Introduce el código de invitación compartido por tu colector.",
+      "codePlaceholder": "ej. A1B2C3D4",
+      "codeAriaLabel": "Código de invitación",
+      "next": "Siguiente",
+      "amountHint": "Introduce el monto que aportarás por período de cobro.",
+      "amountLabel": "Mi monto de contribución (NGN) *",
+      "amountPlaceholder": "ej. 5000",
+      "back": "Atrás",
+      "joining": "Uniéndose…",
+      "sendRequest": "Enviar solicitud",
+      "requestSent": "¡Solicitud enviada!",
+      "waitingApproval": "Esperando la aprobación del colector.",
+      "done": "Listo"
+    }
   }
 }

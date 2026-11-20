@@ -477,5 +477,75 @@
     "greetingAfternoon": "Barka da rana, {{name}}!",
     "greetingEvening": "Barka da yamma, {{name}}!",
     "defaultName": "kai"
+  },
+  "thriftPage": {
+    "page": {
+      "title": "Ƙungiyoyin Ajiya",
+      "subtitle": "Ƙungiyoyin ajiyar haɗin kai naka",
+      "paymentHistoryLink": "Tarihin Biyana Na →",
+      "collectorQueueLink": "Jerin Mai Karɓa →",
+      "billingLink": "Kuɗin Sabis →",
+      "organisationLink": "Ƙungiya →",
+      "joinGroup": "Shiga Ƙungiya",
+      "createGroup": "Ƙirƙiri Ƙungiya",
+      "failedToLoad": "An kasa loda ƙungiyoyin ajiya. Da fatan za a sabunta.",
+      "notMemberYet": "Ba ka cikin wata ƙungiyar ajiya tukuna.",
+      "headers": {
+        "groupName": "Sunan Ƙungiya",
+        "payoutCycle": "Zagayen Biyan Kuɗi",
+        "cycleType": "Nau'in Zagaye",
+        "members": "Mambobi",
+        "collector": "Mai Karɓa",
+        "organisation": "Ƙungiya",
+        "status": "Matsayi"
+      },
+      "statusBadge": {
+        "bankManaged": "Bankin ke Gudanarwa",
+        "trial": "Gwaji",
+        "active": "Mai Aiki",
+        "inactive": "Ba Mai Aiki Ba"
+      }
+    },
+    "createModal": {
+      "title": "Ƙirƙiri Ƙungiyar Ajiya",
+      "closeDialog": "Rufe taga",
+      "nameLabel": "Sunan Ƙungiya *",
+      "namePlaceholder": "misali. Ajiyar Wata-wata ta Kasuwar Apapa",
+      "payoutCycleLabel": "Zagayen Biyan Kuɗi *",
+      "payoutCycleHint": "Mambobi suna ba da gudummawa kullum; wannan shine lokacin da ake biyan kuɗin tarin kuma sabon zagaye ke farawa.",
+      "monthly": "Wata-wata",
+      "yearly": "Shekara-shekara",
+      "cycleTypeLabel": "Nau'in Zagaye *",
+      "rolling": "Mai ci gaba / Bude",
+      "fixed": "Zagaye Tabbataccen",
+      "startDateLabel": "Ranar Farawa *",
+      "endDateLabel": "Ranar Ƙarshe *",
+      "descriptionLabel": "Bayani (na zaɓi)",
+      "descriptionPlaceholder": "Me wannan ƙungiya take don?",
+      "creating": "Ana ƙirƙira…",
+      "createGroup": "Ƙirƙiri Ƙungiya",
+      "errors": {
+        "nameRequired": "Ana buƙatar sunan ƙungiya.",
+        "somethingWrong": "Wani abu ya yi kuskure."
+      }
+    },
+    "joinModal": {
+      "title": "Shiga Ƙungiyar Ajiya",
+      "closeDialog": "Rufe taga",
+      "theGroup": "ƙungiyar",
+      "enterCodeHint": "Shigar da lambar gayyata da mai karɓarka ya raba.",
+      "codePlaceholder": "misali. A1B2C3D4",
+      "codeAriaLabel": "Lambar gayyata",
+      "next": "Na Gaba",
+      "amountHint": "Shigar da adadin da za ka bayar a kowane lokacin karɓa.",
+      "amountLabel": "Adadin Gudummawata (NGN) *",
+      "amountPlaceholder": "misali. 5000",
+      "back": "Na Baya",
+      "joining": "Ana shiga…",
+      "sendRequest": "Aika Buƙata",
+      "requestSent": "An aika buƙata!",
+      "waitingApproval": "Ana jiran amincewar mai karɓa.",
+      "done": "An Gama"
+    }
   }
 }

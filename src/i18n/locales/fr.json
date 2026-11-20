@@ -476,5 +476,75 @@
     "greetingAfternoon": "Bon après-midi, {{name}} !",
     "greetingEvening": "Bonsoir, {{name}} !",
     "defaultName": "là"
+  },
+  "thriftPage": {
+    "page": {
+      "title": "Groupes de tontine",
+      "subtitle": "Vos groupes d'épargne coopérative",
+      "paymentHistoryLink": "Mon historique de paiements →",
+      "collectorQueueLink": "File du collecteur →",
+      "billingLink": "Facturation →",
+      "organisationLink": "Organisation →",
+      "joinGroup": "Rejoindre un groupe",
+      "createGroup": "Créer un groupe",
+      "failedToLoad": "Échec du chargement des groupes de tontine. Veuillez actualiser.",
+      "notMemberYet": "Vous n'êtes membre d'aucun groupe de tontine pour le moment.",
+      "headers": {
+        "groupName": "Nom du groupe",
+        "payoutCycle": "Cycle de paiement",
+        "cycleType": "Type de cycle",
+        "members": "Membres",
+        "collector": "Collecteur",
+        "organisation": "Organisation",
+        "status": "Statut"
+      },
+      "statusBadge": {
+        "bankManaged": "Géré par la banque",
+        "trial": "Essai",
+        "active": "Actif",
+        "inactive": "Inactif"
+      }
+    },
+    "createModal": {
+      "title": "Créer un groupe de tontine",
+      "closeDialog": "Fermer la fenêtre",
+      "nameLabel": "Nom du groupe *",
+      "namePlaceholder": "ex. Tontine mensuelle du marché d'Apapa",
+      "payoutCycleLabel": "Cycle de paiement *",
+      "payoutCycleHint": "Les membres cotisent quotidiennement ; c'est le moment où la cagnotte est versée et un nouveau cycle commence.",
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
+      "cycleTypeLabel": "Type de cycle *",
+      "rolling": "Continu / sans fin",
+      "fixed": "Cycle fixe",
+      "startDateLabel": "Date de début *",
+      "endDateLabel": "Date de fin *",
+      "descriptionLabel": "Description (facultatif)",
+      "descriptionPlaceholder": "À quoi sert ce groupe ?",
+      "creating": "Création…",
+      "createGroup": "Créer le groupe",
+      "errors": {
+        "nameRequired": "Le nom du groupe est requis.",
+        "somethingWrong": "Une erreur s'est produite."
+      }
+    },
+    "joinModal": {
+      "title": "Rejoindre un groupe de tontine",
+      "closeDialog": "Fermer la fenêtre",
+      "theGroup": "le groupe",
+      "enterCodeHint": "Entrez le code d'invitation partagé par votre collecteur.",
+      "codePlaceholder": "ex. A1B2C3D4",
+      "codeAriaLabel": "Code d'invitation",
+      "next": "Suivant",
+      "amountHint": "Entrez le montant que vous cotiserez par période de collecte.",
+      "amountLabel": "Mon montant de cotisation (NGN) *",
+      "amountPlaceholder": "ex. 5000",
+      "back": "Retour",
+      "joining": "Adhésion…",
+      "sendRequest": "Envoyer la demande",
+      "requestSent": "Demande envoyée !",
+      "waitingApproval": "En attente de l'approbation du collecteur.",
+      "done": "Terminé"
+    }
   }
 }

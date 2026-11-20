@@ -476,5 +476,75 @@
     "greetingAfternoon": "Good afternoon, {{name}}!",
     "greetingEvening": "Good evening, {{name}}!",
     "defaultName": "there"
+  },
+  "thriftPage": {
+    "page": {
+      "title": "Thrift Groups",
+      "subtitle": "Your cooperative savings groups",
+      "paymentHistoryLink": "My Payment History →",
+      "collectorQueueLink": "Collector Queue →",
+      "billingLink": "Billing →",
+      "organisationLink": "Organisation →",
+      "joinGroup": "Join Group",
+      "createGroup": "Create Group",
+      "failedToLoad": "Failed to load thrift groups. Please refresh.",
+      "notMemberYet": "You are not a member of any thrift group yet.",
+      "headers": {
+        "groupName": "Group Name",
+        "payoutCycle": "Payout Cycle",
+        "cycleType": "Cycle Type",
+        "members": "Members",
+        "collector": "Collector",
+        "organisation": "Organisation",
+        "status": "Status"
+      },
+      "statusBadge": {
+        "bankManaged": "Bank managed",
+        "trial": "Trial",
+        "active": "Active",
+        "inactive": "Inactive"
+      }
+    },
+    "createModal": {
+      "title": "Create Thrift Group",
+      "closeDialog": "Close dialog",
+      "nameLabel": "Group Name *",
+      "namePlaceholder": "e.g. Apapa Market Monthly Thrift",
+      "payoutCycleLabel": "Payout Cycle *",
+      "payoutCycleHint": "Members contribute daily; this is when the pot pays out and a new cycle starts.",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "cycleTypeLabel": "Cycle Type *",
+      "rolling": "Rolling / Open-ended",
+      "fixed": "Fixed Cycle",
+      "startDateLabel": "Start Date *",
+      "endDateLabel": "End Date *",
+      "descriptionLabel": "Description (optional)",
+      "descriptionPlaceholder": "What is this group for?",
+      "creating": "Creating…",
+      "createGroup": "Create Group",
+      "errors": {
+        "nameRequired": "Group name is required.",
+        "somethingWrong": "Something went wrong."
+      }
+    },
+    "joinModal": {
+      "title": "Join Thrift Group",
+      "closeDialog": "Close dialog",
+      "theGroup": "the group",
+      "enterCodeHint": "Enter the invite code shared by your collector.",
+      "codePlaceholder": "e.g. A1B2C3D4",
+      "codeAriaLabel": "Invite code",
+      "next": "Next",
+      "amountHint": "Enter the amount you will contribute per collection period.",
+      "amountLabel": "My Contribution Amount (NGN) *",
+      "amountPlaceholder": "e.g. 5000",
+      "back": "Back",
+      "joining": "Joining…",
+      "sendRequest": "Send Request",
+      "requestSent": "Request sent!",
+      "waitingApproval": "Waiting for collector approval.",
+      "done": "Done"
+    }
   }
 }

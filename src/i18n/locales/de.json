@@ -476,5 +476,75 @@
     "greetingAfternoon": "Guten Tag, {{name}}!",
     "greetingEvening": "Guten Abend, {{name}}!",
     "defaultName": "dort"
+  },
+  "thriftPage": {
+    "page": {
+      "title": "Spargruppen",
+      "subtitle": "Deine genossenschaftlichen Spargruppen",
+      "paymentHistoryLink": "Meine Zahlungshistorie →",
+      "collectorQueueLink": "Einzieher-Warteschlange →",
+      "billingLink": "Abrechnung →",
+      "organisationLink": "Organisation →",
+      "joinGroup": "Gruppe beitreten",
+      "createGroup": "Gruppe erstellen",
+      "failedToLoad": "Spargruppen konnten nicht geladen werden. Bitte aktualisieren.",
+      "notMemberYet": "Du bist noch kein Mitglied einer Spargruppe.",
+      "headers": {
+        "groupName": "Gruppenname",
+        "payoutCycle": "Auszahlungszyklus",
+        "cycleType": "Zyklustyp",
+        "members": "Mitglieder",
+        "collector": "Einzieher",
+        "organisation": "Organisation",
+        "status": "Status"
+      },
+      "statusBadge": {
+        "bankManaged": "Bankverwaltet",
+        "trial": "Testphase",
+        "active": "Aktiv",
+        "inactive": "Inaktiv"
+      }
+    },
+    "createModal": {
+      "title": "Spargruppe erstellen",
+      "closeDialog": "Dialog schließen",
+      "nameLabel": "Gruppenname *",
+      "namePlaceholder": "z. B. Apapa-Markt monatliche Spargruppe",
+      "payoutCycleLabel": "Auszahlungszyklus *",
+      "payoutCycleHint": "Mitglieder zahlen täglich ein; dies ist der Zeitpunkt, an dem der Topf ausgezahlt wird und ein neuer Zyklus beginnt.",
+      "monthly": "Monatlich",
+      "yearly": "Jährlich",
+      "cycleTypeLabel": "Zyklustyp *",
+      "rolling": "Fortlaufend / offen",
+      "fixed": "Fester Zyklus",
+      "startDateLabel": "Startdatum *",
+      "endDateLabel": "Enddatum *",
+      "descriptionLabel": "Beschreibung (optional)",
+      "descriptionPlaceholder": "Wofür ist diese Gruppe?",
+      "creating": "Wird erstellt…",
+      "createGroup": "Gruppe erstellen",
+      "errors": {
+        "nameRequired": "Gruppenname ist erforderlich.",
+        "somethingWrong": "Etwas ist schiefgelaufen."
+      }
+    },
+    "joinModal": {
+      "title": "Spargruppe beitreten",
+      "closeDialog": "Dialog schließen",
+      "theGroup": "die Gruppe",
+      "enterCodeHint": "Gib den Einladungscode deines Einziehers ein.",
+      "codePlaceholder": "z. B. A1B2C3D4",
+      "codeAriaLabel": "Einladungscode",
+      "next": "Weiter",
+      "amountHint": "Gib den Betrag ein, den du pro Einzugsperiode beitragen wirst.",
+      "amountLabel": "Mein Beitragsbetrag (NGN) *",
+      "amountPlaceholder": "z. B. 5000",
+      "back": "Zurück",
+      "joining": "Beitreten…",
+      "sendRequest": "Anfrage senden",
+      "requestSent": "Anfrage gesendet!",
+      "waitingApproval": "Warten auf Genehmigung des Einziehers.",
+      "done": "Fertig"
+    }
   }
 }

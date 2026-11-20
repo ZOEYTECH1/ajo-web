@@ -477,5 +477,75 @@
     "greetingAfternoon": "Ehihie ọma, {{name}}!",
     "greetingEvening": "Mgbede ọma, {{name}}!",
     "defaultName": "ebe ahụ"
+  },
+  "thriftPage": {
+    "page": {
+      "title": "Ìgwè Ndekọ",
+      "subtitle": "Ìgwè nchekwa ego ọrụ aka gị",
+      "paymentHistoryLink": "Akụkọ Ego Ikwu M →",
+      "collectorQueueLink": "Usoro Onye Nchịkọta →",
+      "billingLink": "Ịkwụ Ụgwọ →",
+      "organisationLink": "Òtù →",
+      "joinGroup": "Sonye Ìgwè",
+      "createGroup": "Mepụta Ìgwè",
+      "failedToLoad": "Enweghị ike ibu ìgwè ndekọ. Biko megharịa.",
+      "notMemberYet": "Ị bụghị onye otu ìgwè ndekọ ọ bụla ugbu a.",
+      "headers": {
+        "groupName": "Aha Ìgwè",
+        "payoutCycle": "Okirikiri Ịkwụ Ụgwọ",
+        "cycleType": "Ụdị Okirikiri",
+        "members": "Ndị Otu",
+        "collector": "Onye Nchịkọta",
+        "organisation": "Òtù",
+        "status": "Ọnọdụ"
+      },
+      "statusBadge": {
+        "bankManaged": "Ụlọ Akụ Na-achị",
+        "trial": "Ule",
+        "active": "Na-arụ Ọrụ",
+        "inactive": "Anaghị Arụ Ọrụ"
+      }
+    },
+    "createModal": {
+      "title": "Mepụta Ìgwè Ndekọ",
+      "closeDialog": "Mechie okwu okwu",
+      "nameLabel": "Aha Ìgwè *",
+      "namePlaceholder": "ọmụmaatụ. Ndekọ Kwa Ọnwa nke Ahịa Apapa",
+      "payoutCycleLabel": "Okirikiri Ịkwụ Ụgwọ *",
+      "payoutCycleHint": "Ndị otu na-enye onyinye kwa ụbọchị; nke a bụ oge a na-akwụ ego kpokọtara ma okirikiri ọhụrụ malite.",
+      "monthly": "Kwa Ọnwa",
+      "yearly": "Kwa Afọ",
+      "cycleTypeLabel": "Ụdị Okirikiri *",
+      "rolling": "Na-aga n'ihu / Ọghọm",
+      "fixed": "Okirikiri Edobere",
+      "startDateLabel": "Ụbọchị Mmalite *",
+      "endDateLabel": "Ụbọchị Ngwụcha *",
+      "descriptionLabel": "Nkọwa (nhọrọ)",
+      "descriptionPlaceholder": "Gịnị ka ìgwè a bụ?",
+      "creating": "Na-emepụta…",
+      "createGroup": "Mepụta Ìgwè",
+      "errors": {
+        "nameRequired": "Achọrọ aha ìgwè.",
+        "somethingWrong": "Ọ dị ihe mejọrọ."
+      }
+    },
+    "joinModal": {
+      "title": "Sonye Ìgwè Ndekọ",
+      "closeDialog": "Mechie okwu okwu",
+      "theGroup": "ìgwè ahụ",
+      "enterCodeHint": "Tinye koodu ọkpụkpọ onye nchịkọta gị kesara.",
+      "codePlaceholder": "ọmụmaatụ. A1B2C3D4",
+      "codeAriaLabel": "Koodu ọkpụkpọ",
+      "next": "Nke ọzọ",
+      "amountHint": "Tinye ego ị ga-enye kwa oge nchịkọta.",
+      "amountLabel": "Ego Onyinye M (NGN) *",
+      "amountPlaceholder": "ọmụmaatụ. 5000",
+      "back": "Laghachi",
+      "joining": "Na-esonye…",
+      "sendRequest": "Zipu Arịrịọ",
+      "requestSent": "E zipụla arịrịọ!",
+      "waitingApproval": "Na-eche nkwenye onye nchịkọta.",
+      "done": "Emechaala"
+    }
   }
 }

@@ -532,7 +532,35 @@
       "pending": "En attente",
       "confirmed": "Confirmé",
       "disputed": "Contesté",
-      "voided": "Annulé"
+      "voided": "Annulé",
+      "paid": "Payé",
+      "overdue": "En retard"
+    },
+    "billing": {
+      "title": "Facturation et factures",
+      "subtitle": "Frais de plateforme pour vos groupes de tontine",
+      "generateInvoice": "Générer une facture",
+      "generating": "Génération…",
+      "generateDisabledTitle": "Aucun cercle terminé n'est prêt à être facturé pour le moment.",
+      "generateHint": "La génération devient disponible une fois qu'un de vos cercles se termine.",
+      "failedToLoad": "Échec du chargement des factures. Veuillez actualiser.",
+      "noInvoicesYet": "Pas encore de factures. Générez votre première facture.",
+      "headers": {
+        "group": "Groupe",
+        "members": "Membres",
+        "rate": "Taux",
+        "fee": "Frais"
+      },
+      "payNow": "Payer maintenant",
+      "loading": "Chargement…",
+      "verified": "Vérifié !",
+      "completePaymentHint": "Terminez le paiement dans le nouvel onglet, puis vérifiez votre transaction ci-dessous.",
+      "transactionIdPlaceholder": "ID de transaction",
+      "transactionIdAriaLabel": "ID de transaction pour la vérification",
+      "verifying": "Vérification…",
+      "verify": "Vérifier",
+      "paidOn": "Payé le {{date}}",
+      "somethingWrong": "Une erreur s'est produite."
     },
     "queue": {
       "title": "File du collecteur",

@@ -532,7 +532,35 @@
       "pending": "Ausstehend",
       "confirmed": "Bestätigt",
       "disputed": "Angefochten",
-      "voided": "Storniert"
+      "voided": "Storniert",
+      "paid": "Bezahlt",
+      "overdue": "Überfällig"
+    },
+    "billing": {
+      "title": "Abrechnung & Rechnungen",
+      "subtitle": "Plattformgebühren für deine Spargruppen",
+      "generateInvoice": "Rechnung erstellen",
+      "generating": "Wird erstellt…",
+      "generateDisabledTitle": "Noch keine abgeschlossenen Kreise bereit zur Abrechnung.",
+      "generateHint": "Erstellen wird verfügbar, sobald einer deiner Kreise abgeschlossen ist.",
+      "failedToLoad": "Rechnungen konnten nicht geladen werden. Bitte aktualisieren.",
+      "noInvoicesYet": "Noch keine Rechnungen. Erstelle deine erste Rechnung.",
+      "headers": {
+        "group": "Gruppe",
+        "members": "Mitglieder",
+        "rate": "Satz",
+        "fee": "Gebühr"
+      },
+      "payNow": "Jetzt bezahlen",
+      "loading": "Lädt…",
+      "verified": "Verifiziert!",
+      "completePaymentHint": "Schließe die Zahlung im neuen Tab ab und bestätige dann unten deine Transaktion.",
+      "transactionIdPlaceholder": "Transaktions-ID",
+      "transactionIdAriaLabel": "Transaktions-ID zur Verifizierung",
+      "verifying": "Wird überprüft…",
+      "verify": "Überprüfen",
+      "paidOn": "Bezahlt am {{date}}",
+      "somethingWrong": "Etwas ist schiefgelaufen."
     },
     "queue": {
       "title": "Einzieher-Warteschlange",

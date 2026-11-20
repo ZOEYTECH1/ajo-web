@@ -533,7 +533,35 @@
       "pending": "Na-eche",
       "confirmed": "Akwadoro",
       "disputed": "Enwere Esemokwu",
-      "voided": "Akagburu"
+      "voided": "Akagburu",
+      "paid": "Akwụla",
+      "overdue": "Agafeela Oge"
+    },
+    "billing": {
+      "title": "Ịkwụ Ụgwọ & Akwụkwọ Ọnụahịa",
+      "subtitle": "Ụgwọ ikpo okwu maka ìgwè ndekọ gị",
+      "generateInvoice": "Mepụta Akwụkwọ Ọnụahịa",
+      "generating": "Na-emepụta…",
+      "generateDisabledTitle": "Enweghị okirikiri gụchara dị njikere ịkwụ ụgwọ ugbu a.",
+      "generateHint": "Ịmepụta ga-adị mgbe otu n'ime okirikiri gị gụchara.",
+      "failedToLoad": "Enweghị ike ibu akwụkwọ ọnụahịa. Biko megharịa.",
+      "noInvoicesYet": "Enweghị akwụkwọ ọnụahịa ugbu a. Mepụta nke mbụ gị.",
+      "headers": {
+        "group": "Ìgwè",
+        "members": "Ndị Otu",
+        "rate": "Ọnụego",
+        "fee": "Ụgwọ"
+      },
+      "payNow": "Kwụọ Ugbu a",
+      "loading": "Na-ebu…",
+      "verified": "Akwadoro!",
+      "completePaymentHint": "Mechaa ịkwụ ụgwọ na tab ọhụrụ, wee nyochaa azụmahịa gị n'okpuru.",
+      "transactionIdPlaceholder": "ID Azụmahịa",
+      "transactionIdAriaLabel": "ID azụmahịa maka nyocha",
+      "verifying": "Na-enyocha…",
+      "verify": "Nyochaa",
+      "paidOn": "Akwụla {{date}}",
+      "somethingWrong": "Ọ dị ihe mejọrọ."
     },
     "queue": {
       "title": "Usoro Onye Nchịkọta",

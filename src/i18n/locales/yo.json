@@ -533,7 +533,35 @@
       "pending": "Ń Dúró",
       "confirmed": "Tí a Fọwọ́sí",
       "disputed": "Tí a Jiyàn",
-      "voided": "Tí a Fagilé"
+      "voided": "Tí a Fagilé",
+      "paid": "Tí a Sanwó",
+      "overdue": "Ó Ti Pẹ́"
+    },
+    "billing": {
+      "title": "Owó Sísan & Àwọn Ìwé Owó",
+      "subtitle": "Owó ìkànnì fún àwọn ẹgbẹ́ ìfowópamọ́ rẹ",
+      "generateInvoice": "Dá Ìwé Owó Sílẹ̀",
+      "generating": "Ń dá sílẹ̀…",
+      "generateDisabledTitle": "Kò sí àyípo tí ó parí tí ó ti ṣetán fún owó síse.",
+      "generateHint": "Dídá yóò wà nígbà tí ọ̀kan nínú àwọn àyípo rẹ bá parí.",
+      "failedToLoad": "Kò lè gba àwọn ìwé owó. Jọ̀wọ́ tún ṣe.",
+      "noInvoicesYet": "Kò sí ìwé owó kankan síbẹ̀. Dá èyí àkọ́kọ́ sílẹ̀.",
+      "headers": {
+        "group": "Ẹgbẹ́",
+        "members": "Àwọn Ọmọ Ẹgbẹ́",
+        "rate": "Oye",
+        "fee": "Owó Ìsàn"
+      },
+      "payNow": "San Owó Nísinsin Yí",
+      "loading": "Ń gbé wọlé…",
+      "verified": "Tí a Fọwọ́sí!",
+      "completePaymentHint": "Parí sísan owó ní táàbù tuntun, lẹ́yìn náà ṣàyẹ̀wò ìṣòwò rẹ ní ìsàlẹ̀.",
+      "transactionIdPlaceholder": "ID Ìṣòwò",
+      "transactionIdAriaLabel": "ID ìṣòwò fún ìfẹsẹ̀múlẹ̀",
+      "verifying": "Ń ṣàyẹ̀wò…",
+      "verify": "Ṣàyẹ̀wò",
+      "paidOn": "Sanwó {{date}}",
+      "somethingWrong": "Àṣìṣe kan ṣẹlẹ̀."
     },
     "queue": {
       "title": "Ìlà Agbagbowó",

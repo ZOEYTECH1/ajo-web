@@ -532,7 +532,35 @@
       "pending": "Pendiente",
       "confirmed": "Confirmado",
       "disputed": "Disputado",
-      "voided": "Anulado"
+      "voided": "Anulado",
+      "paid": "Pagado",
+      "overdue": "Vencido"
+    },
+    "billing": {
+      "title": "Facturación y facturas",
+      "subtitle": "Tarifas de la plataforma para tus grupos de ahorro",
+      "generateInvoice": "Generar factura",
+      "generating": "Generando…",
+      "generateDisabledTitle": "Aún no hay círculos completados listos para facturar.",
+      "generateHint": "Generar estará disponible una vez que uno de tus círculos se complete.",
+      "failedToLoad": "Error al cargar las facturas. Por favor, actualiza.",
+      "noInvoicesYet": "Aún no hay facturas. Genera tu primera factura.",
+      "headers": {
+        "group": "Grupo",
+        "members": "Miembros",
+        "rate": "Tasa",
+        "fee": "Tarifa"
+      },
+      "payNow": "Pagar ahora",
+      "loading": "Cargando…",
+      "verified": "¡Verificado!",
+      "completePaymentHint": "Completa el pago en la nueva pestaña y luego verifica tu transacción a continuación.",
+      "transactionIdPlaceholder": "ID de transacción",
+      "transactionIdAriaLabel": "ID de transacción para verificación",
+      "verifying": "Verificando…",
+      "verify": "Verificar",
+      "paidOn": "Pagado el {{date}}",
+      "somethingWrong": "Algo salió mal."
     },
     "queue": {
       "title": "Cola del colector",

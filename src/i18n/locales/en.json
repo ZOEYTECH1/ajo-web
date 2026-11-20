@@ -532,7 +532,35 @@
       "pending": "Pending",
       "confirmed": "Confirmed",
       "disputed": "Disputed",
-      "voided": "Voided"
+      "voided": "Voided",
+      "paid": "Paid",
+      "overdue": "Overdue"
+    },
+    "billing": {
+      "title": "Billing & Invoices",
+      "subtitle": "Platform fees for your thrift groups",
+      "generateInvoice": "Generate Invoice",
+      "generating": "Generating…",
+      "generateDisabledTitle": "No completed circles are ready to bill yet.",
+      "generateHint": "Generate becomes available once one of your circles completes.",
+      "failedToLoad": "Failed to load invoices. Please refresh.",
+      "noInvoicesYet": "No invoices yet. Generate your first invoice.",
+      "headers": {
+        "group": "Group",
+        "members": "Members",
+        "rate": "Rate",
+        "fee": "Fee"
+      },
+      "payNow": "Pay Now",
+      "loading": "Loading…",
+      "verified": "Verified!",
+      "completePaymentHint": "Complete payment in the new tab, then verify your transaction below.",
+      "transactionIdPlaceholder": "Transaction ID",
+      "transactionIdAriaLabel": "Transaction ID for verification",
+      "verifying": "Verifying…",
+      "verify": "Verify",
+      "paidOn": "Paid {{date}}",
+      "somethingWrong": "Something went wrong."
     },
     "queue": {
       "title": "Collector Queue",

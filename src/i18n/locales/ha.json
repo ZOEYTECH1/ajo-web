@@ -533,7 +533,35 @@
       "pending": "Jiran Dubawa",
       "confirmed": "An Tabbatar",
       "disputed": "An Yi Takaddama",
-      "voided": "An Soke"
+      "voided": "An Soke",
+      "paid": "An Biya",
+      "overdue": "Ya Wuce Lokaci"
+    },
+    "billing": {
+      "title": "Biyan Kuɗi & Lissafin Kuɗi",
+      "subtitle": "Kuɗin dandamali don ƙungiyoyin ajiyarka",
+      "generateInvoice": "Ƙirƙiri Lissafin Kuɗi",
+      "generating": "Ana ƙirƙira…",
+      "generateDisabledTitle": "Babu zagayen da ya kammala da ke shirye don lissafin kuɗi tukuna.",
+      "generateHint": "Ƙirƙira zai samu da zarar ɗaya daga cikin zagayenka ya kammala.",
+      "failedToLoad": "An kasa loda lissafin kuɗi. Da fatan za a sabunta.",
+      "noInvoicesYet": "Babu lissafin kuɗi tukuna. Ƙirƙiri na farko.",
+      "headers": {
+        "group": "Ƙungiya",
+        "members": "Mambobi",
+        "rate": "Kuɗi",
+        "fee": "Kuɗin Sabis"
+      },
+      "payNow": "Biya Yanzu",
+      "loading": "Ana lodawa…",
+      "verified": "An Tabbatar!",
+      "completePaymentHint": "Kammala biyan kuɗi a sabon shafin, sa'an nan tabbatar da ma'amalarka a ƙasa.",
+      "transactionIdPlaceholder": "ID na Ma'amala",
+      "transactionIdAriaLabel": "ID na ma'amala don tabbatarwa",
+      "verifying": "Ana tabbatarwa…",
+      "verify": "Tabbatar",
+      "paidOn": "An biya {{date}}",
+      "somethingWrong": "Wani abu ya yi kuskure."
     },
     "queue": {
       "title": "Jerin Mai Karɓa",

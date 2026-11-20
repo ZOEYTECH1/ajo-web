@@ -534,7 +534,175 @@
       "disputed": "Contesté",
       "voided": "Annulé",
       "paid": "Payé",
-      "overdue": "En retard"
+      "overdue": "En retard",
+      "reviewed": "Examiné",
+      "resolved": "Résolu",
+      "dismissed": "Classé",
+      "approved": "Approuvé",
+      "rejected": "Refusé",
+      "active": "Actif",
+      "suspended": "Suspendu",
+      "all": "Tous"
+    },
+    "org": {
+      "notFound": "Organisation introuvable ou vous n'y avez pas accès.",
+      "verified": "Vérifiée",
+      "exportCsv": "Exporter en CSV",
+      "billing": "Facturation",
+      "inviteCollector": "Inviter un collecteur",
+      "statCards": {
+        "totalCollectors": "Total des collecteurs",
+        "activeGroups": "Groupes actifs",
+        "totalMembers": "Total des membres",
+        "totalCollected": "Total collecté"
+      },
+      "orgType": {
+        "mfb": "IMF",
+        "bank": "Banque",
+        "cooperative": "Coopérative",
+        "other": "Autre"
+      },
+      "pendingApprovals": {
+        "title": "Approbations de collecteurs en attente",
+        "headers": {
+          "name": "Nom",
+          "email": "E-mail",
+          "actions": "Actions"
+        },
+        "approve": "Approuver",
+        "reject": "Refuser"
+      },
+      "collectors": {
+        "title": "Collecteurs",
+        "headers": {
+          "name": "Nom",
+          "status": "Statut",
+          "mobilization": "Mobilisation",
+          "disputeRate": "Taux de litige",
+          "actions": "Actions"
+        },
+        "suspend": "Suspendre",
+        "activate": "Activer",
+        "remove": "Retirer",
+        "removeConfirm": "Retirer {{name}} de cette organisation ?",
+        "noneYet": "Aucun collecteur actif pour le moment."
+      },
+      "groups": {
+        "title": "Groupes",
+        "createGroup": "+ Créer un groupe",
+        "headers": {
+          "name": "Nom",
+          "payoutCycle": "Cycle de paiement",
+          "members": "Membres",
+          "collector": "Collecteur"
+        },
+        "noneYet": "Aucun groupe pour le moment."
+      },
+      "paymentSummary": {
+        "title": "Résumé des paiements",
+        "total": "Total",
+        "confirmed": "Confirmé",
+        "pending": "En attente",
+        "disputed": "Contesté",
+        "mobilization": "Mobilisation"
+      },
+      "reports": {
+        "title": "Signalements",
+        "pendingBadge": "{{count}} en attente",
+        "loading": "Chargement des signalements…",
+        "noneFound": "Aucun signalement {{filter}} trouvé.",
+        "against": "Contre : {{name}}",
+        "by": "Par : {{name}} · {{date}}",
+        "markReviewed": "Marquer comme examiné",
+        "resolve": "Résoudre",
+        "dismiss": "Classer"
+      },
+      "removals": {
+        "title": "Demandes de retrait",
+        "pendingBadge": "{{count}} en attente",
+        "loading": "Chargement…",
+        "noneFound": "Aucune demande de retrait {{filter}}.",
+        "total": "Total",
+        "confirmed": "Confirmé",
+        "pending": "En attente",
+        "disputed": "Contesté",
+        "savedLabel": "Épargné :",
+        "contributionLabel": "Cotisation :",
+        "perPeriod": "/période",
+        "membersReason": "Motif du membre",
+        "settlementNotes": "Notes de règlement",
+        "rejectionReason": "Motif de refus",
+        "reviewApprove": "Examiner et approuver",
+        "reject": "Refuser",
+        "rejectPrompt": "Motif du refus de cette demande de retrait (facultatif) :"
+      },
+      "approveModal": {
+        "title": "Approuver le retrait",
+        "member": "Membre",
+        "group": "Groupe",
+        "contributionPerPeriod": "Cotisation / période",
+        "totalSaved": "Total épargné",
+        "paymentHistory": "Historique des paiements",
+        "total": "Total",
+        "confirmed": "Confirmé",
+        "pending": "En attente",
+        "disputed": "Contesté",
+        "confirmedAmount": "Montant confirmé :",
+        "reasonForLeaving": "Motif du départ",
+        "settlementNotesLabel": "Notes de règlement *",
+        "settlementNotesHint": "Décrivez ce qui a été réglé avant d'approuver : montants en souffrance remboursés ou perdus, litiges résolus, tout ajustement financier effectué.",
+        "settlementNotesPlaceholder": "ex. Les 6 paiements confirmés sont enregistrés. ₦5 000 en souffrance remboursés le 15/01/2024. Aucun litige actif.",
+        "approving": "Approbation…",
+        "confirmButton": "Confirmer et retirer le membre"
+      },
+      "createGroupModal": {
+        "collectorLabel": "Collecteur *",
+        "selectCollector": "Sélectionner un collecteur…",
+        "collectorOption": "{{name}} — {{email}}",
+        "noActiveCollectors": "Aucun collecteur actif dans cette organisation. Invitez et activez un collecteur d'abord.",
+        "selectCollectorError": "Sélectionnez un collecteur pour ce groupe."
+      },
+      "inviteModal": {
+        "title": "Inviter un collecteur",
+        "description": "Entrez l'adresse e-mail du collecteur que vous souhaitez inviter. Il recevra un e-mail avec un lien d'invitation.",
+        "emailLabel": "Adresse e-mail *",
+        "emailPlaceholder": "collecteur@exemple.com",
+        "invalidEmail": "Entrez une adresse e-mail valide.",
+        "inviting": "Invitation…",
+        "sendInvite": "Envoyer l'invitation"
+      },
+      "csv": {
+        "summaryHeader": "=== RÉSUMÉ DE L'ORGANISATION ===",
+        "name": "Nom",
+        "type": "Type",
+        "verified": "Vérifiée",
+        "yes": "Oui",
+        "no": "Non",
+        "paymentStatsHeader": "=== STATISTIQUES DE PAIEMENT ===",
+        "total": "Total",
+        "confirmed": "Confirmé",
+        "disputed": "Contesté",
+        "pending": "En attente",
+        "totalCollectedNgn": "Total collecté (NGN)",
+        "savingsMobilizationPercent": "Mobilisation de l'épargne (%)",
+        "collectorsHeader": "=== COLLECTEURS ===",
+        "email": "E-mail",
+        "status": "Statut",
+        "mobilizationRatePercent": "Taux de mobilisation (%)",
+        "disputeRatePercent": "Taux de litige (%)",
+        "totalAmount": "Montant total",
+        "confirmedAmount": "Montant confirmé",
+        "groupsHeader": "=== GROUPES ===",
+        "groupName": "Nom du groupe",
+        "payoutCycle": "Cycle de paiement",
+        "members": "Membres",
+        "collector": "Collecteur",
+        "unassigned": "Non assigné",
+        "recentReportsHeader": "=== SIGNALEMENTS RÉCENTS ===",
+        "reporter": "Déclarant",
+        "reason": "Motif",
+        "date": "Date"
+      }
     },
     "billing": {
       "title": "Facturation et factures",

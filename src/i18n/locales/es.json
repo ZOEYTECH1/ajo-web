@@ -534,7 +534,175 @@
       "disputed": "Disputado",
       "voided": "Anulado",
       "paid": "Pagado",
-      "overdue": "Vencido"
+      "overdue": "Vencido",
+      "reviewed": "Revisado",
+      "resolved": "Resuelto",
+      "dismissed": "Descartado",
+      "approved": "Aprobado",
+      "rejected": "Rechazado",
+      "active": "Activo",
+      "suspended": "Suspendido",
+      "all": "Todos"
+    },
+    "org": {
+      "notFound": "Organización no encontrada o no tienes acceso.",
+      "verified": "Verificada",
+      "exportCsv": "Exportar CSV",
+      "billing": "Facturación",
+      "inviteCollector": "Invitar colector",
+      "statCards": {
+        "totalCollectors": "Total de colectores",
+        "activeGroups": "Grupos activos",
+        "totalMembers": "Total de miembros",
+        "totalCollected": "Total recaudado"
+      },
+      "orgType": {
+        "mfb": "IMF",
+        "bank": "Banco",
+        "cooperative": "Cooperativa",
+        "other": "Otro"
+      },
+      "pendingApprovals": {
+        "title": "Aprobaciones de colectores pendientes",
+        "headers": {
+          "name": "Nombre",
+          "email": "Correo electrónico",
+          "actions": "Acciones"
+        },
+        "approve": "Aprobar",
+        "reject": "Rechazar"
+      },
+      "collectors": {
+        "title": "Colectores",
+        "headers": {
+          "name": "Nombre",
+          "status": "Estado",
+          "mobilization": "Movilización",
+          "disputeRate": "Tasa de disputa",
+          "actions": "Acciones"
+        },
+        "suspend": "Suspender",
+        "activate": "Activar",
+        "remove": "Eliminar",
+        "removeConfirm": "¿Eliminar a {{name}} de esta organización?",
+        "noneYet": "Aún no hay colectores activos."
+      },
+      "groups": {
+        "title": "Grupos",
+        "createGroup": "+ Crear grupo",
+        "headers": {
+          "name": "Nombre",
+          "payoutCycle": "Ciclo de pago",
+          "members": "Miembros",
+          "collector": "Colector"
+        },
+        "noneYet": "Aún no hay grupos."
+      },
+      "paymentSummary": {
+        "title": "Resumen de pagos",
+        "total": "Total",
+        "confirmed": "Confirmado",
+        "pending": "Pendiente",
+        "disputed": "Disputado",
+        "mobilization": "Movilización"
+      },
+      "reports": {
+        "title": "Reportes",
+        "pendingBadge": "{{count}} pendiente(s)",
+        "loading": "Cargando reportes…",
+        "noneFound": "No se encontraron reportes {{filter}}.",
+        "against": "Contra: {{name}}",
+        "by": "Por: {{name}} · {{date}}",
+        "markReviewed": "Marcar como revisado",
+        "resolve": "Resolver",
+        "dismiss": "Descartar"
+      },
+      "removals": {
+        "title": "Solicitudes de retiro",
+        "pendingBadge": "{{count}} pendiente(s)",
+        "loading": "Cargando…",
+        "noneFound": "No se encontraron solicitudes de retiro {{filter}}.",
+        "total": "Total",
+        "confirmed": "Confirmado",
+        "pending": "Pendiente",
+        "disputed": "Disputado",
+        "savedLabel": "Ahorrado:",
+        "contributionLabel": "Contribución:",
+        "perPeriod": "/periodo",
+        "membersReason": "Motivo del miembro",
+        "settlementNotes": "Notas de liquidación",
+        "rejectionReason": "Motivo de rechazo",
+        "reviewApprove": "Revisar y aprobar",
+        "reject": "Rechazar",
+        "rejectPrompt": "Motivo para rechazar esta solicitud de retiro (opcional):"
+      },
+      "approveModal": {
+        "title": "Aprobar retiro",
+        "member": "Miembro",
+        "group": "Grupo",
+        "contributionPerPeriod": "Contribución / período",
+        "totalSaved": "Total ahorrado",
+        "paymentHistory": "Historial de pagos",
+        "total": "Total",
+        "confirmed": "Confirmado",
+        "pending": "Pendiente",
+        "disputed": "Disputado",
+        "confirmedAmount": "Monto confirmado:",
+        "reasonForLeaving": "Motivo para irse",
+        "settlementNotesLabel": "Notas de liquidación *",
+        "settlementNotesHint": "Describe lo que se liquidó antes de aprobar: montos pendientes reembolsados o perdidos, disputas resueltas, cualquier ajuste financiero realizado.",
+        "settlementNotesPlaceholder": "ej. Los 6 pagos confirmados están registrados. ₦5,000 pendientes reembolsados el 2024-01-15. Sin disputas activas.",
+        "approving": "Aprobando…",
+        "confirmButton": "Confirmar y eliminar miembro"
+      },
+      "createGroupModal": {
+        "collectorLabel": "Colector *",
+        "selectCollector": "Selecciona un colector…",
+        "collectorOption": "{{name}} — {{email}}",
+        "noActiveCollectors": "No hay colectores activos en esta organización. Invita y activa un colector primero.",
+        "selectCollectorError": "Selecciona un colector para este grupo."
+      },
+      "inviteModal": {
+        "title": "Invitar colector",
+        "description": "Introduce la dirección de correo del colector que deseas invitar. Recibirá un correo con un enlace de invitación.",
+        "emailLabel": "Dirección de correo *",
+        "emailPlaceholder": "colector@ejemplo.com",
+        "invalidEmail": "Introduce una dirección de correo válida.",
+        "inviting": "Invitando…",
+        "sendInvite": "Enviar invitación"
+      },
+      "csv": {
+        "summaryHeader": "=== RESUMEN DE LA ORGANIZACIÓN ===",
+        "name": "Nombre",
+        "type": "Tipo",
+        "verified": "Verificada",
+        "yes": "Sí",
+        "no": "No",
+        "paymentStatsHeader": "=== ESTADÍSTICAS DE PAGO ===",
+        "total": "Total",
+        "confirmed": "Confirmado",
+        "disputed": "Disputado",
+        "pending": "Pendiente",
+        "totalCollectedNgn": "Total recaudado (NGN)",
+        "savingsMobilizationPercent": "Movilización de ahorros (%)",
+        "collectorsHeader": "=== COLECTORES ===",
+        "email": "Correo electrónico",
+        "status": "Estado",
+        "mobilizationRatePercent": "Tasa de movilización (%)",
+        "disputeRatePercent": "Tasa de disputa (%)",
+        "totalAmount": "Monto total",
+        "confirmedAmount": "Monto confirmado",
+        "groupsHeader": "=== GRUPOS ===",
+        "groupName": "Nombre del grupo",
+        "payoutCycle": "Ciclo de pago",
+        "members": "Miembros",
+        "collector": "Colector",
+        "unassigned": "Sin asignar",
+        "recentReportsHeader": "=== REPORTES RECIENTES ===",
+        "reporter": "Informante",
+        "reason": "Motivo",
+        "date": "Fecha"
+      }
     },
     "billing": {
       "title": "Facturación y facturas",

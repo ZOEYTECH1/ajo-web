@@ -535,7 +535,175 @@
       "disputed": "Tí a Jiyàn",
       "voided": "Tí a Fagilé",
       "paid": "Tí a Sanwó",
-      "overdue": "Ó Ti Pẹ́"
+      "overdue": "Ó Ti Pẹ́",
+      "reviewed": "Tí a Yẹ̀wò",
+      "resolved": "Tí a Yanjú",
+      "dismissed": "Tí a Fagilé",
+      "approved": "Tí a Fọwọ́sí",
+      "rejected": "Tí a Kọ̀",
+      "active": "Ń Ṣiṣẹ́",
+      "suspended": "Tí a Dáwọ́ Dúró",
+      "all": "Gbogbo"
+    },
+    "org": {
+      "notFound": "Kò rí àjọ tàbí o kò ní àǹfààní láti wọlé.",
+      "verified": "Tí a Fọwọ́sí",
+      "exportCsv": "Ṣe Agbéjáde CSV",
+      "billing": "Owó Sísan",
+      "inviteCollector": "Pe Agbagbowó",
+      "statCards": {
+        "totalCollectors": "Àpapọ̀ Àwọn Agbagbowó",
+        "activeGroups": "Àwọn Ẹgbẹ́ Tí Ń Ṣiṣẹ́",
+        "totalMembers": "Àpapọ̀ Àwọn Ọmọ Ẹgbẹ́",
+        "totalCollected": "Àpapọ̀ Tí A Gbà"
+      },
+      "orgType": {
+        "mfb": "MFB",
+        "bank": "Báńkì",
+        "cooperative": "Ìjọpọ̀",
+        "other": "Mìíràn"
+      },
+      "pendingApprovals": {
+        "title": "Ìfọwọ́sí Agbagbowó Tí Ń Dúró",
+        "headers": {
+          "name": "Orúkọ",
+          "email": "Ímeèlì",
+          "actions": "Ìgbésẹ̀"
+        },
+        "approve": "Fọwọ́sí",
+        "reject": "Kọ̀"
+      },
+      "collectors": {
+        "title": "Àwọn Agbagbowó",
+        "headers": {
+          "name": "Orúkọ",
+          "status": "Ipò",
+          "mobilization": "Ìkójọpọ̀",
+          "disputeRate": "Oye Ìjiyàn",
+          "actions": "Ìgbésẹ̀"
+        },
+        "suspend": "Dáwọ́ Dúró",
+        "activate": "Mú Ṣiṣẹ́",
+        "remove": "Yọ Kúrò",
+        "removeConfirm": "Yọ {{name}} kúrò nínú àjọ yìí?",
+        "noneYet": "Kò sí agbagbowó tí ń ṣiṣẹ́ síbẹ̀."
+      },
+      "groups": {
+        "title": "Àwọn Ẹgbẹ́",
+        "createGroup": "+ Dá Ẹgbẹ́ Sílẹ̀",
+        "headers": {
+          "name": "Orúkọ",
+          "payoutCycle": "Àyípo Owó Síse",
+          "members": "Àwọn Ọmọ Ẹgbẹ́",
+          "collector": "Agbagbowó"
+        },
+        "noneYet": "Kò sí ẹgbẹ́ kankan síbẹ̀."
+      },
+      "paymentSummary": {
+        "title": "Àkótán Owó Sísan",
+        "total": "Àpapọ̀",
+        "confirmed": "Tí a Fọwọ́sí",
+        "pending": "Ń Dúró",
+        "disputed": "Tí a Jiyàn",
+        "mobilization": "Ìkójọpọ̀"
+      },
+      "reports": {
+        "title": "Àwọn Ìròyìn",
+        "pendingBadge": "{{count}} ń dúró",
+        "loading": "Ń gbé àwọn ìròyìn wọlé…",
+        "noneFound": "Kò rí ìròyìn {{filter}} kankan.",
+        "against": "Lòdì sí: {{name}}",
+        "by": "Láti ọ̀dọ̀: {{name}} · {{date}}",
+        "markReviewed": "Sàmì sí Tí A Yẹ̀wò",
+        "resolve": "Yanjú",
+        "dismiss": "Fagilé"
+      },
+      "removals": {
+        "title": "Àwọn Ìbéèrè Ìyọkúrò",
+        "pendingBadge": "{{count}} ń dúró",
+        "loading": "Ń gbé wọlé…",
+        "noneFound": "Kò sí ìbéèrè ìyọkúrò {{filter}}.",
+        "total": "Àpapọ̀",
+        "confirmed": "Tí a Fọwọ́sí",
+        "pending": "Ń Dúró",
+        "disputed": "Tí a Jiyàn",
+        "savedLabel": "Tí a Fi Pamọ́:",
+        "contributionLabel": "Ìfisílẹ̀:",
+        "perPeriod": "/àyípo",
+        "membersReason": "Ìdí ọmọ ẹgbẹ́",
+        "settlementNotes": "Àkọsílẹ̀ Ìpinnu",
+        "rejectionReason": "Ìdí Kíkọ̀",
+        "reviewApprove": "Yẹ̀wò & Fọwọ́sí",
+        "reject": "Kọ̀",
+        "rejectPrompt": "Ìdí kíkọ̀ ìbéèrè ìyọkúrò yìí (yíyàn):"
+      },
+      "approveModal": {
+        "title": "Fọwọ́sí Ìyọkúrò",
+        "member": "Ọmọ Ẹgbẹ́",
+        "group": "Ẹgbẹ́",
+        "contributionPerPeriod": "Ìfisílẹ̀ / àyípo",
+        "totalSaved": "Àpapọ̀ Tí A Fi Pamọ́",
+        "paymentHistory": "Ìtàn Owó Sísan",
+        "total": "Àpapọ̀",
+        "confirmed": "Tí a Fọwọ́sí",
+        "pending": "Ń Dúró",
+        "disputed": "Tí a Jiyàn",
+        "confirmedAmount": "Iye Tí A Fọwọ́sí:",
+        "reasonForLeaving": "Ìdí Ìkúrò",
+        "settlementNotesLabel": "Àkọsílẹ̀ Ìpinnu *",
+        "settlementNotesHint": "Ṣàpèjúwe ohun tí a yanjú kí o tó fọwọ́sí: iye tí ó ṣẹ́kù tí a dá padà tàbí tí ó sọnù, àríyànjiyàn tí a yanjú, àwọn àtúnṣe owó èyíkéyìí tí a ṣe.",
+        "settlementNotesPlaceholder": "f.a. Gbogbo owó 6 tí a fọwọ́sí wà nínú àkọsílẹ̀. A dá ₦5,000 tí ó ṣẹ́kù padà ní 2024-01-15. Kò sí àríyànjiyàn tí ń ṣiṣẹ́.",
+        "approving": "Ń fọwọ́sí…",
+        "confirmButton": "Jẹ́rìí & Yọ Ọmọ Ẹgbẹ́ Kúrò"
+      },
+      "createGroupModal": {
+        "collectorLabel": "Agbagbowó *",
+        "selectCollector": "Yan agbagbowó…",
+        "collectorOption": "{{name}} — {{email}}",
+        "noActiveCollectors": "Kò sí agbagbowó tí ń ṣiṣẹ́ nínú àjọ yìí. Pe kí o sì mú agbagbowó ṣiṣẹ́ kọ́kọ́.",
+        "selectCollectorError": "Yan agbagbowó fún ẹgbẹ́ yìí."
+      },
+      "inviteModal": {
+        "title": "Pe Agbagbowó",
+        "description": "Tẹ àdírẹ́sì ímeèlì agbagbowó tí o fẹ́ pè. Wọn yóò rí ímeèlì kan pẹ̀lú ìjápọ̀ ìkésíni.",
+        "emailLabel": "Àdírẹ́sì Ímeèlì *",
+        "emailPlaceholder": "agbagbowo@àpẹẹrẹ.com",
+        "invalidEmail": "Tẹ àdírẹ́sì ímeèlì tí ó tọ́.",
+        "inviting": "Ń pè…",
+        "sendInvite": "Fi Ìkésíni Ránṣẹ́"
+      },
+      "csv": {
+        "summaryHeader": "=== ÀKÓTÁN ÀJỌ ===",
+        "name": "Orúkọ",
+        "type": "Irú",
+        "verified": "Tí a Fọwọ́sí",
+        "yes": "Bẹ́ẹ̀ni",
+        "no": "Rárá",
+        "paymentStatsHeader": "=== ÀWỌN ÌṢIRO OWÓ SÍSAN ===",
+        "total": "Àpapọ̀",
+        "confirmed": "Tí a Fọwọ́sí",
+        "disputed": "Tí a Jiyàn",
+        "pending": "Ń Dúró",
+        "totalCollectedNgn": "Àpapọ̀ Tí A Gbà (NGN)",
+        "savingsMobilizationPercent": "Ìkójọpọ̀ Ìfowópamọ́ (%)",
+        "collectorsHeader": "=== ÀWỌN AGBAGBOWÓ ===",
+        "email": "Ímeèlì",
+        "status": "Ipò",
+        "mobilizationRatePercent": "Oye Ìkójọpọ̀ (%)",
+        "disputeRatePercent": "Oye Ìjiyàn (%)",
+        "totalAmount": "Àpapọ̀ Iye",
+        "confirmedAmount": "Iye Tí A Fọwọ́sí",
+        "groupsHeader": "=== ÀWỌN ẸGBẸ́ ===",
+        "groupName": "Orúkọ Ẹgbẹ́",
+        "payoutCycle": "Àyípo Owó Síse",
+        "members": "Àwọn Ọmọ Ẹgbẹ́",
+        "collector": "Agbagbowó",
+        "unassigned": "A Kò Yàn Sí",
+        "recentReportsHeader": "=== ÌRÒYÌN TUNTUN ===",
+        "reporter": "Oníròyìn",
+        "reason": "Ìdí",
+        "date": "Ọjọ́"
+      }
     },
     "billing": {
       "title": "Owó Sísan & Àwọn Ìwé Owó",

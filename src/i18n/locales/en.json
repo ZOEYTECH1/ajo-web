@@ -534,7 +534,175 @@
       "disputed": "Disputed",
       "voided": "Voided",
       "paid": "Paid",
-      "overdue": "Overdue"
+      "overdue": "Overdue",
+      "reviewed": "Reviewed",
+      "resolved": "Resolved",
+      "dismissed": "Dismissed",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "active": "Active",
+      "suspended": "Suspended",
+      "all": "All"
+    },
+    "org": {
+      "notFound": "Organisation not found or you do not have access.",
+      "verified": "Verified",
+      "exportCsv": "Export CSV",
+      "billing": "Billing",
+      "inviteCollector": "Invite Collector",
+      "statCards": {
+        "totalCollectors": "Total Collectors",
+        "activeGroups": "Active Groups",
+        "totalMembers": "Total Members",
+        "totalCollected": "Total Collected"
+      },
+      "orgType": {
+        "mfb": "MFB",
+        "bank": "Bank",
+        "cooperative": "Cooperative",
+        "other": "Other"
+      },
+      "pendingApprovals": {
+        "title": "Pending Collector Approvals",
+        "headers": {
+          "name": "Name",
+          "email": "Email",
+          "actions": "Actions"
+        },
+        "approve": "Approve",
+        "reject": "Reject"
+      },
+      "collectors": {
+        "title": "Collectors",
+        "headers": {
+          "name": "Name",
+          "status": "Status",
+          "mobilization": "Mobilization",
+          "disputeRate": "Dispute Rate",
+          "actions": "Actions"
+        },
+        "suspend": "Suspend",
+        "activate": "Activate",
+        "remove": "Remove",
+        "removeConfirm": "Remove {{name}} from this organisation?",
+        "noneYet": "No active collectors yet."
+      },
+      "groups": {
+        "title": "Groups",
+        "createGroup": "+ Create Group",
+        "headers": {
+          "name": "Name",
+          "payoutCycle": "Payout Cycle",
+          "members": "Members",
+          "collector": "Collector"
+        },
+        "noneYet": "No groups yet."
+      },
+      "paymentSummary": {
+        "title": "Payment Summary",
+        "total": "Total",
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "disputed": "Disputed",
+        "mobilization": "Mobilization"
+      },
+      "reports": {
+        "title": "Reports",
+        "pendingBadge": "{{count}} pending",
+        "loading": "Loading reports…",
+        "noneFound": "No {{filter}} reports found.",
+        "against": "Against: {{name}}",
+        "by": "By: {{name}} · {{date}}",
+        "markReviewed": "Mark Reviewed",
+        "resolve": "Resolve",
+        "dismiss": "Dismiss"
+      },
+      "removals": {
+        "title": "Removal Requests",
+        "pendingBadge": "{{count}} pending",
+        "loading": "Loading…",
+        "noneFound": "No {{filter}} removal requests.",
+        "total": "Total",
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "disputed": "Disputed",
+        "savedLabel": "Saved:",
+        "contributionLabel": "Contribution:",
+        "perPeriod": "/period",
+        "membersReason": "Member's reason",
+        "settlementNotes": "Settlement notes",
+        "rejectionReason": "Rejection reason",
+        "reviewApprove": "Review & Approve",
+        "reject": "Reject",
+        "rejectPrompt": "Reason for rejecting this removal request (optional):"
+      },
+      "approveModal": {
+        "title": "Approve Removal",
+        "member": "Member",
+        "group": "Group",
+        "contributionPerPeriod": "Contribution / period",
+        "totalSaved": "Total saved",
+        "paymentHistory": "Payment history",
+        "total": "Total",
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "disputed": "Disputed",
+        "confirmedAmount": "Confirmed amount:",
+        "reasonForLeaving": "Reason for leaving",
+        "settlementNotesLabel": "Settlement notes *",
+        "settlementNotesHint": "Describe what was settled before approving: outstanding amounts refunded or forfeited, disputes resolved, any financial adjustments made.",
+        "settlementNotesPlaceholder": "e.g. All 6 confirmed payments are on record. ₦5,000 outstanding refunded on 2024-01-15. No active disputes.",
+        "approving": "Approving…",
+        "confirmButton": "Confirm & Remove Member"
+      },
+      "createGroupModal": {
+        "collectorLabel": "Collector *",
+        "selectCollector": "Select a collector…",
+        "collectorOption": "{{name}} — {{email}}",
+        "noActiveCollectors": "No active collectors in this organisation. Invite and activate a collector first.",
+        "selectCollectorError": "Select a collector for this group."
+      },
+      "inviteModal": {
+        "title": "Invite Collector",
+        "description": "Enter the email address of the collector you want to invite. They'll receive an email with an invite link.",
+        "emailLabel": "Email address *",
+        "emailPlaceholder": "collector@example.com",
+        "invalidEmail": "Enter a valid email address.",
+        "inviting": "Inviting…",
+        "sendInvite": "Send Invite"
+      },
+      "csv": {
+        "summaryHeader": "=== ORGANISATION SUMMARY ===",
+        "name": "Name",
+        "type": "Type",
+        "verified": "Verified",
+        "yes": "Yes",
+        "no": "No",
+        "paymentStatsHeader": "=== PAYMENT STATS ===",
+        "total": "Total",
+        "confirmed": "Confirmed",
+        "disputed": "Disputed",
+        "pending": "Pending",
+        "totalCollectedNgn": "Total Collected (NGN)",
+        "savingsMobilizationPercent": "Savings Mobilization (%)",
+        "collectorsHeader": "=== COLLECTORS ===",
+        "email": "Email",
+        "status": "Status",
+        "mobilizationRatePercent": "Mobilization Rate (%)",
+        "disputeRatePercent": "Dispute Rate (%)",
+        "totalAmount": "Total Amount",
+        "confirmedAmount": "Confirmed Amount",
+        "groupsHeader": "=== GROUPS ===",
+        "groupName": "Group Name",
+        "payoutCycle": "Payout Cycle",
+        "members": "Members",
+        "collector": "Collector",
+        "unassigned": "Unassigned",
+        "recentReportsHeader": "=== RECENT REPORTS ===",
+        "reporter": "Reporter",
+        "reason": "Reason",
+        "date": "Date"
+      }
     },
     "billing": {
       "title": "Billing & Invoices",

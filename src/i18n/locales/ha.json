@@ -535,7 +535,175 @@
       "disputed": "An Yi Takaddama",
       "voided": "An Soke",
       "paid": "An Biya",
-      "overdue": "Ya Wuce Lokaci"
+      "overdue": "Ya Wuce Lokaci",
+      "reviewed": "An Dubawa",
+      "resolved": "An Warware",
+      "dismissed": "An Ƙi",
+      "approved": "An Amince",
+      "rejected": "An Ƙi",
+      "active": "Mai Aiki",
+      "suspended": "An Dakatar",
+      "all": "Duka"
+    },
+    "org": {
+      "notFound": "Ba a sami ƙungiya ba ko ba ka da izinin shiga.",
+      "verified": "An Tabbatar",
+      "exportCsv": "Fitar da CSV",
+      "billing": "Biyan Kuɗi",
+      "inviteCollector": "Gayyaci Mai Karɓa",
+      "statCards": {
+        "totalCollectors": "Jimillar Masu Karɓa",
+        "activeGroups": "Ƙungiyoyi Masu Aiki",
+        "totalMembers": "Jimillar Mambobi",
+        "totalCollected": "Jimillar Da Aka Karɓa"
+      },
+      "orgType": {
+        "mfb": "MFB",
+        "bank": "Banki",
+        "cooperative": "Haɗin Kai",
+        "other": "Sauran"
+      },
+      "pendingApprovals": {
+        "title": "Yardar Masu Karɓa Da Ke Jira",
+        "headers": {
+          "name": "Suna",
+          "email": "Imel",
+          "actions": "Ayyuka"
+        },
+        "approve": "Amince",
+        "reject": "Ƙi"
+      },
+      "collectors": {
+        "title": "Masu Karɓa",
+        "headers": {
+          "name": "Suna",
+          "status": "Matsayi",
+          "mobilization": "Haɓakawa",
+          "disputeRate": "Yawan Takaddama",
+          "actions": "Ayyuka"
+        },
+        "suspend": "Dakatar",
+        "activate": "Kunna",
+        "remove": "Cire",
+        "removeConfirm": "Cire {{name}} daga wannan ƙungiya?",
+        "noneYet": "Babu masu karɓa masu aiki tukuna."
+      },
+      "groups": {
+        "title": "Ƙungiyoyi",
+        "createGroup": "+ Ƙirƙiri Ƙungiya",
+        "headers": {
+          "name": "Suna",
+          "payoutCycle": "Zagayen Biyan Kuɗi",
+          "members": "Mambobi",
+          "collector": "Mai Karɓa"
+        },
+        "noneYet": "Babu ƙungiyoyi tukuna."
+      },
+      "paymentSummary": {
+        "title": "Taƙaitaccen Biyan Kuɗi",
+        "total": "Jimilla",
+        "confirmed": "An Tabbatar",
+        "pending": "Jiran Dubawa",
+        "disputed": "An Yi Takaddama",
+        "mobilization": "Haɓakawa"
+      },
+      "reports": {
+        "title": "Rahotanni",
+        "pendingBadge": "{{count}} na jiran dubawa",
+        "loading": "Ana loda rahotanni…",
+        "noneFound": "Ba a sami rahotannin {{filter}} ba.",
+        "against": "Kan: {{name}}",
+        "by": "Daga: {{name}} · {{date}}",
+        "markReviewed": "Yi Alamar An Duba",
+        "resolve": "Warware",
+        "dismiss": "Ƙi"
+      },
+      "removals": {
+        "title": "Buƙatun Cirewa",
+        "pendingBadge": "{{count}} na jiran dubawa",
+        "loading": "Ana lodawa…",
+        "noneFound": "Babu buƙatun cirewa na {{filter}}.",
+        "total": "Jimilla",
+        "confirmed": "An Tabbatar",
+        "pending": "Jiran Dubawa",
+        "disputed": "An Yi Takaddama",
+        "savedLabel": "An Ajiye:",
+        "contributionLabel": "Gudummawa:",
+        "perPeriod": "/zagaye",
+        "membersReason": "Dalilin memba",
+        "settlementNotes": "Bayanan Sasantawa",
+        "rejectionReason": "Dalilin Ƙi",
+        "reviewApprove": "Duba & Amince",
+        "reject": "Ƙi",
+        "rejectPrompt": "Dalilin ƙin wannan buƙatar cirewa (na zaɓi):"
+      },
+      "approveModal": {
+        "title": "Amince da Cirewa",
+        "member": "Memba",
+        "group": "Ƙungiya",
+        "contributionPerPeriod": "Gudummawa / zagaye",
+        "totalSaved": "Jimillar da Aka Ajiye",
+        "paymentHistory": "Tarihin Biyan Kuɗi",
+        "total": "Jimilla",
+        "confirmed": "An Tabbatar",
+        "pending": "Jiran Dubawa",
+        "disputed": "An Yi Takaddama",
+        "confirmedAmount": "Adadin da Aka Tabbatar:",
+        "reasonForLeaving": "Dalilin Barin",
+        "settlementNotesLabel": "Bayanan Sasantawa *",
+        "settlementNotesHint": "Bayyana abin da aka sasanta kafin amincewa: adadin da ke rage an mayar da su ko an rasa su, takaddama da aka warware, kowane gyaran kuɗi da aka yi.",
+        "settlementNotesPlaceholder": "misali. Duk kuɗi 6 da aka tabbatar suna cikin rikodin. An mayar da ₦5,000 da suka rage a ranar 2024-01-15. Babu takaddama mai aiki.",
+        "approving": "Ana amincewa…",
+        "confirmButton": "Tabbatar & Cire Memba"
+      },
+      "createGroupModal": {
+        "collectorLabel": "Mai Karɓa *",
+        "selectCollector": "Zaɓi mai karɓa…",
+        "collectorOption": "{{name}} — {{email}}",
+        "noActiveCollectors": "Babu masu karɓa masu aiki a wannan ƙungiya. Gayyaci kuma kunna mai karɓa tukuna.",
+        "selectCollectorError": "Zaɓi mai karɓa don wannan ƙungiya."
+      },
+      "inviteModal": {
+        "title": "Gayyaci Mai Karɓa",
+        "description": "Shigar da adireshin imel na mai karɓar da kake son gayyata. Za su karɓi imel tare da hanyar gayyata.",
+        "emailLabel": "Adireshin Imel *",
+        "emailPlaceholder": "makarbi@misali.com",
+        "invalidEmail": "Shigar da adireshin imel mai inganci.",
+        "inviting": "Ana gayyata…",
+        "sendInvite": "Aika Gayyata"
+      },
+      "csv": {
+        "summaryHeader": "=== TAƘAITACCEN ƘUNGIYA ===",
+        "name": "Suna",
+        "type": "Nau'i",
+        "verified": "An Tabbatar",
+        "yes": "Ee",
+        "no": "A'a",
+        "paymentStatsHeader": "=== KIDAYAR BIYAN KUƊI ===",
+        "total": "Jimilla",
+        "confirmed": "An Tabbatar",
+        "disputed": "An Yi Takaddama",
+        "pending": "Jiran Dubawa",
+        "totalCollectedNgn": "Jimillar Da Aka Karɓa (NGN)",
+        "savingsMobilizationPercent": "Haɓakar Ajiya (%)",
+        "collectorsHeader": "=== MASU KARƁA ===",
+        "email": "Imel",
+        "status": "Matsayi",
+        "mobilizationRatePercent": "Yawan Haɓakawa (%)",
+        "disputeRatePercent": "Yawan Takaddama (%)",
+        "totalAmount": "Jimillar Adadi",
+        "confirmedAmount": "Adadin da Aka Tabbatar",
+        "groupsHeader": "=== ƘUNGIYOYI ===",
+        "groupName": "Sunan Ƙungiya",
+        "payoutCycle": "Zagayen Biyan Kuɗi",
+        "members": "Mambobi",
+        "collector": "Mai Karɓa",
+        "unassigned": "Ba a Naɗa Ba",
+        "recentReportsHeader": "=== SABBIN RAHOTANNI ===",
+        "reporter": "Mai Bayarwa",
+        "reason": "Dalili",
+        "date": "Kwanan Wata"
+      }
     },
     "billing": {
       "title": "Biyan Kuɗi & Lissafin Kuɗi",

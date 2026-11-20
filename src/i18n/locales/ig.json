@@ -535,7 +535,175 @@
       "disputed": "Enwere Esemokwu",
       "voided": "Akagburu",
       "paid": "Akwụla",
-      "overdue": "Agafeela Oge"
+      "overdue": "Agafeela Oge",
+      "reviewed": "Enyochala",
+      "resolved": "Edozila",
+      "dismissed": "Ajụla",
+      "approved": "Ekwenyela",
+      "rejected": "Ajụla",
+      "active": "Na-arụ Ọrụ",
+      "suspended": "Akwụsịla",
+      "all": "Niile"
+    },
+    "org": {
+      "notFound": "Ahụghị òtù ma ọ bụ ị enweghị ohere ịba.",
+      "verified": "Akwadoro",
+      "exportCsv": "Bupụta CSV",
+      "billing": "Ịkwụ Ụgwọ",
+      "inviteCollector": "Kpọọ Onye Nchịkọta",
+      "statCards": {
+        "totalCollectors": "Mkpokọta Ndị Nchịkọta",
+        "activeGroups": "Ìgwè Na-arụ Ọrụ",
+        "totalMembers": "Mkpokọta Ndị Otu",
+        "totalCollected": "Mkpokọta Akwụrụ"
+      },
+      "orgType": {
+        "mfb": "MFB",
+        "bank": "Ụlọ Akụ",
+        "cooperative": "Nkwekọrịta",
+        "other": "Ọzọ"
+      },
+      "pendingApprovals": {
+        "title": "Nkwenye Onye Nchịkọta Na-eche",
+        "headers": {
+          "name": "Aha",
+          "email": "Email",
+          "actions": "Omume"
+        },
+        "approve": "Kwenye",
+        "reject": "Jụ"
+      },
+      "collectors": {
+        "title": "Ndị Nchịkọta",
+        "headers": {
+          "name": "Aha",
+          "status": "Ọnọdụ",
+          "mobilization": "Nkpọkọta",
+          "disputeRate": "Ọnụego Esemokwu",
+          "actions": "Omume"
+        },
+        "suspend": "Kwụsị",
+        "activate": "Mee Ka Ọ Rụọ Ọrụ",
+        "remove": "Wepụ",
+        "removeConfirm": "Wepụ {{name}} n'òtù a?",
+        "noneYet": "Enweghị ndị nchịkọta na-arụ ọrụ ugbu a."
+      },
+      "groups": {
+        "title": "Ìgwè",
+        "createGroup": "+ Mepụta Ìgwè",
+        "headers": {
+          "name": "Aha",
+          "payoutCycle": "Okirikiri Ịkwụ Ụgwọ",
+          "members": "Ndị Otu",
+          "collector": "Onye Nchịkọta"
+        },
+        "noneYet": "Enweghị ìgwè ugbu a."
+      },
+      "paymentSummary": {
+        "title": "Nchikota Ịkwụ Ụgwọ",
+        "total": "Mkpokọta",
+        "confirmed": "Akwadoro",
+        "pending": "Na-eche",
+        "disputed": "Enwere Esemokwu",
+        "mobilization": "Nkpọkọta"
+      },
+      "reports": {
+        "title": "Akụkọ",
+        "pendingBadge": "{{count}} na-eche",
+        "loading": "Na-ebu akụkọ…",
+        "noneFound": "Ahụghị akụkọ {{filter}}.",
+        "against": "Megide: {{name}}",
+        "by": "Site na: {{name}} · {{date}}",
+        "markReviewed": "Kaa Enyochala",
+        "resolve": "Dozie",
+        "dismiss": "Jụ"
+      },
+      "removals": {
+        "title": "Arịrịọ Iwepụ",
+        "pendingBadge": "{{count}} na-eche",
+        "loading": "Na-ebu…",
+        "noneFound": "Enweghị arịrịọ iwepụ {{filter}}.",
+        "total": "Mkpokọta",
+        "confirmed": "Akwadoro",
+        "pending": "Na-eche",
+        "disputed": "Enwere Esemokwu",
+        "savedLabel": "Echekwara:",
+        "contributionLabel": "Onyinye:",
+        "perPeriod": "/oge",
+        "membersReason": "Ihe kpatara nke onye otu",
+        "settlementNotes": "Ndetu Idozi",
+        "rejectionReason": "Ihe kpatara Ọjụjụ",
+        "reviewApprove": "Nyochaa & Kwenye",
+        "reject": "Jụ",
+        "rejectPrompt": "Ihe kpatara ịjụ arịrịọ iwepụ a (nhọrọ):"
+      },
+      "approveModal": {
+        "title": "Kwenye Iwepụ",
+        "member": "Onye Otu",
+        "group": "Ìgwè",
+        "contributionPerPeriod": "Onyinye / oge",
+        "totalSaved": "Mkpokọta Echekwara",
+        "paymentHistory": "Akụkọ Ịkwụ Ụgwọ",
+        "total": "Mkpokọta",
+        "confirmed": "Akwadoro",
+        "pending": "Na-eche",
+        "disputed": "Enwere Esemokwu",
+        "confirmedAmount": "Ego Akwadoro:",
+        "reasonForLeaving": "Ihe Kpatara Ịpụ",
+        "settlementNotesLabel": "Ndetu Idozi *",
+        "settlementNotesHint": "Kọwaa ihe edoziri tupu ikwenye: ego fọdụrụ akwụghachi ma ọ bụ furu efu, esemokwu edoziri, mgbanwe ego ọ bụla emere.",
+        "settlementNotesPlaceholder": "ọmụmaatụ. Ego 6 akwadoro niile dị na ndekọ. ₦5,000 fọdụrụ akwụghachiri na 2024-01-15. Enweghị esemokwu na-arụ ọrụ.",
+        "approving": "Na-ekwe…",
+        "confirmButton": "Kwenye & Wepụ Onye Otu"
+      },
+      "createGroupModal": {
+        "collectorLabel": "Onye Nchịkọta *",
+        "selectCollector": "Họrọ onye nchịkọta…",
+        "collectorOption": "{{name}} — {{email}}",
+        "noActiveCollectors": "Enweghị ndị nchịkọta na-arụ ọrụ n'òtù a. Kpọọ ma mee ka onye nchịkọta rụọ ọrụ mbụ.",
+        "selectCollectorError": "Họrọ onye nchịkọta maka ìgwè a."
+      },
+      "inviteModal": {
+        "title": "Kpọọ Onye Nchịkọta",
+        "description": "Tinye adreesị email nke onye nchịkọta ị chọrọ ịkpọ. Ha ga-enweta email nwere njikọ ọkpụkpọ.",
+        "emailLabel": "Adreesị Email *",
+        "emailPlaceholder": "onyenchikota@ihe.com",
+        "invalidEmail": "Tinye adreesị email ziri ezi.",
+        "inviting": "Na-akpọ…",
+        "sendInvite": "Zipu Ọkpụkpọ"
+      },
+      "csv": {
+        "summaryHeader": "=== NCHIKOTA ÒTÙ ===",
+        "name": "Aha",
+        "type": "Ụdị",
+        "verified": "Akwadoro",
+        "yes": "Ee",
+        "no": "Mba",
+        "paymentStatsHeader": "=== ỌNỤOGUGU ỊKWỤ ỤGWỌ ===",
+        "total": "Mkpokọta",
+        "confirmed": "Akwadoro",
+        "disputed": "Enwere Esemokwu",
+        "pending": "Na-eche",
+        "totalCollectedNgn": "Mkpokọta Akwụrụ (NGN)",
+        "savingsMobilizationPercent": "Nkpọkọta Nchekwa (%)",
+        "collectorsHeader": "=== NDỊ NCHỊKỌTA ===",
+        "email": "Email",
+        "status": "Ọnọdụ",
+        "mobilizationRatePercent": "Ọnụego Nkpọkọta (%)",
+        "disputeRatePercent": "Ọnụego Esemokwu (%)",
+        "totalAmount": "Mkpokọta Ego",
+        "confirmedAmount": "Ego Akwadoro",
+        "groupsHeader": "=== ÌGWÈ ===",
+        "groupName": "Aha Ìgwè",
+        "payoutCycle": "Okirikiri Ịkwụ Ụgwọ",
+        "members": "Ndị Otu",
+        "collector": "Onye Nchịkọta",
+        "unassigned": "Edobeghị",
+        "recentReportsHeader": "=== AKỤKỌ ỌHỤRỤ ===",
+        "reporter": "Onye Kọrọ",
+        "reason": "Ihe Kpatara",
+        "date": "Ụbọchị"
+      }
     },
     "billing": {
       "title": "Ịkwụ Ụgwọ & Akwụkwọ Ọnụahịa",

@@ -534,7 +534,175 @@
       "disputed": "Angefochten",
       "voided": "Storniert",
       "paid": "Bezahlt",
-      "overdue": "Überfällig"
+      "overdue": "Überfällig",
+      "reviewed": "Geprüft",
+      "resolved": "Gelöst",
+      "dismissed": "Abgelehnt",
+      "approved": "Genehmigt",
+      "rejected": "Abgelehnt",
+      "active": "Aktiv",
+      "suspended": "Gesperrt",
+      "all": "Alle"
+    },
+    "org": {
+      "notFound": "Organisation nicht gefunden oder du hast keinen Zugriff.",
+      "verified": "Verifiziert",
+      "exportCsv": "CSV exportieren",
+      "billing": "Abrechnung",
+      "inviteCollector": "Einzieher einladen",
+      "statCards": {
+        "totalCollectors": "Einzieher insgesamt",
+        "activeGroups": "Aktive Gruppen",
+        "totalMembers": "Mitglieder insgesamt",
+        "totalCollected": "Insgesamt eingezogen"
+      },
+      "orgType": {
+        "mfb": "MFB",
+        "bank": "Bank",
+        "cooperative": "Genossenschaft",
+        "other": "Sonstiges"
+      },
+      "pendingApprovals": {
+        "title": "Ausstehende Einzieher-Genehmigungen",
+        "headers": {
+          "name": "Name",
+          "email": "E-Mail",
+          "actions": "Aktionen"
+        },
+        "approve": "Genehmigen",
+        "reject": "Ablehnen"
+      },
+      "collectors": {
+        "title": "Einzieher",
+        "headers": {
+          "name": "Name",
+          "status": "Status",
+          "mobilization": "Mobilisierung",
+          "disputeRate": "Einspruchsquote",
+          "actions": "Aktionen"
+        },
+        "suspend": "Sperren",
+        "activate": "Aktivieren",
+        "remove": "Entfernen",
+        "removeConfirm": "{{name}} aus dieser Organisation entfernen?",
+        "noneYet": "Noch keine aktiven Einzieher."
+      },
+      "groups": {
+        "title": "Gruppen",
+        "createGroup": "+ Gruppe erstellen",
+        "headers": {
+          "name": "Name",
+          "payoutCycle": "Auszahlungszyklus",
+          "members": "Mitglieder",
+          "collector": "Einzieher"
+        },
+        "noneYet": "Noch keine Gruppen."
+      },
+      "paymentSummary": {
+        "title": "Zahlungsübersicht",
+        "total": "Gesamt",
+        "confirmed": "Bestätigt",
+        "pending": "Ausstehend",
+        "disputed": "Angefochten",
+        "mobilization": "Mobilisierung"
+      },
+      "reports": {
+        "title": "Meldungen",
+        "pendingBadge": "{{count}} ausstehend",
+        "loading": "Meldungen werden geladen…",
+        "noneFound": "Keine {{filter}} Meldungen gefunden.",
+        "against": "Gegen: {{name}}",
+        "by": "Von: {{name}} · {{date}}",
+        "markReviewed": "Als geprüft markieren",
+        "resolve": "Lösen",
+        "dismiss": "Ablehnen"
+      },
+      "removals": {
+        "title": "Austrittsanträge",
+        "pendingBadge": "{{count}} ausstehend",
+        "loading": "Wird geladen…",
+        "noneFound": "Keine {{filter}} Austrittsanträge.",
+        "total": "Gesamt",
+        "confirmed": "Bestätigt",
+        "pending": "Ausstehend",
+        "disputed": "Angefochten",
+        "savedLabel": "Gespart:",
+        "contributionLabel": "Beitrag:",
+        "perPeriod": "/Zeitraum",
+        "membersReason": "Grund des Mitglieds",
+        "settlementNotes": "Abrechnungsnotizen",
+        "rejectionReason": "Ablehnungsgrund",
+        "reviewApprove": "Prüfen & Genehmigen",
+        "reject": "Ablehnen",
+        "rejectPrompt": "Grund für die Ablehnung dieses Austrittsantrags (optional):"
+      },
+      "approveModal": {
+        "title": "Austritt genehmigen",
+        "member": "Mitglied",
+        "group": "Gruppe",
+        "contributionPerPeriod": "Beitrag / Zeitraum",
+        "totalSaved": "Gesamt gespart",
+        "paymentHistory": "Zahlungshistorie",
+        "total": "Gesamt",
+        "confirmed": "Bestätigt",
+        "pending": "Ausstehend",
+        "disputed": "Angefochten",
+        "confirmedAmount": "Bestätigter Betrag:",
+        "reasonForLeaving": "Grund für den Austritt",
+        "settlementNotesLabel": "Abrechnungsnotizen *",
+        "settlementNotesHint": "Beschreibe, was vor der Genehmigung abgerechnet wurde: erstattete oder verfallene ausstehende Beträge, gelöste Streitfälle, vorgenommene finanzielle Anpassungen.",
+        "settlementNotesPlaceholder": "z. B. Alle 6 bestätigten Zahlungen sind erfasst. ₦5.000 ausstehend am 15.01.2024 erstattet. Keine aktiven Streitfälle.",
+        "approving": "Wird genehmigt…",
+        "confirmButton": "Bestätigen & Mitglied entfernen"
+      },
+      "createGroupModal": {
+        "collectorLabel": "Einzieher *",
+        "selectCollector": "Einen Einzieher auswählen…",
+        "collectorOption": "{{name}} — {{email}}",
+        "noActiveCollectors": "Keine aktiven Einzieher in dieser Organisation. Lade zuerst einen Einzieher ein und aktiviere ihn.",
+        "selectCollectorError": "Wähle einen Einzieher für diese Gruppe aus."
+      },
+      "inviteModal": {
+        "title": "Einzieher einladen",
+        "description": "Gib die E-Mail-Adresse des Einziehers ein, den du einladen möchtest. Er erhält eine E-Mail mit einem Einladungslink.",
+        "emailLabel": "E-Mail-Adresse *",
+        "emailPlaceholder": "einzieher@beispiel.com",
+        "invalidEmail": "Gib eine gültige E-Mail-Adresse ein.",
+        "inviting": "Wird eingeladen…",
+        "sendInvite": "Einladung senden"
+      },
+      "csv": {
+        "summaryHeader": "=== ORGANISATIONSÜBERSICHT ===",
+        "name": "Name",
+        "type": "Typ",
+        "verified": "Verifiziert",
+        "yes": "Ja",
+        "no": "Nein",
+        "paymentStatsHeader": "=== ZAHLUNGSSTATISTIK ===",
+        "total": "Gesamt",
+        "confirmed": "Bestätigt",
+        "disputed": "Angefochten",
+        "pending": "Ausstehend",
+        "totalCollectedNgn": "Insgesamt eingezogen (NGN)",
+        "savingsMobilizationPercent": "Sparmobilisierung (%)",
+        "collectorsHeader": "=== EINZIEHER ===",
+        "email": "E-Mail",
+        "status": "Status",
+        "mobilizationRatePercent": "Mobilisierungsrate (%)",
+        "disputeRatePercent": "Einspruchsquote (%)",
+        "totalAmount": "Gesamtbetrag",
+        "confirmedAmount": "Bestätigter Betrag",
+        "groupsHeader": "=== GRUPPEN ===",
+        "groupName": "Gruppenname",
+        "payoutCycle": "Auszahlungszyklus",
+        "members": "Mitglieder",
+        "collector": "Einzieher",
+        "unassigned": "Nicht zugewiesen",
+        "recentReportsHeader": "=== AKTUELLE MELDUNGEN ===",
+        "reporter": "Melder",
+        "reason": "Grund",
+        "date": "Datum"
+      }
     },
     "billing": {
       "title": "Abrechnung & Rechnungen",

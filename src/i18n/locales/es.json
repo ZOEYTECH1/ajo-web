@@ -528,6 +528,45 @@
         "somethingWrong": "Algo salió mal."
       }
     },
+    "statusValues": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmado",
+      "disputed": "Disputado",
+      "voided": "Anulado"
+    },
+    "paymentHistory": {
+      "backToThriftGroups": "← Grupos de ahorro",
+      "title": "Mi historial de pagos",
+      "subtitle": "Tus pagos de ahorro en todos los grupos",
+      "myPayments": "Mis pagos ({{count}})",
+      "markedByMe": "Marcados por mí ({{count}})",
+      "noPaymentsFound": "No se encontraron pagos.",
+      "headers": {
+        "group": "Grupo",
+        "member": "Miembro",
+        "periodDate": "Fecha de periodo",
+        "amount": "Monto",
+        "markedAt": "Marcado el",
+        "status": "Estado"
+      }
+    },
+    "orgCreate": {
+      "backToThriftGroups": "← Grupos de ahorro",
+      "title": "Incorporación de organización",
+      "intro": "Mejora tu operación de ahorro a una cuenta de Organización para herramientas de cumplimiento avanzadas, gestión de colectores y facturación consolidada.",
+      "benefits": {
+        "complianceTitle": "Cumplimiento y verificación de identidad",
+        "complianceBody": "Realizamos verificaciones KYC en cada colector y miembro de tu organización, garantizando el cumplimiento normativo total y reduciendo el fraude.",
+        "collectorTitle": "Gestión dedicada de colectores",
+        "collectorBody": "Invita y gestiona colectores, monitorea el rendimiento individual, revisa reportes y actúa sobre disputas, todo desde un solo panel.",
+        "portalTitle": "Acceso completo al portal web",
+        "portalBody": "Gestiona tu organización, grupos y facturación desde la web con paneles en tiempo real, exportaciones CSV y facturación consolidada."
+      },
+      "readyTitle": "¿Listo para empezar?",
+      "contactPrefix": "Contáctanos en",
+      "contactSuffix": "y nuestro equipo configurará tu cuenta de Organización en 24 horas.",
+      "backButton": "Volver a los grupos de ahorro"
+    },
     "joinModal": {
       "title": "Unirse a un grupo de ahorro",
       "closeDialog": "Cerrar diálogo",

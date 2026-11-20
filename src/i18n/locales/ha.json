@@ -529,6 +529,45 @@
         "somethingWrong": "Wani abu ya yi kuskure."
       }
     },
+    "statusValues": {
+      "pending": "Jiran Dubawa",
+      "confirmed": "An Tabbatar",
+      "disputed": "An Yi Takaddama",
+      "voided": "An Soke"
+    },
+    "paymentHistory": {
+      "backToThriftGroups": "← Ƙungiyoyin Ajiya",
+      "title": "Tarihin Biyan Kuɗi Na",
+      "subtitle": "Bayanan biyan kuɗin ajiyarka a dukkan ƙungiyoyi",
+      "myPayments": "Kuɗaɗena ({{count}})",
+      "markedByMe": "Da Na Alama ({{count}})",
+      "noPaymentsFound": "Ba a sami kuɗaɗe ba.",
+      "headers": {
+        "group": "Ƙungiya",
+        "member": "Memba",
+        "periodDate": "Ranar Zagaye",
+        "amount": "Adadi",
+        "markedAt": "An Alama A",
+        "status": "Matsayi"
+      }
+    },
+    "orgCreate": {
+      "backToThriftGroups": "← Ƙungiyoyin Ajiya",
+      "title": "Shigar da Ƙungiya",
+      "intro": "Haɓaka ayyukan ajiyarka zuwa asusun Ƙungiya don kayan aikin bin-doka na ci-gaba, gudanar da masu karɓa, da haɗaɗɗiyar biyan kuɗi.",
+      "benefits": {
+        "complianceTitle": "Bin Doka & Tabbatar da Shaida",
+        "complianceBody": "Muna yin bincike na KYC akan kowane mai karɓa da memba a ƙungiyarka, tabbatar da cikakken bin-doka da rage zamba.",
+        "collectorTitle": "Gudanar da Masu Karɓa na Musamman",
+        "collectorBody": "Gayyaci kuma gudanar da masu karɓa, bibiyar aiki na ɗaiɗaiku, bitar rahotanni, da ɗaukar mataki kan jayayya — duk daga allo ɗaya.",
+        "portalTitle": "Cikakken Shiga Yanar Gizo",
+        "portalBody": "Gudanar da ƙungiyarka, ƙungiyoyi, da biyan kuɗi daga yanar gizo tare da allon lokaci na gaske, fitar da CSV, da haɗaɗɗiyar lissafin kuɗi."
+      },
+      "readyTitle": "A shirye don farawa?",
+      "contactPrefix": "Tuntube mu a",
+      "contactSuffix": "kuma ƙungiyarmu za ta kafa asusun Ƙungiyarka cikin sa'o'i 24.",
+      "backButton": "Koma Ƙungiyoyin Ajiya"
+    },
     "joinModal": {
       "title": "Shiga Ƙungiyar Ajiya",
       "closeDialog": "Rufe taga",

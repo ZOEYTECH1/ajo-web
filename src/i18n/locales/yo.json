@@ -529,6 +529,45 @@
         "somethingWrong": "Àṣìṣe kan ṣẹlẹ̀."
       }
     },
+    "statusValues": {
+      "pending": "Ń Dúró",
+      "confirmed": "Tí a Fọwọ́sí",
+      "disputed": "Tí a Jiyàn",
+      "voided": "Tí a Fagilé"
+    },
+    "paymentHistory": {
+      "backToThriftGroups": "← Àwọn Ẹgbẹ́ Ìfowópamọ́",
+      "title": "Ìtàn Owó Mi",
+      "subtitle": "Àwọn ìgbàsílẹ̀ owó ìfowópamọ́ rẹ ní gbogbo ẹgbẹ́",
+      "myPayments": "Owó Mi ({{count}})",
+      "markedByMe": "Tí Mo Sàmì Sí ({{count}})",
+      "noPaymentsFound": "Kò sí owó tí a rí.",
+      "headers": {
+        "group": "Ẹgbẹ́",
+        "member": "Ọmọ Ẹgbẹ́",
+        "periodDate": "Ọjọ́ Àyípo",
+        "amount": "Iye",
+        "markedAt": "Àmì Sí",
+        "status": "Ipò"
+      }
+    },
+    "orgCreate": {
+      "backToThriftGroups": "← Àwọn Ẹgbẹ́ Ìfowópamọ́",
+      "title": "Ìbẹ̀rẹ̀ Àjọ",
+      "intro": "Gbé iṣẹ́ ìfowópamọ́ rẹ ga sí àkọọ́lé Àjọ fún àwọn irinṣẹ́ ìbámu tó ga jùlọ, ìṣàkóso agbagbowó, àti owó sísan tí a kójọ pọ̀.",
+      "benefits": {
+        "complianceTitle": "Ìbámu & Ìjẹ́rìí Ìdánimọ̀",
+        "complianceBody": "A ń ṣe àyẹ̀wò KYC lórí gbogbo agbagbowó àti ọmọ ẹgbẹ́ nínú àjọ rẹ, ní rírí i dájú ìbámu òfin pátápátá àti dídín jìbìtì kù.",
+        "collectorTitle": "Ìṣàkóso Agbagbowó Pàtàkì",
+        "collectorBody": "Pe kí o sì ṣàkóso àwọn agbagbowó, bójútó iṣẹ́ ẹnìkọ̀ọ̀kan, ṣàyẹ̀wò àwọn ìròyìn, kí o sì gbé ìgbésẹ̀ lórí àríyànjiyàn — gbogbo rẹ̀ láti ibi dasibodu kan.",
+        "portalTitle": "Ẹnu-ọ̀nà Kíkún sí Ìkànnì Ayélujára",
+        "portalBody": "Ṣàkóso àjọ rẹ, àwọn ẹgbẹ́, àti owó sísan láti ayélujára pẹ̀lú dasibodu àkókò gidi, ìyọkuro CSV, àti owó sísan tí a kójọ pọ̀."
+      },
+      "readyTitle": "Ṣé o ti ṣetán láti bẹ̀rẹ̀?",
+      "contactPrefix": "Kan sí wa ní",
+      "contactSuffix": "àti àwùjọ wa yóò ṣètò àkọọ́lé Àjọ rẹ láàrin wákàtí 24.",
+      "backButton": "Padà sí Àwọn Ẹgbẹ́ Ìfowópamọ́"
+    },
     "joinModal": {
       "title": "Dápọ̀ Ẹgbẹ́ Ìfowópamọ́",
       "closeDialog": "Ti àwíjàre",

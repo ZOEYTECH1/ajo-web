@@ -528,6 +528,45 @@
         "somethingWrong": "Etwas ist schiefgelaufen."
       }
     },
+    "statusValues": {
+      "pending": "Ausstehend",
+      "confirmed": "Bestätigt",
+      "disputed": "Angefochten",
+      "voided": "Storniert"
+    },
+    "paymentHistory": {
+      "backToThriftGroups": "← Spargruppen",
+      "title": "Meine Zahlungshistorie",
+      "subtitle": "Deine Thrift-Zahlungen über alle Gruppen hinweg",
+      "myPayments": "Meine Zahlungen ({{count}})",
+      "markedByMe": "Von mir markiert ({{count}})",
+      "noPaymentsFound": "Keine Zahlungen gefunden.",
+      "headers": {
+        "group": "Gruppe",
+        "member": "Mitglied",
+        "periodDate": "Periodendatum",
+        "amount": "Betrag",
+        "markedAt": "Markiert am",
+        "status": "Status"
+      }
+    },
+    "orgCreate": {
+      "backToThriftGroups": "← Spargruppen",
+      "title": "Organisations-Onboarding",
+      "intro": "Rüste deinen Sparbetrieb auf ein Organisationskonto auf, für erweiterte Compliance-Tools, Einzieher-Verwaltung und konsolidierte Abrechnung.",
+      "benefits": {
+        "complianceTitle": "Compliance & Identitätsprüfung",
+        "complianceBody": "Wir führen KYC-Prüfungen für jeden Einzieher und jedes Mitglied deiner Organisation durch und sorgen so für volle regulatorische Compliance und weniger Betrug.",
+        "collectorTitle": "Dedizierte Einzieher-Verwaltung",
+        "collectorBody": "Lade Einzieher ein und verwalte sie, überwache die individuelle Leistung, prüfe Meldungen und reagiere auf Streitfälle — alles über ein Dashboard.",
+        "portalTitle": "Voller Zugriff auf das Webportal",
+        "portalBody": "Verwalte deine Organisation, Gruppen und Abrechnung über das Web mit Echtzeit-Dashboards, CSV-Exporten und konsolidierter Rechnungsstellung."
+      },
+      "readyTitle": "Bereit loszulegen?",
+      "contactPrefix": "Kontaktiere uns unter",
+      "contactSuffix": "und unser Team richtet dein Organisationskonto innerhalb von 24 Stunden ein.",
+      "backButton": "Zurück zu den Spargruppen"
+    },
     "joinModal": {
       "title": "Spargruppe beitreten",
       "closeDialog": "Dialog schließen",

@@ -529,6 +529,45 @@
         "somethingWrong": "Ọ dị ihe mejọrọ."
       }
     },
+    "statusValues": {
+      "pending": "Na-eche",
+      "confirmed": "Akwadoro",
+      "disputed": "Enwere Esemokwu",
+      "voided": "Akagburu"
+    },
+    "paymentHistory": {
+      "backToThriftGroups": "← Ìgwè Ndekọ",
+      "title": "Akụkọ Ego Ikwu M",
+      "subtitle": "Ndekọ ego ndekọ gị n'ìgwè niile",
+      "myPayments": "Ego M ({{count}})",
+      "markedByMe": "M Kara Akara ({{count}})",
+      "noPaymentsFound": "Ahụghị ego ọ bụla.",
+      "headers": {
+        "group": "Ìgwè",
+        "member": "Onye Otu",
+        "periodDate": "Ụbọchị Oge",
+        "amount": "Ego",
+        "markedAt": "Akarara Na",
+        "status": "Ọnọdụ"
+      }
+    },
+    "orgCreate": {
+      "backToThriftGroups": "← Ìgwè Ndekọ",
+      "title": "Ntinye Òtù",
+      "intro": "Bulie ọrụ nchekwa gị elu gaa akaụntụ Òtù maka ngwaọrụ ntụziaka dị elu, njikwa onye nchịkọta, na ịkwụ ụgwọ jikọtara ọnụ.",
+      "benefits": {
+        "complianceTitle": "Nrube Isi & Nkwenye Njirimara",
+        "complianceBody": "Anyị na-eme nyocha KYC na onye nchịkọta ọ bụla na onye otu na òtù gị, na-ahụ na nrube isi iwu zuru oke na belata aghụghọ.",
+        "collectorTitle": "Njikwa Onye Nchịkọta Nke A Raara Nye",
+        "collectorBody": "Kpọọ ma jikwaa ndị nchịkọta, lelee arụmọrụ onye ọ bụla, nyochaa akụkọ, ma mee ihe gbasara esemokwu — ihe niile site na otu dashboard.",
+        "portalTitle": "Ohere Zuru Ezu n'Ọnụ Ụzọ Weebụ",
+        "portalBody": "Jikwaa òtù gị, ìgwè, na ịkwụ ụgwọ site na weebụ na dashboard oge gaa aga, mbupụ CSV, na akwụkwọ ọnụahịa jikọtara ọnụ."
+      },
+      "readyTitle": "Ị dị njikere ịmalite?",
+      "contactPrefix": "Kpọtụrụ anyị na",
+      "contactSuffix": "ndị otu anyị ga-edozi akaụntụ Òtù gị n'ime awa 24.",
+      "backButton": "Laghachi na Ìgwè Ndekọ"
+    },
     "joinModal": {
       "title": "Sonye Ìgwè Ndekọ",
       "closeDialog": "Mechie okwu okwu",

@@ -528,6 +528,45 @@
         "somethingWrong": "Une erreur s'est produite."
       }
     },
+    "statusValues": {
+      "pending": "En attente",
+      "confirmed": "Confirmé",
+      "disputed": "Contesté",
+      "voided": "Annulé"
+    },
+    "paymentHistory": {
+      "backToThriftGroups": "← Groupes de tontine",
+      "title": "Mon historique de paiements",
+      "subtitle": "Vos paiements de tontine dans tous les groupes",
+      "myPayments": "Mes paiements ({{count}})",
+      "markedByMe": "Marqués par moi ({{count}})",
+      "noPaymentsFound": "Aucun paiement trouvé.",
+      "headers": {
+        "group": "Groupe",
+        "member": "Membre",
+        "periodDate": "Date de période",
+        "amount": "Montant",
+        "markedAt": "Marqué le",
+        "status": "Statut"
+      }
+    },
+    "orgCreate": {
+      "backToThriftGroups": "← Groupes de tontine",
+      "title": "Intégration d'organisation",
+      "intro": "Passez votre activité de tontine à un compte Organisation pour des outils de conformité avancés, la gestion des collecteurs et une facturation consolidée.",
+      "benefits": {
+        "complianceTitle": "Conformité et vérification d'identité",
+        "complianceBody": "Nous effectuons des vérifications KYC sur chaque collecteur et membre de votre organisation, garantissant une conformité réglementaire totale et réduisant la fraude.",
+        "collectorTitle": "Gestion dédiée des collecteurs",
+        "collectorBody": "Invitez et gérez des collecteurs, suivez les performances individuelles, examinez les signalements et agissez sur les litiges — tout depuis un seul tableau de bord.",
+        "portalTitle": "Accès complet au portail web",
+        "portalBody": "Gérez votre organisation, vos groupes et votre facturation depuis le web avec des tableaux de bord en temps réel, des exports CSV et une facturation consolidée."
+      },
+      "readyTitle": "Prêt à commencer ?",
+      "contactPrefix": "Contactez-nous à",
+      "contactSuffix": "et notre équipe configurera votre compte Organisation dans les 24 heures.",
+      "backButton": "Retour aux groupes de tontine"
+    },
     "joinModal": {
       "title": "Rejoindre un groupe de tontine",
       "closeDialog": "Fermer la fenêtre",

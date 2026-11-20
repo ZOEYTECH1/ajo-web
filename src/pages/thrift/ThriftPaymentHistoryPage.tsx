@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { Table, type Column } from '../../components/ui/Table';
 import { Pagination } from '../../components/ui/Pagination';
 import api from '../../services/api';
+
+type TFn = (key: string, options?: any) => string;
 
 interface ThriftPaymentHistoryItem {
   id: number;
@@ -42,6 +45,7 @@ function fmt(d: string | null | undefined) {
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useTranslation();
   return (
     <span className={clsx(
       'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize',
@@ -49,16 +53,16 @@ function StatusBadge({ status }: { status: string }) {
       : status === 'disputed' ? 'bg-red-100 text-red-700'
       : 'bg-yellow-100 text-yellow-700',
     )}>
-      {status}
+      {t(`thriftPage.statusValues.${status}`, { defaultValue: status })}
     </span>
   );
 }
 
-function buildColumns(showMember: boolean): Column<Record<string, unknown>>[] {
+function buildColumns(t: TFn, showMember: boolean): Column<Record<string, unknown>>[] {
   return [
     {
       key: 'group_name',
-      header: 'Group',
+      header: t('thriftPage.paymentHistory.headers.group'),
       render: (v, row) => (
         <Link to={`/thrift/${row.group_uuid as string}`} className="text-(--primary) hover:underline font-medium">
           {v as string}
@@ -66,18 +70,19 @@ function buildColumns(showMember: boolean): Column<Record<string, unknown>>[] {
       ),
     },
     ...(showMember
-      ? [{ key: 'member_name', header: 'Member' } as Column<Record<string, unknown>>]
+      ? [{ key: 'member_name', header: t('thriftPage.paymentHistory.headers.member') } as Column<Record<string, unknown>>]
       : []),
-    { key: 'period_date', header: 'Period Date', render: (v) => fmt(v as string) },
-    { key: 'amount', header: 'Amount', render: (v) => formatCurrency(v as string) },
-    { key: 'marked_at', header: 'Marked At', render: (v) => fmt(v as string) },
-    { key: 'status', header: 'Status', render: (v) => <StatusBadge status={v as string} /> },
+    { key: 'period_date', header: t('thriftPage.paymentHistory.headers.periodDate'), render: (v) => fmt(v as string) },
+    { key: 'amount', header: t('thriftPage.paymentHistory.headers.amount'), render: (v) => formatCurrency(v as string) },
+    { key: 'marked_at', header: t('thriftPage.paymentHistory.headers.markedAt'), render: (v) => fmt(v as string) },
+    { key: 'status', header: t('thriftPage.paymentHistory.headers.status'), render: (v) => <StatusBadge status={v as string} /> },
   ];
 }
 
 type ViewTab = 'payer' | 'collector';
 
 export default function ThriftPaymentHistoryPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<ViewTab>('payer');
   const [payerPage, setPayerPage] = useState(1);
   const [collectorPage, setCollectorPage] = useState(1);
@@ -106,9 +111,9 @@ export default function ThriftPaymentHistoryPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4 flex-wrap">
         <div>
-          <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-(--primary)">← Thrift Groups</Link>
-          <h1 className="text-2xl font-bold text-(--text-primary) mt-1">My Payment History</h1>
-          <p className="text-sm text-(--text-secondary)">Your thrift payment records across all groups</p>
+          <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-(--primary)">{t('thriftPage.paymentHistory.backToThriftGroups')}</Link>
+          <h1 className="text-2xl font-bold text-(--text-primary) mt-1">{t('thriftPage.paymentHistory.title')}</h1>
+          <p className="text-sm text-(--text-secondary)">{t('thriftPage.paymentHistory.subtitle')}</p>
         </div>
       </div>
 
@@ -122,7 +127,7 @@ export default function ThriftPaymentHistoryPage() {
             activeTab === 'payer' ? 'bg-(--accent) text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
           )}
         >
-          My Payments ({payerCount})
+          {t('thriftPage.paymentHistory.myPayments', { count: payerCount })}
         </button>
         <button
           type="button"
@@ -132,15 +137,15 @@ export default function ThriftPaymentHistoryPage() {
             activeTab === 'collector' ? 'bg-(--accent) text-white' : 'bg-(--bg) text-(--text-secondary) hover:text-(--text-primary) border border-(--border)',
           )}
         >
-          Marked by Me ({collectorCount})
+          {t('thriftPage.paymentHistory.markedByMe', { count: collectorCount })}
         </button>
       </div>
 
       <Table
-        columns={buildColumns(activeTab === 'collector')}
+        columns={buildColumns(t as unknown as TFn, activeTab === 'collector')}
         data={activePayments as unknown as Record<string, unknown>[]}
         loading={activeLoading}
-        emptyMessage="No payments found."
+        emptyMessage={t('thriftPage.paymentHistory.noPaymentsFound')}
       />
 
       <Pagination

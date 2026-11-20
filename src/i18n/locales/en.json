@@ -528,6 +528,45 @@
         "somethingWrong": "Something went wrong."
       }
     },
+    "statusValues": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "disputed": "Disputed",
+      "voided": "Voided"
+    },
+    "paymentHistory": {
+      "backToThriftGroups": "← Thrift Groups",
+      "title": "My Payment History",
+      "subtitle": "Your thrift payment records across all groups",
+      "myPayments": "My Payments ({{count}})",
+      "markedByMe": "Marked by Me ({{count}})",
+      "noPaymentsFound": "No payments found.",
+      "headers": {
+        "group": "Group",
+        "member": "Member",
+        "periodDate": "Period Date",
+        "amount": "Amount",
+        "markedAt": "Marked At",
+        "status": "Status"
+      }
+    },
+    "orgCreate": {
+      "backToThriftGroups": "← Thrift Groups",
+      "title": "Organisation Onboarding",
+      "intro": "Upgrade your thrift operation to an Organisation account for advanced compliance tools, collector management, and consolidated billing.",
+      "benefits": {
+        "complianceTitle": "Compliance & Identity Verification",
+        "complianceBody": "We perform KYC checks on every collector and member in your organisation, ensuring full regulatory compliance and reducing fraud.",
+        "collectorTitle": "Dedicated Collector Management",
+        "collectorBody": "Invite and manage collectors, monitor individual performance, review reports, and take action on disputes — all from one dashboard.",
+        "portalTitle": "Full Web Portal Access",
+        "portalBody": "Manage your organisation, groups, and billing from the web with real-time dashboards, CSV exports, and consolidated invoicing."
+      },
+      "readyTitle": "Ready to get started?",
+      "contactPrefix": "Contact us at",
+      "contactSuffix": "and our team will set up your organisation account within 24 hours.",
+      "backButton": "Back to Thrift Groups"
+    },
     "joinModal": {
       "title": "Join Thrift Group",
       "closeDialog": "Close dialog",

@@ -1,38 +1,28 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { BuildingOffice2Icon } from '@heroicons/react/24/outline';
 
-const BENEFITS = [
-  {
-    icon: '🔒',
-    title: 'Compliance & Identity Verification',
-    body: 'We perform KYC checks on every collector and member in your organisation, ensuring full regulatory compliance and reducing fraud.',
-  },
-  {
-    icon: '📋',
-    title: 'Dedicated Collector Management',
-    body: 'Invite and manage collectors, monitor individual performance, review reports, and take action on disputes — all from one dashboard.',
-  },
-  {
-    icon: '🌐',
-    title: 'Full Web Portal Access',
-    body: 'Manage your organisation, groups, and billing from the web with real-time dashboards, CSV exports, and consolidated invoicing.',
-  },
-];
-
 export default function ThriftOrgCreatePage() {
+  const { t } = useTranslation();
+
+  const BENEFITS = [
+    { icon: '🔒', title: t('thriftPage.orgCreate.benefits.complianceTitle'), body: t('thriftPage.orgCreate.benefits.complianceBody') },
+    { icon: '📋', title: t('thriftPage.orgCreate.benefits.collectorTitle'), body: t('thriftPage.orgCreate.benefits.collectorBody') },
+    { icon: '🌐', title: t('thriftPage.orgCreate.benefits.portalTitle'), body: t('thriftPage.orgCreate.benefits.portalBody') },
+  ];
+
   return (
     <div className="max-w-lg mx-auto py-10 px-4 space-y-8">
-      <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-(--primary)">← Thrift Groups</Link>
+      <Link to="/thrift" className="text-sm text-(--text-secondary) hover:text-(--primary)">{t('thriftPage.orgCreate.backToThriftGroups')}</Link>
 
       <div className="flex flex-col items-center text-center gap-4">
         <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-(--primary-tint) border border-(--primary-light)/30">
           <BuildingOffice2Icon className="h-10 w-10 text-(--primary)" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-(--text-primary)">Organisation Onboarding</h1>
+          <h1 className="text-2xl font-bold text-(--text-primary)">{t('thriftPage.orgCreate.title')}</h1>
           <p className="text-sm text-(--text-secondary) mt-2 leading-relaxed">
-            Upgrade your thrift operation to an Organisation account for advanced compliance tools,
-            collector management, and consolidated billing.
+            {t('thriftPage.orgCreate.intro')}
           </p>
         </div>
       </div>
@@ -53,16 +43,16 @@ export default function ThriftOrgCreatePage() {
       </div>
 
       <div className="bg-(--primary-tint) border border-(--primary)/30 rounded-xl p-5 text-center space-y-2">
-        <p className="text-sm font-semibold text-(--primary-dark)">Ready to get started?</p>
+        <p className="text-sm font-semibold text-(--primary-dark)">{t('thriftPage.orgCreate.readyTitle')}</p>
         <p className="text-sm text-(--primary-dark) leading-relaxed">
-          Contact us at{' '}
+          {t('thriftPage.orgCreate.contactPrefix')}{' '}
           <a
             href="mailto:support@ajo.app"
             className="font-bold underline hover:text-(--primary-dark)"
           >
             support@ajo.app
           </a>{' '}
-          and our team will set up your organisation account within 24 hours.
+          {t('thriftPage.orgCreate.contactSuffix')}
         </p>
       </div>
 
@@ -70,7 +60,7 @@ export default function ThriftOrgCreatePage() {
         to="/thrift"
         className="block w-full text-center rounded-xl surface-soft-sm surface-soft-interactive text-(--text-secondary) py-3 text-sm font-semibold hover:bg-(--primary-tint)/30"
       >
-        Back to Thrift Groups
+        {t('thriftPage.orgCreate.backButton')}
       </Link>
     </div>
   );

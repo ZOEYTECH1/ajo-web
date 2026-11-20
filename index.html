@@ -2,17 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Uses the same full brand mark as the navbar/sidebar/splash (public/
-         ajo-logo.svg) -- by explicit later request, superseding an earlier
-         decision to use a simplified ring+shield-only mark here because the
-         full 5-element logo was found illegible at 16x16 in a browser tab.
-         That legibility tradeoff still applies; this is a deliberate choice
-         to have one consistent mark everywhere instead. If Chrome's
-         favicon-specific cache (keyed by this href, separate from normal
-         page caching) ever needs busting again, change the href itself
-         (e.g. a query string or a renamed copy) rather than editing the
-         file in place. -->
-    <link rel="icon" type="image/svg+xml" href="/ajo-logo.svg" />
+    <!-- public/favicon-v3.svg -- same full brand mark as the navbar/
+         sidebar/splash (public/ajo-logo.svg), by explicit later request
+         superseding an earlier decision to use a simplified ring+shield-
+         only mark here because the full 5-element logo was found illegible
+         at 16x16 in a browser tab. That legibility tradeoff still applies;
+         this is a deliberate choice to have one consistent mark everywhere
+         instead.
+
+         A SEPARATE static copy, not ajo-logo.svg directly: that file's
+         elements start at opacity:0 and only become visible through a CSS
+         reveal animation, which runs fine when it's loaded as page content
+         (navbar/sidebar/splash/AjoLoader all use <img>) but never runs in
+         the browser's favicon renderer -- pointing the favicon straight at
+         ajo-logo.svg rendered as a permanently blank tab icon. favicon-v3.svg
+         has the identical artwork with no animation, every element visible
+         from the start.
+
+         Named v3, not favicon.svg: that exact filename was already served
+         once (before being retired below for Chrome's favicon-cache
+         reasons) -- reusing it risks resurrecting a browser's old cached
+         entry rather than loading this new content. If Chrome's favicon-
+         specific cache (keyed by this href, separate from normal page
+         caching) ever needs busting again, change the href itself (a new
+         filename, same as this one was) rather than editing the file in
+         place. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon-v3.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scribe</title>
 

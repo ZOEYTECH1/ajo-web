@@ -43,7 +43,7 @@ export default defineConfig({
       strategies: 'injectManifest',
       srcDir: 'src',
       filename: 'sw.ts',
-      includeAssets: ['ajo-logo.svg'],
+      includeAssets: ['ajo-logo.svg', 'favicon-v3.svg'],
       manifest: {
         name: 'Scribe',
         short_name: 'Scribe',

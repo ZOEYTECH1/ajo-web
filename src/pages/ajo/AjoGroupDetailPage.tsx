@@ -2159,6 +2159,7 @@ export default function AjoGroupDetailPage() {
   const isAdmin         = currentUser?.id === group.admin.id;
   const activeCycle     = cycles.find((c) => c.status === 'active');
   const approvedMembers = members.filter((m) => m.status === 'approved');
+  const pendingMembers  = members.filter((m) => m.status === 'pending');
 
   // A Round is a full rotation — every member has collected once. If the
   // last closed cycle was the round's last slot and no new cycle has
@@ -2429,6 +2430,27 @@ export default function AjoGroupDetailPage() {
         roundJustCompleted={roundJustCompleted}
         lastClosedCycle={lastClosedCycle}
       />
+
+      {/* Pending join requests banner — admin only. Updates live off the
+          already-connected group WebSocket (see useGroupSocket above), so
+          a new join request shows up here the instant it happens, without
+          the admin needing to dig into the Members tab's Pending sub-tab
+          or reload the page. */}
+      {isAdmin && pendingMembers.length > 0 && (
+        <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+          <UserGroupIcon className="h-5 w-5 text-blue-600 shrink-0" />
+          <p className="text-sm text-blue-800">
+            {t('groupDetail.main.pendingJoinRequestsBanner', { count: pendingMembers.length })}{' '}
+            <button
+              type="button"
+              onClick={() => setActiveTab('members')}
+              className="underline font-semibold hover:text-blue-900"
+            >
+              {t('groupDetail.main.reviewNow')}
+            </button>
+          </p>
+        </div>
+      )}
 
       {/* Pending payments banner — admin only */}
       {isAdmin && pendingPaymentsCount > 0 && (

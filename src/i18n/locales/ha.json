@@ -322,6 +322,8 @@
       "yourPaymentForCycle": "Kuɗin naka na wannan zagaye:",
       "pendingPaymentsBanner_one": "Akwai kuɗi {{count}} mai jiran dubawa a zagayen mai aiki.",
       "pendingPaymentsBanner_other": "Akwai kuɗaɗe {{count}} masu jiran dubawa a zagayen mai aiki.",
+      "pendingJoinRequestsBanner_one": "Akwai buƙatar shiga {{count}} mai jiran dubawarka.",
+      "pendingJoinRequestsBanner_other": "Akwai buƙatun shiga {{count}} masu jiran dubawarka.",
       "reviewNow": "Dubawa Yanzu",
       "subAdminBanner": "Kuɗin {{name}} yana jiran dubawarka — an zaɓe ka bazuwar wannan zagayen tunda shugaba ba zai iya amincewa da naka ba."
     },

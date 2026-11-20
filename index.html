@@ -2,20 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Renamed from favicon.svg to favicon-v2.svg deliberately -- some
-         browsers (Chrome in particular) keep a favicon cache keyed by URL
-         that's separate from normal page/HTTP caching and can stay stale
-         for a long time even across incognito windows or deploys. A new
-         filename is the only fix that reliably bypasses every layer of
-         that at once; editing the old file's content again would not.
-
-         Content is the ring+shield mark (same as AjoLoader), not the full
-         navbar logo -- by explicit user decision after confirming the full
-         5-element logo (ring, people, documents, shield, naira badge)
-         doesn't read at 16x16 in a browser tab regardless of how the file
-         itself is fixed. Full logo stays in the navbar and the PWA/app
-         icons, which have enough resolution for it. -->
-    <link rel="icon" type="image/svg+xml" href="/favicon-v2.svg" />
+    <!-- Uses the same full brand mark as the navbar/sidebar/splash (public/
+         ajo-logo.svg) -- by explicit later request, superseding an earlier
+         decision to use a simplified ring+shield-only mark here because the
+         full 5-element logo was found illegible at 16x16 in a browser tab.
+         That legibility tradeoff still applies; this is a deliberate choice
+         to have one consistent mark everywhere instead. If Chrome's
+         favicon-specific cache (keyed by this href, separate from normal
+         page caching) ever needs busting again, change the href itself
+         (e.g. a query string or a renamed copy) rather than editing the
+         file in place. -->
+    <link rel="icon" type="image/svg+xml" href="/ajo-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scribe</title>
 

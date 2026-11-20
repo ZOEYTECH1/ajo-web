@@ -321,6 +321,8 @@
       "yourPaymentForCycle": "Deine Zahlung für diesen Zyklus:",
       "pendingPaymentsBanner_one": "{{count}} ausstehende Zahlung im aktiven Zyklus wartet auf deine Prüfung.",
       "pendingPaymentsBanner_other": "{{count}} ausstehende Zahlungen im aktiven Zyklus warten auf deine Prüfung.",
+      "pendingJoinRequestsBanner_one": "{{count}} Beitrittsanfrage wartet auf deine Prüfung.",
+      "pendingJoinRequestsBanner_other": "{{count}} Beitrittsanfragen warten auf deine Prüfung.",
       "reviewNow": "Jetzt prüfen",
       "subAdminBanner": "Die Zahlung von {{name}} wartet auf deine Prüfung — du wurdest diese Runde zufällig ausgewählt, da der Admin seine eigene nicht genehmigen kann."
     },

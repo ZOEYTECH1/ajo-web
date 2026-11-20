@@ -321,6 +321,8 @@
       "yourPaymentForCycle": "Your payment for this cycle:",
       "pendingPaymentsBanner_one": "{{count}} pending payment in the active cycle awaiting your review.",
       "pendingPaymentsBanner_other": "{{count}} pending payments in the active cycle awaiting your review.",
+      "pendingJoinRequestsBanner_one": "{{count}} join request awaiting your review.",
+      "pendingJoinRequestsBanner_other": "{{count}} join requests awaiting your review.",
       "reviewNow": "Review now",
       "subAdminBanner": "{{name}}'s payment is awaiting your review — you were randomly picked this round since the admin can't approve their own."
     },

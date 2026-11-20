@@ -321,6 +321,8 @@
       "yourPaymentForCycle": "Tu pago para este ciclo:",
       "pendingPaymentsBanner_one": "{{count}} pago pendiente en el ciclo activo, esperando tu revisión.",
       "pendingPaymentsBanner_other": "{{count}} pagos pendientes en el ciclo activo, esperando tu revisión.",
+      "pendingJoinRequestsBanner_one": "{{count}} solicitud de ingreso esperando tu revisión.",
+      "pendingJoinRequestsBanner_other": "{{count}} solicitudes de ingreso esperando tu revisión.",
       "reviewNow": "Revisar ahora",
       "subAdminBanner": "El pago de {{name}} espera tu revisión — fuiste elegido al azar esta ronda porque el administrador no puede aprobar el suyo."
     },

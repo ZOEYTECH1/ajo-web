@@ -321,6 +321,8 @@
       "yourPaymentForCycle": "Votre paiement pour ce cycle :",
       "pendingPaymentsBanner_one": "{{count}} paiement en attente dans le cycle actif, en attente de votre validation.",
       "pendingPaymentsBanner_other": "{{count}} paiements en attente dans le cycle actif, en attente de votre validation.",
+      "pendingJoinRequestsBanner_one": "{{count}} demande d'adhésion en attente de votre validation.",
+      "pendingJoinRequestsBanner_other": "{{count}} demandes d'adhésion en attente de votre validation.",
       "reviewNow": "Examiner maintenant",
       "subAdminBanner": "Le paiement de {{name}} attend votre validation — vous avez été choisi au hasard ce tour car l'administrateur ne peut pas approuver le sien."
     },

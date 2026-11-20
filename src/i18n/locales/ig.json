@@ -322,6 +322,8 @@
       "yourPaymentForCycle": "Ego gị maka okirikiri a:",
       "pendingPaymentsBanner_one": "Ego {{count}} na-echere nyocha gị n'okirikiri na-arụ ọrụ.",
       "pendingPaymentsBanner_other": "Ego {{count}} na-echere nyocha gị n'okirikiri na-arụ ọrụ.",
+      "pendingJoinRequestsBanner_one": "Arịrịọ ịbanye {{count}} na-echere nyocha gị.",
+      "pendingJoinRequestsBanner_other": "Arịrịọ ịbanye {{count}} na-echere nyocha gị.",
       "reviewNow": "Nyochaa Ugbu a",
       "subAdminBanner": "Ego {{name}} na-echere nyocha gị — a họọrọ gị na-eme atụghị anya n'okirikiri a ebe ọ bụ na onye nchịkwa enweghị ike ikwenye nke ya."
     },

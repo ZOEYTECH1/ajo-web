@@ -133,19 +133,6 @@ button, [role="button"], summary { cursor: pointer; }
 }
 button:disabled { cursor: not-allowed; }
 
-/* ── Ajo Loader animation ────────────────────────────────────────────────── */
-@keyframes ajo-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-@keyframes ajo-pulse {
-  0%, 100% { transform: scale(1); }
-  50%       { transform: scale(1.1); }
-}
-
-.ajo-ring  { animation: ajo-spin  2400ms linear infinite; }
-.ajo-shield{ animation: ajo-pulse 1700ms ease-in-out infinite; }
-
 /* ── Skeleton pulse ─────────────────────────────────────────────────────── */
 @keyframes skeleton-pulse {
   0%, 100% { opacity: 1; }
@@ -265,7 +252,7 @@ button:disabled { cursor: not-allowed; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-rise-in, .ajo-ring, .ajo-shield, .skeleton,
+  .animate-rise-in, .skeleton,
   .animate-splash-logo-in, .animate-splash-bar-in {
     animation: none !important;
   }

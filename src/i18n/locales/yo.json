@@ -322,6 +322,8 @@
       "yourPaymentForCycle": "Owó rẹ fún àyípo yìí:",
       "pendingPaymentsBanner_one": "Owó {{count}} tí ń dúró ní àyípo tí ń ṣiṣẹ́ ń dúró de àyẹ̀wò rẹ.",
       "pendingPaymentsBanner_other": "Owó {{count}} tí ń dúró ní àyípo tí ń ṣiṣẹ́ ń dúró de àyẹ̀wò rẹ.",
+      "pendingJoinRequestsBanner_one": "Ìbéèrè ìdápọ̀ {{count}} ń dúró de àyẹ̀wò rẹ.",
+      "pendingJoinRequestsBanner_other": "Àwọn ìbéèrè ìdápọ̀ {{count}} ń dúró de àyẹ̀wò rẹ.",
       "reviewNow": "Ṣàyẹ̀wò Nísinsin Yí",
       "subAdminBanner": "Owó {{name}} ń dúró de àyẹ̀wò rẹ — a yàn ọ́ láìmọ̀ọ́mọ̀ fún yípo yìí nítorí alákòóso kò lè fọwọ́sí tirẹ̀."
     },
